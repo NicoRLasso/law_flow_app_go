@@ -1,0 +1,19 @@
+package components
+
+// Card renders a Kinetic Typography styled card
+templ Card(hover bool, sticky bool) {
+	<div class={ 
+		"card", "card-lg",
+		templ.KV("card-hover", hover),
+		templ.KV("card-sticky", sticky),
+	}>
+		{ children... }
+	</div>
+}
+
+// SimpleCard renders a basic card without hover or sticky effects
+templ SimpleCard() {
+	<div class="card card-lg">
+		{ children... }
+	</div>
+}

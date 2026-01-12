@@ -1,0 +1,27 @@
+package components
+
+// Input renders a Kinetic Typography styled input field
+templ Input(name string, placeholder string, inputType string) {
+	<input 
+		type={ inputType }
+		name={ name }
+		placeholder={ placeholder }
+		class="input"
+	/>
+}
+
+// InputWithLabel renders an input with a label
+templ InputWithLabel(label string, name string, placeholder string, inputType string) {
+	<div class="mb-8">
+		<label for={ name } class="text-small text-muted mb-4 block">
+			{ label }
+		</label>
+		<input 
+			type={ inputType }
+			id={ name }
+			name={ name }
+			placeholder={ placeholder }
+			class="input"
+		/>
+	</div>
+}

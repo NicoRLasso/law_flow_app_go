@@ -39,7 +39,8 @@ func main() {
 
 	// Routes
 	// Web routes
-	e.GET("/", handlers.HomeHandler)
+	e.GET("/", handlers.LandingHandler)  // Landing page is now the home page
+	e.GET("/demo", handlers.HomeHandler) // Old home page available at /demo for reference
 
 	// HTMX routes
 	htmx := e.Group("/htmx")

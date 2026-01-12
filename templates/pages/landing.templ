@@ -1,0 +1,421 @@
+package pages
+
+import "law_flow_app_go/templates/layouts"
+
+templ Landing(title string) {
+	@layouts.Base(title) {
+		<!-- Navigation -->
+		<nav class="border-b border-border">
+			<div class="container flex justify-between items-center" style="height: 80px;">
+				<h1 class="text-heading-md">LAW FLOW</h1>
+				<div class="flex gap-8 items-center">
+					<a href="#features" class="text-small hover:text-accent transition-colors">FEATURES</a>
+					<a href="#pricing" class="text-small hover:text-accent transition-colors">PRICING</a>
+					<a href="/demo" class="text-small hover:text-accent transition-colors">DEMO</a>
+					<a href="/api/users" class="btn btn-primary btn-sm">API</a>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Hero Section with Parallax -->
+		<section class="section-lg hero-parallax">
+			<div class="container text-center">
+				<h2 class="text-hero mb-8">
+					LEGAL<br/>
+					WORKFLOW<br/>
+					AUTOMATION
+				</h2>
+				<p class="text-body-lg text-muted mb-16" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+					Transform your law practice with powerful case management, intelligent automation, and seamless client collaboration.
+				</p>
+				<div class="flex gap-4 justify-center flex-wrap">
+					<a href="#" class="btn btn-primary btn-lg">START FREE TRIAL</a>
+					<a href="#features" class="btn btn-outline btn-lg">LEARN MORE</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Stats Marquee (Fast) -->
+		<section class="bg-accent py-12">
+			<div class="marquee marquee-fast">
+				<div class="marquee-content">
+					<div class="marquee-item">
+						<span class="text-number-massive text-black">10K+</span>
+						<span class="text-heading-md text-black">CASES MANAGED</span>
+						<span class="text-number-large text-black">★</span>
+					</div>
+					<div class="marquee-item">
+						<span class="text-number-massive text-black">99.9%</span>
+						<span class="text-heading-md text-black">UPTIME</span>
+						<span class="text-number-large text-black">★</span>
+					</div>
+					<div class="marquee-item">
+						<span class="text-number-massive text-black">500+</span>
+						<span class="text-heading-md text-black">LAW FIRMS</span>
+						<span class="text-number-large text-black">★</span>
+					</div>
+					<div class="marquee-item">
+						<span class="text-number-massive text-black">24/7</span>
+						<span class="text-heading-md text-black">SUPPORT</span>
+						<span class="text-number-large text-black">★</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Features Section with Sticky Scroll -->
+		<section class="section" id="features">
+			<div class="container">
+				<h2 class="text-display text-center mb-8">POWERFUL FEATURES</h2>
+				
+				<div class="grid md:grid-cols-2 lg:grid-cols-3 grid-gap-md">
+					<!-- Feature Card 1 -->
+					<div class="card card-lg card-hover card-sticky fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">01</div>
+						<h3 class="text-heading-lg mb-4">CASE MANAGEMENT</h3>
+						<p class="text-body text-muted">
+							Organize and track all your cases in one centralized platform with powerful search and filtering.
+						</p>
+					</div>
+
+					<!-- Feature Card 2 -->
+					<div class="card card-lg card-hover card-sticky fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">02</div>
+						<h3 class="text-heading-lg mb-4">WORKFLOW AUTOMATION</h3>
+						<p class="text-body text-muted">
+							Automate repetitive tasks and create custom workflows that adapt to your practice.
+						</p>
+					</div>
+
+					<!-- Feature Card 3 -->
+					<div class="card card-lg card-hover card-sticky fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">03</div>
+						<h3 class="text-heading-lg mb-4">CLIENT PORTAL</h3>
+						<p class="text-body text-muted">
+							Give clients secure access to case updates, documents, and billing information.
+						</p>
+					</div>
+
+					<!-- Feature Card 4 -->
+					<div class="card card-lg card-hover card-sticky fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">04</div>
+						<h3 class="text-heading-lg mb-4">DOCUMENT MANAGEMENT</h3>
+						<p class="text-body text-muted">
+							Store, organize, and share documents with version control and advanced search.
+						</p>
+					</div>
+
+					<!-- Feature Card 5 -->
+					<div class="card card-lg card-hover card-sticky fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">05</div>
+						<h3 class="text-heading-lg mb-4">TIME TRACKING</h3>
+						<p class="text-body text-muted">
+							Track billable hours effortlessly with integrated timers and detailed reporting.
+						</p>
+					</div>
+
+					<!-- Feature Card 6 -->
+					<div class="card card-lg card-hover card-sticky fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">06</div>
+						<h3 class="text-heading-lg mb-4">ANALYTICS</h3>
+						<p class="text-body text-muted">
+							Gain insights into your practice with comprehensive dashboards and reports.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Benefits Section with Hover Reveals -->
+		<section class="section bg-muted">
+			<div class="container">
+				<h2 class="text-display text-center mb-16">WHY LAW FLOW?</h2>
+				
+				<div class="grid md:grid-cols-2 grid-gap-lg">
+					<div class="p-12 border-b border-border" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+						<h3 class="text-heading-lg mb-4 transition-transform duration-300" :class="hover ? 'translate-x-8' : ''">
+							SAVE TIME
+						</h3>
+						<p class="text-body text-muted transition-opacity duration-300" :class="hover ? 'opacity-100' : 'md:opacity-0'">
+							Automate routine tasks and focus on what matters most - serving your clients and winning cases.
+						</p>
+					</div>
+
+					<div class="p-12 border-b border-border" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+						<h3 class="text-heading-lg mb-4 transition-transform duration-300" :class="hover ? 'translate-x-8' : ''">
+							INCREASE REVENUE
+						</h3>
+						<p class="text-body text-muted transition-opacity duration-300" :class="hover ? 'opacity-100' : 'md:opacity-0'">
+							Never miss billable hours with accurate time tracking and streamlined invoicing.
+						</p>
+					</div>
+
+					<div class="p-12 border-b border-border" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+						<h3 class="text-heading-lg mb-4 transition-transform duration-300" :class="hover ? 'translate-x-8' : ''">
+							IMPROVE COLLABORATION
+						</h3>
+						<p class="text-body text-muted transition-opacity duration-300" :class="hover ? 'opacity-100' : 'md:opacity-0'">
+							Keep your team aligned with real-time updates, shared calendars, and task management.
+						</p>
+					</div>
+
+					<div class="p-12 border-b border-border" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+						<h3 class="text-heading-lg mb-4 transition-transform duration-300" :class="hover ? 'translate-x-8' : ''">
+							ENHANCE SECURITY
+						</h3>
+						<p class="text-body text-muted transition-opacity duration-300" :class="hover ? 'opacity-100' : 'md:opacity-0'">
+							Bank-level encryption and compliance with industry standards keep your data safe.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Testimonials Marquee (Slower) -->
+		<section class="section">
+			<div class="container mb-16">
+				<h2 class="text-display text-center">WHAT LAWYERS SAY</h2>
+			</div>
+			
+			<div class="marquee marquee-slow">
+				<div class="marquee-content">
+					<div class="marquee-item" style="width: 600px;">
+						<div class="card card-lg">
+							<p class="text-body mb-8">"Law Flow transformed our practice. We've cut administrative time by 60% and our clients love the portal."</p>
+							<div class="text-small text-muted">
+								<div class="font-bold">SARAH CHEN</div>
+								<div>Partner, Chen & Associates</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="marquee-item" style="width: 600px;">
+						<div class="card card-lg">
+							<p class="text-body mb-8">"The workflow automation is a game-changer. We handle 3x more cases with the same team size."</p>
+							<div class="text-small text-muted">
+								<div class="font-bold">MICHAEL RODRIGUEZ</div>
+								<div>Managing Attorney, Rodriguez Law Group</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="marquee-item" style="width: 600px;">
+						<div class="card card-lg">
+							<p class="text-body mb-8">"Best investment we've made. The time tracking alone has increased our billable hours by 25%."</p>
+							<div class="text-small text-muted">
+								<div class="font-bold">EMILY THOMPSON</div>
+								<div>Founder, Thompson Legal Services</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="marquee-item" style="width: 600px;">
+						<div class="card card-lg">
+							<p class="text-body mb-8">"Intuitive, powerful, and reliable. Law Flow is everything we needed in practice management software."</p>
+							<div class="text-small text-muted">
+								<div class="font-bold">DAVID KIM</div>
+								<div>Senior Partner, Kim & Partners LLP</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Pricing Section -->
+		<section class="section bg-muted" id="pricing">
+			<div class="container">
+				<h2 class="text-display text-center mb-16">SIMPLE PRICING</h2>
+				
+				<div class="grid lg:grid-cols-3 grid-gap-md">
+					<!-- Starter Plan -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-small text-muted mb-4">STARTER</div>
+						<div class="mb-8">
+							<span class="text-number-large">$99</span>
+							<span class="text-body text-muted">/month</span>
+						</div>
+						<ul class="text-body text-muted mb-12" style="list-style: none; line-height: 2;">
+							<li>✓ Up to 50 cases</li>
+							<li>✓ 2 team members</li>
+							<li>✓ Basic workflows</li>
+							<li>✓ Client portal</li>
+							<li>✓ Email support</li>
+						</ul>
+						<a href="#" class="btn btn-outline btn-md w-full">GET STARTED</a>
+					</div>
+
+					<!-- Professional Plan -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-small text-accent mb-4">PROFESSIONAL</div>
+						<div class="mb-8">
+							<span class="text-number-large">$299</span>
+							<span class="text-body text-muted">/month</span>
+						</div>
+						<ul class="text-body text-muted mb-12" style="list-style: none; line-height: 2;">
+							<li>✓ Unlimited cases</li>
+							<li>✓ 10 team members</li>
+							<li>✓ Advanced workflows</li>
+							<li>✓ Client portal</li>
+							<li>✓ Priority support</li>
+							<li>✓ Custom integrations</li>
+						</ul>
+						<a href="#" class="btn btn-primary btn-md w-full">GET STARTED</a>
+					</div>
+
+					<!-- Enterprise Plan -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-small text-muted mb-4">ENTERPRISE</div>
+						<div class="mb-8">
+							<span class="text-number-large">$999</span>
+							<span class="text-body text-muted">/month</span>
+						</div>
+						<ul class="text-body text-muted mb-12" style="list-style: none; line-height: 2;">
+							<li>✓ Everything in Pro</li>
+							<li>✓ Unlimited team members</li>
+							<li>✓ White-label options</li>
+							<li>✓ Dedicated support</li>
+							<li>✓ Custom development</li>
+							<li>✓ SLA guarantee</li>
+						</ul>
+						<a href="#" class="btn btn-outline btn-md w-full">CONTACT SALES</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- FAQ Accordion -->
+		<section class="section">
+			<div class="container" style="max-width: 900px;">
+				<h2 class="text-display text-center mb-16">FREQUENTLY ASKED</h2>
+				
+				<div>
+					<div class="accordion-item">
+						<button class="accordion-trigger" aria-expanded="false">
+							<span>How secure is my data?</span>
+							<span class="text-accent">+</span>
+						</button>
+						<div class="accordion-content">
+							<div class="accordion-content-inner">
+								We use bank-level 256-bit encryption for all data in transit and at rest. Our infrastructure is SOC 2 Type II certified and we undergo regular third-party security audits. Your data is backed up daily and stored in geographically distributed data centers.
+							</div>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<button class="accordion-trigger" aria-expanded="false">
+							<span>Can I migrate from my current system?</span>
+							<span class="text-accent">+</span>
+						</button>
+						<div class="accordion-content">
+							<div class="accordion-content-inner">
+								Yes! We offer free data migration assistance for all new customers. Our team will work with you to import your existing cases, contacts, and documents from most major practice management systems.
+							</div>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<button class="accordion-trigger" aria-expanded="false">
+							<span>Is there a free trial?</span>
+							<span class="text-accent">+</span>
+						</button>
+						<div class="accordion-content">
+							<div class="accordion-content-inner">
+								Absolutely! We offer a 14-day free trial with full access to all features. No credit card required. You can upgrade, downgrade, or cancel at any time.
+							</div>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<button class="accordion-trigger" aria-expanded="false">
+							<span>What kind of support do you offer?</span>
+							<span class="text-accent">+</span>
+						</button>
+						<div class="accordion-content">
+							<div class="accordion-content-inner">
+								All plans include email support with response times under 24 hours. Professional and Enterprise plans get priority support with faster response times. Enterprise customers also receive a dedicated account manager and 24/7 phone support.
+							</div>
+						</div>
+					</div>
+
+					<div class="accordion-item">
+						<button class="accordion-trigger" aria-expanded="false">
+							<span>Can I customize workflows?</span>
+							<span class="text-accent">+</span>
+						</button>
+						<div class="accordion-content">
+							<div class="accordion-content-inner">
+								Yes! Our workflow builder allows you to create custom automation tailored to your practice. Professional and Enterprise plans include advanced workflow features and custom integrations with your existing tools.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- CTA Section -->
+		<section class="section-lg bg-accent">
+			<div class="container text-center">
+				<h2 class="text-display text-black mb-8">
+					READY TO TRANSFORM<br/>
+					YOUR PRACTICE?
+				</h2>
+				<p class="text-body-lg text-black mb-16" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+					Join hundreds of law firms already using Law Flow to streamline their operations and delight their clients.
+				</p>
+				<a href="#" class="btn btn-md text-white bg-background hover:scale-105" style="border: 2px solid #000;">
+					START YOUR FREE TRIAL
+				</a>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer class="border-t border-border py-16">
+			<div class="container">
+				<div class="grid md:grid-cols-4 grid-gap-lg mb-16">
+					<div>
+						<h3 class="text-heading-md mb-8">LAW FLOW</h3>
+						<p class="text-body text-muted">
+							Modern practice management for modern law firms.
+						</p>
+					</div>
+
+					<div>
+						<h4 class="text-small mb-4">PRODUCT</h4>
+						<ul class="text-body text-muted" style="list-style: none; line-height: 2;">
+							<li><a href="#" class="hover:text-accent transition-colors">Features</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Pricing</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Security</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Integrations</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-small mb-4">COMPANY</h4>
+						<ul class="text-body text-muted" style="list-style: none; line-height: 2;">
+							<li><a href="#" class="hover:text-accent transition-colors">About</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Blog</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Careers</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Contact</a></li>
+						</ul>
+					</div>
+
+					<div>
+						<h4 class="text-small mb-4">LEGAL</h4>
+						<ul class="text-body text-muted" style="list-style: none; line-height: 2;">
+							<li><a href="#" class="hover:text-accent transition-colors">Privacy</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Terms</a></li>
+							<li><a href="#" class="hover:text-accent transition-colors">Cookie Policy</a></li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="border-t border-border pt-8 text-center">
+					<p class="text-small text-muted">
+						© 2026 LAW FLOW. ALL RIGHTS RESERVED.
+					</p>
+				</div>
+			</div>
+		</footer>
+	}
+}

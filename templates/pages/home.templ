@@ -5,161 +5,161 @@ import "law_flow_app_go/templates/layouts"
 templ Home(title string) {
 	@layouts.Base(title) {
 		<!-- Navbar -->
-		<nav class="bg-white shadow-lg">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex justify-between h-16">
-					<div class="flex items-center">
-						<h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-							Law Flow App
-						</h1>
-					</div>
-					<div class="flex items-center space-x-4">
-						<a href="/" class="text-gray-700 hover:text-purple-600 transition">Home</a>
-						<a href="/api/users" class="text-gray-700 hover:text-purple-600 transition">API</a>
-					</div>
+		<nav class="border-b border-border">
+			<div class="container flex justify-between items-center" style="height: 80px;">
+				<h1 class="text-heading-md">LAW FLOW APP</h1>
+				<div class="flex gap-8 items-center">
+					<a href="/" class="text-small hover:text-accent transition-colors">HOME</a>
+					<a href="/demo" class="text-small hover:text-accent transition-colors">DEMO</a>
+					<a href="/api/users" class="text-small hover:text-accent transition-colors">API</a>
 				</div>
 			</div>
 		</nav>
 		
 		<!-- Main Content -->
-		<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-			<!-- Hero Section -->
-			<div class="text-center mb-12">
-				<h2 class="text-4xl font-bold text-gray-900 mb-4">
-					Welcome to Your Go Fullstack App
-				</h2>
-				<p class="text-xl text-gray-600 mb-8">
-					Built with Echo, GORM, SQLite, Templ, HTMX, Alpine.js, and Tailwind CSS
-				</p>
-			</div>
-			
-			<!-- Features Grid -->
-			<div class="grid md:grid-cols-3 gap-8 mb-12">
-				<!-- Echo Card -->
-				<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-					<div class="text-4xl mb-4">🚀</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">Echo Framework</h3>
-					<p class="text-gray-600">High performance, extensible, minimalist Go web framework</p>
+		<main class="section">
+			<div class="container">
+				<!-- Hero Section -->
+				<div class="text-center mb-16">
+					<h2 class="text-display mb-8">
+						GO FULLSTACK<br/>
+						DEMO APP
+					</h2>
+					<p class="text-body-lg text-muted mb-8" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+						Built with Echo, GORM, SQLite, Templ, HTMX, Alpine.js, and Tailwind CSS
+					</p>
 				</div>
 				
-				<!-- GORM + SQLite Card -->
-				<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-					<div class="text-4xl mb-4">💾</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">GORM + SQLite</h3>
-					<p class="text-gray-600">Powerful ORM with SQLite for lightweight data persistence</p>
-				</div>
-				
-				<!-- Templ Card -->
-				<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-					<div class="text-4xl mb-4">🎨</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">Templ</h3>
-					<p class="text-gray-600">Type-safe HTML templating for Go</p>
-				</div>
-				
-				<!-- HTMX Card -->
-				<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-					<div class="text-4xl mb-4">⚡</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">HTMX</h3>
-					<p class="text-gray-600">Access AJAX, CSS Transitions, WebSockets and Server Sent Events directly in HTML</p>
-				</div>
-				
-				<!-- Alpine.js Card -->
-				<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-					<div class="text-4xl mb-4">🏔️</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">Alpine.js</h3>
-					<p class="text-gray-600">Lightweight JavaScript framework for composing behavior directly in your markup</p>
-				</div>
-				
-				<!-- Tailwind Card -->
-				<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
-					<div class="text-4xl mb-4">🎨</div>
-					<h3 class="text-xl font-bold text-gray-900 mb-2">Tailwind CSS</h3>
-					<p class="text-gray-600">A utility-first CSS framework for rapidly building custom designs</p>
-				</div>
-			</div>
-			
-			<!-- Interactive Demo Section -->
-			<div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-				<h3 class="text-2xl font-bold text-gray-900 mb-6">Interactive Demo</h3>
-				
-				<!-- Alpine.js Modal Example -->
-				<div class="mb-8" x-data="{ modalOpen: false }">
-					<h4 class="text-lg font-semibold text-gray-800 mb-3">Alpine.js Modal Example</h4>
-					<button 
-						@click="modalOpen = true"
-						class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition shadow-md">
-						Open Modal (Alpine.js)
-					</button>
+				<!-- Features Grid -->
+				<div class="grid md:grid-cols-2 lg:grid-cols-3 grid-gap-md mb-16">
+					<!-- Echo Card -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">🚀</div>
+						<h3 class="text-heading-lg mb-4">ECHO FRAMEWORK</h3>
+						<p class="text-body text-muted">High performance, extensible, minimalist Go web framework</p>
+					</div>
 					
-					<!-- Modal -->
-					<div 
-						x-show="modalOpen"
-						x-transition
-						class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-						@click.self="modalOpen = false">
-						<div class="bg-white rounded-xl p-8 max-w-md mx-4 shadow-2xl">
-							<h3 class="text-2xl font-bold text-gray-900 mb-4">Alpine.js Modal</h3>
-							<p class="text-gray-600 mb-6">This modal is controlled entirely by Alpine.js for client-side state management!</p>
-							<button 
-								@click="modalOpen = false"
-								class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition">
-								Close
-							</button>
-						</div>
+					<!-- GORM + SQLite Card -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">💾</div>
+						<h3 class="text-heading-lg mb-4">GORM + SQLITE</h3>
+						<p class="text-body text-muted">Powerful ORM with SQLite for lightweight data persistence</p>
+					</div>
+					
+					<!-- Templ Card -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">🎨</div>
+						<h3 class="text-heading-lg mb-4">TEMPL</h3>
+						<p class="text-body text-muted">Type-safe HTML templating for Go</p>
+					</div>
+					
+					<!-- HTMX Card -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">⚡</div>
+						<h3 class="text-heading-lg mb-4">HTMX</h3>
+						<p class="text-body text-muted">Access AJAX, CSS Transitions, WebSockets directly in HTML</p>
+					</div>
+					
+					<!-- Alpine.js Card -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">🏔️</div>
+						<h3 class="text-heading-lg mb-4">ALPINE.JS</h3>
+						<p class="text-body text-muted">Lightweight JavaScript framework for composing behavior</p>
+					</div>
+					
+					<!-- Tailwind Card -->
+					<div class="card card-lg card-hover fade-in">
+						<div class="text-number-large text-muted mb-4" aria-hidden="true">💨</div>
+						<h3 class="text-heading-lg mb-4">TAILWIND CSS</h3>
+						<p class="text-body text-muted">Utility-first CSS framework for rapid development</p>
 					</div>
 				</div>
 				
-				<!-- HTMX Example -->
-				<div class="mb-8">
-					<h4 class="text-lg font-semibold text-gray-800 mb-3">HTMX Data Loading Example</h4>
-					<button 
-						hx-get="/htmx/users"
-						hx-target="#user-list"
-						hx-swap="innerHTML"
-						hx-indicator="#loading"
-						class="bg-gradient-to-r from-green-600 to-teal-600 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-teal-700 transition shadow-md">
-						Load Users (HTMX)
-					</button>
+				<!-- Interactive Demo Section -->
+				<div class="card card-lg mb-16">
+					<h3 class="text-heading-lg mb-12">INTERACTIVE DEMOS</h3>
 					
-					<div id="loading" class="htmx-indicator mt-4">
-						<div class="flex items-center text-gray-600">
-							<svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-							</svg>
-							Loading...
-						</div>
-					</div>
-					
-					<div id="user-list" class="mt-4"></div>
-				</div>
-				
-				<!-- Alpine.js Dropdown Example -->
-				<div x-data="{ dropdownOpen: false }">
-					<h4 class="text-lg font-semibold text-gray-800 mb-3">Alpine.js Dropdown Example</h4>
-					<div class="relative inline-block">
+					<!-- Alpine.js Modal Example -->
+					<div class="mb-12" x-data="{ modalOpen: false }">
+						<h4 class="text-heading-md mb-4">ALPINE.JS MODAL</h4>
 						<button 
-							@click="dropdownOpen = !dropdownOpen"
-							class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md">
-							Toggle Dropdown
+							@click="modalOpen = true"
+							class="btn btn-primary btn-md">
+							OPEN MODAL
 						</button>
 						
+						<!-- Modal -->
 						<div 
-							x-show="dropdownOpen"
-							@click.away="dropdownOpen = false"
+							x-show="modalOpen"
 							x-transition
-							class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-10">
-							<a href="#" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 rounded-t-lg">Option 1</a>
-							<a href="#" class="block px-4 py-2 text-gray-800 hover:bg-purple-50">Option 2</a>
-							<a href="#" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 rounded-b-lg">Option 3</a>
+							class="fixed inset-0 flex items-center justify-center z-50"
+							style="background-color: rgba(0, 0, 0, 0.8);"
+							@click.self="modalOpen = false">
+							<div class="card card-lg" style="max-width: 600px; margin: 0 1rem;">
+								<h3 class="text-heading-lg mb-4">ALPINE.JS MODAL</h3>
+								<p class="text-body text-muted mb-8">This modal is controlled entirely by Alpine.js for client-side state management!</p>
+								<button 
+									@click="modalOpen = false"
+									class="btn btn-outline btn-md">
+									CLOSE
+								</button>
+							</div>
+						</div>
+					</div>
+					
+					<!-- HTMX Example -->
+					<div class="mb-12">
+						<h4 class="text-heading-md mb-4">HTMX DATA LOADING</h4>
+						<button 
+							hx-get="/htmx/users"
+							hx-target="#user-list"
+							hx-swap="innerHTML"
+							hx-indicator="#loading"
+							class="btn btn-accent btn-md">
+							LOAD USERS (HTMX)
+						</button>
+						
+						<div id="loading" class="htmx-indicator mt-8">
+							<div class="flex items-center text-muted">
+								<svg class="animate-spin h-8 w-8 mr-4" viewBox="0 0 24 24">
+									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+								</svg>
+								<span class="text-body">LOADING...</span>
+							</div>
+						</div>
+						
+						<div id="user-list" class="mt-8"></div>
+					</div>
+					
+					<!-- Alpine.js Dropdown Example -->
+					<div x-data="{ dropdownOpen: false }">
+						<h4 class="text-heading-md mb-4">ALPINE.JS DROPDOWN</h4>
+						<div class="relative inline-block">
+							<button 
+								@click="dropdownOpen = !dropdownOpen"
+								class="btn btn-outline btn-md">
+								TOGGLE DROPDOWN
+							</button>
+							
+							<div 
+								x-show="dropdownOpen"
+								@click.away="dropdownOpen = false"
+								x-transition
+								class="absolute left-0 mt-2 card"
+								style="min-width: 200px; z-index: 10;">
+								<a href="#" class="block p-4 text-body hover:text-accent transition-colors border-b border-border">OPTION 1</a>
+								<a href="#" class="block p-4 text-body hover:text-accent transition-colors border-b border-border">OPTION 2</a>
+								<a href="#" class="block p-4 text-body hover:text-accent transition-colors">OPTION 3</a>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			
-			<!-- Footer -->
-			<div class="text-center text-gray-600">
-				<p class="text-lg font-semibold">Ready to build something amazing! 🚀</p>
+				
+				<!-- Footer -->
+				<div class="text-center">
+					<p class="text-heading-md text-accent">READY TO BUILD! 🚀</p>
+				</div>
 			</div>
 		</main>
 		
@@ -174,3 +174,4 @@ templ Home(title string) {
 		</style>
 	}
 }
+
