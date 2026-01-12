@@ -1,4 +1,4 @@
-.PHONY: help run build clean generate install-deps test
+.PHONY: help run build clean generate install-deps test dev
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -9,9 +9,13 @@ help: ## Show this help message
 install-deps: ## Install project dependencies
 	go mod download
 	go install github.com/a-h/templ/cmd/templ@latest
+	go install github.com/air-verse/air@latest
 
 generate: ## Generate Templ templates
-	templ generate
+	$(HOME)/go/bin/templ generate
+
+dev: generate ## Run with live-reload (requires air)
+	$(HOME)/go/bin/air
 
 run: generate ## Run the application
 	go run cmd/server/main.go
@@ -29,7 +33,7 @@ test: ## Run tests
 
 fmt: ## Format code
 	go fmt ./...
-	templ fmt .
+	$(HOME)/go/bin/templ fmt .
 
 tidy: ## Tidy dependencies
 	go mod tidy

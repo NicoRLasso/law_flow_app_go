@@ -1,0 +1,38 @@
+package partials
+
+import "law_flow_app_go/models"
+
+templ UserList(users []models.User) {
+	if len(users) == 0 {
+		<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+			<p class="text-yellow-700">No users found. Create some users via the API!</p>
+		</div>
+	} else {
+		<div class="space-y-4">
+			for _, user := range users {
+				<div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition border-l-4 border-purple-500">
+					<div class="flex items-start justify-between">
+						<div>
+							<h3 class="text-xl font-bold text-gray-900">{ user.Name }</h3>
+							<p class="text-gray-600 mt-1">
+								<span class="inline-flex items-center">
+									<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+									</svg>
+									{ user.Email }
+								</span>
+							</p>
+						</div>
+						<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+							ID: { templ.EscapeString(string(rune(user.ID))) }
+						</span>
+					</div>
+					<div class="mt-4 flex space-x-2">
+						<button class="text-sm text-purple-600 hover:text-purple-800 font-medium">Edit</button>
+						<button class="text-sm text-red-600 hover:text-red-800 font-medium">Delete</button>
+					</div>
+				</div>
+			}
+		</div>
+	}
+}

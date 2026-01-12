@@ -41,6 +41,12 @@ func main() {
 	// Web routes
 	e.GET("/", handlers.HomeHandler)
 
+	// HTMX routes
+	htmx := e.Group("/htmx")
+	{
+		htmx.GET("/users", handlers.GetUsersHTMX)
+	}
+
 	// API routes
 	api := e.Group("/api")
 	{

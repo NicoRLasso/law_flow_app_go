@@ -1,0 +1,41 @@
+package layouts
+
+templ Base(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+			
+			<!-- Tailwind CSS -->
+			<script src="https://cdn.tailwindcss.com"></script>
+			
+			<!-- HTMX -->
+			<script src="https://unpkg.com/htmx.org@2.0.0"></script>
+			
+			<!-- Alpine.js -->
+			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+			
+			<!-- Custom JavaScript -->
+			<script src="/static/js/app.js" defer></script>
+			
+			<!-- Custom Tailwind Config -->
+			<script>
+				tailwind.config = {
+					theme: {
+						extend: {
+							colors: {
+								primary: '#667eea',
+								secondary: '#764ba2',
+							}
+						}
+					}
+				}
+			</script>
+		</head>
+		<body class="bg-gradient-to-br from-purple-50 to-indigo-100 min-h-screen">
+			{ children... }
+		</body>
+	</html>
+}
