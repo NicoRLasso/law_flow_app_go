@@ -15,43 +15,6 @@ A modern fullstack web application built with Go, featuring a REST API, server-s
 - **[Alpine.js](https://alpinejs.dev/)** - Lightweight JavaScript framework for reactive UI
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 
-## 📁 Project Structure
-
-```
-law_flow_app_go/
-├── cmd/
-│   └── server/          # Application entry point
-│       └── main.go
-├── config/              # Configuration management
-│   └── config.go
-├── db/                  # Database setup and migrations
-│   ├── database.go
-│   └── app.db          # SQLite database file (generated)
-├── handlers/            # HTTP request handlers
-│   ├── home.go         # Home page handler
-│   ├── htmx.go         # HTMX partial handlers
-│   └── user.go         # User API handlers
-├── models/              # Data models
-│   └── user.go
-├── templates/           # Templ templates
-│   ├── layouts/        # Base layouts
-│   │   └── base.templ
-│   ├── pages/          # Full page templates
-│   │   └── home.templ
-│   └── partials/       # HTMX partial templates
-│       └── user_list.templ
-├── static/              # Static assets
-│   ├── css/
-│   ├── js/
-│   │   └── app.js
-│   └── images/
-├── .air.toml           # Air live-reload config
-├── Makefile            # Development commands
-├── frontend_rules.md   # Frontend development guidelines
-├── go.mod
-└── README.md
-```
-
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
@@ -102,43 +65,6 @@ make run
 make build
 ./bin/server
 ```
-
-## 📡 API Endpoints
-
-### Web Routes
-- `GET /` - Home page with interactive examples
-
-### HTMX Routes
-- `GET /htmx/users` - Get user list partial (HTMX)
-
-### API Routes (REST)
-- `GET /api/users` - Get all users
-- `GET /api/users/:id` - Get user by ID
-- `POST /api/users` - Create new user
-- `PUT /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
-
-### Example API Requests
-
-**Create a user:**
-```bash
-curl -X POST http://localhost:8080/api/users \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "password": "securepassword"
-  }'
-```
-
-**Get all users:**
-```bash
-curl http://localhost:8080/api/users
-```
-
-**Load users via HTMX (from browser):**
-- Visit `http://localhost:8080`
-- Click "Load Users (HTMX)" button
 
 ## 🗄️ Database
 
@@ -228,14 +154,6 @@ make tidy          # Tidy Go modules
 3. **Edit handlers**: Modify files in `handlers/`
 4. **Auto-reload**: Air watches and rebuilds automatically
 5. **Refresh browser**: See changes immediately
-
-## 🎯 Interactive Examples
-
-The home page includes three interactive examples:
-
-1. **Alpine.js Modal** - Client-side modal with smooth transitions
-2. **HTMX User Loading** - Server-side data fetching without page reload
-3. **Alpine.js Dropdown** - Toggle dropdown menu
 
 ## 📚 Frontend Guidelines
 
