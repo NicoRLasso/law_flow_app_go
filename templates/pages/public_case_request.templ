@@ -1,0 +1,213 @@
+package pages
+
+import "law_flow_app_go/templates/layouts"
+import "law_flow_app_go/models"
+
+templ PublicCaseRequest(firm models.Firm) {
+	@layouts.Base("Request Legal Assistance - " + firm.Name) {
+		<div class="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
+			<!-- Background effects -->
+			<div class="absolute inset-0 z-0">
+				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
+				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px]"></div>
+			</div>
+
+			<div class="w-full max-w-3xl relative z-10 px-6">
+				<!-- Firm Header -->
+				<div class="text-center mb-10">
+					<h1 class="text-4xl md:text-5xl font-bold font-space-grotesk tracking-tighter mb-2">
+						{ firm.Name }
+					</h1>
+					<p class="text-muted-foreground">
+						if firm.City != "" && firm.Country != "" {
+							{ firm.City }, { firm.Country }
+						} else if firm.Country != "" {
+							{ firm.Country }
+						}
+					</p>
+					<p class="text-lg mt-4 text-foreground/80">Request Legal Assistance</p>
+				</div>
+
+				<!-- Request Form Card -->
+				<div class="glass-panel p-8 rounded-2xl border border-white/10">
+					<div class="mb-8">
+						<h2 class="text-2xl font-bold mb-2">Case Request Form</h2>
+						<p class="text-muted-foreground text-sm">Please fill out the form below and we will contact you soon.</p>
+					</div>
+
+					<form 
+						hx-post={ "/firm/" + firm.Slug + "/request" }
+						hx-target="#form-message"
+						hx-swap="innerHTML"
+						enctype="multipart/form-data"
+						class="space-y-6"
+					>
+						<!-- Form Message Area -->
+						<div id="form-message" class="min-h-[24px]"></div>
+
+						<!-- Personal Information Section -->
+						<div class="space-y-4">
+							<h3 class="text-lg font-semibold text-accent">Personal Information</h3>
+							
+							<!-- Full Name -->
+							<div class="space-y-2">
+								<label for="name" class="text-sm font-medium text-muted-foreground ml-1">Full Name *</label>
+								<div class="relative group">
+									<input 
+										type="text" 
+										id="name" 
+										name="name"
+										required
+										placeholder="Juan Pérez"
+										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									/>
+									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+								</div>
+							</div>
+
+							<!-- Email -->
+							<div class="space-y-2">
+								<label for="email" class="text-sm font-medium text-muted-foreground ml-1">Email Address *</label>
+								<div class="relative group">
+									<input 
+										type="email" 
+										id="email" 
+										name="email"
+										required
+										placeholder="juan@example.com"
+										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									/>
+									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+								</div>
+							</div>
+
+							<!-- Phone -->
+							<div class="space-y-2">
+								<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">Phone Number *</label>
+								<div class="relative group">
+									<input 
+										type="tel" 
+										id="phone" 
+										name="phone"
+										required
+										placeholder="+57 300 123 4567"
+										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									/>
+									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+								</div>
+							</div>
+
+							<!-- Document Type and Number (Grid) -->
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<!-- Document Type -->
+								<div class="space-y-2">
+									<label for="document_type" class="text-sm font-medium text-muted-foreground ml-1">Document Type *</label>
+									<div class="relative group">
+										<select 
+											id="document_type" 
+											name="document_type"
+											required
+											class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+										>
+											<option value="">Select type</option>
+											<option value="CC">Cédula de Ciudadanía (CC)</option>
+											<option value="CE">Cédula de Extranjería (CE)</option>
+											<option value="Pasaporte">Pasaporte</option>
+											<option value="NIT">NIT (Company)</option>
+											<option value="TI">Tarjeta de Identidad (TI)</option>
+										</select>
+										<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+									</div>
+								</div>
+
+								<!-- Document Number -->
+								<div class="space-y-2">
+									<label for="document_number" class="text-sm font-medium text-muted-foreground ml-1">Document Number *</label>
+									<div class="relative group">
+										<input 
+											type="text" 
+											id="document_number" 
+											name="document_number"
+											required
+											placeholder="1234567890"
+											class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+										/>
+										<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Case Details Section -->
+						<div class="space-y-4">
+							<h3 class="text-lg font-semibold text-accent">Case Details</h3>
+
+							<!-- Priority -->
+							<div class="space-y-2">
+								<label for="priority" class="text-sm font-medium text-muted-foreground ml-1">Priority / Urgency</label>
+								<div class="relative group">
+									<select 
+										id="priority" 
+										name="priority"
+										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									>
+										<option value="low">Low</option>
+										<option value="medium" selected>Medium</option>
+										<option value="high">High</option>
+										<option value="urgent">Urgent</option>
+									</select>
+									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+								</div>
+							</div>
+
+							<!-- Description -->
+							<div class="space-y-2">
+								<label for="description" class="text-sm font-medium text-muted-foreground ml-1">Case Description *</label>
+								<div class="relative group">
+									<textarea 
+										id="description" 
+										name="description"
+										required
+										rows="6"
+										placeholder="Please describe your legal matter in detail..."
+										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 resize-none"
+									></textarea>
+									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+								</div>
+							</div>
+
+							<!-- File Upload -->
+							<div class="space-y-2">
+								<label for="file" class="text-sm font-medium text-muted-foreground ml-1">Supporting Document (Optional)</label>
+								<div class="relative group">
+									<input 
+										type="file" 
+										id="file" 
+										name="file"
+										accept=".pdf"
+										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-accent-foreground hover:file:bg-accent/80 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									/>
+									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+								</div>
+								<p class="text-xs text-muted-foreground ml-1">PDF only, maximum 10MB</p>
+							</div>
+						</div>
+
+						<!-- Submit Button -->
+						<button 
+							type="submit"
+							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
+						>
+							<span class="relative z-10">Submit Request</span>
+							<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+						</button>
+
+						<p class="text-center text-xs text-muted-foreground mt-4">
+							By submitting this form, you agree to our terms of service and privacy policy.
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	}
+}

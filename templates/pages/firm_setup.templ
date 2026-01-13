@@ -46,14 +46,14 @@ templ FirmSetup(title string, user *models.User) {
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div class="space-y-2">
 								<label for="country" class="text-sm font-medium text-muted-foreground ml-1">Country <span class="text-red-500">*</span></label>
-								<input 
-									type="text" 
+								<select 
 									id="country" 
 									name="country"
 									required
-									placeholder="United States"
-									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
-								/>
+									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+								>
+									<option value="Colombia" selected>Colombia</option>
+								</select>
 							</div>
 							<div class="space-y-2">
 								<label for="city" class="text-sm font-medium text-muted-foreground ml-1">City</label>

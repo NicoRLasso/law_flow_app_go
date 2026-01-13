@@ -25,7 +25,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	// Create Echo instance
@@ -47,6 +47,11 @@ func main() {
 	e.POST("/forgot-password", handlers.ForgotPasswordPostHandler)
 	e.GET("/reset-password", handlers.ResetPasswordHandler)
 	e.POST("/reset-password", handlers.ResetPasswordPostHandler)
+
+	// Public case request routes (no authentication)
+	e.GET("/firm/:slug/request", handlers.PublicCaseRequestHandler)
+	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler)
+	e.GET("/firm/:slug/request/success", handlers.PublicCaseRequestSuccessHandler)
 
 	// Firm setup routes (authenticated but no firm required)
 	firmSetup := e.Group("/firm")
@@ -81,6 +86,19 @@ func main() {
 			adminRoutes.POST("/api/users", handlers.CreateUser)
 			adminRoutes.DELETE("/api/users/:id", handlers.DeleteUser)
 		}
+
+		// Case request routes (admin and lawyer only)
+		caseRequestRoutes := protected.Group("/api/case-requests")
+		caseRequestRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			caseRequestRoutes.GET("", handlers.GetCaseRequestsHandler)
+			caseRequestRoutes.GET("/:id", handlers.GetCaseRequestHandler)
+			caseRequestRoutes.GET("/:id/file", handlers.DownloadCaseRequestFileHandler)
+			caseRequestRoutes.PUT("/:id/status", handlers.UpdateCaseRequestStatusHandler)
+		}
+
+		// Case requests dashboard page
+		protected.GET("/case-requests", handlers.CaseRequestsPageHandler)
 	}
 
 	// Development-only routes

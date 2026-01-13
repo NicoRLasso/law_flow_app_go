@@ -1,0 +1,87 @@
+package pages
+
+import "law_flow_app_go/templates/layouts"
+import "law_flow_app_go/models"
+
+templ CaseRequestSuccess(firm models.Firm) {
+	@layouts.Base("Request Submitted - " + firm.Name) {
+		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+			<!-- Background effects -->
+			<div class="absolute inset-0 z-0">
+				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
+				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px]"></div>
+			</div>
+
+			<div class="w-full max-w-2xl relative z-10 px-6">
+				<!-- Success Card -->
+				<div class="glass-panel p-12 rounded-2xl border border-white/10 text-center">
+					<!-- Success Icon -->
+					<div class="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
+						<svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+						</svg>
+					</div>
+
+					<!-- Success Message -->
+					<h1 class="text-3xl md:text-4xl font-bold mb-4">Request Submitted Successfully!</h1>
+					<p class="text-lg text-muted-foreground mb-8">
+						Thank you for contacting <span class="text-foreground font-semibold">{ firm.Name }</span>
+					</p>
+
+					<!-- Details -->
+					<div class="glass-panel p-6 rounded-xl border border-white/10 mb-8 text-left">
+						<h2 class="text-lg font-semibold mb-4 text-center">What happens next?</h2>
+						<ul class="space-y-3 text-muted-foreground">
+							<li class="flex items-start gap-3">
+								<svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								<span>Our team will review your case request within 24-48 hours</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+								</svg>
+								<span>We'll contact you via email or phone to discuss your case</span>
+							</li>
+							<li class="flex items-start gap-3">
+								<svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+								</svg>
+								<span>If you uploaded a document, our lawyers will review it carefully</span>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Contact Info -->
+					<div class="text-sm text-muted-foreground mb-8">
+						<p>Need immediate assistance?</p>
+						if firm.Phone != "" {
+							<p class="mt-2">
+								Call us at <a href={ templ.URL("tel:" + firm.Phone) } class="text-accent hover:underline">{ firm.Phone }</a>
+							</p>
+						}
+						if firm.InfoEmail != "" {
+							<p class="mt-1">
+								Email us at <a href={ templ.URL("mailto:" + firm.InfoEmail) } class="text-accent hover:underline">{ firm.InfoEmail }</a>
+							</p>
+						}
+					</div>
+
+					<!-- Action Button -->
+					<a 
+						href={ templ.URL("/firm/" + firm.Slug + "/request") }
+						class="inline-block bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-medium py-3 px-8 rounded-xl transition-all duration-300 hover:scale-105"
+					>
+						Submit Another Request
+					</a>
+				</div>
+
+				<!-- Footer Note -->
+				<p class="text-center text-xs text-muted-foreground mt-6">
+					You can close this page. We have all the information we need.
+				</p>
+			</div>
+		</div>
+	}
+}

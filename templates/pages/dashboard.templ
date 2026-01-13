@@ -21,6 +21,9 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 								<a href="/cases" class="text-muted-foreground hover:text-accent transition-colors">Cases</a>
 								<a href="/clients" class="text-muted-foreground hover:text-accent transition-colors">Clients</a>
 								<a href="/documents" class="text-muted-foreground hover:text-accent transition-colors">Documents</a>
+								if user.Role == "admin" || user.Role == "lawyer" {
+									<a href="/case-requests" class="text-muted-foreground hover:text-accent transition-colors">Requests</a>
+								}
 							</div>
 						</div>
 						<div class="flex items-center space-x-4">
