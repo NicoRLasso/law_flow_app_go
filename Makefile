@@ -1,4 +1,4 @@
-.PHONY: help run build clean generate install-deps test dev
+.PHONY: help run build clean generate install-deps test dev fmt tidy create-user
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -37,3 +37,6 @@ fmt: ## Format code
 
 tidy: ## Tidy dependencies
 	go mod tidy
+
+create-user: ## Create a new user (interactive CLI)
+	@go run cmd/create-user/main.go

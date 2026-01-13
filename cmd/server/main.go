@@ -4,11 +4,14 @@ import (
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/handlers"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services"
 	"log"
+	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echomiddleware "github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -22,41 +25,63 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.User{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
-
 	// Create Echo instance
 	e := echo.New()
 
 	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
+	e.Use(echomiddleware.RequestLogger())
+	e.Use(echomiddleware.Recover())
+	e.Use(echomiddleware.CORS())
 
 	// Static files
 	e.Static("/static", "static")
 
-	// Routes
-	// Web routes
+	// Public routes (no authentication required)
 	e.GET("/", handlers.LandingHandler)
+	e.GET("/login", handlers.LoginHandler)
+	e.POST("/login", handlers.LoginPostHandler)
 
-	// HTMX routes
-	htmx := e.Group("/htmx")
+	// Firm setup routes (authenticated but no firm required)
+	firmSetup := e.Group("/firm")
+	firmSetup.Use(middleware.RequireAuth())
 	{
-		htmx.GET("/users", handlers.GetUsersHTMX)
+		firmSetup.GET("/setup", handlers.FirmSetupHandler)
+		firmSetup.POST("/setup", handlers.FirmSetupPostHandler)
 	}
 
-	// API routes
-	api := e.Group("/api")
+	// Protected routes (authentication required)
+	protected := e.Group("")
+	protected.Use(middleware.RequireAuth())
 	{
-		// User endpoints
-		api.GET("/users", handlers.GetUsers)
-		api.GET("/users/:id", handlers.GetUser)
-		api.POST("/users", handlers.CreateUser)
-		api.PUT("/users/:id", handlers.UpdateUser)
-		api.DELETE("/users/:id", handlers.DeleteUser)
+		protected.GET("/dashboard", handlers.DashboardHandler)
+		protected.POST("/logout", handlers.LogoutHandler)
+		protected.GET("/api/me", handlers.GetCurrentUserHandler)
+
+		// HTMX routes
+		protected.GET("/htmx/users", handlers.GetUsersHTMX)
+
+		// API routes
+		protected.GET("/api/users", handlers.GetUsers)
+		protected.GET("/api/users/:id", handlers.GetUser)
+		protected.POST("/api/users", handlers.CreateUser)
+		protected.PUT("/api/users/:id", handlers.UpdateUser)
+		protected.DELETE("/api/users/:id", handlers.DeleteUser)
 	}
+
+	// Start background session cleanup (runs every hour)
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			if err := services.CleanupExpiredSessions(db.DB); err != nil {
+				log.Printf("Error cleaning up expired sessions: %v", err)
+			}
+		}
+	}()
 
 	// Start server
 	log.Printf("Server starting on port %s", cfg.ServerPort)

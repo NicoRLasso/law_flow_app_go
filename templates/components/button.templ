@@ -29,7 +29,7 @@ templ Button(text string, href string, variant ButtonVariant, size ButtonSize) {
 }
 
 // ButtonAsButton renders a button element instead of anchor
-templ ButtonAsButton(text string, variant ButtonVariant, size ButtonSize, attrs ...templ.Attributes) {
+templ ButtonAsButton(text string, variant ButtonVariant, size ButtonSize, attrs templ.Attributes) {
 	<button 
 		class={ "btn", "btn-" + string(variant), "btn-" + string(size) }
 		{ attrs... }
