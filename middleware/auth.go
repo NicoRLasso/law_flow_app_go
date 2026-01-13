@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
@@ -112,13 +113,19 @@ func GetCurrentFirm(c echo.Context) *models.Firm {
 
 // clearSessionCookie clears the session cookie
 func clearSessionCookie(c echo.Context) {
+	// Get config to check environment
+	var isProduction bool
+	if cfg, ok := c.Get("config").(*config.Config); ok {
+		isProduction = cfg.Environment == "production"
+	}
+
 	cookie := &http.Cookie{
 		Name:     SessionCookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
-		Secure:   false, // Set to true in production with HTTPS
+		Secure:   isProduction,
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(cookie)
