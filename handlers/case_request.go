@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -281,7 +282,8 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 
 	// Parse request body
 	var payload struct {
-		Status string `json:"status"`
+		Status        string `json:"status" form:"status"`
+		RejectionNote string `json:"rejection_note" form:"rejection_note"`
 	}
 	if err := c.Bind(&payload); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request body")
@@ -292,10 +294,15 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid status")
 	}
 
-	// Fetch request with firm-scoping
+	// Validate rejection note if status is rejected
+	if payload.Status == models.StatusRejected && strings.TrimSpace(payload.RejectionNote) == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Rejection note is required when rejecting a request")
+	}
+
+	// Fetch request with firm-scoping and firm information
 	var request models.CaseRequest
 	query := middleware.GetFirmScopedQuery(c, db.DB)
-	if err := query.First(&request, "id = ?", id).Error; err != nil {
+	if err := query.Preload("Firm").First(&request, "id = ?", id).Error; err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
 	}
 
@@ -308,8 +315,38 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 	request.ReviewedByID = &currentUser.ID
 	request.ReviewedAt = &now
 
+	// Update rejection note if provided
+	if payload.Status == models.StatusRejected {
+		request.RejectionNote = strings.TrimSpace(payload.RejectionNote)
+	}
+
 	if err := db.DB.Save(&request).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update status")
+	}
+
+	// Send rejection email if status is rejected
+	if payload.Status == models.StatusRejected {
+		// Get config and build rejection email
+		cfg := c.Get("config").(*config.Config)
+
+		// Determine contact email (prefer InfoEmail, fallback to BillingEmail)
+		firmEmail := request.Firm.InfoEmail
+		if firmEmail == "" {
+			firmEmail = request.Firm.BillingEmail
+		}
+
+		// Build rejection email
+		emailMsg := services.BuildCaseRequestRejectionEmail(
+			request.Email,
+			request.Name,
+			request.Firm.Name,
+			request.RejectionNote,
+			firmEmail,
+			request.Firm.Phone,
+		)
+
+		// Send email asynchronously
+		services.SendEmailAsync(cfg, emailMsg)
 	}
 
 	return c.JSON(http.StatusOK, request)

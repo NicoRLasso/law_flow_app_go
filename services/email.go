@@ -236,3 +236,38 @@ func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt string) *
 		TextBody: textBody,
 	}
 }
+
+// CaseRequestRejectionEmailData contains data for the case request rejection email template
+type CaseRequestRejectionEmailData struct {
+	ClientName    string
+	FirmName      string
+	RejectionNote string
+	FirmEmail     string
+	FirmPhone     string
+}
+
+// BuildCaseRequestRejectionEmail creates a rejection email for case requests
+func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejectionNote, firmEmail, firmPhone string) *Email {
+	data := CaseRequestRejectionEmailData{
+		ClientName:    clientName,
+		FirmName:      firmName,
+		RejectionNote: rejectionNote,
+		FirmEmail:     firmEmail,
+		FirmPhone:     firmPhone,
+	}
+
+	htmlBody, textBody, err := loadTemplate("case_request_rejection", data)
+	if err != nil {
+		log.Printf("Error loading case request rejection email template: %v", err)
+		// Fallback to simple text email
+		textBody = fmt.Sprintf("Dear %s,\n\nThank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.\n\nReason:\n%s\n\nIf you have any questions, please contact us at %s or %s.\n\nBest regards,\n%s", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Thank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.</p><p><strong>Reason:</strong><br>%s</p><p>If you have any questions, please contact us at %s or %s.</p><p>Best regards,<br>%s</p>", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
+	}
+
+	return &Email{
+		To:       []string{clientEmail},
+		Subject:  fmt.Sprintf("Case Request Update - %s", firmName),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; }
+		.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+		.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+		.content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+		.footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 8px 8px; }
+		.info-box { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 20px 0; border-radius: 5px; }
+		.reason-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }
+		.contact-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; margin: 20px 0; border-radius: 5px; }
+		h1 { margin: 0; font-size: 28px; }
+		h2 { color: #667eea; }
+		h3 { color: #333; margin-top: 0; }
+		.contact-info { margin: 10px 0; }
+		.contact-info a { color: #667eea; text-decoration: none; }
+		.contact-info a:hover { text-decoration: underline; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>📋 Case Request Update</h1>
+		</div>
+		<div class="content">
+			<h2>Dear {{.ClientName}},</h2>
+			<p>Thank you for your interest in {{.FirmName}} and for taking the time to submit your case request.</p>
+
+			<div class="info-box">
+				<p style="margin: 0;"><strong>After careful review, we have decided not to proceed with your case request at this time.</strong></p>
+			</div>
+
+			<div class="reason-box">
+				<h3>📝 Reason for Decision:</h3>
+				<p style="margin: 0; white-space: pre-wrap;">{{.RejectionNote}}</p>
+			</div>
+
+			<p>We understand this may not be the outcome you were hoping for. This decision does not reflect on the validity of your case, but rather our firm's current capacity, specialization, or specific practice areas.</p>
+
+			<div class="contact-box">
+				<h3>📞 Questions or Concerns?</h3>
+				<p>If you have any questions about this decision or would like to discuss your legal needs further, please don't hesitate to contact us:</p>
+				<div class="contact-info">
+					<p><strong>Email:</strong> <a href="mailto:{{.FirmEmail}}">{{.FirmEmail}}</a></p>
+					<p><strong>Phone:</strong> <a href="tel:{{.FirmPhone}}">{{.FirmPhone}}</a></p>
+				</div>
+			</div>
+
+			<p>We appreciate your understanding and wish you the best in resolving your legal matter. We recommend consulting with other legal professionals who may be better suited to assist with your specific needs.</p>
+
+			<p>Best regards,<br><strong>{{.FirmName}}</strong></p>
+		</div>
+		<div class="footer">
+			<p>&copy; 2026 {{.FirmName}}. All rights reserved.</p>
+			<p style="color: #999; font-size: 11px;">This is an automated message sent via LawFlow App.</p>
+		</div>
+	</div>
+</body>
+</html>

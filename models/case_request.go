@@ -26,10 +26,9 @@ const (
 
 // Request status
 const (
-	StatusPending   = "pending"
-	StatusReviewing = "reviewing"
-	StatusConverted = "converted"
-	StatusRejected  = "rejected"
+	StatusPending  = "pending"
+	StatusAccepted = "accepted"
+	StatusRejected = "rejected"
 )
 
 type CaseRequest struct {
@@ -50,9 +49,10 @@ type CaseRequest struct {
 	DocumentNumber string `gorm:"not null" json:"document_number"`
 
 	// Case details
-	Description string `gorm:"type:text;not null" json:"description"`
-	Priority    string `gorm:"not null;default:medium;index" json:"priority"`
-	Status      string `gorm:"not null;default:pending;index" json:"status"`
+	Description    string `gorm:"type:text;not null" json:"description"`
+	Priority       string `gorm:"not null;default:medium;index" json:"priority"`
+	Status         string `gorm:"not null;default:pending;index" json:"status"`
+	RejectionNote  string `gorm:"type:text" json:"rejection_note,omitempty"`
 
 	// File metadata
 	FileName         string `json:"file_name,omitempty"`
@@ -118,8 +118,7 @@ func IsValidPriority(priority string) bool {
 func IsValidStatus(status string) bool {
 	validStatuses := []string{
 		StatusPending,
-		StatusReviewing,
-		StatusConverted,
+		StatusAccepted,
 		StatusRejected,
 	}
 	for _, s := range validStatuses {
