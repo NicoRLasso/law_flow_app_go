@@ -205,3 +205,34 @@ func BuildFirmSetupEmail(userEmail, userName, firmName string) *Email {
 		TextBody: textBody,
 	}
 }
+
+// PasswordResetEmailData contains data for the password reset email template
+type PasswordResetEmailData struct {
+	UserName  string
+	ResetLink string
+	ExpiresAt string
+}
+
+// BuildPasswordResetEmail creates a password reset email with reset link
+func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt string) *Email {
+	data := PasswordResetEmailData{
+		UserName:  userName,
+		ResetLink: resetLink,
+		ExpiresAt: expiresAt,
+	}
+
+	htmlBody, textBody, err := loadTemplate("password_reset", data)
+	if err != nil {
+		log.Printf("Error loading password reset email template: %v", err)
+		// Fallback to simple text email
+		textBody = fmt.Sprintf("Password reset requested for %s. Reset link: %s (expires: %s)", userName, resetLink, expiresAt)
+		htmlBody = fmt.Sprintf("<p>Password reset requested for %s.</p><p>Reset link: <a href=\"%s\">%s</a></p><p>Expires: %s</p>", userName, resetLink, resetLink, expiresAt)
+	}
+
+	return &Email{
+		To:       []string{userEmail},
+		Subject:  "Password Reset Request - LawFlow App",
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}

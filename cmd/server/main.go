@@ -25,7 +25,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	// Create Echo instance
@@ -43,6 +43,10 @@ func main() {
 	e.GET("/", handlers.LandingHandler)
 	e.GET("/login", handlers.LoginHandler)
 	e.POST("/login", handlers.LoginPostHandler)
+	e.GET("/forgot-password", handlers.ForgotPasswordHandler)
+	e.POST("/forgot-password", handlers.ForgotPasswordPostHandler)
+	e.GET("/reset-password", handlers.ResetPasswordHandler)
+	e.POST("/reset-password", handlers.ResetPasswordPostHandler)
 
 	// Firm setup routes (authenticated but no firm required)
 	firmSetup := e.Group("/firm")
@@ -89,14 +93,20 @@ func main() {
 		}
 	}
 
-	// Start background session cleanup (runs every hour)
+	// Start background cleanup jobs (runs every hour)
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
 		defer ticker.Stop()
 
 		for range ticker.C {
+			// Clean up expired sessions
 			if err := services.CleanupExpiredSessions(db.DB); err != nil {
 				log.Printf("Error cleaning up expired sessions: %v", err)
+			}
+
+			// Clean up expired password reset tokens
+			if err := services.CleanupExpiredTokens(db.DB); err != nil {
+				log.Printf("Error cleaning up expired tokens: %v", err)
 			}
 		}
 	}()

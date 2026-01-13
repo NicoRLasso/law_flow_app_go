@@ -115,6 +115,19 @@ func CleanupExpiredSessions(db *gorm.DB) error {
 	return nil
 }
 
+// DeleteAllUserSessions deletes all sessions for a specific user
+// Used when password is reset for security
+func DeleteAllUserSessions(db *gorm.DB, userID string) error {
+	result := db.Where("user_id = ?", userID).Delete(&models.Session{})
+	if result.Error != nil {
+		return fmt.Errorf("failed to delete user sessions: %w", result.Error)
+	}
+	if result.RowsAffected > 0 {
+		log.Printf("Deleted %d sessions for user %s (password reset)", result.RowsAffected, userID)
+	}
+	return nil
+}
+
 // LogSecurityEvent logs security-related events
 func LogSecurityEvent(eventType, userID, details string) {
 	log.Printf("[SECURITY] %s | User: %s | Details: %s", eventType, userID, details)
