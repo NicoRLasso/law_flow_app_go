@@ -1,9 +1,31 @@
 package components
 
-// Card renders a Kinetic Typography styled card
-templ Card(hover bool, sticky bool) {
-	<div class={ 
-		"card", "card-lg",
+// CardVariant defines the visual style of the card
+type CardVariant string
+
+const (
+	CardDefault  CardVariant = "default"
+	CardGlass    CardVariant = "glass"
+	CardGradient CardVariant = "gradient"
+)
+
+// CardSize defines the padding size of the card
+type CardSize string
+
+const (
+	CardSmall  CardSize = "sm"
+	CardMedium CardSize = "md"
+	CardLarge  CardSize = "lg"
+)
+
+// Card renders a Linear/Modern styled card with variants
+templ Card(variant CardVariant, size CardSize, hover bool, sticky bool) {
+	<div class={
+		"card",
+		templ.KV("card-sm", size == CardSmall),
+		templ.KV("card-lg", size == CardLarge),
+		templ.KV("card-glass", variant == CardGlass),
+		templ.KV("card-gradient", variant == CardGradient),
 		templ.KV("card-hover", hover),
 		templ.KV("card-sticky", sticky),
 	}>

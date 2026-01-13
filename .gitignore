@@ -49,3 +49,9 @@ Thumbs.db
 # Build artifacts
 tmp/
 uploads/
+
+# Node
+node_modules/
+
+# CSS Build Output
+static/css/output.css

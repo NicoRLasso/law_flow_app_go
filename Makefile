@@ -1,4 +1,4 @@
-.PHONY: help run build clean generate install-deps test dev fmt tidy create-user
+.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css-build css-watch
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -10,11 +10,21 @@ install-deps: ## Install project dependencies
 	go mod download
 	go install github.com/a-h/templ/cmd/templ@latest
 	go install github.com/air-verse/air@latest
+	npm install
 
 generate: ## Generate Templ templates
 	$(HOME)/go/bin/templ generate
 
-dev: generate ## Run with live-reload (requires air)
+css-build: ## Build CSS with PostCSS and Tailwind
+	npm run build:css
+
+css-watch: ## Watch and rebuild CSS on changes
+	npm run watch:css
+
+dev: generate css-build ## Run with live-reload (requires air and npm)
+	@echo "Starting development servers..."
+	@trap 'kill 0' EXIT; \
+	npm run watch:css & \
 	$(HOME)/go/bin/air
 
 run: generate ## Run the application

@@ -36,9 +36,8 @@ templ PublicCaseRequest(firm models.Firm) {
 					</div>
 
 					<form 
-						hx-post={ "/firm/" + firm.Slug + "/request" }
-						hx-target="#form-message"
-						hx-swap="innerHTML"
+						method="POST"
+						action={ templ.URL("/firm/" + firm.Slug + "/request") }
 						enctype="multipart/form-data"
 						class="space-y-6"
 					>
