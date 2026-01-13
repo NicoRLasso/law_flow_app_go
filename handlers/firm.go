@@ -101,6 +101,18 @@ func FirmSetupPostHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to assign firm to user")
 	}
 
+	// Seed default choice categories and options for the firm
+	if err := services.SeedDefaultChoices(db.DB, firm.ID, firm.Country); err != nil {
+		// Log error but don't fail the firm creation
+		c.Logger().Errorf("Failed to seed default choices for firm %s: %v", firm.ID, err)
+	}
+
+	// Seed case classifications for the firm
+	if err := services.SeedCaseClassifications(db.DB, firm.ID, firm.Country); err != nil {
+		// Log error but don't fail the firm creation
+		c.Logger().Errorf("Failed to seed case classifications for firm %s: %v", firm.ID, err)
+	}
+
 	// Send firm setup confirmation email asynchronously (non-blocking)
 	cfg := config.Load()
 	if user.Email != "" {

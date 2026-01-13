@@ -2,7 +2,7 @@ package components
 
 import "law_flow_app_go/models"
 
-templ Navbar(user *models.User, firm *models.Firm) {
+templ Navbar(user *models.User, firm *models.Firm, currentPath string) {
 	<nav class="sticky top-0 z-50 glass-panel border-b border-white/10">
 		<div class="container mx-auto px-6 py-4">
 			<div class="flex items-center justify-between">
@@ -16,11 +16,27 @@ templ Navbar(user *models.User, firm *models.Firm) {
 					
 					<!-- Desktop Navigation -->
 					<div class="hidden md:flex items-center gap-1">
-						<a href="/dashboard" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">Dashboard</a>
-						<a href="/cases" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Cases</a>
-						<a href="/clients" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Clients</a>
+						if currentPath == "/dashboard" {
+							<a href="/dashboard" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">Dashboard</a>
+						} else {
+							<a href="/dashboard" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Dashboard</a>
+						}
+						if currentPath == "/cases" {
+							<a href="/cases" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">Cases</a>
+						} else {
+							<a href="/cases" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Cases</a>
+						}
+						if currentPath == "/users" {
+							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">Users</a>
+						} else {
+							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Users</a>
+						}
 						if user.Role == "admin" || user.Role == "lawyer" {
-							<a href="/case-requests" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Requests</a>
+							if currentPath == "/case-requests" {
+								<a href="/case-requests" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">Requests</a>
+							} else {
+								<a href="/case-requests" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">Requests</a>
+							}
 						}
 					</div>
 				</div>

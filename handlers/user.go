@@ -6,6 +6,8 @@ import (
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/templates/pages"
+	"law_flow_app_go/templates/partials"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -56,11 +58,15 @@ func CreateUser(c echo.Context) error {
 	// Only admins can create users (enforced by route middleware)
 	user := new(models.User)
 
-	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Invalid request body",
-		})
-	}
+	// Read form values
+	user.Name = c.FormValue("name")
+	user.Email = c.FormValue("email")
+	user.Password = c.FormValue("password")
+	user.Role = c.FormValue("role")
+
+	// Handle checkbox - only present if checked
+	isActiveStr := c.FormValue("is_active")
+	user.IsActive = isActiveStr == "true"
 
 	// Validate required fields
 	if user.Email == "" || user.Password == "" || user.Name == "" {
@@ -93,9 +99,6 @@ func CreateUser(c echo.Context) error {
 	}
 	user.Password = hashedPassword
 
-	// Set IsActive to true by default
-	user.IsActive = true
-
 	if err := db.DB.Create(user).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to create user",
@@ -114,6 +117,13 @@ func CreateUser(c echo.Context) error {
 		}
 		email := services.BuildWelcomeEmail(user.Email, userName)
 		services.SendEmailAsync(cfg, email)
+	}
+
+	// Check if this is an HTMX request
+	if c.Request().Header.Get("HX-Request") == "true" {
+		// Close modal and reload users table
+		c.Response().Header().Set("HX-Trigger", "reload-users")
+		return c.NoContent(http.StatusOK)
 	}
 
 	// Don't return password in response
@@ -146,11 +156,23 @@ func UpdateUser(c echo.Context) error {
 	originalPassword := user.Password
 	currentUser := middleware.GetCurrentUser(c)
 
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Invalid request body",
-		})
+	// Read form values
+	name := c.FormValue("name")
+	email := c.FormValue("email")
+	role := c.FormValue("role")
+	isActiveStr := c.FormValue("is_active")
+
+	// Update fields
+	if name != "" {
+		user.Name = name
 	}
+	if email != "" {
+		user.Email = email
+	}
+	if role != "" {
+		user.Role = role
+	}
+	user.IsActive = isActiveStr == "true"
 
 	// Non-admins cannot change firm or role
 	if currentUser.Role != "admin" {
@@ -183,6 +205,13 @@ func UpdateUser(c echo.Context) error {
 	// Log security event if admin modified another user
 	if currentUser.ID != user.ID {
 		services.LogSecurityEvent("USER_MODIFIED", currentUser.ID, "Modified user: "+user.ID)
+	}
+
+	// Check if this is an HTMX request
+	if c.Request().Header.Get("HX-Request") == "true" {
+		// Close modal and reload users table
+		c.Response().Header().Set("HX-Trigger", "reload-users")
+		return c.NoContent(http.StatusOK)
 	}
 
 	// Don't return password in response
@@ -223,5 +252,110 @@ func DeleteUser(c echo.Context) error {
 	// Log security event
 	services.LogSecurityEvent("USER_DELETED", currentUser.ID, "Deleted user: "+user.ID)
 
+	// Check if this is an HTMX request
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return c.NoContent(http.StatusOK)
+	}
+
 	return c.JSON(http.StatusNoContent, nil)
+}
+
+// UsersPageHandler renders the users management page
+func UsersPageHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	// Render the users page
+	component := pages.Users("User Management", currentUser, firm)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetUsersListHTMX returns the users table with optional filters
+func GetUsersListHTMX(c echo.Context) error {
+	var users []models.User
+	currentUser := middleware.GetCurrentUser(c)
+
+	// Get filter parameters
+	roleFilter := c.QueryParam("role")
+	statusFilter := c.QueryParam("status")
+
+	// Scope query to current user's firm
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+
+	// Apply role filter
+	if roleFilter != "" {
+		query = query.Where("role = ?", roleFilter)
+	}
+
+	// Apply status filter
+	if statusFilter != "" {
+		if statusFilter == "active" {
+			query = query.Where("is_active = ?", true)
+		} else if statusFilter == "inactive" {
+			query = query.Where("is_active = ?", false)
+		}
+	}
+
+	// Order by created_at descending
+	query = query.Order("created_at DESC")
+
+	if err := query.Find(&users).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to fetch users",
+		})
+	}
+
+	// Render the users table
+	component := partials.UsersTable(users, currentUser.Role)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetUserFormNew returns the form modal for creating a new user
+func GetUserFormNew(c echo.Context) error {
+	// Render the form modal with empty user
+	component := partials.UserFormModal(nil, false)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetUserFormEdit returns the form modal for editing an existing user
+func GetUserFormEdit(c echo.Context) error {
+	id := c.Param("id")
+	var user models.User
+
+	// Scope query to current user's firm
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+
+	if err := query.First(&user, "id = ?", id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "User not found",
+		})
+	}
+
+	// Check authorization
+	if !middleware.CanAccessUser(c, user.ID) {
+		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
+	}
+
+	// Render the form modal with user data
+	component := partials.UserFormModal(&user, true)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetUserDeleteConfirm returns the delete confirmation modal
+func GetUserDeleteConfirm(c echo.Context) error {
+	id := c.Param("id")
+	var user models.User
+
+	// Scope query to current user's firm
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+
+	if err := query.First(&user, "id = ?", id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error": "User not found",
+		})
+	}
+
+	// Render the delete confirmation modal
+	component := partials.DeleteConfirmModal(user)
+	return component.Render(c.Request().Context(), c.Response().Writer)
 }

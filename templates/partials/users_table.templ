@@ -1,0 +1,288 @@
+package partials
+
+import (
+	"law_flow_app_go/models"
+)
+
+// UserFilters renders the filter controls
+templ UserFilters() {
+	<div class="glass-panel p-4 rounded-xl border border-white/10">
+		<div class="flex flex-wrap gap-4 items-center">
+			<div class="flex items-center gap-2">
+				<label class="text-sm font-medium text-muted-foreground">Role:</label>
+				<select
+					class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+					hx-get="/api/users/list"
+					hx-target="#users-table"
+					hx-trigger="change"
+					hx-include="[name='status']"
+					name="role"
+					id="role-filter"
+				>
+					<option value="">All Roles</option>
+					<option value="admin">Admin</option>
+					<option value="lawyer">Lawyer</option>
+					<option value="staff">Staff</option>
+					<option value="client">Client</option>
+				</select>
+			</div>
+
+			<div class="flex items-center gap-2">
+				<label class="text-sm font-medium text-muted-foreground">Status:</label>
+				<select
+					class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+					hx-get="/api/users/list"
+					hx-target="#users-table"
+					hx-trigger="change"
+					hx-include="[name='role']"
+					name="status"
+					id="status-filter"
+				>
+					<option value="">All Status</option>
+					<option value="active">Active</option>
+					<option value="inactive">Inactive</option>
+				</select>
+			</div>
+		</div>
+	</div>
+}
+
+// UsersTable renders the users table (without filters)
+templ UsersTable(users []models.User, currentUserRole string) {
+	if len(users) == 0 {
+		<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
+			<p class="text-muted-foreground">No users found</p>
+		</div>
+	} else {
+		<!-- Table Container with Horizontal Scroll -->
+		<div class="glass-panel rounded-xl border border-white/10 overflow-hidden">
+			<div class="overflow-x-auto">
+				<table class="w-full">
+					<thead>
+						<tr class="border-b border-white/10 bg-white/5">
+							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Last Login</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-white/10">
+						for _, u := range users {
+							@UserRow(u, currentUserRole)
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
+}
+
+// UserRow renders a single table row for a user
+templ UserRow(user models.User, currentUserRole string) {
+	<tr class="hover:bg-white/5 transition-colors duration-200">
+		<!-- Name -->
+		<td class="px-6 py-4">
+			<div class="flex items-center gap-3">
+				<div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+					<span class="text-sm font-semibold text-accent">{ getInitials(user.Name) }</span>
+				</div>
+				<span class="text-sm font-semibold text-foreground">{ user.Name }</span>
+			</div>
+		</td>
+
+		<!-- Email -->
+		<td class="px-6 py-4">
+			<span class="text-sm text-muted-foreground">{ user.Email }</span>
+		</td>
+
+		<!-- Role -->
+		<td class="px-6 py-4">
+			@RoleBadge(user.Role)
+		</td>
+
+		<!-- Status -->
+		<td class="px-6 py-4">
+			@UserStatusBadge(user.IsActive)
+		</td>
+
+		<!-- Last Login -->
+		<td class="px-6 py-4">
+			<span class="text-xs text-muted-foreground">
+				if user.LastLoginAt != nil {
+					{ formatRelativeTime(*user.LastLoginAt) }
+				} else {
+					Never
+				}
+			</span>
+		</td>
+
+		<!-- Actions -->
+		<td class="px-6 py-4">
+			<div class="flex items-center gap-2">
+				<button
+					class="px-3 py-1.5 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+					hx-get={ "/api/users/" + user.ID + "/edit" }
+					hx-target="body"
+					hx-swap="beforeend"
+					title="Edit User"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+					</svg>
+					<span>Edit</span>
+				</button>
+				if currentUserRole == "admin" {
+					<button
+						class="px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+						hx-get={ "/api/users/" + user.ID + "/delete-confirm" }
+						hx-target="body"
+						hx-swap="beforeend"
+						title="Delete User"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+						</svg>
+						<span>Delete</span>
+					</button>
+				}
+			</div>
+		</td>
+	</tr>
+}
+
+// RoleBadge renders a role badge
+templ RoleBadge(role string) {
+	<span class={ "px-2 py-1 rounded-full text-xs font-semibold ", getRoleClass(role) }>
+		{ getRoleLabel(role) }
+	</span>
+}
+
+// UserStatusBadge renders a status badge
+templ UserStatusBadge(isActive bool) {
+	if isActive {
+		<span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30">
+			Active
+		</span>
+	} else {
+		<span class="px-2 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-400 border border-gray-500/30">
+			Inactive
+		</span>
+	}
+}
+
+// Helper function to get user initials
+func getInitials(name string) string {
+	if len(name) == 0 {
+		return "?"
+	}
+
+	runes := []rune(name)
+	if len(runes) == 1 {
+		return string(runes[0])
+	}
+
+	// Try to get first letter of first and last name
+	parts := []rune{}
+	inWord := false
+	for _, r := range runes {
+		if r == ' ' {
+			inWord = false
+		} else if !inWord {
+			parts = append(parts, r)
+			inWord = true
+			if len(parts) >= 2 {
+				break
+			}
+		}
+	}
+
+	if len(parts) == 0 {
+		return string(runes[0])
+	}
+
+	return string(parts)
+}
+
+// Helper functions for role styling
+func getRoleClass(role string) string {
+	switch role {
+	case "admin":
+		return "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+	case "lawyer":
+		return "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+	case "staff":
+		return "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+	case "client":
+		return "bg-green-500/20 text-green-400 border border-green-500/30"
+	default:
+		return "bg-white/10 text-white border border-white/20"
+	}
+}
+
+func getRoleLabel(role string) string {
+	switch role {
+	case "admin":
+		return "Admin"
+	case "lawyer":
+		return "Lawyer"
+	case "staff":
+		return "Staff"
+	case "client":
+		return "Client"
+	default:
+		return role
+	}
+}
+
+// DeleteConfirmModal renders a confirmation modal for deleting a user
+templ DeleteConfirmModal(user models.User) {
+	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" id="delete-confirm-modal">
+		<div class="bg-background border border-white/10 rounded-2xl shadow-2xl max-w-md w-full">
+			<!-- Modal Header -->
+			<div class="px-6 py-4 border-b border-white/10">
+				<h2 class="text-xl font-bold text-red-400">Delete User</h2>
+			</div>
+
+			<!-- Modal Body -->
+			<div class="px-6 py-6">
+				<div class="flex items-start gap-4">
+					<div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+						<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+						</svg>
+					</div>
+					<div class="flex-1">
+						<p class="text-foreground font-medium mb-2">
+							Are you sure you want to delete <span class="text-red-400">{ user.Name }</span>?
+						</p>
+						<p class="text-sm text-muted-foreground">
+							This action cannot be undone. The user will be permanently removed from the system.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal Footer -->
+			<div class="px-6 py-4 bg-white/5 border-t border-white/10 flex gap-3">
+				<button
+					type="button"
+					class="flex-1 px-4 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-xl font-medium transition-all duration-200"
+					onclick="document.getElementById('delete-confirm-modal').remove()"
+				>
+					Cancel
+				</button>
+				<button
+					type="button"
+					class="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-200"
+					hx-delete={ "/api/users/" + user.ID }
+					hx-trigger="click"
+					hx-on::after-request="document.getElementById('delete-confirm-modal').remove(); htmx.trigger('body', 'reload-users');"
+				>
+					Delete User
+				</button>
+			</div>
+		</div>
+	</div>
+}

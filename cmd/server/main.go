@@ -25,7 +25,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	// Create Echo instance
@@ -89,19 +89,23 @@ func main() {
 		protected.POST("/logout", handlers.LogoutHandler)
 		protected.GET("/api/me", handlers.GetCurrentUserHandler)
 
-		// HTMX routes (all roles, firm-scoped)
-		protected.GET("/htmx/users", handlers.GetUsersHTMX)
+		// User management page (all users can view)
+		protected.GET("/users", handlers.UsersPageHandler)
 
 		// User viewing routes (all roles, firm-scoped, with handler-level auth checks)
 		protected.GET("/api/users", handlers.GetUsers)
+		protected.GET("/api/users/list", handlers.GetUsersListHTMX)
 		protected.GET("/api/users/:id", handlers.GetUser)
+		protected.GET("/api/users/:id/edit", handlers.GetUserFormEdit)
 		protected.PUT("/api/users/:id", handlers.UpdateUser)
 
 		// Admin-only routes
 		adminRoutes := protected.Group("")
 		adminRoutes.Use(middleware.RequireRole("admin"))
 		{
+			adminRoutes.GET("/api/users/new", handlers.GetUserFormNew)
 			adminRoutes.POST("/api/users", handlers.CreateUser)
+			adminRoutes.GET("/api/users/:id/delete-confirm", handlers.GetUserDeleteConfirm)
 			adminRoutes.DELETE("/api/users/:id", handlers.DeleteUser)
 		}
 

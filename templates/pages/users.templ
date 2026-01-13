@@ -1,0 +1,58 @@
+package pages
+
+import (
+	"law_flow_app_go/models"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
+)
+
+templ Users(title string, user *models.User, firm *models.Firm) {
+	@layouts.Base(title) {
+		<div class="min-h-screen bg-background">
+			<!-- Navigation Bar -->
+			@components.Navbar(user, firm, "/users")
+			<!-- Main Content -->
+			<main class="w-full mx-auto px-6 py-8">
+				<div class="space-y-6">
+					<!-- Header -->
+					<div class="flex items-center justify-between">
+						<div>
+							<h1 class="text-3xl font-bold tracking-tight">User Management</h1>
+							<p class="text-muted-foreground mt-1">Manage users, admins, lawyers, staff, and clients</p>
+						</div>
+						if user.Role == "admin" {
+							<button
+								class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
+								hx-get="/api/users/new"
+								hx-target="body"
+								hx-swap="beforeend"
+							>
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+								</svg>
+								<span>Add User</span>
+							</button>
+						}
+					</div>
+
+					<!-- User Filters (static, not reloaded) -->
+					@partials.UserFilters()
+
+					<!-- Loading indicator (outside of the replaced content) -->
+					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
+						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+					</div>
+
+					<!-- Users Table (reloadable content) -->
+					<div
+						id="users-table"
+						hx-get="/api/users/list"
+						hx-trigger="load, reload-users from:body"
+						hx-indicator="#loading-indicator"
+					></div>
+				</div>
+			</main>
+		</div>
+	}
+}

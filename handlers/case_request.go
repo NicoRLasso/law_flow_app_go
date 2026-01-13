@@ -36,8 +36,22 @@ func PublicCaseRequestHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
 	}
 
+	// Fetch document type options
+	documentTypes, err := services.GetChoiceOptions(db.DB, firm.ID, "document_type")
+	if err != nil {
+		c.Logger().Errorf("Failed to fetch document types for firm %s: %v", firm.ID, err)
+		// Continue with empty slice - form will show no options
+	}
+
+	// Fetch priority options
+	priorities, err := services.GetChoiceOptions(db.DB, firm.ID, "priority")
+	if err != nil {
+		c.Logger().Errorf("Failed to fetch priorities for firm %s: %v", firm.ID, err)
+		// Continue with empty slice - form will show no options
+	}
+
 	// Render public form template
-	component := pages.PublicCaseRequest(firm)
+	component := pages.PublicCaseRequest(firm, documentTypes, priorities)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -74,7 +88,7 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 	}
 
 	// Validate document type
-	if !models.IsValidDocumentType(documentType) {
+	if !services.ValidateChoiceOption(db.DB, firm.ID, "document_type", documentType) {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusBadRequest, `<div class="error-message">Invalid document type</div>`)
 		}
@@ -82,7 +96,7 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 	}
 
 	// Validate priority
-	if !models.IsValidPriority(priority) {
+	if !services.ValidateChoiceOption(db.DB, firm.ID, "priority", priority) {
 		priority = models.PriorityMedium
 	}
 

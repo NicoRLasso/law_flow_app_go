@@ -3,7 +3,7 @@ package pages
 import "law_flow_app_go/templates/layouts"
 import "law_flow_app_go/models"
 
-templ PublicCaseRequest(firm models.Firm) {
+templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption) {
 	@layouts.Base("Request Legal Assistance - " + firm.Name) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
 			<!-- Background effects -->
@@ -109,11 +109,9 @@ templ PublicCaseRequest(firm models.Firm) {
 											class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 										>
 											<option value="">Select type</option>
-											<option value="CC">Cédula de Ciudadanía (CC)</option>
-											<option value="CE">Cédula de Extranjería (CE)</option>
-											<option value="Pasaporte">Pasaporte</option>
-											<option value="NIT">NIT (Company)</option>
-											<option value="TI">Tarjeta de Identidad (TI)</option>
+											for _, opt := range documentTypes {
+												<option value={ opt.Code }>{ opt.Label }</option>
+											}
 										</select>
 										<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 									</div>
@@ -150,10 +148,13 @@ templ PublicCaseRequest(firm models.Firm) {
 										name="priority"
 										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 									>
-										<option value="low">Low</option>
-										<option value="medium" selected>Medium</option>
-										<option value="high">High</option>
-										<option value="urgent">Urgent</option>
+										for _, opt := range priorities {
+											if opt.Code == "medium" {
+												<option value={ opt.Code } selected>{ opt.Label }</option>
+											} else {
+												<option value={ opt.Code }>{ opt.Label }</option>
+											}
+										}
 									</select>
 									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 								</div>

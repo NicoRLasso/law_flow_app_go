@@ -11,7 +11,7 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 	@layouts.Base(title) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
-			@components.Navbar(user, firm)
+			@components.Navbar(user, firm, "/case-requests")
 			<!-- Main Content -->
 			<main class="w-full mx-auto px-6 py-8">
 				<div class="space-y-6">

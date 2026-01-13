@@ -10,7 +10,7 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 	@layouts.Base(title) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
-			@components.Navbar(user, firm)
+			@components.Navbar(user, firm, "/dashboard")
 			<!-- Main Content -->
 			<main class="w-full mx-auto px-6 py-8">
 				<!-- Welcome Section -->
@@ -114,29 +114,29 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 				<div class="glass-panel p-8 rounded-2xl border border-white/10">
 					<h3 class="text-xl font-bold mb-6">Quick Actions</h3>
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-						<a href="/cases/new" class="bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-xl p-6 transition-all duration-300 group">
+						<a href="/case-requests" class="bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-xl p-6 transition-all duration-300 group">
 							<div class="flex items-center space-x-4">
 								<div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform">
 									<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 									</svg>
 								</div>
 								<div>
-									<p class="font-medium">New Case</p>
-									<p class="text-sm text-muted-foreground">Create a new case</p>
+									<p class="font-medium">Case Requests</p>
+									<p class="text-sm text-muted-foreground">Manage incoming requests</p>
 								</div>
 							</div>
 						</a>
-						<a href="/clients/new" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-6 transition-all duration-300 group">
+						<a href="/users" class="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-6 transition-all duration-300 group">
 							<div class="flex items-center space-x-4">
 								<div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform group-hover:bg-accent/10 group-hover:text-accent">
 									<svg class="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
 									</svg>
 								</div>
 								<div>
-									<p class="font-medium">Add Client</p>
-									<p class="text-sm text-muted-foreground">Register new client</p>
+									<p class="font-medium">Manage Users</p>
+									<p class="text-sm text-muted-foreground">Add & edit users</p>
 								</div>
 							</div>
 						</a>
