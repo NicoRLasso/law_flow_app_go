@@ -745,3 +745,12 @@ body::before {
   .lg\:text-left { text-align: left; }
   .lg\:py-32 { padding-top: var(--space-32); padding-bottom: var(--space-32); }
 }
+
+/* ============================================
+   ALPINE.JS UTILITIES
+   ============================================ */
+
+/* Hide elements with x-cloak until Alpine.js initializes */
+[x-cloak] {
+  display: none !important;
+}

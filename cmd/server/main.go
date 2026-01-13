@@ -93,8 +93,10 @@ func main() {
 		{
 			caseRequestRoutes.GET("", handlers.GetCaseRequestsHandler)
 			caseRequestRoutes.GET("/:id", handlers.GetCaseRequestHandler)
+			caseRequestRoutes.GET("/:id/detail", handlers.GetCaseRequestDetailHandler)
 			caseRequestRoutes.GET("/:id/file", handlers.DownloadCaseRequestFileHandler)
 			caseRequestRoutes.PUT("/:id/status", handlers.UpdateCaseRequestStatusHandler)
+			caseRequestRoutes.DELETE("/:id", handlers.DeleteCaseRequestHandler)
 		}
 
 		// Case requests dashboard page

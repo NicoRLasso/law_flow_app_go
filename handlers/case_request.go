@@ -9,6 +9,7 @@ import (
 	"law_flow_app_go/templates/partials"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -151,6 +152,20 @@ func GetCaseRequestsHandler(c echo.Context) error {
 	status := c.QueryParam("status")
 	priority := c.QueryParam("priority")
 
+	// Get pagination parameters
+	page := 1
+	limit := 20
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
 	// Build firm-scoped query
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 
@@ -162,19 +177,38 @@ func GetCaseRequestsHandler(c echo.Context) error {
 		query = query.Where("priority = ?", priority)
 	}
 
-	// Fetch requests
+	// Get total count
+	var total int64
+	if err := query.Model(&models.CaseRequest{}).Count(&total).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to count requests")
+	}
+
+	// Calculate pagination
+	offset := (page - 1) * limit
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
+
+	// Fetch paginated requests
 	var requests []models.CaseRequest
-	if err := query.Order("created_at DESC").Find(&requests).Error; err != nil {
+	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&requests).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch requests")
 	}
 
 	// Check if HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
-		component := partials.CaseRequestList(requests)
+		component := partials.CaseRequestTable(requests, page, totalPages, limit, int(total))
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
-	return c.JSON(http.StatusOK, requests)
+	// Return JSON with pagination metadata
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": requests,
+		"pagination": map[string]interface{}{
+			"page":        page,
+			"limit":       limit,
+			"total":       total,
+			"total_pages": totalPages,
+		},
+	})
 }
 
 // GetCaseRequestHandler returns a single case request
@@ -189,6 +223,22 @@ func GetCaseRequestHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, request)
+}
+
+// GetCaseRequestDetailHandler returns a case request detail modal
+func GetCaseRequestDetailHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	// Fetch request with firm-scoping
+	var request models.CaseRequest
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+	if err := query.Preload("ReviewedBy").First(&request, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
+	}
+
+	// Render detail modal
+	component := partials.CaseRequestDetailModal(request)
+	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
 // DownloadCaseRequestFileHandler serves the uploaded file
@@ -263,4 +313,45 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, request)
+}
+
+// DeleteCaseRequestHandler deletes a case request and its associated file
+func DeleteCaseRequestHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	// Fetch request with firm-scoping
+	var request models.CaseRequest
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+	if err := query.First(&request, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
+	}
+
+	// Delete associated file from disk if exists
+	if request.FilePath != "" {
+		// Verify file path is within upload directory (security check)
+		uploadDir := "uploads"
+		absUploadDir, err := filepath.Abs(uploadDir)
+		if err == nil {
+			absFilePath, err := filepath.Abs(request.FilePath)
+			if err == nil && strings.HasPrefix(absFilePath, absUploadDir) {
+				// Delete file, log error but don't fail the request
+				if err := services.DeleteUploadedFile(request.FilePath); err != nil {
+					// Log error but continue with database deletion
+					c.Logger().Errorf("Failed to delete file %s: %v", request.FilePath, err)
+				}
+			}
+		}
+	}
+
+	// Soft delete the database record
+	if err := db.DB.Delete(&request).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete request")
+	}
+
+	// Return success for HTMX
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return c.NoContent(http.StatusOK)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Request deleted successfully"})
 }

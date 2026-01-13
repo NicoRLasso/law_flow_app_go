@@ -22,16 +22,16 @@ templ FirmSetup(title string, user *models.User) {
 					<p class="text-muted-foreground">Welcome, { user.Name }! Let's set up your firm.</p>
 				</div>
 				<!-- Setup Card -->
-				<div class="glass-panel p-8 rounded-2xl border border-white/10">
-					<div class="mb-8">
-						<h2 class="text-2xl font-bold mb-2">Create Your Firm</h2>
+				<div class="glass-panel p-10 rounded-2xl border border-white/10">
+					<div class="mb-10">
+						<h2 class="text-2xl font-bold mb-3">Create Your Firm</h2>
 						<p class="text-muted-foreground text-sm">Enter your firm's information to get started</p>
 					</div>
 					<form hx-post="/firm/setup" hx-target="#error-message" hx-swap="innerHTML" class="space-y-6">
 						<!-- Error Message Area -->
 						<div id="error-message" class="min-h-[24px]"></div>
 						<!-- Firm Name -->
-						<div class="space-y-2">
+						<div class="space-y-3">
 							<label for="name" class="text-sm font-medium text-muted-foreground ml-1">Firm Name <span class="text-red-500">*</span></label>
 							<input 
 								type="text" 
@@ -43,11 +43,11 @@ templ FirmSetup(title string, user *models.User) {
 							/>
 						</div>
 						<!-- Country and City -->
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div class="space-y-2">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div class="space-y-3">
 								<label for="country" class="text-sm font-medium text-muted-foreground ml-1">Country <span class="text-red-500">*</span></label>
-								<select 
-									id="country" 
+								<select
+									id="country"
 									name="country"
 									required
 									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
@@ -55,11 +55,11 @@ templ FirmSetup(title string, user *models.User) {
 									<option value="Colombia" selected>Colombia</option>
 								</select>
 							</div>
-							<div class="space-y-2">
+							<div class="space-y-3">
 								<label for="city" class="text-sm font-medium text-muted-foreground ml-1">City</label>
-								<input 
-									type="text" 
-									id="city" 
+								<input
+									type="text"
+									id="city"
 									name="city"
 									placeholder="New York"
 									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
@@ -67,44 +67,44 @@ templ FirmSetup(title string, user *models.User) {
 							</div>
 						</div>
 						<!-- Timezone -->
-						<div class="space-y-2">
+						<div class="space-y-3">
 							<label for="timezone" class="text-sm font-medium text-muted-foreground ml-1">Timezone</label>
-							<input 
-								type="text" 
-								id="timezone" 
+							<input
+								type="text"
+								id="timezone"
 								name="timezone"
 								placeholder="America/New_York (default: UTC)"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 							/>
 						</div>
 						<!-- Address -->
-						<div class="space-y-2">
+						<div class="space-y-3">
 							<label for="address" class="text-sm font-medium text-muted-foreground ml-1">Address</label>
-							<input 
-								type="text" 
-								id="address" 
+							<input
+								type="text"
+								id="address"
 								name="address"
 								placeholder="123 Legal Street"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 							/>
 						</div>
 						<!-- Phone -->
-						<div class="space-y-2">
+						<div class="space-y-3">
 							<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">Phone</label>
-							<input 
-								type="tel" 
-								id="phone" 
+							<input
+								type="tel"
+								id="phone"
 								name="phone"
 								placeholder="+1 (555) 123-4567"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 							/>
 						</div>
 						<!-- Billing Email -->
-						<div class="space-y-2">
+						<div class="space-y-3">
 							<label for="billing_email" class="text-sm font-medium text-muted-foreground ml-1">Billing Email <span class="text-red-500">*</span></label>
-							<input 
-								type="email" 
-								id="billing_email" 
+							<input
+								type="email"
+								id="billing_email"
 								name="billing_email"
 								required
 								placeholder="billing@yourfirm.com"
@@ -112,22 +112,22 @@ templ FirmSetup(title string, user *models.User) {
 							/>
 						</div>
 						<!-- Info and Noreply Emails -->
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div class="space-y-2">
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div class="space-y-3">
 								<label for="info_email" class="text-sm font-medium text-muted-foreground ml-1">Info Email</label>
-								<input 
-									type="email" 
-									id="info_email" 
+								<input
+									type="email"
+									id="info_email"
 									name="info_email"
 									placeholder="info@yourfirm.com"
 									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 								/>
 							</div>
-							<div class="space-y-2">
+							<div class="space-y-3">
 								<label for="noreply_email" class="text-sm font-medium text-muted-foreground ml-1">No-Reply Email</label>
-								<input 
-									type="email" 
-									id="noreply_email" 
+								<input
+									type="email"
+									id="noreply_email"
 									name="noreply_email"
 									placeholder="noreply@yourfirm.com"
 									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
@@ -135,20 +135,20 @@ templ FirmSetup(title string, user *models.User) {
 							</div>
 						</div>
 						<!-- Description -->
-						<div class="space-y-2">
+						<div class="space-y-3">
 							<label for="description" class="text-sm font-medium text-muted-foreground ml-1">Description</label>
-							<textarea 
-								id="description" 
+							<textarea
+								id="description"
 								name="description"
-								rows="3"
+								rows="4"
 								placeholder="Brief description of your firm..."
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 resize-none"
 							></textarea>
 						</div>
 						<!-- Submit Button -->
-						<button 
+						<button
 							type="submit"
-							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
+							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group mt-8"
 						>
 							<span class="relative z-10">Create Firm & Continue</span>
 							<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>

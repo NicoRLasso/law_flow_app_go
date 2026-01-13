@@ -4,6 +4,7 @@ import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
 )
 
 templ CaseRequests(title string, user *models.User, firm *models.Firm) {
@@ -12,7 +13,7 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 			<!-- Navigation Bar -->
 			@components.Navbar(user, firm)
 			<!-- Main Content -->
-			<main class="max-w-7xl mx-auto px-6 py-8">
+			<main class="w-full mx-auto px-6 py-8">
 				<div class="space-y-6">
 					<!-- Header -->
 					<div class="flex items-center justify-between">
@@ -22,69 +23,15 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 						</div>
 					</div>
 
-					<!-- Filters -->
-					<div class="glass-panel p-6 rounded-xl border border-white/10" x-data="{ activeFilter: 'all' }">
-						<div class="flex flex-wrap gap-2">
-							<button 
-								@click="activeFilter = 'all'"
-								:class="activeFilter === 'all' ? 'bg-accent text-accent-foreground' : 'bg-white/5 text-foreground hover:bg-white/10'"
-								hx-get="/api/case-requests"
-								hx-target="#case-requests-list"
-								hx-trigger="click"
-								class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
-							>
-								All Requests
-							</button>
-							<button 
-								@click="activeFilter = 'pending'"
-								:class="activeFilter === 'pending' ? 'bg-accent text-accent-foreground' : 'bg-white/5 text-foreground hover:bg-white/10'"
-								hx-get="/api/case-requests?status=pending"
-								hx-target="#case-requests-list"
-								hx-trigger="click"
-								class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
-							>
-								Pending
-							</button>
-							<button 
-								@click="activeFilter = 'reviewing'"
-								:class="activeFilter === 'reviewing' ? 'bg-accent text-accent-foreground' : 'bg-white/5 text-foreground hover:bg-white/10'"
-								hx-get="/api/case-requests?status=reviewing"
-								hx-target="#case-requests-list"
-								hx-trigger="click"
-								class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
-							>
-								Reviewing
-							</button>
-							<button 
-								@click="activeFilter = 'converted'"
-								:class="activeFilter === 'converted' ? 'bg-accent text-accent-foreground' : 'bg-white/5 text-foreground hover:bg-white/10'"
-								hx-get="/api/case-requests?status=converted"
-								hx-target="#case-requests-list"
-								hx-trigger="click"
-								class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
-							>
-								Converted
-							</button>
-							<button 
-								@click="activeFilter = 'rejected'"
-								:class="activeFilter === 'rejected' ? 'bg-accent text-accent-foreground' : 'bg-white/5 text-foreground hover:bg-white/10'"
-								hx-get="/api/case-requests?status=rejected"
-								hx-target="#case-requests-list"
-								hx-trigger="click"
-								class="px-4 py-2 rounded-lg font-medium transition-all duration-200"
-							>
-								Rejected
-							</button>
-						</div>
-					</div>
-
-					<!-- Case Requests List -->
+					<!-- Case Requests Filters (static, not reloaded) -->
+					@partials.CaseRequestFilters()
+					
+					<!-- Case Requests Table (reloadable content) -->
 					<div 
-						id="case-requests-list"
+						id="case-requests-table"
 						hx-get="/api/case-requests"
 						hx-trigger="load"
 						hx-indicator="#loading-indicator"
-						class="space-y-4"
 					>
 						<!-- Loading indicator -->
 						<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">

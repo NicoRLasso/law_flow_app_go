@@ -21,7 +21,7 @@ css-build: ## Build CSS with PostCSS and Tailwind
 css-watch: ## Watch and rebuild CSS on changes
 	npm run watch:css
 
-dev: generate css-build ## Run with live-reload (requires air and npm)
+dev: build generate css-build ## Run with live-reload (requires air and npm)
 	@echo "Starting development servers..."
 	@trap 'kill 0' EXIT; \
 	npm run watch:css & \
