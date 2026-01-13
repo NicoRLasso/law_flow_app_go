@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 const (
@@ -121,4 +122,77 @@ func clearSessionCookie(c echo.Context) {
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(cookie)
+}
+
+// RequireFirm ensures the user has a firm assigned
+func RequireFirm() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			user := GetCurrentUser(c)
+
+			if user == nil {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Not authenticated")
+			}
+
+			if !user.HasFirm() {
+				// Redirect to firm setup
+				if c.Request().Header.Get("HX-Request") == "true" {
+					c.Response().Header().Set("HX-Redirect", "/firm/setup")
+					return c.NoContent(http.StatusSeeOther)
+				}
+				return c.Redirect(http.StatusSeeOther, "/firm/setup")
+			}
+
+			return next(c)
+		}
+	}
+}
+
+// GetFirmScopedQuery returns a GORM query scoped to the current user's firm
+func GetFirmScopedQuery(c echo.Context, db *gorm.DB) *gorm.DB {
+	currentUser := GetCurrentUser(c)
+	if currentUser == nil || currentUser.FirmID == nil {
+		// Return query that matches nothing
+		return db.Where("1 = 0")
+	}
+
+	return db.Where("firm_id = ?", *currentUser.FirmID)
+}
+
+// CanAccessUser checks if the current user can access another user's data
+func CanAccessUser(c echo.Context, targetUserID string) bool {
+	currentUser := GetCurrentUser(c)
+	if currentUser == nil {
+		return false
+	}
+
+	// Admins can access all users in their firm
+	if currentUser.Role == "admin" {
+		return true
+	}
+
+	// Users can always access their own data
+	if currentUser.ID == targetUserID {
+		return true
+	}
+
+	// Lawyers and staff can view (but not edit) users in their firm
+	// This is enforced at the handler level
+	return false
+}
+
+// CanModifyUser checks if the current user can modify another user's data
+func CanModifyUser(c echo.Context, targetUserID string) bool {
+	currentUser := GetCurrentUser(c)
+	if currentUser == nil {
+		return false
+	}
+
+	// Only admins can modify other users
+	if currentUser.Role == "admin" {
+		return true
+	}
+
+	// Users can modify their own profile
+	return currentUser.ID == targetUserID
 }

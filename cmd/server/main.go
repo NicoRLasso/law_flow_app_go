@@ -52,28 +52,41 @@ func main() {
 		firmSetup.POST("/setup", handlers.FirmSetupPostHandler)
 	}
 
-	// Protected routes (authentication required)
+	// Protected routes (authentication + firm required)
 	protected := e.Group("")
 	protected.Use(middleware.RequireAuth())
+	protected.Use(middleware.RequireFirm()) // Ensure user has a firm
 	{
+		// All users with a firm can access dashboard and their own profile
 		protected.GET("/dashboard", handlers.DashboardHandler)
 		protected.POST("/logout", handlers.LogoutHandler)
 		protected.GET("/api/me", handlers.GetCurrentUserHandler)
 
-		// HTMX routes
+		// HTMX routes (all roles, firm-scoped)
 		protected.GET("/htmx/users", handlers.GetUsersHTMX)
 
-		// API routes
+		// User viewing routes (all roles, firm-scoped, with handler-level auth checks)
 		protected.GET("/api/users", handlers.GetUsers)
 		protected.GET("/api/users/:id", handlers.GetUser)
-		protected.POST("/api/users", handlers.CreateUser)
 		protected.PUT("/api/users/:id", handlers.UpdateUser)
-		protected.DELETE("/api/users/:id", handlers.DeleteUser)
+
+		// Admin-only routes
+		adminRoutes := protected.Group("")
+		adminRoutes.Use(middleware.RequireRole("admin"))
+		{
+			adminRoutes.POST("/api/users", handlers.CreateUser)
+			adminRoutes.DELETE("/api/users/:id", handlers.DeleteUser)
+		}
 	}
 
 	// Development-only routes
 	if cfg.Environment == "development" {
-		e.GET("/dev/email/test", handlers.TestEmailHandler)
+		devRoutes := e.Group("/dev")
+		devRoutes.Use(middleware.RequireAuth())
+		devRoutes.Use(middleware.RequireRole("admin"))
+		{
+			devRoutes.GET("/email/test", handlers.TestEmailHandler)
+		}
 	}
 
 	// Start background session cleanup (runs every hour)

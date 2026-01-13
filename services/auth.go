@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"law_flow_app_go/models"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -112,4 +113,9 @@ func CleanupExpiredSessions(db *gorm.DB) error {
 		fmt.Printf("Cleaned up %d expired sessions\n", result.RowsAffected)
 	}
 	return nil
+}
+
+// LogSecurityEvent logs security-related events
+func LogSecurityEvent(eventType, userID, details string) {
+	log.Printf("[SECURITY] %s | User: %s | Details: %s", eventType, userID, details)
 }

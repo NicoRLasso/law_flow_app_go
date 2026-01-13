@@ -36,9 +36,14 @@ func FirmSetupPostHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Not authenticated")
 	}
 
-	// If user already has a firm, don't allow creating another
+	// Defense in depth: double-check user doesn't have a firm
 	if user.HasFirm() {
-		return echo.NewHTTPError(http.StatusBadRequest, "User already has a firm")
+		// Redirect to dashboard if user already has a firm
+		if c.Request().Header.Get("HX-Request") == "true" {
+			c.Response().Header().Set("HX-Redirect", "/dashboard")
+			return c.NoContent(http.StatusSeeOther)
+		}
+		return c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 
 	// Parse form data
