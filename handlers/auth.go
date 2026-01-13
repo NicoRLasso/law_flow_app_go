@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -72,6 +73,10 @@ func LoginPostHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create session")
 	}
 
+	// Get config
+	cfg := c.Get("config").(*config.Config)
+	isProduction := cfg.Environment == "production"
+
 	// Set session cookie
 	cookie := &http.Cookie{
 		Name:     middleware.SessionCookieName,
@@ -79,7 +84,7 @@ func LoginPostHandler(c echo.Context) error {
 		Path:     "/",
 		MaxAge:   int(services.DefaultSessionDuration.Seconds()),
 		HttpOnly: true,
-		Secure:   false, // Set to true in production with HTTPS
+		Secure:   isProduction,
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(cookie)
@@ -117,6 +122,10 @@ func LogoutHandler(c echo.Context) error {
 		services.DeleteSession(db.DB, cookie.Value)
 	}
 
+	// Get config
+	cfg := c.Get("config").(*config.Config)
+	isProduction := cfg.Environment == "production"
+
 	// Clear session cookie
 	clearCookie := &http.Cookie{
 		Name:     middleware.SessionCookieName,
@@ -124,7 +133,7 @@ func LogoutHandler(c echo.Context) error {
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   isProduction,
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(clearCookie)

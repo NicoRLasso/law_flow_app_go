@@ -170,6 +170,12 @@ func GetCaseRequestsHandler(c echo.Context) error {
 	// Build firm-scoped query
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 
+	// Filter out rejected requests older than 24 hours
+	// Logic: Show if (Status != Rejected) OR (Status == Rejected AND UpdatedAt > 24h ago)
+	twentyFourHoursAgo := time.Now().Add(-24 * time.Hour)
+	query = query.Where("(status != ? OR (status = ? AND updated_at > ?))",
+		models.StatusRejected, models.StatusRejected, twentyFourHoursAgo)
+
 	// Apply filters
 	if status != "" && models.IsValidStatus(status) {
 		query = query.Where("status = ?", status)
@@ -306,6 +312,15 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
 	}
 
+	// IMMUTABLE REJECTION: Prevent changing status if already rejected
+	if request.Status == models.StatusRejected {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			// For HTMX, we might want to show a toast or alert, but for now 400 is fine
+			return c.HTML(http.StatusBadRequest, "Cannot change status of a rejected request")
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Cannot change status of a rejected request")
+	}
+
 	// Get current user
 	currentUser := middleware.GetCurrentUser(c)
 
@@ -318,6 +333,27 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 	// Update rejection note if provided
 	if payload.Status == models.StatusRejected {
 		request.RejectionNote = strings.TrimSpace(payload.RejectionNote)
+
+		// DOCUMENTATION REMOVAL: Delete file if exists
+		if request.FilePath != "" {
+			// Verify file path is within upload directory (security check)
+			uploadDir := "uploads"
+			absUploadDir, err := filepath.Abs(uploadDir)
+			if err == nil {
+				absFilePath, err := filepath.Abs(request.FilePath)
+				if err == nil && strings.HasPrefix(absFilePath, absUploadDir) {
+					// Delete file
+					if err := services.DeleteUploadedFile(request.FilePath); err != nil {
+						c.Logger().Errorf("Failed to delete file %s: %v", request.FilePath, err)
+					}
+				}
+			}
+			// Clear metadata
+			request.FilePath = ""
+			request.FileName = ""
+			request.FileOriginalName = ""
+			request.FileSize = 0
+		}
 	}
 
 	if err := db.DB.Save(&request).Error; err != nil {

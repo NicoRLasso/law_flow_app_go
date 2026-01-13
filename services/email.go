@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"gopkg.in/gomail.v2"
+	"github.com/wneessen/go-mail"
 )
 
 // Email represents an email message
@@ -79,19 +79,23 @@ func SendEmail(cfg *config.Config, email *Email) error {
 	}
 
 	// Create message
-	m := gomail.NewMessage()
-	m.SetHeader("From", fmt.Sprintf("%s <%s>", cfg.EmailFromName, cfg.EmailFrom))
-	m.SetHeader("To", email.To...)
-	m.SetHeader("Subject", email.Subject)
+	m := mail.NewMsg()
+	if err := m.From(fmt.Sprintf("%s <%s>", cfg.EmailFromName, cfg.EmailFrom)); err != nil {
+		return fmt.Errorf("failed to set From address: %w", err)
+	}
+	if err := m.To(email.To...); err != nil {
+		return fmt.Errorf("failed to set To address: %w", err)
+	}
+	m.Subject(email.Subject)
 
 	// Set body (prefer HTML if available, fallback to text)
 	if email.HTMLBody != "" {
-		m.SetBody("text/html", email.HTMLBody)
+		m.SetBodyString(mail.TypeTextHTML, email.HTMLBody)
 		if email.TextBody != "" {
-			m.AddAlternative("text/plain", email.TextBody)
+			m.SetBodyString(mail.TypeTextPlain, email.TextBody)
 		}
 	} else if email.TextBody != "" {
-		m.SetBody("text/plain", email.TextBody)
+		m.SetBodyString(mail.TypeTextPlain, email.TextBody)
 	} else {
 		return fmt.Errorf("email must have either HTMLBody or TextBody")
 	}
@@ -102,11 +106,19 @@ func SendEmail(cfg *config.Config, email *Email) error {
 		return fmt.Errorf("invalid SMTP port: %v", err)
 	}
 
-	// Create dialer
-	d := gomail.NewDialer(cfg.SMTPHost, port, cfg.SMTPUsername, cfg.SMTPPassword)
+	// Create client with options
+	c, err := mail.NewClient(cfg.SMTPHost,
+		mail.WithPort(port),
+		mail.WithSMTPAuth(mail.SMTPAuthPlain),
+		mail.WithUsername(cfg.SMTPUsername),
+		mail.WithPassword(cfg.SMTPPassword),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create mail client: %w", err)
+	}
 
 	// Send email
-	if err := d.DialAndSend(m); err != nil {
+	if err := c.DialAndSend(m); err != nil {
 		return fmt.Errorf("failed to send email: %v", err)
 	}
 

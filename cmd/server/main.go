@@ -34,7 +34,17 @@ func main() {
 	// Middleware
 	e.Use(echomiddleware.RequestLogger())
 	e.Use(echomiddleware.Recover())
-	e.Use(echomiddleware.CORS())
+
+	// Security Middleware
+	// Rate Limiting (20 requests/sec per IP)
+	e.Use(echomiddleware.RateLimiter(echomiddleware.NewRateLimiterMemoryStore(20)))
+
+	// CORS Configuration
+	corsConfig := echomiddleware.DefaultCORSConfig
+	if cfg.Environment == "production" {
+		corsConfig.AllowOrigins = cfg.AllowedOrigins
+	}
+	e.Use(echomiddleware.CORSWithConfig(corsConfig))
 
 	// Make config available to handlers
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
