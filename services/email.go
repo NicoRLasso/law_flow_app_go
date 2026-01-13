@@ -66,11 +66,13 @@ func loadTemplate(templateName string, data interface{}) (html string, text stri
 
 // SendEmail sends an email synchronously using SMTP
 func SendEmail(cfg *config.Config, email *Email) error {
-
 	// In development mode, log the email instead of sending
 	if cfg.Environment == "development" {
 		logEmailToConsole(email)
+		log.Printf("✅ Email logged successfully (development mode - not actually sent)")
+		return nil // Return early in development mode
 	}
+
 	// Validate configuration
 	if cfg.SMTPUsername == "" || cfg.SMTPPassword == "" {
 		return fmt.Errorf("SMTP credentials not configured")
@@ -232,6 +234,41 @@ func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt string) *
 	return &Email{
 		To:       []string{userEmail},
 		Subject:  "Password Reset Request - LawFlow App",
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
+// CaseRequestRejectionEmailData contains data for the case request rejection email template
+type CaseRequestRejectionEmailData struct {
+	ClientName    string
+	FirmName      string
+	RejectionNote string
+	FirmEmail     string
+	FirmPhone     string
+}
+
+// BuildCaseRequestRejectionEmail creates a rejection email for case requests
+func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejectionNote, firmEmail, firmPhone string) *Email {
+	data := CaseRequestRejectionEmailData{
+		ClientName:    clientName,
+		FirmName:      firmName,
+		RejectionNote: rejectionNote,
+		FirmEmail:     firmEmail,
+		FirmPhone:     firmPhone,
+	}
+
+	htmlBody, textBody, err := loadTemplate("case_request_rejection", data)
+	if err != nil {
+		log.Printf("Error loading case request rejection email template: %v", err)
+		// Fallback to simple text email
+		textBody = fmt.Sprintf("Dear %s,\n\nThank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.\n\nReason:\n%s\n\nIf you have any questions, please contact us at %s or %s.\n\nBest regards,\n%s", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Thank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.</p><p><strong>Reason:</strong><br>%s</p><p>If you have any questions, please contact us at %s or %s.</p><p>Best regards,<br>%s</p>", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
+	}
+
+	return &Email{
+		To:       []string{clientEmail},
+		Subject:  fmt.Sprintf("Case Request Update - %s", firmName),
 		HTMLBody: htmlBody,
 		TextBody: textBody,
 	}

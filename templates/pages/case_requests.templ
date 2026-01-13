@@ -30,7 +30,7 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 					<div 
 						id="case-requests-table"
 						hx-get="/api/case-requests"
-						hx-trigger="load"
+						hx-trigger="load, reload-case-requests from:body"
 						hx-indicator="#loading-indicator"
 					>
 						<!-- Loading indicator -->

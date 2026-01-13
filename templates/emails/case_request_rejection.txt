@@ -1,0 +1,29 @@
+Case Request Update
+
+Dear {{.ClientName}},
+
+Thank you for your interest in {{.FirmName}} and for taking the time to submit your case request.
+
+After careful review, we have decided not to proceed with your case request at this time.
+
+📝 Reason for Decision:
+----------------------------------------
+{{.RejectionNote}}
+----------------------------------------
+
+We understand this may not be the outcome you were hoping for. This decision does not reflect on the validity of your case, but rather our firm's current capacity, specialization, or specific practice areas.
+
+📞 Questions or Concerns?
+If you have any questions about this decision or would like to discuss your legal needs further, please don't hesitate to contact us:
+
+Email: {{.FirmEmail}}
+Phone: {{.FirmPhone}}
+
+We appreciate your understanding and wish you the best in resolving your legal matter. We recommend consulting with other legal professionals who may be better suited to assist with your specific needs.
+
+Best regards,
+{{.FirmName}}
+
+---
+© 2026 {{.FirmName}}. All rights reserved.
+This is an automated message sent via LawFlow App.

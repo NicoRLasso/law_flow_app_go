@@ -3,6 +3,7 @@ package partials
 import (
 	"law_flow_app_go/models"
 	"fmt"
+	"strings"
 )
 
 // CaseRequestDetailModal renders a modal with case request details
@@ -49,16 +50,12 @@ templ CaseRequestDetailModal(request models.CaseRequest) {
 						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Status</label>
 						<select
 							class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
-							hx-put={ "/api/case-requests/" + request.ID + "/status" }
-							hx-target="#case-requests-list"
-							hx-swap="outerHTML"
-							hx-trigger="change"
-							hx-vals='js:{"status": event.target.value}'
-							hx-on::after-request="if(event.detail.successful) { show = false; setTimeout(() => document.getElementById('case-request-detail-modal').remove(), 300) }"
+							x-data={ fmt.Sprintf("{ originalStatus: '%s' }", request.Status) }
+							@change={ fmt.Sprintf("if($event.target.value === 'rejected' && originalStatus !== 'rejected') { $dispatch('show-rejection-modal', { requestId: '%s', requestName: '%s' }); $event.target.value = originalStatus; } else { const select = $event.target; const newValue = select.value; select.disabled = true; fetch('/api/case-requests/%s/status', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'HX-Request': 'true' }, body: JSON.stringify({ status: newValue }) }).then(res => { if(res.ok) { window.location.reload(); } else { select.value = originalStatus; select.disabled = false; alert('Failed to update status'); } }).catch(e => { console.error(e); select.value = originalStatus; select.disabled = false; alert('An error occurred'); }); }", request.ID, escapeJS(request.Name), request.ID) }
+							id="status-select"
 						>
 							<option value="pending" selected?={ request.Status == "pending" }>Pending</option>
-							<option value="reviewing" selected?={ request.Status == "reviewing" }>Reviewing</option>
-							<option value="converted" selected?={ request.Status == "converted" }>Converted</option>
+							<option value="accepted" selected?={ request.Status == "accepted" }>Accepted</option>
 							<option value="rejected" selected?={ request.Status == "rejected" }>Rejected</option>
 						</select>
 					</div>
@@ -134,6 +131,21 @@ templ CaseRequestDetailModal(request models.CaseRequest) {
 							<p class="text-base text-foreground leading-relaxed whitespace-pre-wrap">{ request.Description }</p>
 						</div>
 					</div>
+
+					<!-- Rejection Note Section -->
+					if request.Status == "rejected" && request.RejectionNote != "" {
+						<div class="space-y-5 p-4">
+							<h3 class="text-lg font-semibold text-red-400 flex items-center gap-2">
+								<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
+								Rejection Reason
+							</h3>
+							<div class="glass-panel p-6 rounded-xl border border-red-500/30 bg-red-500/10">
+								<p class="text-base text-red-200 leading-relaxed whitespace-pre-wrap">{ request.RejectionNote }</p>
+							</div>
+						</div>
+					}
 
 					<!-- Documents Section -->
 					if request.FileName != "" {
@@ -253,6 +265,124 @@ templ CaseRequestDetailModal(request models.CaseRequest) {
 				</button>
 			</div>
 		</div>
+
+		<!-- Rejection Modal -->
+		<div
+			x-data="{ showReject: false, requestId: '', requestName: '', rejectionNote: '' }"
+			@show-rejection-modal.window="showReject = true; requestId = $event.detail.requestId; requestName = $event.detail.requestName"
+			x-show="showReject"
+			class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+			x-transition:enter="transition ease-out duration-300"
+			x-transition:enter-start="opacity-0"
+			x-transition:enter-end="opacity-100"
+			x-transition:leave="transition ease-in duration-200"
+			x-transition:leave-start="opacity-100"
+			x-transition:leave-end="opacity-0"
+			@click.self="showReject = false; rejectionNote = ''"
+			style="display: none;"
+		>
+			<div
+				class="glass-panel rounded-2xl border border-white/10 max-w-2xl w-full shadow-2xl"
+				x-show="showReject"
+				x-transition:enter="transition ease-out duration-300"
+				x-transition:enter-start="opacity-0 scale-95"
+				x-transition:enter-end="opacity-100 scale-100"
+				x-transition:leave="transition ease-in duration-200"
+				x-transition:leave-start="opacity-100 scale-100"
+				x-transition:leave-end="opacity-0 scale-95"
+			>
+				<!-- Rejection Modal Header -->
+				<div class="flex items-center justify-between p-6 border-b border-white/10">
+					<div class="flex items-center gap-4">
+						<div class="p-3 bg-red-500/20 rounded-xl">
+							<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+							</svg>
+						</div>
+						<div>
+							<h2 class="text-xl font-bold text-foreground">Reject Case Request</h2>
+							<p class="text-sm text-muted-foreground" x-text="'Request from: ' + requestName"></p>
+						</div>
+					</div>
+					<button
+						class="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
+						@click="showReject = false; rejectionNote = ''"
+					>
+						<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				</div>
+
+				<!-- Rejection Modal Body -->
+				<div class="p-6">
+					<div class="space-y-4">
+						<div>
+							<p class="text-sm text-muted-foreground mb-4">
+								Please provide a reason for rejecting this case request. This message will be sent to the client via email.
+							</p>
+							<textarea
+								x-model="rejectionNote"
+								rows="6"
+								placeholder="Please explain why this case request is being rejected..."
+								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition-all duration-300 resize-none"
+								required
+							></textarea>
+						</div>
+					</div>
+				</div>
+
+				<!-- Rejection Modal Footer -->
+				<div class="flex items-center justify-end gap-3 p-6 border-t border-white/10 bg-white/5">
+					<button
+						class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+						@click="showReject = false; rejectionNote = ''"
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						class="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+						@click="
+						if(rejectionNote.trim() === '') { alert('Please provide a rejection reason'); return; }
+						const btn = $el;
+						const originalContent = btn.innerHTML;
+						btn.disabled = true;
+						btn.innerHTML = '<span>Processing...</span>';
+						
+						fetch('/api/case-requests/' + requestId + '/status', {
+							method: 'PUT',
+							headers: {
+								'Content-Type': 'application/json',
+								'HX-Request': 'true'
+							},
+							body: JSON.stringify({ status: 'rejected', rejection_note: rejectionNote })
+						})
+						.then(response => {
+							if (response.ok) {
+								window.location.reload();
+							} else {
+								alert('Failed to update status');
+								btn.disabled = false;
+								btn.innerHTML = originalContent;
+							}
+						})
+						.catch(err => {
+							console.error(err);
+							alert('An error occurred');
+							btn.disabled = false;
+							btn.innerHTML = originalContent;
+						});
+						"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+						Reject & Send Email
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 }
 
@@ -274,4 +404,16 @@ func formatFileSize(bytes int64) string {
 	default:
 		return fmt.Sprintf("%d B", bytes)
 	}
+}
+
+// Helper function to escape JavaScript strings
+func escapeJS(s string) string {
+	// Escape special characters for JavaScript strings
+	s = strings.ReplaceAll(s, "\\", "\\\\") // Backslash first
+	s = strings.ReplaceAll(s, "'", "\\'")   // Single quote
+	s = strings.ReplaceAll(s, "\"", "\\\"") // Double quote
+	s = strings.ReplaceAll(s, "\n", "\\n")  // Newline
+	s = strings.ReplaceAll(s, "\r", "\\r")  // Carriage return
+	s = strings.ReplaceAll(s, "\t", "\\t")  // Tab
+	return s
 }

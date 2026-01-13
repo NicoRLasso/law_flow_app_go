@@ -36,6 +36,14 @@ func main() {
 	e.Use(echomiddleware.Recover())
 	e.Use(echomiddleware.CORS())
 
+	// Make config available to handlers
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("config", cfg)
+			return next(c)
+		}
+	})
+
 	// Static files
 	e.Static("/static", "static")
 

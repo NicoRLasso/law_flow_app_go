@@ -16,9 +16,11 @@ The public case request system allows potential clients to submit case requests 
 
 ### For Law Firms
 - **Centralized Dashboard**: View all incoming case requests in one place
-- **Smart Filtering**: Filter requests by status (Pending, Reviewing, Converted, Rejected)
+- **Smart Filtering**: Filter requests by status (Pending, Accepted, Rejected) and priority levels
 - **Secure File Access**: Download client-submitted PDFs securely
-- **Status Management**: Track requests through your workflow
+- **Status Management**: Streamlined accept/reject workflow for quick decision-making
+- **Automatic Client Notifications**: Clients receive professional email notifications when their request is rejected
+- **Detailed Request View**: Modal interface showing all client information, documents, and case details
 - **Role-Based Access**: Only admins and lawyers can view requests
 - **Multi-Tenant**: Each firm only sees their own requests
 
@@ -54,18 +56,50 @@ Share this URL on:
 
 2. **Review Incoming Requests**
    - See all pending requests at a glance
-   - View client contact information
-   - Read case descriptions
+   - Click "Details" button to view complete request information in a modal
+   - View client contact information (name, email, phone, document details)
+   - Read full case descriptions
    - Download attached documents
 
 3. **Filter and Organize**
-   - Click filter buttons to view specific statuses
+   - Filter by status: Pending, Accepted, or Rejected
+   - Filter by priority: Urgent, High, Medium, or Low
    - See priority levels at a glance with color-coded badges
 
-4. **Update Status**
-   - Mark requests as "Reviewing" when you start evaluation
-   - Mark as "Converted" when you create a full case
-   - Mark as "Rejected" if you decline the case
+4. **Make Decisions**
+   - **Accept Requests**: Change status to "Accepted" for cases you'll take on
+   - **Reject Requests**: Change status to "Rejected" if you decline the case
+     - System prompts you to provide a rejection reason
+     - Client automatically receives a professional email with your explanation
+     - Email includes your firm's contact information for follow-up questions
+
+### Request Detail View
+
+The detail modal provides a comprehensive view of each case request:
+
+**Personal Information Section**
+- Full name and contact details (email, phone)
+- Colombian document type and number (CC, CE, Pasaporte, NIT, TI)
+
+**Case Information Section**
+- Full case description submitted by the client
+- Priority level (color-coded badge)
+- Current status with quick status changer
+
+**Documents Section**
+- View attached files (if any)
+- Download PDFs securely
+- See file metadata (name, size)
+
+**Review Information** (when applicable)
+- Who reviewed the request
+- When the review occurred
+- Rejection reason (if rejected)
+
+**Metadata Section**
+- Submission date and time
+- Client's IP address (for audit purposes)
+- User agent information
 
 ## Workflow
 
@@ -85,10 +119,64 @@ After submitting a request, clients are automatically redirected to a confirmati
 
 ### Firm Review Process
 ```
-Request appears as "Pending" → Lawyer reviews → 
-Status: "Reviewing" → Decision made → 
-Status: "Converted" or "Rejected"
+Request appears as "Pending" → Lawyer clicks "Details" →
+Reviews all information → Decision made →
+Status: "Accepted" or "Rejected"
 ```
+
+### Rejection Workflow
+When you reject a case request:
+1. Select "Rejected" status in the request detail modal
+2. System prompts for rejection reason
+3. Enter a professional explanation (e.g., "We specialize in corporate law and your case requires a criminal defense attorney")
+4. Click "Confirm Rejection"
+5. Client immediately receives an email containing:
+   - Professional rejection notification
+   - Your explanation/reason
+   - Your firm's contact information
+   - Encouragement to seek appropriate legal counsel
+
+**Email Benefits:**
+- Maintains professional relationships even when declining cases
+- Provides transparency to potential clients
+- Reduces follow-up inquiries by explaining the decision upfront
+- Shows professionalism and respect for the client's time
+
+## Best Practices
+
+### Writing Rejection Messages
+
+When rejecting a case request, your message should be:
+
+**Professional and Respectful**
+- Thank the client for considering your firm
+- Be courteous even when declining
+
+**Clear and Specific**
+- Explain the reason for the decision
+- Avoid vague statements
+
+**Helpful When Possible**
+- Suggest what type of attorney they should seek
+- Provide context about your firm's specialization
+
+**Examples of Good Rejection Messages:**
+
+✅ "Thank you for contacting our firm. We specialize in corporate and business law, and your case requires expertise in family law. We recommend seeking a family law attorney who can better serve your specific needs."
+
+✅ "We appreciate your interest in our services. Unfortunately, we currently have a full caseload and cannot take on additional personal injury cases at this time. We encourage you to contact another qualified attorney in your area soon, as statute of limitations may apply."
+
+✅ "Thank you for reaching out to us. After reviewing your case, we've determined that the matter falls outside our practice areas. We focus primarily on real estate law, and your case would be better served by a criminal defense attorney."
+
+❌ Avoid: "We don't want your case." (Too harsh, unprofessional)
+❌ Avoid: "Cannot help." (Too vague, unhelpful)
+❌ Avoid: Not providing any reason (Leaves client confused)
+
+### Response Times
+
+- **Pending Requests**: Review within 1-2 business days when possible
+- **High Priority/Urgent**: Prioritize these for same-day or next-day review
+- **Consistent Communication**: Even rejections are better than no response
 
 ## Security & Privacy
 
@@ -142,8 +230,10 @@ Share your case request URL in social media profiles and posts to make it easy f
 ## Future Capabilities
 
 Planned enhancements include:
-- Email notifications when new requests arrive
+- Email notifications to firm when new requests arrive
+- Acceptance confirmation emails to clients
 - Automatic case creation from approved requests
 - Public tracking codes so clients can check status
 - Custom fields specific to your firm's practice areas
 - Multi-file upload support
+- SMS notifications for urgent requests
