@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services"
 	"law_flow_app_go/templates/pages"
 	"net/http"
 	"strings"
@@ -92,6 +94,17 @@ func FirmSetupPostHandler(c echo.Context) error {
 		// Rollback: delete the firm if we can't assign it
 		db.DB.Delete(firm)
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to assign firm to user")
+	}
+
+	// Send firm setup confirmation email asynchronously (non-blocking)
+	cfg := config.Load()
+	if user.Email != "" {
+		userName := user.Name
+		if userName == "" {
+			userName = user.Email
+		}
+		email := services.BuildFirmSetupEmail(user.Email, userName, firm.Name)
+		services.SendEmailAsync(cfg, email)
 	}
 
 	// Redirect to dashboard

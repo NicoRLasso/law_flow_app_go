@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; }
+		.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+		.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+		.content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+		.footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 8px 8px; }
+		.success-badge { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; margin: 10px 0; }
+		h1 { margin: 0; font-size: 28px; }
+		h2 { color: #667eea; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>🎉 Firm Setup Complete!</h1>
+		</div>
+		<div class="content">
+			<h2>Congratulations, {{.UserName}}!</h2>
+			<div class="success-badge">✓ Setup Successful</div>
+			<p>Your firm <strong>{{.FirmName}}</strong> has been successfully set up on LawFlow App!</p>
+			<p>You're now ready to start managing your legal practice with our comprehensive suite of tools.</p>
+			<p><strong>Next Steps:</strong></p>
+			<ol>
+				<li>Invite team members to join your firm</li>
+				<li>Set up your first case</li>
+				<li>Configure your billing preferences</li>
+				<li>Explore the dashboard and features</li>
+			</ol>
+			<p>If you need any help getting started, our documentation and support team are here to assist you.</p>
+			<p>Best regards,<br>The LawFlow Team</p>
+		</div>
+		<div class="footer">
+			<p>&copy; 2026 LawFlow App. All rights reserved.</p>
+		</div>
+	</div>
+</body>
+</html>

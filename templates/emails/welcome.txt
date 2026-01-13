@@ -1,0 +1,21 @@
+Welcome to LawFlow App!
+
+Hello {{.UserName}}!
+
+Thank you for joining LawFlow App. We're excited to have you on board!
+
+LawFlow App is your comprehensive legal practice management solution, designed to streamline your workflow and help you focus on what matters most - serving your clients.
+
+What you can do with LawFlow App:
+- Manage cases and clients efficiently
+- Track time and billing
+- Collaborate with your team
+- Generate reports and insights
+
+If you have any questions or need assistance, please don't hesitate to reach out to our support team.
+
+Best regards,
+The LawFlow Team
+
+---
+© 2026 LawFlow App. All rights reserved.

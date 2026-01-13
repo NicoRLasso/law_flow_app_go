@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -49,6 +51,17 @@ func CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to create user",
 		})
+	}
+
+	// Send welcome email asynchronously (non-blocking)
+	cfg := config.Load()
+	if user.Email != "" {
+		userName := user.Name
+		if userName == "" {
+			userName = user.Email
+		}
+		email := services.BuildWelcomeEmail(user.Email, userName)
+		services.SendEmailAsync(cfg, email)
 	}
 
 	return c.JSON(http.StatusCreated, user)

@@ -71,6 +71,11 @@ func main() {
 		protected.DELETE("/api/users/:id", handlers.DeleteUser)
 	}
 
+	// Development-only routes
+	if cfg.Environment == "development" {
+		e.GET("/dev/email/test", handlers.TestEmailHandler)
+	}
+
 	// Start background session cleanup (runs every hour)
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
