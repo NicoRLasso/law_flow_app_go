@@ -4,6 +4,7 @@ import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/templates/components"
 	"fmt"
+	"strings"
 )
 
 // CaseDocumentTable renders the case documents table with pagination
@@ -101,17 +102,31 @@ templ CaseDocumentRow(doc models.CaseDocument, caseID string) {
 		<!-- Actions -->
 		<td class="px-6 py-4">
 			<div class="flex items-center gap-2">
-				<a
-					href={ templ.SafeURL(fmt.Sprintf("/api/cases/%s/documents/%s/download", caseID, doc.ID)) }
-					class="px-4 py-2 bg-accent/20 text-accent hover:bg-accent/30 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5"
-					title="Download"
-				>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-					</svg>
-					<span>Download</span>
-				</a>
+				if isPDFFile(doc) {
+					<button
+						type="button"
+						class="px-4 py-2 bg-accent/20 text-accent hover:bg-accent/30 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5"
+						title="View PDF"
+						data-doc-id={ doc.ID }
+						data-case-id={ caseID }
+						data-file-name={ doc.FileOriginalName }
+						onclick="openPDFViewerModal(this.getAttribute('data-doc-id'), this.getAttribute('data-case-id'), this.getAttribute('data-file-name'))"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+						</svg>
+						<span>View</span>
+					</button>
+				}
 			</div>
 		</td>
 	</tr>
 }
+
+// isPDFFile checks if a document is a PDF based on the file extension
+func isPDFFile(doc models.CaseDocument) bool {
+	ext := strings.ToLower(strings.TrimSpace(doc.FileOriginalName))
+	return strings.HasSuffix(ext, ".pdf")
+}
+

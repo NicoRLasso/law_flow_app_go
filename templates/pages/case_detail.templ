@@ -4,6 +4,7 @@ import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
 )
 
 templ CaseDetail(title string, user *models.User, firm *models.Firm, caseRecord models.Case) {
@@ -120,12 +121,43 @@ templ CaseDetail(title string, user *models.User, firm *models.Firm, caseRecord 
 							modal.style.display = 'none';
 							document.getElementById('upload-form').reset();
 						}
+
+						function openPDFViewerModal(docID, caseID, fileName) {
+							const modal = document.getElementById('pdf-viewer-modal');
+							const embedElement = document.getElementById('pdf-embed');
+							const titleElement = document.getElementById('pdf-title');
+
+							// Set document title
+							titleElement.textContent = fileName;
+
+							// Load PDF
+							embedElement.src = `/api/cases/${caseID}/documents/${docID}/view`;
+
+							// Show modal
+							modal.classList.remove('hidden');
+							modal.style.display = 'flex';
+						}
+
+						function closePDFViewerModal() {
+							const modal = document.getElementById('pdf-viewer-modal');
+							const embedElement = document.getElementById('pdf-embed');
+
+							// Hide modal
+							modal.classList.add('hidden');
+							modal.style.display = 'none';
+
+							// Clear PDF src to stop loading
+							embedElement.src = '';
+						}
 					</script>
 				</div>
 			</main>
 
 			<!-- Upload Document Modal (outside main content) -->
 			@UploadDocumentModal(caseRecord)
+
+			<!-- PDF Viewer Modal -->
+			@partials.PDFViewerModal(caseRecord)
 		</div>
 	}
 }
@@ -338,6 +370,7 @@ templ CaseDocumentsTab(caseRecord models.Case) {
 		<!-- Documents Table Container -->
 		<div
 			id="case-documents-list"
+			data-case-id={ caseRecord.ID }
 			hx-get={ "/api/cases/" + caseRecord.ID + "/documents" }
 			hx-trigger="loadDocuments, load"
 			hx-swap="innerHTML"
@@ -354,7 +387,8 @@ templ CaseDocumentsTab(caseRecord models.Case) {
 		function filterDocuments() {
 			const keyword = document.getElementById('doc-keyword').value;
 			const docType = document.getElementById('doc-type').value;
-			const caseID = '{ caseRecord.ID }';
+			const container = document.getElementById('case-documents-list');
+			const caseID = container.dataset.caseId;
 
 			let url = `/api/cases/${caseID}/documents?`;
 			if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
@@ -364,7 +398,6 @@ templ CaseDocumentsTab(caseRecord models.Case) {
 			url = url.replace(/[&?]$/, '');
 
 			// Trigger HTMX request
-			const container = document.getElementById('case-documents-list');
 			htmx.ajax('GET', url, {
 				target: '#case-documents-list',
 				swap: 'innerHTML'

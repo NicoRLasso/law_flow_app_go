@@ -332,6 +332,62 @@ func DownloadCaseDocumentHandler(c echo.Context) error {
 	return c.File(document.FilePath)
 }
 
+// ViewCaseDocumentHandler serves a PDF document for inline viewing
+func ViewCaseDocumentHandler(c echo.Context) error {
+	caseID := c.Param("id")
+	docID := c.Param("docId")
+	currentUser := middleware.GetCurrentUser(c)
+
+	// First verify the case exists and user has access
+	caseQuery := middleware.GetFirmScopedQuery(c, db.DB)
+	if currentUser.Role == "lawyer" {
+		caseQuery = caseQuery.Where("assigned_to_id = ?", currentUser.ID)
+	}
+
+	var caseRecord models.Case
+	if err := caseQuery.First(&caseRecord, "id = ?", caseID).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Case not found")
+	}
+
+	// Fetch document with firm-scoping
+	var document models.CaseDocument
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+	if err := query.First(&document, "id = ? AND case_id = ?", docID, caseID).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Document not found")
+	}
+
+	// Check if file exists
+	if document.FilePath == "" {
+		return echo.NewHTTPError(http.StatusNotFound, "No file attached to this document")
+	}
+
+	// Validate it's a PDF
+	if !strings.HasSuffix(strings.ToLower(document.FileOriginalName), ".pdf") {
+		return echo.NewHTTPError(http.StatusBadRequest, "Only PDF files can be viewed inline")
+	}
+
+	// Verify file path is within upload directory (security check)
+	uploadDir := "uploads"
+	absUploadDir, err := filepath.Abs(uploadDir)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
+	}
+	absFilePath, err := filepath.Abs(document.FilePath)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
+	}
+	if !strings.HasPrefix(absFilePath, absUploadDir) {
+		return echo.NewHTTPError(http.StatusForbidden, "Invalid file path")
+	}
+
+	// Set headers for inline display
+	c.Response().Header().Set("Content-Type", "application/pdf")
+	c.Response().Header().Set("Content-Disposition", "inline; filename=\""+document.FileOriginalName+"\"")
+
+	// Serve file
+	return c.File(document.FilePath)
+}
+
 // UploadCaseDocumentHandler handles document uploads for a case
 func UploadCaseDocumentHandler(c echo.Context) error {
 	caseID := c.Param("id")

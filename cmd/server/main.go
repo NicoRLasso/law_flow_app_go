@@ -149,6 +149,7 @@ func main() {
 			caseRoutes.GET("/:id/documents", handlers.GetCaseDocumentsHandler)
 			caseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
 			caseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
+			caseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
 		}
 
 		// Lawyer filter route (admin only) - add to adminRoutes
