@@ -61,8 +61,8 @@ func ValidatePDFUpload(fileHeader *multipart.FileHeader) error {
 
 // SaveUploadedFile saves the uploaded file to disk with a secure filename
 func SaveUploadedFile(fileHeader *multipart.FileHeader, uploadDir string, firmID string) (*UploadResult, error) {
-	// Create firm-specific directory
-	firmDir := filepath.Join(uploadDir, "case_requests", firmID)
+	// Create firm-specific directory with better organization
+	firmDir := filepath.Join(uploadDir, "firms", firmID, "case_requests")
 	if err := os.MkdirAll(firmDir, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create upload directory: %w", err)
 	}

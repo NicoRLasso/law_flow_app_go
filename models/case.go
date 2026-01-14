@@ -9,9 +9,9 @@ import (
 
 // Case status constants
 const (
-	CaseStatusOpen    = "OPEN"
-	CaseStatusOnHold  = "ON_HOLD"
-	CaseStatusClosed  = "CLOSED"
+	CaseStatusOpen   = "OPEN"
+	CaseStatusOnHold = "ON_HOLD"
+	CaseStatusClosed = "CLOSED"
 )
 
 // Case represents a legal case
@@ -30,10 +30,10 @@ type Case struct {
 	Client   User   `gorm:"foreignKey:ClientID" json:"client,omitempty"`
 
 	// Case identification
-	CaseNumber string  `gorm:"not null;uniqueIndex" json:"case_number"`
-	Title      *string `json:"title,omitempty"` // Brief case title for identification
-	CaseType   string  `gorm:"not null" json:"case_type"`
-	Description string `gorm:"type:text;not null" json:"description"`
+	CaseNumber  string  `gorm:"not null;uniqueIndex" json:"case_number"`
+	Title       *string `json:"title,omitempty"` // Brief case title for identification
+	CaseType    string  `gorm:"not null" json:"case_type"`
+	Description string  `gorm:"type:text;not null" json:"description"`
 
 	// Status and lifecycle
 	Status          string     `gorm:"not null;default:OPEN;index:idx_case_firm_status" json:"status"`
@@ -61,15 +61,16 @@ type Case struct {
 	CreatedFromRequest   *CaseRequest `gorm:"foreignKey:CreatedFromRequestID" json:"created_from_request,omitempty"`
 
 	// Soft delete tracking
-	IsDeleted bool       `gorm:"not null;default:false" json:"is_deleted"`
+	IsDeleted  bool       `gorm:"not null;default:false" json:"is_deleted"`
 	DeletedAt2 *time.Time `json:"deleted_at_custom,omitempty"` // Custom deleted timestamp (separate from GORM's DeletedAt)
-	DeletedBy *string    `gorm:"type:uuid" json:"deleted_by,omitempty"`
+	DeletedBy  *string    `gorm:"type:uuid" json:"deleted_by,omitempty"`
 
 	// Relationships
-	StatusChanger    *User          `gorm:"foreignKey:StatusChangedBy" json:"status_changer,omitempty"`
-	Classifier       *User          `gorm:"foreignKey:ClassifiedBy" json:"classifier,omitempty"`
-	Deleter          *User          `gorm:"foreignKey:DeletedBy" json:"deleter,omitempty"`
-	Subtypes         []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
+	StatusChanger *User          `gorm:"foreignKey:StatusChangedBy" json:"status_changer,omitempty"`
+	Classifier    *User          `gorm:"foreignKey:ClassifiedBy" json:"classifier,omitempty"`
+	Deleter       *User          `gorm:"foreignKey:DeletedBy" json:"deleter,omitempty"`
+	Subtypes      []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
+	Documents     []CaseDocument `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID and set OpenedAt

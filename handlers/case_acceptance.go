@@ -398,6 +398,12 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to commit transaction")
 	}
 
+	// Transfer document from request to case (outside transaction, non-critical)
+	if err := services.TransferRequestDocumentToCase(db.DB, &request, newCase.ID, currentUser.ID); err != nil {
+		// Log error but don't fail the request
+		c.Logger().Errorf("Failed to transfer document: %v", err)
+	}
+
 	// Send emails asynchronously (don't block on errors)
 	go func() {
 		// Send welcome email to new clients
