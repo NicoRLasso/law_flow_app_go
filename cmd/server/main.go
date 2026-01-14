@@ -137,6 +137,19 @@ func main() {
 
 		// Case requests dashboard page
 		protected.GET("/case-requests", handlers.CaseRequestsPageHandler)
+
+		// Case viewer routes (admin and lawyer only)
+		protected.GET("/cases", handlers.CasesPageHandler)
+		protected.GET("/cases/:id", handlers.GetCaseDetailHandler)
+
+		caseRoutes := protected.Group("/api/cases")
+		caseRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			caseRoutes.GET("", handlers.GetCasesHandler)
+		}
+
+		// Lawyer filter route (admin only) - add to adminRoutes
+		adminRoutes.GET("/api/lawyers", handlers.GetLawyersForFilterHandler)
 	}
 
 	// Development-only routes
