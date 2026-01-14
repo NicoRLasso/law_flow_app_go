@@ -89,6 +89,11 @@ func main() {
 		protected.POST("/logout", handlers.LogoutHandler)
 		protected.GET("/api/me", handlers.GetCurrentUserHandler)
 
+		// Profile settings (all authenticated users)
+		protected.GET("/profile", handlers.ProfileSettingsPageHandler)
+		protected.PUT("/api/profile", handlers.UpdateProfileHandler)
+		protected.POST("/api/profile/password", handlers.ChangePasswordHandler)
+
 		// User management page (all users can view)
 		protected.GET("/users", handlers.UsersPageHandler)
 
@@ -107,6 +112,10 @@ func main() {
 			adminRoutes.POST("/api/users", handlers.CreateUser)
 			adminRoutes.GET("/api/users/:id/delete-confirm", handlers.GetUserDeleteConfirm)
 			adminRoutes.DELETE("/api/users/:id", handlers.DeleteUser)
+
+			// Firm settings (admin only)
+			adminRoutes.GET("/firm/settings", handlers.FirmSettingsPageHandler)
+			adminRoutes.PUT("/api/firm/settings", handlers.UpdateFirmHandler)
 		}
 
 		// Case request routes (admin and lawyer only)

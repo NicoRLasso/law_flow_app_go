@@ -1,0 +1,288 @@
+package pages
+
+import (
+	"law_flow_app_go/models"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ ProfileSettings(title string, user *models.User, firm *models.Firm) {
+	@layouts.Base(title) {
+		<div class="min-h-screen bg-background">
+			<!-- Navigation Bar -->
+			@components.Navbar(user, firm, "/profile")
+			<!-- Main Content -->
+			<main class="container mx-auto px-6 py-8 flex justify-center">
+				<div class="w-full max-w-6xl" x-data="{ activeTab: 'profile' }">
+					<!-- Header -->
+					<div class="text-center mb-8">
+						<h1 class="text-3xl font-bold tracking-tight">Profile Settings</h1>
+						<p class="text-muted-foreground mt-1">Manage your personal information and account settings</p>
+					</div>
+					<!-- Layout with Sidebar -->
+					<div class="flex gap-6">
+						<!-- Sidebar Navigation -->
+						<aside class="w-64 flex-shrink-0">
+							<nav class="glass-panel rounded-2xl p-4 border border-white/10 sticky top-24">
+								<ul class="space-y-2">
+									<li>
+										<button
+											@click="activeTab = 'profile'"
+											:class="activeTab === 'profile' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+											</svg>
+											<span>Profile</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'security'"
+											:class="activeTab === 'security' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+											</svg>
+											<span>Security</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'account'"
+											:class="activeTab === 'account' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+											</svg>
+											<span>Account Info</span>
+										</button>
+									</li>
+								</ul>
+							</nav>
+						</aside>
+						<!-- Main Content Area -->
+						<div class="flex-1 space-y-6">
+							<!-- Profile Tab -->
+							<div x-show="activeTab === 'profile'" x-transition class="space-y-6">
+								<!-- Profile Information Card -->
+								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+										</svg>
+										Personal Information
+									</h2>
+									<form
+										hx-put="/api/profile"
+										hx-target="#profile-message"
+										hx-swap="innerHTML"
+										class="space-y-4"
+									>
+										<!-- Name -->
+										<div>
+											<label for="name" class="block text-sm font-medium text-foreground mb-2">
+												Full Name <span class="text-red-500">*</span>
+											</label>
+											<input
+												type="text"
+												id="name"
+												name="name"
+												value={ user.Name }
+												required
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- Email -->
+										<div>
+											<label for="email" class="block text-sm font-medium text-foreground mb-2">
+												Email Address <span class="text-red-500">*</span>
+											</label>
+											<input
+												type="email"
+												id="email"
+												name="email"
+												value={ user.Email }
+												required
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- Phone Number -->
+										<div>
+											<label for="phone_number" class="block text-sm font-medium text-foreground mb-2">
+												Phone Number
+											</label>
+											<input
+												type="tel"
+												id="phone_number"
+												name="phone_number"
+												if user.PhoneNumber != nil {
+													value={ *user.PhoneNumber }
+												}
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- Address -->
+										<div>
+											<label for="address" class="block text-sm font-medium text-foreground mb-2">
+												Address
+											</label>
+											<input
+												type="text"
+												id="address"
+												name="address"
+												if user.Address != nil {
+													value={ *user.Address }
+												}
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- Document Number -->
+										<div>
+											<label for="document_number" class="block text-sm font-medium text-foreground mb-2">
+												Document Number
+											</label>
+											<input
+												type="text"
+												id="document_number"
+												name="document_number"
+												if user.DocumentNumber != nil {
+													value={ *user.DocumentNumber }
+												}
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- Message Container -->
+										<div id="profile-message"></div>
+										<!-- Submit Button -->
+										<div class="flex justify-end pt-4">
+											<button
+												type="submit"
+												class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
+											>
+												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+												</svg>
+												<span>Save Changes</span>
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- Security Tab -->
+							<div x-show="activeTab === 'security'" x-transition class="space-y-6">
+								<!-- Password Change Card -->
+								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+										</svg>
+										Change Password
+									</h2>
+									<form
+										hx-post="/api/profile/password"
+										hx-target="#password-message"
+										hx-swap="innerHTML"
+										class="space-y-4"
+										x-data="{ resetForm() { this.$el.reset(); } }"
+										@password-changed.window="resetForm()"
+									>
+										<!-- Current Password -->
+										<div>
+											<label for="current_password" class="block text-sm font-medium text-foreground mb-2">
+												Current Password <span class="text-red-500">*</span>
+											</label>
+											<input
+												type="password"
+												id="current_password"
+												name="current_password"
+												required
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- New Password -->
+										<div>
+											<label for="new_password" class="block text-sm font-medium text-foreground mb-2">
+												New Password <span class="text-red-500">*</span>
+											</label>
+											<input
+												type="password"
+												id="new_password"
+												name="new_password"
+												required
+												minlength="8"
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+											<p class="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
+										</div>
+										<!-- Confirm Password -->
+										<div>
+											<label for="confirm_password" class="block text-sm font-medium text-foreground mb-2">
+												Confirm New Password <span class="text-red-500">*</span>
+											</label>
+											<input
+												type="password"
+												id="confirm_password"
+												name="confirm_password"
+												required
+												minlength="8"
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+										</div>
+										<!-- Message Container -->
+										<div id="password-message"></div>
+										<!-- Submit Button -->
+										<div class="flex justify-end pt-4">
+											<button
+												type="submit"
+												class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
+											>
+												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+												</svg>
+												<span>Change Password</span>
+											</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- Account Info Tab -->
+							<div x-show="activeTab === 'account'" x-transition class="space-y-6">
+								<!-- Account Info -->
+								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+									<h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+										</svg>
+										Account Information
+									</h2>
+									<div class="space-y-3 text-sm">
+										<div class="flex justify-between py-2 border-b border-white/5">
+											<span class="text-muted-foreground">Role</span>
+											<span class="font-medium text-foreground uppercase">{ user.Role }</span>
+										</div>
+										<div class="flex justify-between py-2 border-b border-white/5">
+											<span class="text-muted-foreground">Status</span>
+											if user.IsActive {
+												<span class="px-2 py-1 bg-green-500/10 text-green-400 rounded-lg text-xs font-medium">Active</span>
+											} else {
+												<span class="px-2 py-1 bg-red-500/10 text-red-400 rounded-lg text-xs font-medium">Inactive</span>
+											}
+										</div>
+										<div class="flex justify-between py-2">
+											<span class="text-muted-foreground">Firm</span>
+											<span class="font-medium text-foreground">{ firm.Name }</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}

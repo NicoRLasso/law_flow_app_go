@@ -132,3 +132,76 @@ func FirmSetupPostHandler(c echo.Context) error {
 
 	return c.Redirect(http.StatusSeeOther, "/dashboard")
 }
+
+// FirmSettingsPageHandler renders the firm settings page (admin only)
+func FirmSettingsPageHandler(c echo.Context) error {
+	user := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	// Render the firm settings page
+	component := pages.FirmSettings("Firm Settings | Law Flow", user, firm)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// UpdateFirmHandler updates the firm information (admin only)
+func UpdateFirmHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	// Parse form data
+	name := strings.TrimSpace(c.FormValue("name"))
+	country := strings.TrimSpace(c.FormValue("country"))
+	timezone := strings.TrimSpace(c.FormValue("timezone"))
+	address := strings.TrimSpace(c.FormValue("address"))
+	city := strings.TrimSpace(c.FormValue("city"))
+	phone := strings.TrimSpace(c.FormValue("phone"))
+	description := strings.TrimSpace(c.FormValue("description"))
+	billingEmail := strings.TrimSpace(c.FormValue("billing_email"))
+	infoEmail := strings.TrimSpace(c.FormValue("info_email"))
+	noreplyEmail := strings.TrimSpace(c.FormValue("noreply_email"))
+
+	// Validate required fields
+	if name == "" || country == "" || billingEmail == "" {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Firm name, country, and billing email are required</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Firm name, country, and billing email are required")
+	}
+
+	// Set default timezone if not provided
+	if timezone == "" {
+		timezone = "UTC"
+	}
+
+	// Update firm fields
+	firm.Name = name
+	firm.Country = country
+	firm.Timezone = timezone
+	firm.Address = address
+	firm.City = city
+	firm.Phone = phone
+	firm.Description = description
+	firm.BillingEmail = billingEmail
+	firm.InfoEmail = infoEmail
+	firm.NoreplyEmail = noreplyEmail
+
+	// Save changes
+	if err := db.DB.Save(firm).Error; err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to update firm settings. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update firm settings")
+	}
+
+	// Log security event
+	services.LogSecurityEvent("FIRM_UPDATED", currentUser.ID, "Admin updated firm settings: "+firm.ID)
+
+	// Check if this is an HTMX request
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm mt-2">Firm settings updated successfully!</div>`)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Firm settings updated successfully",
+	})
+}
