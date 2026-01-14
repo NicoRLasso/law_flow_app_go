@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@source "../**/*.html";
+@source "../../templates/**/*.templ";
+
 @theme {
   /* Custom Colors */
   --color-background-deep: #020203;

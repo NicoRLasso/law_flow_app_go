@@ -18,7 +18,7 @@ templ CaseDetail(title string, user *models.User, firm *models.Firm, caseRecord 
 					<!-- Header with Back Button -->
 					<div class="flex items-center justify-between">
 						<div class="flex items-center gap-4">
-							<a 
+							<a
 								href="/cases"
 								class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
 								title="Back to Cases"
@@ -35,8 +35,105 @@ templ CaseDetail(title string, user *models.User, firm *models.Firm, caseRecord 
 						@CaseStatusBadge(caseRecord.Status)
 					</div>
 
-					<!-- Case Information Grid -->
-					<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+					<!-- Tabs -->
+					<div class="glass-panel rounded-xl border border-white/10">
+						<!-- Tab Navigation -->
+						<div class="border-b border-white/10">
+							<nav class="flex gap-4 px-6" role="tablist">
+								<button
+									type="button"
+									role="tab"
+									aria-selected="true"
+									aria-controls="resumen-tab"
+									data-tab="resumen"
+									class="tab-button active px-4 py-3 text-sm font-semibold border-b-2 border-accent text-accent transition-all duration-200"
+									onclick="switchTab('resumen')"
+								>
+									Summary
+								</button>
+								<button
+									type="button"
+									role="tab"
+									aria-selected="false"
+									aria-controls="documents-tab"
+									data-tab="documents"
+									class="tab-button px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-muted-foreground hover:text-foreground transition-all duration-200"
+									onclick="switchTab('documents')"
+								>
+									Documents
+								</button>
+							</nav>
+						</div>
+
+						<!-- Tab Content -->
+						<div class="p-6">
+							<!-- Resumen Tab -->
+							<div id="resumen-tab" class="tab-content active">
+								@CaseResumenTab(caseRecord)
+							</div>
+
+							<!-- Documents Tab -->
+							<div id="documents-tab" class="tab-content hidden">
+								@CaseDocumentsTab(caseRecord)
+							</div>
+						</div>
+					</div>
+
+					<script>
+						function switchTab(tabName) {
+							// Update tab buttons
+							document.querySelectorAll('.tab-button').forEach(btn => {
+								const isActive = btn.dataset.tab === tabName;
+								btn.classList.toggle('active', isActive);
+								btn.classList.toggle('border-accent', isActive);
+								btn.classList.toggle('text-accent', isActive);
+								btn.classList.toggle('border-transparent', !isActive);
+								btn.classList.toggle('text-muted-foreground', !isActive);
+								btn.setAttribute('aria-selected', isActive);
+							});
+
+							// Update tab content
+							document.querySelectorAll('.tab-content').forEach(content => {
+								const isActive = content.id === tabName + '-tab';
+								content.classList.toggle('hidden', !isActive);
+								content.classList.toggle('active', isActive);
+							});
+
+							// Load documents if switching to documents tab
+							if (tabName === 'documents') {
+								const documentsContainer = document.getElementById('case-documents-list');
+								if (documentsContainer && !documentsContainer.dataset.loaded) {
+									htmx.trigger(documentsContainer, 'loadDocuments');
+								}
+							}
+						}
+
+						function openUploadModal() {
+							const modal = document.getElementById('upload-document-modal');
+							modal.classList.remove('hidden');
+							modal.style.display = 'flex';
+						}
+
+						function closeUploadModal() {
+							const modal = document.getElementById('upload-document-modal');
+							modal.classList.add('hidden');
+							modal.style.display = 'none';
+							document.getElementById('upload-form').reset();
+						}
+					</script>
+				</div>
+			</main>
+
+			<!-- Upload Document Modal (outside main content) -->
+			@UploadDocumentModal(caseRecord)
+		</div>
+	}
+}
+
+// CaseResumenTab renders the summary tab content
+templ CaseResumenTab(caseRecord models.Case) {
+	<!-- Case Information Grid -->
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 						<!-- Left Column -->
 						<div class="space-y-6">
 							<!-- Case Information -->
@@ -120,104 +217,163 @@ templ CaseDetail(title string, user *models.User, firm *models.Firm, caseRecord 
 							</div>
 						</div>
 
-						<!-- Right Column -->
-						<div class="space-y-6">
-							<!-- Assignment -->
-							<div class="glass-panel p-6 rounded-xl border border-white/10">
-								<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-									</svg>
-									Assignment
-								</h2>
-								<div>
-									<label class="text-sm font-medium text-muted-foreground">Assigned Lawyer</label>
-									if caseRecord.AssignedTo != nil {
-										<p class="text-foreground mt-1">{ caseRecord.AssignedTo.Name }</p>
-									} else {
-										<p class="text-muted-foreground mt-1 italic">Unassigned</p>
+		<!-- Right Column -->
+		<div class="space-y-6">
+			<!-- Assignment -->
+			<div class="glass-panel p-6 rounded-xl border border-white/10">
+				<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+					</svg>
+					Assignment
+				</h2>
+				<div>
+					<label class="text-sm font-medium text-muted-foreground">Assigned Lawyer</label>
+					if caseRecord.AssignedTo != nil {
+						<p class="text-foreground mt-1">{ caseRecord.AssignedTo.Name }</p>
+					} else {
+						<p class="text-muted-foreground mt-1 italic">Unassigned</p>
+					}
+				</div>
+			</div>
+
+			<!-- Classification -->
+			if caseRecord.Domain != nil || caseRecord.Branch != nil || len(caseRecord.Subtypes) > 0 {
+				<div class="glass-panel p-6 rounded-xl border border-white/10">
+					<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+						</svg>
+						Classification
+					</h2>
+					<div class="space-y-4">
+						if caseRecord.Domain != nil {
+							<div>
+								<label class="text-sm font-medium text-muted-foreground">Domain</label>
+								<p class="text-foreground mt-1">{ caseRecord.Domain.Name }</p>
+							</div>
+						}
+						if caseRecord.Branch != nil {
+							<div>
+								<label class="text-sm font-medium text-muted-foreground">Branch</label>
+								<p class="text-foreground mt-1">{ caseRecord.Branch.Name }</p>
+							</div>
+						}
+						if len(caseRecord.Subtypes) > 0 {
+							<div>
+								<label class="text-sm font-medium text-muted-foreground">Subtypes</label>
+								<div class="flex flex-wrap gap-2 mt-2">
+									for _, subtype := range caseRecord.Subtypes {
+										<span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-sm text-foreground">
+											{ subtype.Name }
+										</span>
 									}
 								</div>
 							</div>
-
-							<!-- Classification -->
-							if caseRecord.Domain != nil || caseRecord.Branch != nil || len(caseRecord.Subtypes) > 0 {
-								<div class="glass-panel p-6 rounded-xl border border-white/10">
-									<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-										</svg>
-										Classification
-									</h2>
-									<div class="space-y-4">
-										if caseRecord.Domain != nil {
-											<div>
-												<label class="text-sm font-medium text-muted-foreground">Domain</label>
-												<p class="text-foreground mt-1">{ caseRecord.Domain.Name }</p>
-											</div>
-										}
-										if caseRecord.Branch != nil {
-											<div>
-												<label class="text-sm font-medium text-muted-foreground">Branch</label>
-												<p class="text-foreground mt-1">{ caseRecord.Branch.Name }</p>
-											</div>
-										}
-										if len(caseRecord.Subtypes) > 0 {
-											<div>
-												<label class="text-sm font-medium text-muted-foreground">Subtypes</label>
-												<div class="flex flex-wrap gap-2 mt-2">
-													for _, subtype := range caseRecord.Subtypes {
-														<span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-sm text-foreground">
-															{ subtype.Name }
-														</span>
-													}
-												</div>
-											</div>
-										}
-									</div>
-								</div>
-							}
-
-							<!-- Documents -->
-							<div class="glass-panel p-6 rounded-xl border border-white/10">
-								<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-									</svg>
-									Documents
-								</h2>
-								if len(caseRecord.Documents) > 0 {
-									<div class="space-y-3">
-										for _, doc := range caseRecord.Documents {
-											<div class="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
-												<div class="flex items-center gap-3 flex-1 min-w-0">
-													<svg class="w-5 h-5 text-muted-foreground flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-													</svg>
-													<div class="min-w-0 flex-1">
-														<p class="text-sm font-medium text-foreground truncate">{ doc.FileOriginalName }</p>
-														<p class="text-xs text-muted-foreground">{ doc.DocumentType }</p>
-													</div>
-												</div>
-												<a
-													href={ templ.SafeURL("/api/cases/" + caseRecord.ID + "/documents/" + doc.ID + "/download") }
-													class="px-3 py-1.5 bg-accent/20 text-accent hover:bg-accent/30 rounded-lg text-sm font-medium transition-all duration-200 flex-shrink-0"
-												>
-													Download
-												</a>
-											</div>
-										}
-									</div>
-								} else {
-									<p class="text-sm text-muted-foreground text-center py-8">No documents attached</p>
-								}
-							</div>
-						</div>
+						}
 					</div>
 				</div>
-			</main>
+			}
 		</div>
-	}
+	</div>
+}
+
+// CaseDocumentsTab renders the documents tab content
+templ CaseDocumentsTab(caseRecord models.Case) {
+	<div class="space-y-6">
+		<!-- Header with Upload Button -->
+		<div class="flex items-center justify-between">
+			<h2 class="text-xl font-semibold">Case Documents</h2>
+			<button
+				type="button"
+				onclick="openUploadModal()"
+				class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 flex items-center gap-2"
+			>
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+				</svg>
+				Upload Document
+			</button>
+		</div>
+
+		<!-- Document Filters -->
+		<div class="glass-panel p-4 rounded-xl border border-white/10">
+			<div class="flex flex-wrap gap-4">
+				<!-- Keyword Search -->
+				<div class="flex-1 min-w-[200px]">
+					<input
+						type="text"
+						id="doc-keyword"
+						placeholder="Search documents..."
+						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+					/>
+				</div>
+
+				<!-- Document Type Filter -->
+				<div class="min-w-[150px]">
+					<select
+						id="doc-type"
+						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+					>
+						<option value="">All Types</option>
+						<option value="initial_request">Initial Request</option>
+						<option value="evidence">Evidence</option>
+						<option value="contract">Contract</option>
+						<option value="correspondence">Correspondence</option>
+						<option value="other">Other</option>
+					</select>
+				</div>
+
+				<!-- Apply Filter Button -->
+				<button
+					type="button"
+					onclick="filterDocuments()"
+					class="px-6 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
+				>
+					Apply Filters
+				</button>
+			</div>
+		</div>
+
+		<!-- Documents Table Container -->
+		<div
+			id="case-documents-list"
+			hx-get={ "/api/cases/" + caseRecord.ID + "/documents" }
+			hx-trigger="loadDocuments, load"
+			hx-swap="innerHTML"
+		>
+			<!-- Loading state -->
+			<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
+				<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+				<p class="text-muted-foreground">Loading documents...</p>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function filterDocuments() {
+			const keyword = document.getElementById('doc-keyword').value;
+			const docType = document.getElementById('doc-type').value;
+			const caseID = '{ caseRecord.ID }';
+
+			let url = `/api/cases/${caseID}/documents?`;
+			if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
+			if (docType) url += `document_type=${encodeURIComponent(docType)}&`;
+
+			// Remove trailing & or ?
+			url = url.replace(/[&?]$/, '');
+
+			// Trigger HTMX request
+			const container = document.getElementById('case-documents-list');
+			htmx.ajax('GET', url, {
+				target: '#case-documents-list',
+				swap: 'innerHTML'
+			});
+
+			// Mark as loaded
+			container.dataset.loaded = 'true';
+		}
+	</script>
 }
 
 // CaseStatusBadge renders a status badge for cases
@@ -252,4 +408,106 @@ func getCaseStatusLabel(status string) string {
 	default:
 		return status
 	}
+}
+
+// UploadDocumentModal renders the document upload modal
+templ UploadDocumentModal(caseRecord models.Case) {
+	<!-- Upload Document Modal -->
+	<div id="upload-document-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999; display: none;" onclick="if(event.target === this) closeUploadModal()">
+		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-2xl font-bold">Upload Document</h3>
+				<button
+					type="button"
+					onclick="closeUploadModal()"
+					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Upload Form -->
+			<form
+				id="upload-form"
+				hx-post={ "/api/cases/" + caseRecord.ID + "/documents/upload" }
+				hx-encoding="multipart/form-data"
+				hx-target="#upload-response"
+				hx-swap="innerHTML"
+			>
+				<div class="space-y-4">
+					<!-- File Upload -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Document File <span class="text-red-400">*</span>
+						</label>
+						<input
+							type="file"
+							name="file"
+							required
+							accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-accent-foreground hover:file:bg-accent/90"
+						/>
+						<p class="text-xs text-muted-foreground mt-1">Accepted formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)</p>
+					</div>
+
+					<!-- Document Type -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Document Type <span class="text-red-400">*</span>
+						</label>
+						<select
+							name="document_type"
+							required
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>
+							<option value="">Select a type...</option>
+							<option value="evidence">Evidence</option>
+							<option value="contract">Contract</option>
+							<option value="correspondence">Correspondence</option>
+							<option value="legal_brief">Legal Brief</option>
+							<option value="court_filing">Court Filing</option>
+							<option value="invoice">Invoice</option>
+							<option value="other">Other</option>
+						</select>
+					</div>
+
+					<!-- Description -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Description
+						</label>
+						<textarea
+							name="description"
+							rows="3"
+							placeholder="Optional description of the document..."
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						></textarea>
+					</div>
+
+					<!-- Response Container -->
+					<div id="upload-response"></div>
+
+					<!-- Action Buttons -->
+					<div class="flex items-center gap-3 pt-4">
+						<button
+							type="submit"
+							class="flex-1 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
+						>
+							Upload
+						</button>
+						<button
+							type="button"
+							onclick="closeUploadModal()"
+							class="px-6 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-lg font-semibold transition-all duration-200"
+						>
+							Cancel
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
 }

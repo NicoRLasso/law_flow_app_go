@@ -22,6 +22,7 @@ type UploadResult struct {
 	FileOriginalName string
 	FilePath         string
 	FileSize         int64
+	MimeType         string
 }
 
 // ValidatePDFUpload checks if the uploaded file is a valid PDF within size limits
@@ -143,4 +144,105 @@ func DeleteUploadedFile(filePath string) error {
 // GetFileURL generates a URL for file access (for authenticated downloads)
 func GetFileURL(requestID string) string {
 	return fmt.Sprintf("/api/case-requests/%s/file", requestID)
+}
+
+// ValidateDocumentUpload checks if the uploaded file is valid within size limits
+func ValidateDocumentUpload(fileHeader *multipart.FileHeader) error {
+	// Check file size
+	if fileHeader.Size > MaxUploadSize {
+		return fmt.Errorf("file size exceeds maximum allowed size of 10MB")
+	}
+
+	// Check file extension
+	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
+	allowedExtensions := []string{".pdf", ".doc", ".docx", ".txt", ".jpg", ".jpeg", ".png"}
+
+	isAllowed := false
+	for _, allowed := range allowedExtensions {
+		if ext == allowed {
+			isAllowed = true
+			break
+		}
+	}
+
+	if !isAllowed {
+		return fmt.Errorf("file type not allowed. Accepted formats: PDF, DOC, DOCX, TXT, JPG, PNG")
+	}
+
+	return nil
+}
+
+// SaveCaseDocument saves a document file for a specific case
+func SaveCaseDocument(fileHeader *multipart.FileHeader, uploadDir string, firmID string, caseID string) (*UploadResult, error) {
+	// Create case-specific directory
+	caseDir := filepath.Join(uploadDir, "firms", firmID, "cases", caseID)
+	if err := os.MkdirAll(caseDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create upload directory: %w", err)
+	}
+
+	// Generate secure filename using SHA256 hash + timestamp
+	file, err := fileHeader.Open()
+	if err != nil {
+		return nil, fmt.Errorf("failed to open uploaded file: %w", err)
+	}
+	defer file.Close()
+
+	// Calculate hash
+	hash := sha256.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return nil, fmt.Errorf("failed to calculate file hash: %w", err)
+	}
+	hashStr := hex.EncodeToString(hash.Sum(nil))[:16] // Use first 16 chars
+
+	// Get file extension
+	ext := filepath.Ext(fileHeader.Filename)
+
+	// Generate filename: hash_timestamp.ext
+	timestamp := time.Now().Unix()
+	fileName := fmt.Sprintf("%s_%d%s", hashStr, timestamp, ext)
+	filePath := filepath.Join(caseDir, fileName)
+
+	// Verify path is within upload directory (prevent path traversal)
+	absUploadDir, err := filepath.Abs(uploadDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve upload directory: %w", err)
+	}
+	absFilePath, err := filepath.Abs(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve file path: %w", err)
+	}
+	if !strings.HasPrefix(absFilePath, absUploadDir) {
+		return nil, fmt.Errorf("invalid file path: path traversal detected")
+	}
+
+	// Reset file pointer to beginning
+	if _, err := file.Seek(0, 0); err != nil {
+		return nil, fmt.Errorf("failed to reset file pointer: %w", err)
+	}
+
+	// Create destination file
+	dst, err := os.Create(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create destination file: %w", err)
+	}
+	defer dst.Close()
+
+	// Copy file content
+	written, err := io.Copy(dst, file)
+	if err != nil {
+		// Clean up on error
+		os.Remove(filePath)
+		return nil, fmt.Errorf("failed to save file: %w", err)
+	}
+
+	// Get MIME type
+	mimeType := fileHeader.Header.Get("Content-Type")
+
+	return &UploadResult{
+		FileName:         fileName,
+		FileOriginalName: fileHeader.Filename,
+		FilePath:         filePath,
+		FileSize:         written,
+		MimeType:         mimeType,
+	}, nil
 }

@@ -146,6 +146,9 @@ func main() {
 		caseRoutes.Use(middleware.RequireRole("admin", "lawyer"))
 		{
 			caseRoutes.GET("", handlers.GetCasesHandler)
+			caseRoutes.GET("/:id/documents", handlers.GetCaseDocumentsHandler)
+			caseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
+			caseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
 		}
 
 		// Lawyer filter route (admin only) - add to adminRoutes
