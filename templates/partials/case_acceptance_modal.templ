@@ -1,0 +1,463 @@
+package partials
+
+import (
+	"law_flow_app_go/models"
+)
+
+// CaseAcceptanceModal renders the main acceptance modal container
+templ CaseAcceptanceModal(request models.CaseRequest) {
+	<div
+		id="case-acceptance-modal"
+		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+		x-data="{ 
+			currentStep: 1,
+			isNewClient: false,
+			selectedLawyerId: '',
+			classification: { domainId: '', branchId: '', subtypeIds: [] },
+			loading: false,
+			errors: {}
+		}"
+		@htmx:after-swap.window="
+			const url = $event.detail.pathInfo.requestPath;
+			if (url.includes('/accept/client')) currentStep = 2;
+			else if (url.includes('/accept/lawyer')) currentStep = 3;
+			else if (url.includes('/accept/classification')) currentStep = 4;
+		"
+		x-show="true"
+		x-transition:enter="transition ease-out duration-300"
+		x-transition:enter-start="opacity-0"
+		x-transition:enter-end="opacity-100"
+		x-transition:leave="transition ease-in duration-200"
+		x-transition:leave-start="opacity-100"
+		x-transition:leave-end="opacity-0"
+		@keydown.escape.window="document.getElementById('case-acceptance-modal').remove()"
+		@click.self="document.getElementById('case-acceptance-modal').remove()"
+	>
+		<div
+			class="glass-panel rounded-2xl border border-white/10 max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+			x-show="true"
+			x-transition:enter="transition ease-out duration-300"
+			x-transition:enter-start="opacity-0 scale-95"
+			x-transition:enter-end="opacity-100 scale-100"
+			x-transition:leave="transition ease-in duration-200"
+			x-transition:leave-start="opacity-100 scale-100"
+			x-transition:leave-end="opacity-0 scale-95"
+			@click.stop
+		>
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between p-6 border-b border-white/10">
+				<div class="flex items-center gap-4">
+					<div class="p-3 bg-accent/20 rounded-xl">
+						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+					</div>
+					<div>
+						<h2 class="text-2xl font-bold text-foreground">Accept Case Request</h2>
+						<p class="text-sm text-muted-foreground">{ request.Name }</p>
+					</div>
+				</div>
+				<button
+					class="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
+					@click="document.getElementById('case-acceptance-modal').remove()"
+				>
+					<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Step Indicator -->
+			@StepIndicator()
+
+			<!-- Modal Body - Will be replaced by HTMX -->
+			<div id="acceptance-step-container" class="overflow-y-auto max-h-[calc(90vh-200px)]">
+				<!-- Step 1: Client Review -->
+				@ClientReviewStep(request)
+			</div>
+		</div>
+	</div>
+}
+
+// StepIndicator shows the progress through the 4 steps
+templ StepIndicator() {
+	<div class="px-6 py-4 border-b border-white/10">
+		<div class="flex items-center justify-between max-w-2xl mx-auto">
+			<!-- Step 1 -->
+			<div class="flex items-center flex-1">
+				<div class="flex items-center gap-2">
+					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 1">1</div>
+					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 1">1</div>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 1">Client</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 1">Client</span>
+				</div>
+				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 1 ? 'bg-accent' : 'bg-white/10'"></div>
+			</div>
+
+			<!-- Step 2 -->
+			<div class="flex items-center flex-1">
+				<div class="flex items-center gap-2">
+					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 2">2</div>
+					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 2">2</div>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 2">Lawyer</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 2">Lawyer</span>
+				</div>
+				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 2 ? 'bg-accent' : 'bg-white/10'"></div>
+			</div>
+
+			<!-- Step 3 -->
+			<div class="flex items-center flex-1">
+				<div class="flex items-center gap-2">
+					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 3">3</div>
+					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 3">3</div>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 3">Classification</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 3">Classification</span>
+				</div>
+				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 3 ? 'bg-accent' : 'bg-white/10'"></div>
+			</div>
+
+			<!-- Step 4 -->
+			<div class="flex items-center">
+				<div class="flex items-center gap-2">
+					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 4">4</div>
+					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 4">4</div>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 4">Review</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 4">Review</span>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// ClientReviewStep shows the client information from the request
+templ ClientReviewStep(request models.CaseRequest) {
+	<div class="p-6">
+		<h3 class="text-lg font-semibold text-foreground mb-4">Review Client Information</h3>
+		
+		<div class="glass-panel p-6 rounded-xl border border-white/5 space-y-4">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div>
+					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</label>
+					<p class="text-base text-foreground font-medium">{ request.Name }</p>
+				</div>
+				<div>
+					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
+					<p class="text-base text-foreground font-medium">{ request.Email }</p>
+				</div>
+				<div>
+					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Phone</label>
+					<p class="text-base text-foreground font-medium">{ request.Phone }</p>
+				</div>
+				<div>
+					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Document</label>
+					<p class="text-base text-foreground font-medium">
+						if request.DocumentTypeOption != nil {
+							{ request.DocumentTypeOption.Label } - { request.DocumentNumber }
+						} else {
+							{ request.DocumentType } - { request.DocumentNumber }
+						}
+					</p>
+				</div>
+			</div>
+			
+			<div>
+				<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Description</label>
+				<p class="text-base text-foreground leading-relaxed whitespace-pre-wrap">{ request.Description }</p>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<div class="flex items-center justify-end gap-3 mt-6">
+			<button
+				type="button"
+				class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+				@click="document.getElementById('case-acceptance-modal').remove()"
+			>
+				Cancel
+			</button>
+			<button
+				type="button"
+				class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200"
+				hx-post={ "/api/case-requests/" + request.ID + "/accept/client" }
+				hx-target="#acceptance-step-container"
+				hx-swap="innerHTML"
+			>
+				Next: Assign Lawyer
+			</button>
+		</div>
+	</div>
+}
+
+// LawyerSelectionStep shows the lawyer selection interface
+templ LawyerSelectionStep(lawyers []models.User, isNewClient bool, request models.CaseRequest) {
+	<div class="p-6">
+		<div class="flex items-center justify-between mb-4">
+			<h3 class="text-lg font-semibold text-foreground">Assign Lawyer</h3>
+			if isNewClient {
+				<span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">New Client</span>
+			} else {
+				<span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold">Existing Client</span>
+			}
+		</div>
+
+		<form
+			id="lawyer-form"
+			hx-post={ "/api/case-requests/" + request.ID + "/accept/lawyer" }
+			hx-target="#acceptance-step-container"
+			hx-swap="innerHTML"
+		>
+			<div class="space-y-3 max-h-96 overflow-y-auto">
+				if len(lawyers) == 0 {
+					<div class="glass-panel p-8 rounded-xl border border-white/5 text-center">
+						<p class="text-muted-foreground">No active lawyers found. Please create a lawyer user first.</p>
+						<a href="/users" class="text-accent hover:underline text-sm mt-2 inline-block">Go to Users</a>
+					</div>
+				} else {
+					for _, lawyer := range lawyers {
+						<label class="glass-panel p-4 rounded-lg border border-white/5 hover:border-accent/50 cursor-pointer transition-all duration-200 flex items-center gap-4">
+							<input
+								type="radio"
+								name="lawyer_id"
+								value={ lawyer.ID }
+								class="w-4 h-4 text-accent focus:ring-accent focus:ring-2"
+								required
+							/>
+							<div class="flex-1">
+								<div class="flex items-center gap-2">
+									<span class="font-medium text-foreground">{ lawyer.Name }</span>
+									<span class="px-2 py-0.5 bg-accent/20 text-accent rounded text-xs">{ lawyer.Role }</span>
+								</div>
+								<span class="text-sm text-muted-foreground">{ lawyer.Email }</span>
+							</div>
+						</label>
+					}
+				}
+			</div>
+
+			<!-- Footer -->
+			<div class="flex items-center justify-end gap-3 mt-6">
+				<button
+					type="button"
+					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					@click="document.getElementById('case-acceptance-modal').remove()"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200"
+					if len(lawyers) == 0 {
+						disabled
+					}
+				>
+					Next: Classification
+				</button>
+			</div>
+		</form>
+	</div>
+}
+
+// ClassificationStep shows the classification selection interface
+templ ClassificationStep(domains []models.CaseDomain, request models.CaseRequest, lawyerID string) {
+	<div class="p-6">
+		<h3 class="text-lg font-semibold text-foreground mb-4">Case Classification (Optional)</h3>
+		
+		<form
+			id="classification-form"
+			hx-post={ "/api/case-requests/" + request.ID + "/accept/classification" }
+			hx-target="#acceptance-step-container"
+			hx-swap="innerHTML"
+			x-data="{ selectedDomain: '', selectedBranch: '', branches: [], subtypes: [] }"
+		>
+			<input type="hidden" name="lawyer_id" value={ lawyerID }/>
+			
+			<div class="space-y-4">
+				<!-- Domain Selection -->
+				<div>
+					<label class="text-sm font-medium text-foreground mb-2 block">Domain</label>
+					<select
+						name="domain_id"
+						x-model="selectedDomain"
+						@change="
+							selectedBranch = '';
+							subtypes = [];
+							if(selectedDomain) {
+								fetch('/api/case-requests/' + '{ request.ID }' + '/accept/classification?domain_id=' + selectedDomain)
+									.then(r => r.json())
+									.then(data => branches = data.branches || []);
+							} else {
+								branches = [];
+							}
+						"
+						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+					>
+						<option value="">-- Skip Classification --</option>
+						for _, domain := range domains {
+							<option value={ domain.ID }>{ domain.Name }</option>
+						}
+					</select>
+				</div>
+
+				<!-- Branch Selection -->
+				<div x-show="branches.length > 0">
+					<label class="text-sm font-medium text-foreground mb-2 block">Branch</label>
+					<select
+						name="branch_id"
+						x-model="selectedBranch"
+						@change="
+							if(selectedBranch) {
+								fetch('/api/case-requests/' + '{ request.ID }' + '/accept/classification?domain_id=' + selectedDomain + '&branch_id=' + selectedBranch)
+									.then(r => r.json())
+									.then(data => subtypes = data.subtypes || []);
+							} else {
+								subtypes = [];
+							}
+						"
+						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+					>
+						<option value="">-- Select Branch --</option>
+						<template x-for="branch in branches" :key="branch.id">
+							<option :value="branch.id" x-text="branch.name"></option>
+						</template>
+					</select>
+				</div>
+
+				<!-- Subtype Selection -->
+				<div x-show="subtypes.length > 0">
+					<label class="text-sm font-medium text-foreground mb-2 block">Subtypes (Multi-select)</label>
+					<div class="glass-panel p-4 rounded-lg border border-white/5 max-h-48 overflow-y-auto space-y-2">
+						<template x-for="subtype in subtypes" :key="subtype.id">
+							<label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded">
+								<input
+									type="checkbox"
+									name="subtype_ids[]"
+									:value="subtype.id"
+									class="w-4 h-4 text-accent focus:ring-accent focus:ring-2"
+								/>
+								<span class="text-sm text-foreground" x-text="subtype.name"></span>
+							</label>
+						</template>
+					</div>
+				</div>
+			</div>
+
+			<!-- Footer -->
+			<div class="flex items-center justify-end gap-3 mt-6">
+				<button
+					type="button"
+					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					@click="document.getElementById('case-acceptance-modal').remove()"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200"
+				>
+					Next: Review
+				</button>
+			</div>
+		</form>
+	</div>
+}
+
+// ReviewConfirmStep shows the final review before creating the case
+templ ReviewConfirmStep(
+	request models.CaseRequest,
+	lawyer models.User,
+	isNewClient bool,
+	domain *models.CaseDomain,
+	branch *models.CaseBranch,
+	subtypes []models.CaseSubtype,
+	domainID string,
+	branchID string,
+	subtypeIDs []string,
+	lawyerID string,
+) {
+	<div class="p-6">
+		<h3 class="text-lg font-semibold text-foreground mb-4">Review & Confirm</h3>
+		
+		<div class="space-y-4">
+			<!-- Client Info -->
+			<div class="glass-panel p-4 rounded-lg border border-white/5">
+				<div class="flex items-center justify-between mb-2">
+					<h4 class="font-semibold text-foreground">Client</h4>
+					if isNewClient {
+						<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold">New Client</span>
+					} else {
+						<span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-semibold">Existing Client</span>
+					}
+				</div>
+				<p class="text-sm text-foreground">{ request.Name } ({ request.Email })</p>
+			</div>
+
+			<!-- Lawyer Info -->
+			<div class="glass-panel p-4 rounded-lg border border-white/5">
+				<h4 class="font-semibold text-foreground mb-2">Assigned Lawyer</h4>
+				<p class="text-sm text-foreground">{ lawyer.Name } ({ lawyer.Email })</p>
+			</div>
+
+			<!-- Classification Info -->
+			if domain != nil || branch != nil || len(subtypes) > 0 {
+				<div class="glass-panel p-4 rounded-lg border border-white/5">
+					<h4 class="font-semibold text-foreground mb-2">Classification</h4>
+					<div class="space-y-1 text-sm text-foreground">
+						if domain != nil {
+							<p><span class="text-muted-foreground">Domain:</span> { domain.Name }</p>
+						}
+						if branch != nil {
+							<p><span class="text-muted-foreground">Branch:</span> { branch.Name }</p>
+						}
+						if len(subtypes) > 0 {
+							<p class="text-muted-foreground">Subtypes:</p>
+							<ul class="list-disc list-inside ml-2">
+								for _, subtype := range subtypes {
+									<li>{ subtype.Name }</li>
+								}
+							</ul>
+						}
+					</div>
+				</div>
+			} else {
+				<div class="glass-panel p-4 rounded-lg border border-white/5">
+					<h4 class="font-semibold text-foreground mb-2">Classification</h4>
+					<p class="text-sm text-muted-foreground">No classification selected</p>
+				</div>
+			}
+		</div>
+
+		<!-- Finalize Form -->
+		<form
+			id="finalize-form"
+			hx-post={ "/api/case-requests/" + request.ID + "/accept/finalize" }
+			hx-swap="none"
+		>
+			<input type="hidden" name="lawyer_id" value={ lawyerID }/>
+			<input type="hidden" name="domain_id" value={ domainID }/>
+			<input type="hidden" name="branch_id" value={ branchID }/>
+			for _, subtypeID := range subtypeIDs {
+				<input type="hidden" name="subtype_ids[]" value={ subtypeID }/>
+			}
+
+			<!-- Footer -->
+			<div class="flex items-center justify-end gap-3 mt-6">
+				<button
+					type="button"
+					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					@click="document.getElementById('case-acceptance-modal').remove()"
+				>
+					Cancel
+				</button>
+				<button
+					type="submit"
+					class="px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+					</svg>
+					Create Case
+				</button>
+			</div>
+		</form>
+	</div>
+}

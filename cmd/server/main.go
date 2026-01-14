@@ -121,6 +121,20 @@ func main() {
 			caseRequestRoutes.DELETE("/:id", handlers.DeleteCaseRequestHandler)
 		}
 
+		// Case acceptance routes (admin and lawyer only)
+		caseAcceptanceRoutes := protected.Group("/api/case-requests/:id/accept")
+		caseAcceptanceRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			caseAcceptanceRoutes.GET("/start", handlers.StartCaseAcceptanceHandler)
+			caseAcceptanceRoutes.POST("/client", handlers.ProcessClientStepHandler)
+			caseAcceptanceRoutes.GET("/lawyers", handlers.GetLawyerListHandler)
+			caseAcceptanceRoutes.POST("/lawyer", handlers.AssignLawyerStepHandler)
+			caseAcceptanceRoutes.GET("/classification", handlers.GetClassificationOptionsHandler)
+			caseAcceptanceRoutes.POST("/classification", handlers.SaveClassificationStepHandler)
+			caseAcceptanceRoutes.POST("/finalize", handlers.FinalizeCaseCreationHandler)
+			caseAcceptanceRoutes.DELETE("/cancel", handlers.CancelAcceptanceHandler)
+		}
+
 		// Case requests dashboard page
 		protected.GET("/case-requests", handlers.CaseRequestsPageHandler)
 	}

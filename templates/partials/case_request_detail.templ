@@ -6,8 +6,32 @@ import (
 	"strings"
 )
 
+script acceptanceModalListener() {
+	window.addEventListener('show-acceptance-modal', function(event) {
+		const requestId = event.detail.requestId;
+		fetch('/api/case-requests/' + requestId + '/accept/start', {
+			headers: { 'HX-Request': 'true' }
+		})
+		.then(res => res.text())
+		.then(html => {
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = html;
+			const modalElement = tempDiv.firstElementChild;
+			document.body.appendChild(modalElement);
+			if (typeof htmx !== 'undefined') {
+				htmx.process(modalElement);
+			}
+		})
+		.catch(err => {
+			console.error('Failed to load acceptance modal:', err);
+			alert('Failed to load acceptance modal');
+		});
+	});
+}
+
 // CaseRequestDetailModal renders a modal with case request details
 templ CaseRequestDetailModal(request models.CaseRequest) {
+	@acceptanceModalListener()
 	<div
 		id="case-request-detail-modal"
 		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
@@ -51,9 +75,9 @@ templ CaseRequestDetailModal(request models.CaseRequest) {
 						<select
 							class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
 							x-data={ fmt.Sprintf("{ originalStatus: '%s' }", request.Status) }
-							@change={ fmt.Sprintf("if($event.target.value === 'rejected' && originalStatus !== 'rejected') { $dispatch('show-rejection-modal', { requestId: '%s', requestName: '%s' }); $event.target.value = originalStatus; } else { const select = $event.target; const newValue = select.value; select.disabled = true; fetch('/api/case-requests/%s/status', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'HX-Request': 'true' }, body: JSON.stringify({ status: newValue }) }).then(res => { if(res.ok) { window.location.reload(); } else { select.value = originalStatus; select.disabled = false; alert('Failed to update status'); } }).catch(e => { console.error(e); select.value = originalStatus; select.disabled = false; alert('An error occurred'); }); }", request.ID, escapeJS(request.Name), request.ID) }
+							@change={ fmt.Sprintf("if($event.target.value === 'rejected' && originalStatus !== 'rejected') { $dispatch('show-rejection-modal', { requestId: '%s', requestName: '%s' }); $event.target.value = originalStatus; } else if($event.target.value === 'accepted' && originalStatus !== 'accepted') { $dispatch('show-acceptance-modal', { requestId: '%s', requestName: '%s' }); $event.target.value = originalStatus; } else { const select = $event.target; const newValue = select.value; select.disabled = true; fetch('/api/case-requests/%s/status', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'HX-Request': 'true' }, body: JSON.stringify({ status: newValue }) }).then(res => { if(res.ok) { window.location.reload(); } else { select.value = originalStatus; select.disabled = false; alert('Failed to update status'); } }).catch(e => { console.error(e); select.value = originalStatus; select.disabled = false; alert('An error occurred'); }); }", request.ID, escapeJS(request.Name), request.ID, escapeJS(request.Name), request.ID) }
 							id="status-select"
-							disabled?={ request.Status == "rejected" }
+							disabled?={ request.Status == "rejected" || request.Status == "accepted" }
 						>
 							<option value="pending" selected?={ request.Status == "pending" }>Pending</option>
 							<option value="accepted" selected?={ request.Status == "accepted" }>Accepted</option>

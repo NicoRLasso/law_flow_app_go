@@ -285,3 +285,65 @@ func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejection
 		TextBody: textBody,
 	}
 }
+
+// CaseAcceptanceEmailData contains data for the case acceptance email template
+type CaseAcceptanceEmailData struct {
+	ClientName string
+	FirmName   string
+	CaseNumber string
+}
+
+// BuildCaseAcceptanceEmail creates a welcome email for clients when their case is accepted
+func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber string) *Email {
+	data := CaseAcceptanceEmailData{
+		ClientName: clientName,
+		FirmName:   firmName,
+		CaseNumber: caseNumber,
+	}
+
+	htmlBody, textBody, err := loadTemplate("case_acceptance", data)
+	if err != nil {
+		log.Printf("Error loading case acceptance email template: %v", err)
+		// Fallback to simple text email
+		textBody = fmt.Sprintf("Dear %s,\n\nWe are pleased to inform you that %s has accepted your case request.\n\nCase Number: %s\n\nYour assigned lawyer will contact you shortly.\n\nBest regards,\n%s", clientName, firmName, caseNumber, firmName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>We are pleased to inform you that %s has accepted your case request.</p><p><strong>Case Number: %s</strong></p><p>Your assigned lawyer will contact you shortly.</p><p>Best regards,<br>%s</p>", clientName, firmName, caseNumber, firmName)
+	}
+
+	return &Email{
+		To:       []string{clientEmail},
+		Subject:  fmt.Sprintf("Case Accepted - %s", firmName),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
+// LawyerAssignmentEmailData contains data for the lawyer assignment email template
+type LawyerAssignmentEmailData struct {
+	LawyerName string
+	CaseNumber string
+	ClientName string
+}
+
+// BuildLawyerAssignmentEmail creates an assignment notification email for lawyers
+func BuildLawyerAssignmentEmail(lawyerEmail, lawyerName, caseNumber, clientName string) *Email {
+	data := LawyerAssignmentEmailData{
+		LawyerName: lawyerName,
+		CaseNumber: caseNumber,
+		ClientName: clientName,
+	}
+
+	htmlBody, textBody, err := loadTemplate("lawyer_assignment", data)
+	if err != nil {
+		log.Printf("Error loading lawyer assignment email template: %v", err)
+		// Fallback to simple text email
+		textBody = fmt.Sprintf("Dear %s,\n\nA new case has been assigned to you.\n\nCase Number: %s\nClient Name: %s\n\nPlease log in to the dashboard to view the complete case information.\n\nBest regards", lawyerName, caseNumber, clientName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>A new case has been assigned to you.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s</p><p>Please log in to the dashboard to view the complete case information.</p>", lawyerName, caseNumber, clientName)
+	}
+
+	return &Email{
+		To:       []string{lawyerEmail},
+		Subject:  fmt.Sprintf("New Case Assigned - %s", caseNumber),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
