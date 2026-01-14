@@ -37,7 +37,7 @@ func GetUser(c echo.Context) error {
 	// Scope query to current user's firm
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 
-	if err := query.First(&user, "id = ?", id).Error; err != nil {
+	if err := query.Preload("DocumentType").First(&user, "id = ?", id).Error; err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{
 			"error": "User not found",
 		})
@@ -63,6 +63,20 @@ func CreateUser(c echo.Context) error {
 	user.Email = c.FormValue("email")
 	user.Password = c.FormValue("password")
 	user.Role = c.FormValue("role")
+
+	// Handle optional fields
+	if address := c.FormValue("address"); address != "" {
+		user.Address = &address
+	}
+	if phoneNumber := c.FormValue("phone_number"); phoneNumber != "" {
+		user.PhoneNumber = &phoneNumber
+	}
+	if documentTypeID := c.FormValue("document_type_id"); documentTypeID != "" {
+		user.DocumentTypeID = &documentTypeID
+	}
+	if documentNumber := c.FormValue("document_number"); documentNumber != "" {
+		user.DocumentNumber = &documentNumber
+	}
 
 	// Handle checkbox - only present if checked
 	isActiveStr := c.FormValue("is_active")
@@ -173,6 +187,20 @@ func UpdateUser(c echo.Context) error {
 		user.Role = role
 	}
 	user.IsActive = isActiveStr == "true"
+
+	// Handle optional fields
+	if address := c.FormValue("address"); address != "" {
+		user.Address = &address
+	}
+	if phoneNumber := c.FormValue("phone_number"); phoneNumber != "" {
+		user.PhoneNumber = &phoneNumber
+	}
+	if documentTypeID := c.FormValue("document_type_id"); documentTypeID != "" {
+		user.DocumentTypeID = &documentTypeID
+	}
+	if documentNumber := c.FormValue("document_number"); documentNumber != "" {
+		user.DocumentNumber = &documentNumber
+	}
 
 	// Non-admins cannot change firm or role
 	if currentUser.Role != "admin" {
@@ -325,7 +353,7 @@ func GetUserFormEdit(c echo.Context) error {
 	// Scope query to current user's firm
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 
-	if err := query.First(&user, "id = ?", id).Error; err != nil {
+	if err := query.Preload("DocumentType").First(&user, "id = ?", id).Error; err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{
 			"error": "User not found",
 		})

@@ -21,8 +21,15 @@ type User struct {
 	IsActive    bool       `gorm:"not null;default:true" json:"is_active"`
 	LastLoginAt *time.Time `json:"last_login_at"`
 
+	// Optional personal information
+	Address          *string `json:"address,omitempty"`
+	PhoneNumber      *string `json:"phone_number,omitempty"`
+	DocumentTypeID   *string `gorm:"type:uuid" json:"document_type_id,omitempty"` // Foreign key to ChoiceOption
+	DocumentNumber   *string `json:"document_number,omitempty"`
+
 	// Relationships
-	Firm *Firm `gorm:"foreignKey:FirmID" json:"firm,omitempty"`
+	Firm         *Firm         `gorm:"foreignKey:FirmID" json:"firm,omitempty"`
+	DocumentType *ChoiceOption `gorm:"foreignKey:DocumentTypeID" json:"document_type,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID
