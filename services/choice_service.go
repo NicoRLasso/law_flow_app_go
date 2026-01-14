@@ -17,7 +17,7 @@ func GetChoiceOptions(db *gorm.DB, firmID string, categoryKey string) ([]models.
 		Where("choice_categories.key = ?", categoryKey).
 		Where("choice_categories.is_active = ?", true).
 		Where("choice_options.is_active = ?", true).
-		Order("choice_options.order ASC").
+		Order("choice_options.sort_order ASC").
 		Find(&options).Error
 
 	return options, err
@@ -80,10 +80,10 @@ func seedPriorityChoices(db *gorm.DB, firmID string, country string) error {
 
 	// Create priority options
 	priorities := []models.ChoiceOption{
-		{CategoryID: category.ID, Code: "low", Label: "Low", Order: 1, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "medium", Label: "Medium", Order: 2, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "high", Label: "High", Order: 3, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "urgent", Label: "Urgent", Order: 4, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "low", Label: "Low", SortOrder: 1, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "medium", Label: "Medium", SortOrder: 2, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "high", Label: "High", SortOrder: 3, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "urgent", Label: "Urgent", SortOrder: 4, IsActive: true, IsSystem: true},
 	}
 
 	for _, priority := range priorities {
@@ -114,11 +114,11 @@ func seedColombianDocumentTypes(db *gorm.DB, firmID string, country string) erro
 
 	// Create Colombian document type options
 	documentTypes := []models.ChoiceOption{
-		{CategoryID: category.ID, Code: "CC", Label: "Cédula de Ciudadanía (CC)", Order: 1, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "CE", Label: "Cédula de Extranjería (CE)", Order: 2, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "Pasaporte", Label: "Pasaporte", Order: 3, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "NIT", Label: "NIT (Company)", Order: 4, IsActive: true, IsSystem: true},
-		{CategoryID: category.ID, Code: "TI", Label: "Tarjeta de Identidad (TI)", Order: 5, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "CC", Label: "Cédula de Ciudadanía (CC)", SortOrder: 1, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "CE", Label: "Cédula de Extranjería (CE)", SortOrder: 2, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "Pasaporte", Label: "Pasaporte", SortOrder: 3, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "NIT", Label: "NIT (Company)", SortOrder: 4, IsActive: true, IsSystem: true},
+		{CategoryID: category.ID, Code: "TI", Label: "Tarjeta de Identidad (TI)", SortOrder: 5, IsActive: true, IsSystem: true},
 	}
 
 	for _, docType := range documentTypes {

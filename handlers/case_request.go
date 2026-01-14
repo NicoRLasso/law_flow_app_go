@@ -100,13 +100,22 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 		priority = models.PriorityMedium
 	}
 
+	// Resolve document type code to UUID
+	var documentTypeID *string
+	var docTypeOption models.ChoiceOption
+	if err := db.DB.Where("firm_id = ? AND category = ? AND code = ?", firm.ID, "document_type", documentType).
+		First(&docTypeOption).Error; err == nil {
+		documentTypeID = &docTypeOption.ID
+	}
+
 	// Create case request
 	caseRequest := models.CaseRequest{
 		FirmID:         firm.ID,
 		Name:           name,
 		Email:          email,
 		Phone:          phone,
-		DocumentType:   documentType,
+		DocumentType:   documentType,   // Legacy: store code
+		DocumentTypeID: documentTypeID, // New: store UUID reference
 		DocumentNumber: documentNumber,
 		Description:    description,
 		Priority:       priority,
@@ -210,7 +219,7 @@ func GetCaseRequestsHandler(c echo.Context) error {
 
 	// Fetch paginated requests
 	var requests []models.CaseRequest
-	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&requests).Error; err != nil {
+	if err := query.Preload("DocumentTypeOption").Order("created_at DESC").Limit(limit).Offset(offset).Find(&requests).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch requests")
 	}
 
@@ -239,7 +248,7 @@ func GetCaseRequestHandler(c echo.Context) error {
 	// Fetch request with firm-scoping
 	var request models.CaseRequest
 	query := middleware.GetFirmScopedQuery(c, db.DB)
-	if err := query.Preload("ReviewedBy").First(&request, "id = ?", id).Error; err != nil {
+	if err := query.Preload("ReviewedBy").Preload("DocumentTypeOption").First(&request, "id = ?", id).Error; err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
 	}
 
@@ -253,7 +262,7 @@ func GetCaseRequestDetailHandler(c echo.Context) error {
 	// Fetch request with firm-scoping
 	var request models.CaseRequest
 	query := middleware.GetFirmScopedQuery(c, db.DB)
-	if err := query.Preload("ReviewedBy").First(&request, "id = ?", id).Error; err != nil {
+	if err := query.Preload("ReviewedBy").Preload("DocumentTypeOption").First(&request, "id = ?", id).Error; err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
 	}
 

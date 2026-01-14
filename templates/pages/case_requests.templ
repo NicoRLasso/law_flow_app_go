@@ -26,6 +26,11 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 					<!-- Case Requests Filters (static, not reloaded) -->
 					@partials.CaseRequestFilters()
 					
+					<!-- Loading indicator (outside the replaceable content) -->
+					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
+						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+					</div>
+					
 					<!-- Case Requests Table (reloadable content) -->
 					<div 
 						id="case-requests-table"
@@ -33,10 +38,6 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 						hx-trigger="load, reload-case-requests from:body"
 						hx-indicator="#loading-indicator"
 					>
-						<!-- Loading indicator -->
-						<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
-							<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
-						</div>
 					</div>
 				</div>
 			</main>
