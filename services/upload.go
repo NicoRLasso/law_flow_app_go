@@ -67,15 +67,6 @@ func ValidateDocumentUpload(file *multipart.FileHeader) error {
 
 	contentType := http.DetectContentType(buffer)
 
-	// Map of allowed MIME types
-	allowedMimeTypes := map[string]bool{
-		"application/pdf":    true,
-		"application/msword": true,
-		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": true,
-		"image/jpeg": true,
-		"image/png":  true,
-	}
-
 	// Note: http.DetectContentType isn't perfect for all formats (especially DOC/DOCX which might show as application/zip or application/octet-stream)
 	// For stricter checking we might need specific magic number checks, but this is a good baseline.
 	// We'll be lenient with DOCX/DOC if the extension matches, as they are often complex composite formats.

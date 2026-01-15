@@ -55,16 +55,16 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 					</div>
 
 					<!-- Layout with Sidebar -->
-					<div class="flex flex-col md:flex-row gap-6 md:gap-8">
+					<div class="settings-layout">
 						<!-- Sidebar Navigation -->
-						<aside class="w-full md:w-64 flex-shrink-0">
+						<aside class="settings-sidebar">
 							<!-- Mobile Toggle Button -->
 							<button
 								@click="sidebarOpen = !sidebarOpen"
 								:aria-expanded="sidebarOpen"
-								class="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl md:hidden mb-4"
+								class="settings-mobile-toggle md:hidden"
 							>
-								<span class="flex items-center gap-3 font-medium">
+								<span class="flex items-center gap-3">
 									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
 									</svg>
@@ -83,7 +83,8 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10"
+								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav"
+								:class="{ 'settings-nav-hidden': !sidebarOpen }"
 								x-show="sidebarOpen || window.innerWidth >= 768"
 								x-transition
 							>
@@ -129,7 +130,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 						</aside>
 
 						<!-- Main Content Area -->
-						<div class="flex-1 min-w-0">
+						<div class="settings-content space-y-6">
 							<!-- Summary Tab -->
 							<div x-show="activeTab === 'summary'" x-transition class="space-y-6">
 								@CaseResumenTab(ctx, caseRecord)

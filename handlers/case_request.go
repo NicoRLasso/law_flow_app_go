@@ -129,8 +129,8 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 	// Handle optional file upload
 	file, err := c.FormFile("file")
 	if err == nil && file != nil {
-		// Validate PDF upload
-		if err := services.ValidatePDFUpload(file); err != nil {
+		// Validate document upload (includes PDF check)
+		if err := services.ValidateDocumentUpload(file); err != nil {
 			if c.Request().Header.Get("HX-Request") == "true" {
 				return c.HTML(http.StatusBadRequest, `<div class="error-message">`+err.Error()+`</div>`)
 			}
@@ -141,7 +141,8 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 		uploadDir := "uploads" // Default, should come from config in production
 
 		// Save file
-		uploadResult, err := services.SaveUploadedFile(file, uploadDir, firm.ID)
+		// Use "case_requests" as a placeholder ID to store these in a dedicated folder
+		uploadResult, err := services.SaveCaseDocument(file, uploadDir, firm.ID, "case_requests")
 		if err != nil {
 			if c.Request().Header.Get("HX-Request") == "true" {
 				return c.HTML(http.StatusInternalServerError, `<div class="error-message">Failed to upload file</div>`)
