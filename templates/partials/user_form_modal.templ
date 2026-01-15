@@ -6,11 +6,11 @@ import (
 
 // UserFormModal renders a modal for creating a new user
 templ UserFormModal(user *models.User, isEdit bool) {
-	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" id="user-modal">
-		<div class="bg-background border border-white/10 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4" id="user-modal">
+		<div class="bg-background border border-white/10 rounded-xl md:rounded-2xl shadow-2xl max-w-md w-full max-h-[98vh] md:max-h-[90vh] flex flex-col">
 			<!-- Modal Header -->
-			<div class="sticky top-0 bg-background border-b border-white/10 px-6 py-4 flex items-center justify-between">
-				<h2 class="text-xl font-bold">
+			<div class="flex-shrink-0 bg-background border-b border-white/10 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between rounded-t-xl md:rounded-t-2xl">
+				<h2 class="text-lg md:text-xl font-bold">
 					if isEdit {
 						Edit User
 					} else {
@@ -18,10 +18,10 @@ templ UserFormModal(user *models.User, isEdit bool) {
 					}
 				</h2>
 				<button
-					class="text-muted-foreground hover:text-foreground transition-colors"
+					class="text-muted-foreground hover:text-foreground transition-colors p-1"
 					onclick="document.getElementById('user-modal').remove()"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
@@ -37,7 +37,7 @@ templ UserFormModal(user *models.User, isEdit bool) {
 				hx-target="#user-modal"
 				hx-swap="outerHTML"
 				hx-on::after-success="document.getElementById('user-modal').remove()"
-				class="px-6 py-6 space-y-6"
+				class="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6"
 			>
 				<!-- Name -->
 				<div>

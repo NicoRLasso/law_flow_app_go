@@ -13,13 +13,13 @@ templ CaseRequests(title string, user *models.User, firm *models.Firm) {
 			<!-- Navigation Bar -->
 			@components.Navbar(user, firm, "/case-requests")
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-6 py-8">
-				<div class="space-y-6">
+			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
+				<div class="space-y-4 md:space-y-6">
 					<!-- Header -->
-					<div class="flex items-center justify-between">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 						<div>
-							<h1 class="text-3xl font-bold tracking-tight">Case Requests</h1>
-							<p class="text-muted-foreground mt-1">Manage incoming case requests from your public form</p>
+							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">Case Requests</h1>
+							<p class="text-muted-foreground mt-1 text-sm md:text-base">Manage incoming case requests from your public form</p>
 						</div>
 					</div>
 

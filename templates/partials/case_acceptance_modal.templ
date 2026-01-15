@@ -34,7 +34,7 @@ templ CaseAcceptanceModal(request models.CaseRequest) {
 		@click.self="document.getElementById('case-acceptance-modal').remove()"
 	>
 		<div
-			class="glass-panel rounded-2xl border border-white/10 max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+			class="glass-panel rounded-2xl border border-white/10 max-w-4xl w-full max-h-[90vh] shadow-2xl flex flex-col"
 			x-show="true"
 			x-transition:enter="transition ease-out duration-300"
 			x-transition:enter-start="opacity-0 scale-95"
@@ -71,7 +71,7 @@ templ CaseAcceptanceModal(request models.CaseRequest) {
 			@StepIndicator()
 
 			<!-- Modal Body - Will be replaced by HTMX -->
-			<div id="acceptance-step-container" class="overflow-y-auto max-h-[calc(90vh-200px)]">
+			<div id="acceptance-step-container" class="flex-1 overflow-y-auto">
 				<!-- Step 1: Client Review -->
 				@ClientReviewStep(request)
 			</div>

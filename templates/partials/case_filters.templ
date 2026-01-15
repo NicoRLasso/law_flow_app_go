@@ -6,91 +6,108 @@ import (
 
 // CaseFilters renders the filter controls for cases
 templ CaseFilters(user *models.User) {
-	<div class="glass-panel p-4 rounded-xl border border-white/10">
-		<div class="flex flex-wrap gap-4 items-center">
+	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10">
+		<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
 			
 			if user.Role == "admin" {
-				<!-- Status Filter (Admin Only) -->
-				<div class="flex items-center gap-2">
-					<label class="text-sm font-medium text-muted-foreground">Status:</label>
-					<select
-						class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
-						hx-get="/api/cases"
-						hx-target="#cases-table"
-						hx-trigger="change"
-						hx-include="[name='assigned_to'], [name='date_from'], [name='date_to'], [name='keyword']"
-						name="status"
-						id="status-filter"
-					>
-						<option value="">All Status</option>
-						<option value="OPEN">Open</option>
-						<option value="ON_HOLD">On Hold</option>
-						<option value="CLOSED">Closed</option>
-					</select>
-				</div>
-				
-				<!-- Assigned User Filter (Admin Only) -->
-				<div class="flex items-center gap-2">
-					<label class="text-sm font-medium text-muted-foreground">Assigned To:</label>
-					<select
-						class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
-						hx-get="/api/cases"
-						hx-target="#cases-table"
-						hx-trigger="change"
-						hx-include="[name='status'], [name='date_from'], [name='date_to'], [name='keyword']"
-						name="assigned_to"
-						id="assigned-to-filter"
-					>
-						<option value="">All Lawyers</option>
-						<!-- Options will be populated via HTMX from /api/lawyers -->
-					</select>
-				</div>
+				@StatusSelect()
+				@AssignedToSelect()
 			}
 			
-			<!-- Date Range Filters (All Users) -->
-			<div class="flex items-center gap-2">
-				<label class="text-sm font-medium text-muted-foreground">From:</label>
-				<input
-					type="date"
-					class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
-					hx-get="/api/cases"
-					hx-target="#cases-table"
-					hx-trigger="change"
-					hx-include="[name='status'], [name='assigned_to'], [name='date_to'], [name='keyword']"
-					name="date_from"
-					id="date-from-filter"
-				/>
-			</div>
+			@DateFromInput()
+			@DateToInput()
 			
-			<div class="flex items-center gap-2">
-				<label class="text-sm font-medium text-muted-foreground">To:</label>
-				<input
-					type="date"
-					class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
-					hx-get="/api/cases"
-					hx-target="#cases-table"
-					hx-trigger="change"
-					hx-include="[name='status'], [name='assigned_to'], [name='date_from'], [name='keyword']"
-					name="date_to"
-					id="date-to-filter"
-				/>
-			</div>
-			
-			<!-- Keyword Search (All Users) -->
-			<div class="flex items-center gap-2 flex-1">
-				<label class="text-sm font-medium text-muted-foreground">Search:</label>
-				<input
-					type="text"
-					placeholder="Case number, title, description, or client..."
-					class="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
-					hx-get="/api/cases"
-					hx-target="#cases-table"
-					hx-trigger="keyup changed delay:500ms"
-					hx-include="[name='status'], [name='assigned_to'], [name='date_from'], [name='date_to']"
-					name="keyword"
-					id="keyword-filter"
-				/>
-			</div>
+			<!-- Search takes remaining width on desktop, full width on mobile -->
+			@KeywordInput()
 		</div>
+	</div>
+}
+
+// Helper Components for Inputs to avoid duplication
+
+templ StatusSelect() {
+	<div class="flex items-center gap-2 w-full sm:w-auto">
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">Status:</label>
+		<select
+			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+			hx-get="/api/cases"
+			hx-target="#cases-table"
+			hx-trigger="change"
+			hx-include="[name='assigned_to'], [name='date_from'], [name='date_to'], [name='keyword']"
+			name="status"
+			id="status-filter"
+		>
+			<option value="">All Status</option>
+			<option value="OPEN">Open</option>
+			<option value="ON_HOLD">On Hold</option>
+			<option value="CLOSED">Closed</option>
+		</select>
+	</div>
+}
+
+templ AssignedToSelect() {
+	<div class="flex items-center gap-2 w-full sm:w-auto">
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">Assigned To:</label>
+		<select
+			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+			hx-get="/api/cases"
+			hx-target="#cases-table"
+			hx-trigger="change"
+			hx-include="[name='status'], [name='date_from'], [name='date_to'], [name='keyword']"
+			name="assigned_to"
+			id="assigned-to-filter"
+		>
+			<option value="">All Lawyers</option>
+			<!-- Options will be populated via HTMX from /api/lawyers -->
+		</select>
+	</div>
+}
+
+templ DateFromInput() {
+	<div class="flex items-center gap-2 w-full sm:w-auto">
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">From:</label>
+		<input
+			type="date"
+			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+			hx-get="/api/cases"
+			hx-target="#cases-table"
+			hx-trigger="change"
+			hx-include="[name='status'], [name='assigned_to'], [name='date_to'], [name='keyword']"
+			name="date_from"
+			id="date-from-filter"
+		/>
+	</div>
+}
+
+templ DateToInput() {
+	<div class="flex items-center gap-2 w-full sm:w-auto">
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">To:</label>
+		<input
+			type="date"
+			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+			hx-get="/api/cases"
+			hx-target="#cases-table"
+			hx-trigger="change"
+			hx-include="[name='status'], [name='assigned_to'], [name='date_from'], [name='keyword']"
+			name="date_to"
+			id="date-to-filter"
+		/>
+	</div>
+}
+
+templ KeywordInput() {
+	<div class="flex items-center gap-2 w-full sm:flex-1 min-w-[200px]">
+		<label class="text-sm font-medium text-muted-foreground min-w-fit sm:hidden md:block">Search:</label>
+		<input
+			type="text"
+			placeholder="Case number, title..."
+			class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+			hx-get="/api/cases"
+			hx-target="#cases-table"
+			hx-trigger="keyup changed delay:500ms"
+			hx-include="[name='status'], [name='assigned_to'], [name='date_from'], [name='date_to']"
+			name="keyword"
+			id="keyword-filter"
+		/>
 	</div>
 }

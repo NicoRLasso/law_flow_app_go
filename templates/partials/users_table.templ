@@ -6,12 +6,12 @@ import (
 
 // UserFilters renders the filter controls
 templ UserFilters() {
-	<div class="glass-panel p-4 rounded-xl border border-white/10">
-		<div class="flex flex-wrap gap-4 items-center">
-			<div class="flex items-center gap-2">
-				<label class="text-sm font-medium text-muted-foreground">Role:</label>
+	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10">
+		<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
+			<div class="flex items-center gap-2 w-full sm:w-auto">
+				<label class="text-sm font-medium text-muted-foreground min-w-fit">Role:</label>
 				<select
-					class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+					class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					hx-get="/api/users/list"
 					hx-target="#users-table"
 					hx-trigger="change"
@@ -27,10 +27,10 @@ templ UserFilters() {
 				</select>
 			</div>
 
-			<div class="flex items-center gap-2">
-				<label class="text-sm font-medium text-muted-foreground">Status:</label>
+			<div class="flex items-center gap-2 w-full sm:w-auto">
+				<label class="text-sm font-medium text-muted-foreground min-w-fit">Status:</label>
 				<select
-					class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
+					class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					hx-get="/api/users/list"
 					hx-target="#users-table"
 					hx-trigger="change"
@@ -60,12 +60,12 @@ templ UsersTable(users []models.User, currentUserRole string) {
 				<table class="w-full">
 					<thead>
 						<tr class="border-b border-white/10 bg-white/5">
-							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Last Login</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
+							<th class="hidden md:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role</th>
+							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+							<th class="hidden lg:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Last Login</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-white/10">
@@ -83,32 +83,35 @@ templ UsersTable(users []models.User, currentUserRole string) {
 templ UserRow(user models.User, currentUserRole string) {
 	<tr class="hover:bg-white/5 transition-colors duration-200">
 		<!-- Name -->
-		<td class="px-6 py-4">
+		<td class="px-4 md:px-6 py-4 md:py-5">
 			<div class="flex items-center gap-3">
-				<div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-					<span class="text-sm font-semibold text-accent">{ getInitials(user.Name) }</span>
+				<div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-accent/20 flex items-center justify-center">
+					<span class="text-xs md:text-sm font-semibold text-accent">{ getInitials(user.Name) }</span>
 				</div>
-				<span class="text-sm font-semibold text-foreground">{ user.Name }</span>
+				<div class="flex flex-col">
+					<span class="text-sm font-semibold text-foreground">{ user.Name }</span>
+					<span class="text-xs text-muted-foreground md:hidden truncate max-w-[150px]">{ user.Email }</span>
+				</div>
 			</div>
 		</td>
 
-		<!-- Email -->
-		<td class="px-6 py-4">
+		<!-- Email (hidden on mobile) -->
+		<td class="hidden md:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="text-sm text-muted-foreground">{ user.Email }</span>
 		</td>
 
 		<!-- Role -->
-		<td class="px-6 py-4">
+		<td class="px-4 md:px-6 py-4 md:py-5">
 			@RoleBadge(user.Role)
 		</td>
 
-		<!-- Status -->
-		<td class="px-6 py-4">
+		<!-- Status (hidden on mobile) -->
+		<td class="hidden sm:table-cell px-4 md:px-6 py-4 md:py-5">
 			@UserStatusBadge(user.IsActive)
 		</td>
 
-		<!-- Last Login -->
-		<td class="px-6 py-4">
+		<!-- Last Login (hidden on small screens) -->
+		<td class="hidden lg:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="text-xs text-muted-foreground">
 				if user.LastLoginAt != nil {
 					{ formatRelativeTime(*user.LastLoginAt) }
@@ -119,10 +122,10 @@ templ UserRow(user models.User, currentUserRole string) {
 		</td>
 
 		<!-- Actions -->
-		<td class="px-6 py-4">
-			<div class="flex items-center gap-2">
+		<td class="px-4 md:px-6 py-4 md:py-5">
+			<div class="flex items-center gap-1 md:gap-2">
 				<button
-					class="px-3 py-1.5 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+					class="px-2 md:px-3 py-1.5 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 md:gap-2"
 					hx-get={ "/api/users/" + user.ID + "/edit" }
 					hx-target="body"
 					hx-swap="beforeend"
@@ -131,11 +134,11 @@ templ UserRow(user models.User, currentUserRole string) {
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
 					</svg>
-					<span>Edit</span>
+					<span class="hidden sm:inline">Edit</span>
 				</button>
 				if currentUserRole == "admin" {
 					<button
-						class="px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+						class="px-2 md:px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 md:gap-2"
 						hx-get={ "/api/users/" + user.ID + "/delete-confirm" }
 						hx-target="body"
 						hx-swap="beforeend"
@@ -144,7 +147,7 @@ templ UserRow(user models.User, currentUserRole string) {
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
 						</svg>
-						<span>Delete</span>
+						<span class="hidden sm:inline">Delete</span>
 					</button>
 				}
 			</div>
@@ -238,26 +241,26 @@ func getRoleLabel(role string) string {
 
 // DeleteConfirmModal renders a confirmation modal for deleting a user
 templ DeleteConfirmModal(user models.User) {
-	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" id="delete-confirm-modal">
-		<div class="bg-background border border-white/10 rounded-2xl shadow-2xl max-w-md w-full">
+	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4" id="delete-confirm-modal">
+		<div class="bg-background border border-white/10 rounded-xl md:rounded-2xl shadow-2xl max-w-md w-full">
 			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-white/10">
-				<h2 class="text-xl font-bold text-red-400">Delete User</h2>
+			<div class="px-4 md:px-6 py-3 md:py-4 border-b border-white/10">
+				<h2 class="text-lg md:text-xl font-bold text-red-400">Delete User</h2>
 			</div>
 
 			<!-- Modal Body -->
-			<div class="px-6 py-6">
-				<div class="flex items-start gap-4">
-					<div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-						<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div class="px-4 md:px-6 py-4 md:py-6">
+				<div class="flex items-start gap-3 md:gap-4">
+					<div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+						<svg class="w-5 h-5 md:w-6 md:h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
 						</svg>
 					</div>
 					<div class="flex-1">
-						<p class="text-foreground font-medium mb-2">
+						<p class="text-foreground font-medium mb-2 text-sm md:text-base">
 							Are you sure you want to delete <span class="text-red-400">{ user.Name }</span>?
 						</p>
-						<p class="text-sm text-muted-foreground">
+						<p class="text-xs md:text-sm text-muted-foreground">
 							This action cannot be undone. The user will be permanently removed from the system.
 						</p>
 					</div>
@@ -265,17 +268,17 @@ templ DeleteConfirmModal(user models.User) {
 			</div>
 
 			<!-- Modal Footer -->
-			<div class="px-6 py-4 bg-white/5 border-t border-white/10 flex gap-3">
+			<div class="px-4 md:px-6 py-3 md:py-4 bg-white/5 border-t border-white/10 flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 rounded-b-xl md:rounded-b-2xl">
 				<button
 					type="button"
-					class="flex-1 px-4 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-xl font-medium transition-all duration-200"
+					class="flex-1 px-4 py-2.5 md:py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-xl font-medium transition-all duration-200 text-sm md:text-base"
 					onclick="document.getElementById('delete-confirm-modal').remove()"
 				>
 					Cancel
 				</button>
 				<button
 					type="button"
-					class="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-200"
+					class="flex-1 px-4 py-2.5 md:py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-200 text-sm md:text-base"
 					hx-delete={ "/api/users/" + user.ID }
 					hx-trigger="click"
 					hx-on::after-request="document.getElementById('delete-confirm-modal').remove(); htmx.trigger('body', 'reload-users');"
