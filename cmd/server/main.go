@@ -155,6 +155,8 @@ func main() {
 		caseRoutes.Use(middleware.RequireRole("admin", "lawyer"))
 		{
 			caseRoutes.GET("", handlers.GetCasesHandler)
+			caseRoutes.GET("/:id/edit", handlers.GetCaseEditFormHandler)
+			caseRoutes.PUT("/:id", handlers.UpdateCaseHandler)
 			caseRoutes.GET("/:id/documents", handlers.GetCaseDocumentsHandler)
 			caseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
 			caseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)

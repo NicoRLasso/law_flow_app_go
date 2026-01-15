@@ -1,0 +1,137 @@
+package partials
+
+import (
+	"law_flow_app_go/models"
+)
+
+templ CaseEditModal(caseRecord models.Case, clients []models.User, lawyers []models.User) {
+	<!-- Edit Case Modal -->
+	<div id="edit-case-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999;" onclick="if(event.target === this) closeEditModal()">
+		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-2xl font-bold">Edit Case</h3>
+				<button
+					type="button"
+					onclick="closeEditModal()"
+					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Edit Form -->
+			<form
+				id="edit-case-form"
+				hx-put={ "/api/cases/" + caseRecord.ID }
+				hx-target="#edit-response"
+				hx-swap="innerHTML"
+			>
+				<div class="space-y-4">
+					<!-- Status -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Status <span class="text-red-400">*</span>
+						</label>
+						<select
+							name="status"
+							required
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>
+							<option value="OPEN" selected?={ caseRecord.Status == "OPEN" }>Open</option>
+							<option value="ON_HOLD" selected?={ caseRecord.Status == "ON_HOLD" }>On Hold</option>
+							<option value="CLOSED" selected?={ caseRecord.Status == "CLOSED" }>Closed</option>
+						</select>
+					</div>
+
+					<!-- Description -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Description <span class="text-red-400">*</span>
+						</label>
+						<textarea
+							name="description"
+							rows="4"
+							required
+							placeholder="Case description..."
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>{ caseRecord.Description }</textarea>
+					</div>
+
+					<!-- Client -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Client <span class="text-red-400">*</span>
+						</label>
+						<select
+							name="client_id"
+							required
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>
+							for _, client := range clients {
+								<option value={ client.ID } selected?={ client.ID == caseRecord.ClientID }>
+									{ client.Name } ({ client.Email })
+								</option>
+							}
+						</select>
+					</div>
+
+					<!-- Assigned Lawyer -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							Assigned Lawyer
+						</label>
+						<select
+							name="assigned_to_id"
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>
+							<option value="">Unassigned</option>
+							for _, lawyer := range lawyers {
+								if caseRecord.AssignedToID != nil {
+									<option value={ lawyer.ID } selected?={ lawyer.ID == *caseRecord.AssignedToID }>
+										{ lawyer.Name } ({ lawyer.Role })
+									</option>
+								} else {
+									<option value={ lawyer.ID }>
+										{ lawyer.Name } ({ lawyer.Role })
+									</option>
+								}
+							}
+						</select>
+					</div>
+
+					<!-- Response Container -->
+					<div id="edit-response"></div>
+
+					<!-- Action Buttons -->
+					<div class="flex items-center gap-3 pt-4">
+						<button
+							type="submit"
+							class="flex-1 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
+						>
+							Save Changes
+						</button>
+						<button
+							type="button"
+							onclick="closeEditModal()"
+							class="px-6 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-lg font-semibold transition-all duration-200"
+						>
+							Cancel
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		function closeEditModal() {
+			const modal = document.getElementById('edit-case-modal-container');
+			if (modal) {
+				modal.innerHTML = '';
+			}
+		}
+	</script>
+}
