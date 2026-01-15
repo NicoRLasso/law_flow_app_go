@@ -347,3 +347,36 @@ func BuildLawyerAssignmentEmail(lawyerEmail, lawyerName, caseNumber, clientName 
 		TextBody: textBody,
 	}
 }
+
+// CollaboratorAddedEmailData contains data for the collaborator added email template
+type CollaboratorAddedEmailData struct {
+	CollaboratorName string
+	CaseNumber       string
+	ClientName       string
+	AssignedLawyer   string
+}
+
+// BuildCollaboratorAddedEmail creates a notification email when a user is added as a case collaborator
+func BuildCollaboratorAddedEmail(collaboratorEmail, collaboratorName, caseNumber, clientName, assignedLawyer string) *Email {
+	data := CollaboratorAddedEmailData{
+		CollaboratorName: collaboratorName,
+		CaseNumber:       caseNumber,
+		ClientName:       clientName,
+		AssignedLawyer:   assignedLawyer,
+	}
+
+	htmlBody, textBody, err := loadTemplate("collaborator_added", data)
+	if err != nil {
+		log.Printf("Error loading collaborator added email template: %v", err)
+		// Fallback to simple text email
+		textBody = fmt.Sprintf("Dear %s,\n\nYou have been added as a collaborator on a case.\n\nCase Number: %s\nClient Name: %s\nPrimary Lawyer: %s\n\nPlease log in to the dashboard to view the case details.\n\nBest regards", collaboratorName, caseNumber, clientName, assignedLawyer)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>You have been added as a collaborator on a case.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s<br><strong>Primary Lawyer:</strong> %s</p><p>Please log in to the dashboard to view the case details.</p>", collaboratorName, caseNumber, clientName, assignedLawyer)
+	}
+
+	return &Email{
+		To:       []string{collaboratorEmail},
+		Subject:  fmt.Sprintf("Added as Collaborator - Case %s", caseNumber),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}

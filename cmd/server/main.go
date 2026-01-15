@@ -201,6 +201,10 @@ func main() {
 			caseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
 			caseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
 			caseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
+			// Collaborator routes
+			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
+			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)
+			caseRoutes.GET("/:id/collaborators/available", handlers.GetAvailableCollaboratorsHandler)
 		}
 
 		// Lawyer filter route (admin only) - add to adminRoutes

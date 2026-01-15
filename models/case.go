@@ -71,6 +71,7 @@ type Case struct {
 	Deleter       *User          `gorm:"foreignKey:DeletedBy" json:"deleter,omitempty"`
 	Subtypes      []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
 	Documents     []CaseDocument `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
+	Collaborators []User         `gorm:"many2many:case_collaborators;" json:"collaborators,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID and set OpenedAt

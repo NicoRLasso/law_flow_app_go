@@ -6,7 +6,7 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User) {
+templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User) {
 	<!-- Edit Case Modal -->
 	<div id="edit-case-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999;" onclick="if(event.target === this) closeEditModal()">
 		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
@@ -80,28 +80,38 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 						</select>
 					</div>
 
-					<!-- Assigned Lawyer -->
+					<!-- Assigned Lawyer (Admin only can edit) -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
 							{ i18n.T(ctx, "case.edit.lawyer") }
 						</label>
-						<select
-							name="assigned_to_id"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-						>
-							<option value="">{ i18n.T(ctx, "case.edit.unassigned") }</option>
-							for _, lawyer := range lawyers {
-								if caseRecord.AssignedToID != nil {
-									<option value={ lawyer.ID } selected?={ lawyer.ID == *caseRecord.AssignedToID }>
-										{ lawyer.Name } ({ lawyer.Role })
-									</option>
-								} else {
-									<option value={ lawyer.ID }>
-										{ lawyer.Name } ({ lawyer.Role })
-									</option>
+						if currentUser.Role == "admin" {
+							<select
+								name="assigned_to_id"
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							>
+								<option value="">{ i18n.T(ctx, "case.edit.unassigned") }</option>
+								for _, lawyer := range lawyers {
+									if caseRecord.AssignedToID != nil {
+										<option value={ lawyer.ID } selected?={ lawyer.ID == *caseRecord.AssignedToID }>
+											{ lawyer.Name } ({ lawyer.Role })
+										</option>
+									} else {
+										<option value={ lawyer.ID }>
+											{ lawyer.Name } ({ lawyer.Role })
+										</option>
+									}
 								}
+							</select>
+						} else {
+							<!-- Read-only display for non-admins -->
+							if caseRecord.AssignedTo != nil {
+								<p class="text-foreground py-2">{ caseRecord.AssignedTo.Name }</p>
+								<input type="hidden" name="assigned_to_id" value={ *caseRecord.AssignedToID }/>
+							} else {
+								<p class="text-muted-foreground italic py-2">{ i18n.T(ctx, "case.detail.unassigned") }</p>
 							}
-						</select>
+						}
 					</div>
 
 					<!-- Response Container -->

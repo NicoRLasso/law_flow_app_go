@@ -133,7 +133,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 						<div class="settings-content space-y-6">
 							<!-- Summary Tab -->
 							<div x-show="activeTab === 'summary'" x-transition class="space-y-6">
-								@CaseResumenTab(ctx, caseRecord)
+								@CaseResumenTab(ctx, caseRecord, user)
 							</div>
 
 							<!-- Client Tab -->
@@ -206,7 +206,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 }
 
 // CaseResumenTab renders the summary tab content
-templ CaseResumenTab(ctx context.Context, caseRecord models.Case) {
+templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.User) {
 	<!-- Case Information Grid -->
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 						<!-- Left Column -->
@@ -275,13 +275,86 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case) {
 					</svg>
 					{ i18n.T(ctx, "case.detail.assignment_title") }
 				</h2>
-				<div>
-					<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.assigned_lawyer") }</label>
-					if caseRecord.AssignedTo != nil {
-						<p class="text-foreground mt-1">{ caseRecord.AssignedTo.Name }</p>
-					} else {
-						<p class="text-muted-foreground mt-1 italic">{ i18n.T(ctx, "case.detail.unassigned") }</p>
-					}
+				<div class="space-y-4">
+					<div>
+						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.assigned_lawyer") }</label>
+						if caseRecord.AssignedTo != nil {
+							<p class="text-foreground mt-1">{ caseRecord.AssignedTo.Name }</p>
+						} else {
+							<p class="text-muted-foreground mt-1 italic">{ i18n.T(ctx, "case.detail.unassigned") }</p>
+						}
+					</div>
+					<!-- Collaborators Section -->
+					<div>
+						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.collaborators") }</label>
+						if len(caseRecord.Collaborators) > 0 {
+							<div class="flex flex-wrap gap-2 mt-2">
+								for _, collab := range caseRecord.Collaborators {
+									<div class="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg">
+										<span class="text-sm text-foreground">{ collab.Name }</span>
+										if user.Role == "admin" {
+											<button
+												type="button"
+												hx-delete={ "/api/cases/" + caseRecord.ID + "/collaborators/" + collab.ID }
+												hx-target="#collaborator-response"
+												hx-swap="innerHTML"
+												hx-confirm={ i18n.T(ctx, "case.detail.remove_collaborator_confirm") }
+												class="text-red-400 hover:text-red-300 transition-colors"
+												title={ i18n.T(ctx, "case.detail.remove_collaborator") }
+											>
+												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+												</svg>
+											</button>
+										}
+									</div>
+								}
+							</div>
+						} else {
+							<p class="text-muted-foreground mt-1 italic">{ i18n.T(ctx, "case.detail.no_collaborators") }</p>
+						}
+						<!-- Add Collaborator (Admin only) -->
+						if user.Role == "admin" {
+							<div class="mt-3" x-data={ "{ showAdd: false, availableCollaborators: [], loading: false, caseId: '" + caseRecord.ID + "' }" }>
+								<button
+									type="button"
+									@click="showAdd = !showAdd; if(showAdd && availableCollaborators.length === 0) { loading = true; fetch('/api/cases/' + caseId + '/collaborators/available').then(r => r.json()).then(data => { availableCollaborators = data; loading = false; }); }"
+									class="text-sm text-accent hover:text-accent/80 transition-colors flex items-center gap-1"
+								>
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+									</svg>
+									{ i18n.T(ctx, "case.detail.add_collaborator") }
+								</button>
+								<div x-show="showAdd" x-transition class="mt-2">
+									<form
+										hx-post={ "/api/cases/" + caseRecord.ID + "/collaborators" }
+										hx-target="#collaborator-response"
+										hx-swap="innerHTML"
+										class="flex flex-col sm:flex-row gap-2"
+									>
+										<select
+											name="user_id"
+											required
+											x-ref="collaboratorSelect"
+											x-effect="if(availableCollaborators.length > 0) { const s = $refs.collaboratorSelect; while(s.options.length > 1) s.remove(1); availableCollaborators.forEach(c => s.add(new Option(c.name + ' (' + c.role + ')', c.id))); }"
+											class="flex-1 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+										>
+											<option value="">{ i18n.T(ctx, "case.detail.select_collaborator") }</option>
+										</select>
+										<button
+											type="submit"
+											class="px-3 py-1.5 bg-accent text-accent-foreground rounded-lg text-sm font-semibold hover:bg-accent/90 transition-all duration-200 w-full sm:w-auto"
+										>
+											{ i18n.T(ctx, "common.add") }
+										</button>
+									</form>
+								</div>
+							</div>
+						}
+						<!-- Collaborator Response -->  
+						<div id="collaborator-response"></div>
+					</div>
 				</div>
 			</div>
 

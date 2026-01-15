@@ -64,7 +64,7 @@ func GetCaseEditFormHandler(c echo.Context) error {
 	}
 
 	// Render the edit modal
-	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers)
+	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers, currentUser)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -135,8 +135,8 @@ func UpdateCaseHandler(c echo.Context) error {
 		}
 	}
 
-	// Validate lawyer if provided
-	if assignedToID != "" {
+	// Validate lawyer if provided (only if admin is making the change)
+	if assignedToID != "" && currentUser.Role == "admin" {
 		var lawyer models.User
 		lawyerQuery := middleware.GetFirmScopedQuery(c, db.DB)
 		if err := lawyerQuery.
@@ -163,13 +163,16 @@ func UpdateCaseHandler(c echo.Context) error {
 		caseRecord.ClientID = clientID
 	}
 
-	// Update assigned lawyer if provided
-	if assignedToID != "" {
-		caseRecord.AssignedToID = &assignedToID
-	} else if assignedToID == "" && c.FormValue("clear_lawyer") == "true" {
-		// Allow clearing the assigned lawyer
-		caseRecord.AssignedToID = nil
+	// Update assigned lawyer if provided (only admins can change this)
+	if currentUser.Role == "admin" {
+		if assignedToID != "" {
+			caseRecord.AssignedToID = &assignedToID
+		} else if assignedToID == "" && c.FormValue("clear_lawyer") == "true" {
+			// Allow clearing the assigned lawyer
+			caseRecord.AssignedToID = nil
+		}
 	}
+	// Non-admins cannot change the assigned lawyer, so the value remains unchanged
 
 	// Handle status change logic
 	if statusChanged {

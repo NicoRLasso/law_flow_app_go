@@ -56,8 +56,11 @@ func GetCasesHandler(c echo.Context) error {
 
 	// Apply role-based filter
 	if currentUser.Role == "lawyer" {
-		// Lawyers only see cases assigned to them
-		query = query.Where("assigned_to_id = ?", currentUser.ID)
+		// Lawyers see cases assigned to them OR where they are collaborators
+		query = query.Where(
+			db.DB.Where("assigned_to_id = ?", currentUser.ID).
+				Or("EXISTS (SELECT 1 FROM case_collaborators WHERE case_collaborators.case_id = cases.id AND case_collaborators.user_id = ?)", currentUser.ID),
+		)
 	}
 	// Admins see all cases (no additional filter)
 
@@ -115,6 +118,7 @@ func GetCasesHandler(c echo.Context) error {
 		Preload("Branch").
 		Preload("Subtypes").
 		Preload("Documents").
+		Preload("Collaborators").
 		Order("opened_at DESC").
 		Limit(limit).
 		Offset(offset).
@@ -151,8 +155,11 @@ func GetCaseDetailHandler(c echo.Context) error {
 
 	// Apply role-based filter
 	if currentUser.Role == "lawyer" {
-		// Lawyers only see cases assigned to them
-		query = query.Where("assigned_to_id = ?", currentUser.ID)
+		// Lawyers see cases assigned to them OR where they are collaborators
+		query = query.Where(
+			db.DB.Where("assigned_to_id = ?", currentUser.ID).
+				Or("EXISTS (SELECT 1 FROM case_collaborators WHERE case_collaborators.case_id = cases.id AND case_collaborators.user_id = ?)", currentUser.ID),
+		)
 	}
 
 	// Fetch case with all relationships
@@ -164,6 +171,7 @@ func GetCaseDetailHandler(c echo.Context) error {
 		Preload("Branch").
 		Preload("Subtypes").
 		Preload("Documents").
+		Preload("Collaborators").
 		First(&caseRecord, "id = ?", id).Error; err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Case not found")
 	}
