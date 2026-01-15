@@ -33,7 +33,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.Availability{}, &models.BlockedDate{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	// Check sensitive configuration
@@ -209,6 +209,25 @@ func main() {
 
 		// Lawyer filter route (admin only) - add to adminRoutes
 		adminRoutes.GET("/api/lawyers", handlers.GetLawyersForFilterHandler)
+
+		// Availability routes (lawyer and admin only)
+		availabilityRoutes := protected.Group("")
+		availabilityRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			availabilityRoutes.GET("/availability", handlers.AvailabilityPageHandler)
+			availabilityRoutes.GET("/api/availability", handlers.GetAvailabilityHandler)
+			availabilityRoutes.POST("/api/availability", handlers.CreateAvailabilityHandler)
+			availabilityRoutes.POST("/api/availability/validate", handlers.CheckOverlapHandler)
+			availabilityRoutes.PUT("/api/availability/:id", handlers.UpdateAvailabilityHandler)
+			availabilityRoutes.DELETE("/api/availability/:id", handlers.DeleteAvailabilityHandler)
+			availabilityRoutes.GET("/api/blocked-dates", handlers.GetBlockedDatesHandler)
+			availabilityRoutes.POST("/api/blocked-dates", handlers.CreateBlockedDateHandler)
+			availabilityRoutes.POST("/api/blocked-dates/validate", handlers.CheckBlockedDateOverlapHandler)
+			availabilityRoutes.DELETE("/api/blocked-dates/:id", handlers.DeleteBlockedDateHandler)
+		}
+
+		// Buffer settings (admin only)
+		adminRoutes.PUT("/api/firm/buffer-settings", handlers.UpdateBufferSettingsHandler)
 	}
 
 	// Development-only routes

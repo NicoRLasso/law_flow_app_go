@@ -16,6 +16,7 @@
     "case_requests": "Solicitudes de Caso",
     "requests": "Solicitudes",
     "cases": "Casos",
+    "availability": "Disponibilidad",
     "profile_settings": "Configuración de Perfil",
     "features": "Características",
     "benefits": "Beneficios",
@@ -527,6 +528,58 @@
       "open": "Abierto",
       "on_hold": "En Espera",
       "closed": "Cerrado"
+    }
+  },
+  "availability": {
+    "title": "Configuración de Disponibilidad",
+    "desc": "Gestiona tus horarios de trabajo y fechas bloqueadas",
+    "nav": {
+      "schedule": "Horario Semanal",
+      "blocked": "Fechas Bloqueadas",
+      "settings": "Configuración"
+    },
+    "schedule": {
+      "title": "Horario de Trabajo Estándar",
+      "add_slot": "Agregar Horario",
+      "day": "Día",
+      "start": "Hora de Inicio",
+      "end": "Hora de Fin",
+      "active": "Activo",
+      "no_slots": "No hay horarios configurados",
+      "save": "Guardar Cambios",
+      "delete_confirm": "¿Eliminar este horario?"
+    },
+    "blocked": {
+      "title": "Fechas Bloqueadas",
+      "add": "Bloquear Fecha",
+      "date": "Fecha",
+      "reason": "Razón",
+      "full_day": "Día Completo",
+      "time_range": "Rango de Tiempo",
+      "no_blocked": "Sin fechas bloqueadas",
+      "reasons": {
+        "vacation": "Vacaciones",
+        "holiday": "Feriado",
+        "personal": "Personal",
+        "other": "Otro"
+      },
+      "delete_confirm": "¿Eliminar esta fecha bloqueada?"
+    },
+    "settings": {
+      "title": "Configuración de Buffer",
+      "buffer": "Tiempo Entre Citas",
+      "buffer_desc": "Tiempo de espera entre citas consecutivas",
+      "minutes": "minutos",
+      "admin_only": "Solo los administradores pueden cambiar la configuración de buffer"
+    },
+    "days": {
+      "sunday": "Domingo",
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado"
     }
   }
 }

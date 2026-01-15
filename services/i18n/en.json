@@ -16,6 +16,7 @@
     "case_requests": "Case Requests",
     "requests": "Requests",
     "cases": "Cases",
+    "availability": "Availability",
     "profile_settings": "Profile Settings",
     "features": "Features",
     "benefits": "Benefits",
@@ -527,6 +528,58 @@
       "open": "Open",
       "on_hold": "On Hold",
       "closed": "Closed"
+    }
+  },
+  "availability": {
+    "title": "Availability Settings",
+    "desc": "Manage your working hours and blocked dates",
+    "nav": {
+      "schedule": "Weekly Schedule",
+      "blocked": "Blocked Dates",
+      "settings": "Settings"
+    },
+    "schedule": {
+      "title": "Standard Working Hours",
+      "add_slot": "Add Time Slot",
+      "day": "Day",
+      "start": "Start Time",
+      "end": "End Time",
+      "active": "Active",
+      "no_slots": "No availability slots configured",
+      "save": "Save Changes",
+      "delete_confirm": "Delete this time slot?"
+    },
+    "blocked": {
+      "title": "Blocked Dates",
+      "add": "Block Date",
+      "date": "Date",
+      "reason": "Reason",
+      "full_day": "Full Day",
+      "time_range": "Time Range",
+      "no_blocked": "No blocked dates",
+      "reasons": {
+        "vacation": "Vacation",
+        "holiday": "Holiday",
+        "personal": "Personal",
+        "other": "Other"
+      },
+      "delete_confirm": "Remove this blocked date?"
+    },
+    "settings": {
+      "title": "Buffer Settings",
+      "buffer": "Buffer Between Appointments",
+      "buffer_desc": "Time gap between consecutive appointments",
+      "minutes": "minutes",
+      "admin_only": "Only administrators can change buffer settings"
+    },
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
     }
   }
 }

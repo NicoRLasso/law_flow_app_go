@@ -28,6 +28,9 @@ type Firm struct {
 	InfoEmail    string `json:"info_email"`
 	NoreplyEmail string `json:"noreply_email"`
 
+	// Availability settings
+	BufferMinutes int `gorm:"not null;default:15" json:"buffer_minutes"` // Buffer between appointments (30, 45, or 60 min)
+
 	// Relationships
 	Users []User `gorm:"foreignKey:FirmID" json:"-"`
 }
