@@ -10,17 +10,17 @@ import (
 	"strings"
 )
 
-templ CaseDetail(ctx context.Context, title string, user *models.User, firm *models.Firm, caseRecord models.Case) {
-	@layouts.Base(ctx, title) {
+templ CaseDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, caseRecord models.Case) {
+	@layouts.Base(ctx, title, csrfToken) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/cases")
 			
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
-				<div class="max-w-7xl mx-auto space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="w-full max-w-7xl" x-data="{ activeTab: 'summary', sidebarOpen: false }">
 					<!-- Header with Back Button -->
-					<div class="flex items-center justify-between">
+					<div class="flex items-center justify-between mb-6 md:mb-8">
 						<div class="flex items-center gap-4">
 							<a
 								href="/cases"
@@ -54,95 +54,100 @@ templ CaseDetail(ctx context.Context, title string, user *models.User, firm *mod
 						</div>
 					</div>
 
-					<!-- Tabs -->
-					<div class="glass-panel rounded-xl border border-white/10">
-						<!-- Tab Navigation -->
-						<div class="border-b border-white/10 overflow-x-auto">
-							<nav class="flex gap-4 px-4 md:px-6 min-w-max" role="tablist">
-								<button
-									type="button"
-									role="tab"
-									aria-selected="true"
-									aria-controls="resumen-tab"
-									data-tab="resumen"
-									class="tab-button active px-4 py-3 text-sm font-semibold border-b-2 border-accent text-accent transition-all duration-200"
-									onclick="switchTab('resumen')"
+					<!-- Layout with Sidebar -->
+					<div class="flex flex-col md:flex-row gap-6 md:gap-8">
+						<!-- Sidebar Navigation -->
+						<aside class="w-full md:w-64 flex-shrink-0">
+							<!-- Mobile Toggle Button -->
+							<button
+								@click="sidebarOpen = !sidebarOpen"
+								:aria-expanded="sidebarOpen"
+								class="w-full flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl md:hidden mb-4"
+							>
+								<span class="flex items-center gap-3 font-medium">
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+									</svg>
+									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'client' ? '" + i18n.T(ctx, "case.detail.tab.client") + "' : '" + i18n.T(ctx, "case.detail.tab.documents") + "'" }></span>
+								</span>
+								<svg 
+									class="w-5 h-5 transition-transform duration-200"
+									:class="{ 'rotate-180': sidebarOpen }"
+									fill="none" 
+									stroke="currentColor" 
+									viewBox="0 0 24 24"
 								>
-									{ i18n.T(ctx, "case.detail.tab.summary") }
-								</button>
-								<button
-									type="button"
-									role="tab"
-									aria-selected="false"
-									aria-controls="client-tab"
-									data-tab="client"
-									class="tab-button px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-muted-foreground hover:text-foreground transition-all duration-200"
-									onclick="switchTab('client')"
-								>
-									{ i18n.T(ctx, "case.detail.tab.client") }
-								</button>
-								<button
-									type="button"
-									role="tab"
-									aria-selected="false"
-									aria-controls="documents-tab"
-									data-tab="documents"
-									class="tab-button px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-muted-foreground hover:text-foreground transition-all duration-200"
-									onclick="switchTab('documents')"
-								>
-									{ i18n.T(ctx, "case.detail.tab.documents") }
-								</button>
-							</nav>
-						</div>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
 
-						<!-- Tab Content -->
-						<div class="p-6">
-							<!-- Resumen Tab -->
-							<div id="resumen-tab" class="tab-content active">
+							<!-- Navigation Menu -->
+							<nav
+								class="glass-panel rounded-2xl p-4 border border-white/10"
+								x-show="sidebarOpen || window.innerWidth >= 768"
+								x-transition
+							>
+								<ul class="space-y-2">
+									<li>
+										<button
+											@click="activeTab = 'summary'; sidebarOpen = false"
+											:class="activeTab === 'summary' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+											</svg>
+											<span>{ i18n.T(ctx, "case.detail.tab.summary") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'client'; sidebarOpen = false"
+											:class="activeTab === 'client' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+											</svg>
+											<span>{ i18n.T(ctx, "case.detail.tab.client") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'documents'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-documents-list').dataset.loaded) htmx.trigger('#case-documents-list', 'loadDocuments') }, 50)"
+											:class="activeTab === 'documents' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+											</svg>
+											<span>{ i18n.T(ctx, "case.detail.tab.documents") }</span>
+										</button>
+									</li>
+								</ul>
+							</nav>
+						</aside>
+
+						<!-- Main Content Area -->
+						<div class="flex-1 min-w-0">
+							<!-- Summary Tab -->
+							<div x-show="activeTab === 'summary'" x-transition class="space-y-6">
 								@CaseResumenTab(ctx, caseRecord)
 							</div>
 
 							<!-- Client Tab -->
-							<div id="client-tab" class="tab-content hidden">
+							<div x-show="activeTab === 'client'" x-transition class="space-y-6">
 								@CaseClientTab(ctx, caseRecord)
 							</div>
 
 							<!-- Documents Tab -->
-							<div id="documents-tab" class="tab-content hidden">
+							<div x-show="activeTab === 'documents'" x-transition class="space-y-6">
 								@CaseDocumentsTab(ctx, caseRecord)
 							</div>
 						</div>
 					</div>
 
 					<script>
-						function switchTab(tabName) {
-							// Update tab buttons
-							document.querySelectorAll('.tab-button').forEach(btn => {
-								const isActive = btn.dataset.tab === tabName;
-								btn.classList.toggle('active', isActive);
-								btn.classList.toggle('border-accent', isActive);
-								btn.classList.toggle('text-accent', isActive);
-								btn.classList.toggle('border-transparent', !isActive);
-								btn.classList.toggle('text-muted-foreground', !isActive);
-								btn.setAttribute('aria-selected', isActive);
-							});
-
-							// Update tab content
-							document.querySelectorAll('.tab-content').forEach(content => {
-								const isActive = content.id === tabName + '-tab';
-								content.classList.toggle('hidden', !isActive);
-								content.classList.toggle('active', isActive);
-							});
-
-							// Load documents if switching to documents tab
-							if (tabName === 'documents') {
-								const documentsContainer = document.getElementById('case-documents-list');
-								if (documentsContainer && !documentsContainer.dataset.loaded) {
-									htmx.trigger(documentsContainer, 'loadDocuments');
-								}
-							}
-						}
-
 						function openUploadModal() {
 							const modal = document.getElementById('upload-document-modal');
 							modal.classList.remove('hidden');

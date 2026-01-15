@@ -25,7 +25,8 @@ func FirmSetupHandler(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 
-	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | Law Flow", user)
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | Law Flow", csrfToken, user)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -137,9 +138,10 @@ func FirmSetupPostHandler(c echo.Context) error {
 func FirmSettingsPageHandler(c echo.Context) error {
 	user := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
+	csrfToken := middleware.GetCSRFToken(c)
 
 	// Render the firm settings page
-	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | Law Flow", user, firm)
+	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | Law Flow", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

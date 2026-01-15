@@ -21,8 +21,9 @@ import (
 func CaseRequestsPageHandler(c echo.Context) error {
 	user := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
+	csrfToken := middleware.GetCSRFToken(c)
 
-	component := pages.CaseRequests(c.Request().Context(), "Case Requests | Law Flow", user, firm)
+	component := pages.CaseRequests(c.Request().Context(), "Case Requests | Law Flow", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -51,7 +52,8 @@ func PublicCaseRequestHandler(c echo.Context) error {
 	}
 
 	// Render public form template
-	component := pages.PublicCaseRequest(c.Request().Context(), firm, documentTypes, priorities)
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.PublicCaseRequest(c.Request().Context(), csrfToken, firm, documentTypes, priorities)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

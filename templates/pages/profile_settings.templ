@@ -8,8 +8,8 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ ProfileSettings(ctx context.Context, title string, user *models.User, firm *models.Firm) {
-	@layouts.Base(ctx, title) {
+templ ProfileSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title, csrfToken) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/profile")

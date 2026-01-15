@@ -20,8 +20,9 @@ import (
 func CasesPageHandler(c echo.Context) error {
 	user := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
+	csrfToken := middleware.GetCSRFToken(c)
 
-	component := pages.Cases(c.Request().Context(), "Cases | Law Flow", user, firm)
+	component := pages.Cases(c.Request().Context(), "Cases | Law Flow", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -168,7 +169,8 @@ func GetCaseDetailHandler(c echo.Context) error {
 	}
 
 	// Render detail page
-	component := pages.CaseDetail(c.Request().Context(), "Case Details | Law Flow", currentUser, currentFirm, caseRecord)
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.CaseDetail(c.Request().Context(), "Case Details | Law Flow", csrfToken, currentUser, currentFirm, caseRecord)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

@@ -16,7 +16,8 @@ import (
 
 // LoginHandler renders the login page
 func LoginHandler(c echo.Context) error {
-	component := pages.Login(c.Request().Context(), "Login | Law Flow")
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.Login(c.Request().Context(), "Login | Law Flow", csrfToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

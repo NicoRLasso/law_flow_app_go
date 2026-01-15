@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"law_flow_app_go/db"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/templates/pages"
 	"net/http"
@@ -20,6 +21,7 @@ func PublicCaseRequestSuccessHandler(c echo.Context) error {
 	}
 
 	// Render success template
-	component := pages.CaseRequestSuccess(c.Request().Context(), firm)
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.CaseRequestSuccess(c.Request().Context(), csrfToken, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

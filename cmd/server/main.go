@@ -8,6 +8,7 @@ import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"log"
+	"net/http"
 	"time"
 
 	"law_flow_app_go/services/i18n"
@@ -52,6 +53,16 @@ func main() {
 		corsConfig.AllowOrigins = cfg.AllowedOrigins
 	}
 	e.Use(echomiddleware.CORSWithConfig(corsConfig))
+
+	// CSRF Protection
+	e.Use(echomiddleware.CSRFWithConfig(echomiddleware.CSRFConfig{
+		TokenLookup:    "header:X-CSRF-Token,form:_csrf",
+		CookieName:     "_csrf",
+		CookieSecure:   cfg.Environment == "production",
+		CookieHTTPOnly: true,
+		CookieSameSite: http.SameSiteLaxMode,
+		CookiePath:     "/",
+	}))
 
 	// Locale Middleware
 	e.Use(middleware.Locale())

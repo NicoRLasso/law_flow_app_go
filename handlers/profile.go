@@ -24,7 +24,8 @@ func ProfileSettingsPageHandler(c echo.Context) error {
 	}
 
 	// Render the profile settings page
-	component := pages.ProfileSettings(c.Request().Context(), "Profile Settings | Law Flow", &user, firm)
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.ProfileSettings(c.Request().Context(), "Profile Settings | Law Flow", csrfToken, &user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

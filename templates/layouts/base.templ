@@ -5,38 +5,50 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ Base(ctx context.Context, title string) {
+templ Base(ctx context.Context, title string, csrfToken string) {
 	<!DOCTYPE html>
 	<html lang={ i18n.GetLocale(ctx) }>
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="csrf-token" content={ csrfToken }/>
 			<title>{ title }</title>
-			
+
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
-			
+
 			<!-- Google Fonts - Inter -->
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-			
+
 			<!-- Linear/Modern Design System -->
 			<link rel="stylesheet" href="/static/css/kinetic.css"/>
-			
+
 			<!-- Tailwind CSS (Compiled) -->
 			<link rel="stylesheet" href="/static/css/output.css"/>
-			
+
 			<!-- HTMX -->
 			<script src="https://unpkg.com/htmx.org@2.0.0"></script>
-			
+
 			<!-- Alpine.js -->
 			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-			
+
+			<!-- CSRF Configuration for HTMX -->
+			<script>
+				// Configure HTMX to include CSRF token in all requests
+				document.addEventListener('DOMContentLoaded', function() {
+					document.body.addEventListener('htmx:configRequest', function(event) {
+						const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+						event.detail.headers['X-CSRF-Token'] = csrfToken;
+					});
+				});
+			</script>
+
 			<!-- Custom JavaScript -->
 			<script src="/static/js/marquee.js" defer></script>
 			<script src="/static/js/app.js" defer></script>
-			
+
 
 		</head>
 		<body class="bg-background text-foreground">

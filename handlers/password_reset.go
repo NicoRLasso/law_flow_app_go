@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/services"
 	"law_flow_app_go/templates/pages"
 	"net/http"
@@ -14,7 +15,8 @@ import (
 
 // ForgotPasswordHandler renders the forgot password page
 func ForgotPasswordHandler(c echo.Context) error {
-	component := pages.ForgotPassword(c.Request().Context(), "Forgot Password | Law Flow")
+	csrfToken := middleware.GetCSRFToken(c)
+	component := pages.ForgotPassword(c.Request().Context(), "Forgot Password | Law Flow", csrfToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -87,10 +89,11 @@ func ForgotPasswordPostHandler(c echo.Context) error {
 
 // ResetPasswordHandler renders the reset password page
 func ResetPasswordHandler(c echo.Context) error {
+	csrfToken := middleware.GetCSRFToken(c)
 	token := c.QueryParam("token")
 
 	if token == "" {
-		component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", "", false)
+		component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", csrfToken, "", false)
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -98,7 +101,7 @@ func ResetPasswordHandler(c echo.Context) error {
 	_, err := services.ValidateResetToken(db.DB, token)
 	validToken := err == nil
 
-	component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", token, validToken)
+	component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", csrfToken, token, validToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

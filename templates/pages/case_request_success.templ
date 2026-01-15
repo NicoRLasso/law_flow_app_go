@@ -7,8 +7,8 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ CaseRequestSuccess(ctx context.Context, firm models.Firm) {
-	@layouts.Base(ctx, i18n.T(ctx, "public.success.title") + " - " + firm.Name) {
+templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm) {
+	@layouts.Base(ctx, i18n.T(ctx, "public.success.title") + " - " + firm.Name, csrfToken) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">

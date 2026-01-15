@@ -292,9 +292,10 @@ func DeleteUser(c echo.Context) error {
 func UsersPageHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
+	csrfToken := middleware.GetCSRFToken(c)
 
 	// Render the users page
-	component := pages.Users(c.Request().Context(), "User Management", currentUser, firm)
+	component := pages.Users(c.Request().Context(), "User Management", csrfToken, currentUser, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
