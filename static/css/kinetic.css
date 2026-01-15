@@ -747,6 +747,125 @@ body::before {
 }
 
 /* ============================================
+   SETTINGS PAGE RESPONSIVE STYLES
+   ============================================ */
+
+/* Settings Layout - Base Mobile First */
+.settings-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Settings Sidebar */
+.settings-sidebar {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Mobile Menu Toggle Button */
+.settings-mobile-toggle {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-lg);
+  color: var(--color-foreground);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-expo-out);
+}
+
+.settings-mobile-toggle:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+}
+
+.settings-mobile-toggle svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: transform var(--duration-fast) var(--easing-expo-out);
+}
+
+.settings-mobile-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* Settings Nav - Mobile Collapsible */
+.settings-nav {
+  margin-top: var(--space-3);
+}
+
+.settings-nav-hidden {
+  display: none;
+}
+
+/* Settings Content Area */
+.settings-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Desktop Breakpoint */
+@media (min-width: 768px) {
+  .settings-layout {
+    flex-direction: row;
+  }
+
+  .settings-sidebar {
+    width: 16rem; /* 256px, equivalent to w-64 */
+    position: sticky;
+    top: 6rem;
+    align-self: flex-start;
+  }
+
+  .settings-mobile-toggle {
+    display: none;
+  }
+
+  .settings-nav {
+    margin-top: 0;
+  }
+
+  .settings-nav-hidden {
+    display: block;
+  }
+}
+
+/* ============================================
+   ADDITIONAL RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Hide utilities */
+.hidden { display: none !important; }
+.block { display: block; }
+
+@media (min-width: 768px) {
+  .md\:hidden { display: none !important; }
+  .md\:block { display: block !important; }
+  .md\:flex { display: flex !important; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:hidden { display: none !important; }
+  .lg\:block { display: block !important; }
+}
+
+/* Responsive Padding */
+@media (max-width: 767px) {
+  .settings-page-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .settings-page-header p {
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
    ALPINE.JS UTILITIES
    ============================================ */
 

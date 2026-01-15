@@ -12,22 +12,44 @@ templ FirmSettings(title string, user *models.User, firm *models.Firm) {
 			<!-- Navigation Bar -->
 			@components.Navbar(user, firm, "/firm/settings")
 			<!-- Main Content -->
-			<main class="container mx-auto px-6 py-8 flex justify-center">
-				<div class="w-full max-w-6xl" x-data="{ activeTab: 'general' }">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="w-full max-w-6xl" x-data="{ activeTab: 'general', sidebarOpen: false }">
 					<!-- Header -->
-					<div class="text-center mb-8">
-						<h1 class="text-3xl font-bold tracking-tight">Firm Settings</h1>
+					<div class="text-center mb-6 md:mb-8 settings-page-header">
+						<h1 class="text-2xl md:text-3xl font-bold tracking-tight">Firm Settings</h1>
 						<p class="text-muted-foreground mt-1">Manage your firm's information and configuration</p>
 					</div>
 					<!-- Layout with Sidebar -->
-					<div class="flex gap-6">
+					<div class="settings-layout">
 						<!-- Sidebar Navigation -->
-						<aside class="w-64 flex-shrink-0">
-							<nav class="glass-panel rounded-2xl p-4 border border-white/10 sticky top-24">
+						<aside class="settings-sidebar">
+							<!-- Mobile Toggle Button -->
+							<button
+								@click="sidebarOpen = !sidebarOpen"
+								:aria-expanded="sidebarOpen"
+								class="settings-mobile-toggle md:hidden"
+							>
+								<span class="flex items-center gap-3">
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+									</svg>
+									<span x-text="activeTab === 'general' ? 'General' : activeTab === 'email' ? 'Email Config' : 'Firm Details'"></span>
+								</span>
+								<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
+							<!-- Navigation Menu -->
+							<nav
+								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav"
+								:class="{ 'settings-nav-hidden': !sidebarOpen }"
+								x-show="sidebarOpen || window.innerWidth >= 768"
+								x-transition
+							>
 								<ul class="space-y-2">
 									<li>
 										<button
-											@click="activeTab = 'general'"
+											@click="activeTab = 'general'; sidebarOpen = false"
 											:class="activeTab === 'general' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
 											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
 										>
@@ -39,7 +61,7 @@ templ FirmSettings(title string, user *models.User, firm *models.Firm) {
 									</li>
 									<li>
 										<button
-											@click="activeTab = 'email'"
+											@click="activeTab = 'email'; sidebarOpen = false"
 											:class="activeTab === 'email' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
 											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
 										>
@@ -51,7 +73,7 @@ templ FirmSettings(title string, user *models.User, firm *models.Firm) {
 									</li>
 									<li>
 										<button
-											@click="activeTab = 'details'"
+											@click="activeTab = 'details'; sidebarOpen = false"
 											:class="activeTab === 'details' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
 											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
 										>
@@ -65,7 +87,7 @@ templ FirmSettings(title string, user *models.User, firm *models.Firm) {
 							</nav>
 						</aside>
 						<!-- Main Content Area -->
-						<div class="flex-1 space-y-6">
+						<div class="settings-content space-y-6">
 							<!-- General Tab -->
 							<div x-show="activeTab === 'general'" x-transition class="space-y-6">
 								<!-- Firm Information Card -->
