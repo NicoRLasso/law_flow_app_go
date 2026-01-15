@@ -19,13 +19,14 @@ type User struct {
 	FirmID      *string    `gorm:"type:uuid;index" json:"firm_id"`     // Nullable - user may not have firm yet
 	Role        string     `gorm:"not null;default:staff" json:"role"` // admin, lawyer, staff, client
 	IsActive    bool       `gorm:"not null;default:true" json:"is_active"`
+	Language    string     `gorm:"not null;default:'en'" json:"language"` // en, es
 	LastLoginAt *time.Time `json:"last_login_at"`
 
 	// Optional personal information
-	Address          *string `json:"address,omitempty"`
-	PhoneNumber      *string `json:"phone_number,omitempty"`
-	DocumentTypeID   *string `gorm:"type:uuid" json:"document_type_id,omitempty"` // Foreign key to ChoiceOption
-	DocumentNumber   *string `json:"document_number,omitempty"`
+	Address        *string `json:"address,omitempty"`
+	PhoneNumber    *string `json:"phone_number,omitempty"`
+	DocumentTypeID *string `gorm:"type:uuid" json:"document_type_id,omitempty"` // Foreign key to ChoiceOption
+	DocumentNumber *string `json:"document_number,omitempty"`
 
 	// Relationships
 	Firm         *Firm         `gorm:"foreignKey:FirmID" json:"firm,omitempty"`

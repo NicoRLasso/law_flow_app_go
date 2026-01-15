@@ -1,22 +1,24 @@
 package pages
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
 )
 
-templ Dashboard(title string, user *models.User, firm *models.Firm) {
-	@layouts.Base(title) {
+templ Dashboard(ctx context.Context, title string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
-			@components.Navbar(user, firm, "/dashboard")
+			@components.Navbar(ctx, user, firm, "/dashboard")
 			<!-- Main Content -->
 			<main class="w-full mx-auto px-6 py-8">
 				<!-- Welcome Section -->
 				<div class="mb-8">
-					<h2 class="text-3xl font-bold mb-2">Welcome back, { user.Name }!</h2>
-					<p class="text-muted-foreground">Here's what's happening with your practice today.</p>
+					<h2 class="text-3xl font-bold mb-2">{ i18n.T(ctx, "dashboard.welcome", map[string]interface{}{"name": user.Name}) }</h2>
+					<p class="text-muted-foreground">{ i18n.T(ctx, "dashboard.subtitle") }</p>
 				</div>
 				<!-- Stats Grid -->
 				<!-- Stats Grid -->
@@ -32,7 +34,7 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 							<span class="text-xs text-accent font-medium">+12%</span>
 						</div>
 						<h3 class="text-2xl font-bold mb-1">24</h3>
-						<p class="text-sm text-muted-foreground">Active Cases</p>
+						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
 					</div>
 					<!-- Stat Card 2 -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
@@ -45,7 +47,7 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 							<span class="text-xs text-accent font-medium">+5</span>
 						</div>
 						<h3 class="text-2xl font-bold mb-1">142</h3>
-						<p class="text-sm text-muted-foreground">Total Clients</p>
+						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
 					</div>
 					<!-- Stat Card 3 -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
@@ -58,7 +60,7 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 							<span class="text-xs text-accent font-medium">+8</span>
 						</div>
 						<h3 class="text-2xl font-bold mb-1">18</h3>
-						<p class="text-sm text-muted-foreground">Completed This Month</p>
+						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
 					</div>
 					<!-- Stat Card 4 -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
@@ -68,43 +70,43 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 								</svg>
 							</div>
-							<span class="text-xs text-accent font-medium">Urgent</span>
+							<span class="text-xs text-accent font-medium">{ i18n.T(ctx, "dashboard.stats.urgent_label") }</span>
 						</div>
 						<h3 class="text-2xl font-bold mb-1">7</h3>
-						<p class="text-sm text-muted-foreground">Pending Tasks</p>
+						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
 					</div>
 				</div>
 				<!-- Firm Information Panel -->
 				<div class="glass-panel p-8 rounded-2xl border border-white/10 mb-8">
-					<h3 class="text-xl font-bold mb-6">Firm Information</h3>
+					<h3 class="text-xl font-bold mb-6">{ i18n.T(ctx, "dashboard.firm_info.label") }</h3>
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<p class="text-sm text-muted-foreground mb-1">Firm Name</p>
+							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.name") }</p>
 							<p class="font-medium">{ firm.Name }</p>
 						</div>
 						<div>
-							<p class="text-sm text-muted-foreground mb-1">Location</p>
+							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.location") }</p>
 							<p class="font-medium">{ firm.City }, { firm.Country }</p>
 						</div>
 						<div>
-							<p class="text-sm text-muted-foreground mb-1">Timezone</p>
+							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.timezone") }</p>
 							<p class="font-medium">{ firm.Timezone }</p>
 						</div>
 						<div>
-							<p class="text-sm text-muted-foreground mb-1">Contact</p>
+							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.contact") }</p>
 							<p class="font-medium">{ firm.Phone }</p>
 						</div>
 						<div>
-							<p class="text-sm text-muted-foreground mb-1">Billing Email</p>
+							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.billing_email") }</p>
 							<p class="font-medium">{ firm.BillingEmail }</p>
 						</div>
 						<div>
-							<p class="text-sm text-muted-foreground mb-1">Info Email</p>
+							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.info_email") }</p>
 							<p class="font-medium">
 								if firm.InfoEmail != "" {
 									{ firm.InfoEmail }
 								} else {
-									<span class="text-muted-foreground">Not set</span>
+									<span class="text-muted-foreground">{ i18n.T(ctx, "common.not_set") }</span>
 								}
 							</p>
 						</div>
@@ -112,7 +114,7 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 				</div>
 				<!-- Quick Actions -->
 				<div class="glass-panel p-8 rounded-2xl border border-white/10">
-					<h3 class="text-xl font-bold mb-6">Quick Actions</h3>
+					<h3 class="text-xl font-bold mb-6">{ i18n.T(ctx, "dashboard.quick_actions.label") }</h3>
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 						<a href="/case-requests" class="bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-xl p-6 transition-all duration-300 group">
 							<div class="flex items-center space-x-4">
@@ -122,8 +124,8 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 									</svg>
 								</div>
 								<div>
-									<p class="font-medium">Case Requests</p>
-									<p class="text-sm text-muted-foreground">Manage incoming requests</p>
+									<p class="font-medium">{ i18n.T(ctx, "dashboard.quick_actions.case_requests_title") }</p>
+									<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.quick_actions.case_requests_desc") }</p>
 								</div>
 							</div>
 						</a>
@@ -135,8 +137,8 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 									</svg>
 								</div>
 								<div>
-									<p class="font-medium">Manage Users</p>
-									<p class="text-sm text-muted-foreground">Add & edit users</p>
+									<p class="font-medium">{ i18n.T(ctx, "dashboard.quick_actions.users_title") }</p>
+									<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.quick_actions.users_desc") }</p>
 								</div>
 							</div>
 						</a>
@@ -148,8 +150,8 @@ templ Dashboard(title string, user *models.User, firm *models.Firm) {
 									</svg>
 								</div>
 								<div>
-									<p class="font-medium">Upload Document</p>
-									<p class="text-sm text-muted-foreground">Add new document</p>
+									<p class="font-medium">{ i18n.T(ctx, "dashboard.quick_actions.upload_doc_title") }</p>
+									<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.quick_actions.upload_doc_desc") }</p>
 								</div>
 							</div>
 						</a>

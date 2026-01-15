@@ -1,8 +1,13 @@
 package layouts
 
-templ Base(title string) {
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+)
+
+templ Base(ctx context.Context, title string) {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang={ i18n.GetLocale(ctx) }>
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>

@@ -10,6 +10,8 @@ import (
 	"log"
 	"time"
 
+	"law_flow_app_go/services/i18n"
+
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 )
@@ -17,6 +19,11 @@ import (
 func main() {
 	// Load configuration
 	cfg := config.Load()
+
+	// Initialize i18n
+	if err := i18n.Load(); err != nil {
+		log.Fatalf("Failed to load translations: %v", err)
+	}
 
 	// Initialize database
 	if err := db.Initialize(cfg.DBPath); err != nil {
@@ -45,6 +52,9 @@ func main() {
 		corsConfig.AllowOrigins = cfg.AllowedOrigins
 	}
 	e.Use(echomiddleware.CORSWithConfig(corsConfig))
+
+	// Locale Middleware
+	e.Use(middleware.Locale())
 
 	// Make config available to handlers
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {

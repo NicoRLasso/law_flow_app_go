@@ -1,12 +1,14 @@
 package pages
 
 import (
+	"context"
 	"law_flow_app_go/models"
 	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/services/i18n"
 )
 
-templ FirmSetup(title string, user *models.User) {
-	@layouts.Base(title) {
+templ FirmSetup(ctx context.Context, title string, user *models.User) {
+	@layouts.Base(ctx, title) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">
@@ -17,22 +19,22 @@ templ FirmSetup(title string, user *models.User) {
 				<!-- Header -->
 				<div class="text-center mb-10">
 					<h1 class="text-4xl md:text-5xl font-bold font-space-grotesk tracking-tighter mb-2">
-						LAW <span class="text-accent">FLOW</span>
+						{ i18n.T(ctx, "app.name") }
 					</h1>
-					<p class="text-muted-foreground">Welcome, { user.Name }! Let's set up your firm.</p>
+					<p class="text-muted-foreground">{ i18n.T(ctx, "firm.setup.welcome", map[string]interface{}{"name": user.Name}) }</p>
 				</div>
 				<!-- Setup Card -->
 				<div class="glass-panel p-10 rounded-2xl border border-white/10">
 					<div class="mb-10">
-						<h2 class="text-2xl font-bold mb-3">Create Your Firm</h2>
-						<p class="text-muted-foreground text-sm">Enter your firm's information to get started</p>
+						<h2 class="text-2xl font-bold mb-3">{ i18n.T(ctx, "firm.setup.create_title") }</h2>
+						<p class="text-muted-foreground text-sm">{ i18n.T(ctx, "firm.setup.enter_info") }</p>
 					</div>
 					<form hx-post="/firm/setup" hx-target="#error-message" hx-swap="innerHTML" class="space-y-6">
 						<!-- Error Message Area -->
 						<div id="error-message" class="min-h-[24px]"></div>
 						<!-- Firm Name -->
 						<div class="space-y-3">
-							<label for="name" class="text-sm font-medium text-muted-foreground ml-1">Firm Name <span class="text-red-500">*</span></label>
+							<label for="name" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.name") } <span class="text-red-500">*</span></label>
 							<input 
 								type="text" 
 								id="name" 
@@ -45,7 +47,7 @@ templ FirmSetup(title string, user *models.User) {
 						<!-- Country and City -->
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div class="space-y-3">
-								<label for="country" class="text-sm font-medium text-muted-foreground ml-1">Country <span class="text-red-500">*</span></label>
+								<label for="country" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.country") } <span class="text-red-500">*</span></label>
 								<select
 									id="country"
 									name="country"
@@ -56,7 +58,7 @@ templ FirmSetup(title string, user *models.User) {
 								</select>
 							</div>
 							<div class="space-y-3">
-								<label for="city" class="text-sm font-medium text-muted-foreground ml-1">City</label>
+								<label for="city" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.city") }</label>
 								<input
 									type="text"
 									id="city"
@@ -68,7 +70,7 @@ templ FirmSetup(title string, user *models.User) {
 						</div>
 						<!-- Timezone -->
 						<div class="space-y-3">
-							<label for="timezone" class="text-sm font-medium text-muted-foreground ml-1">Timezone</label>
+							<label for="timezone" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.timezone") }</label>
 							<input
 								type="text"
 								id="timezone"
@@ -79,7 +81,7 @@ templ FirmSetup(title string, user *models.User) {
 						</div>
 						<!-- Address -->
 						<div class="space-y-3">
-							<label for="address" class="text-sm font-medium text-muted-foreground ml-1">Address</label>
+							<label for="address" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.address") }</label>
 							<input
 								type="text"
 								id="address"
@@ -90,7 +92,7 @@ templ FirmSetup(title string, user *models.User) {
 						</div>
 						<!-- Phone -->
 						<div class="space-y-3">
-							<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">Phone</label>
+							<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.phone") }</label>
 							<input
 								type="tel"
 								id="phone"
@@ -101,7 +103,7 @@ templ FirmSetup(title string, user *models.User) {
 						</div>
 						<!-- Billing Email -->
 						<div class="space-y-3">
-							<label for="billing_email" class="text-sm font-medium text-muted-foreground ml-1">Billing Email <span class="text-red-500">*</span></label>
+							<label for="billing_email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.billing_email") } <span class="text-red-500">*</span></label>
 							<input
 								type="email"
 								id="billing_email"
@@ -114,7 +116,7 @@ templ FirmSetup(title string, user *models.User) {
 						<!-- Info and Noreply Emails -->
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div class="space-y-3">
-								<label for="info_email" class="text-sm font-medium text-muted-foreground ml-1">Info Email</label>
+								<label for="info_email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.info_email") }</label>
 								<input
 									type="email"
 									id="info_email"
@@ -124,7 +126,7 @@ templ FirmSetup(title string, user *models.User) {
 								/>
 							</div>
 							<div class="space-y-3">
-								<label for="noreply_email" class="text-sm font-medium text-muted-foreground ml-1">No-Reply Email</label>
+								<label for="noreply_email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.noreply_email") }</label>
 								<input
 									type="email"
 									id="noreply_email"
@@ -136,7 +138,7 @@ templ FirmSetup(title string, user *models.User) {
 						</div>
 						<!-- Description -->
 						<div class="space-y-3">
-							<label for="description" class="text-sm font-medium text-muted-foreground ml-1">Description</label>
+							<label for="description" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "case_requests.detail.case_description") }</label>
 							<textarea
 								id="description"
 								name="description"
@@ -150,7 +152,7 @@ templ FirmSetup(title string, user *models.User) {
 							type="submit"
 							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group mt-8"
 						>
-							<span class="relative z-10">Create Firm & Continue</span>
+							<span class="relative z-10">{ i18n.T(ctx, "firm.setup.create_btn") }</span>
 							<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
 						</button>
 					</form>

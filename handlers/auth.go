@@ -16,7 +16,7 @@ import (
 
 // LoginHandler renders the login page
 func LoginHandler(c echo.Context) error {
-	component := pages.Login("Login | Law Flow")
+	component := pages.Login(c.Request().Context(), "Login | Law Flow")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -88,6 +88,11 @@ func LoginPostHandler(c echo.Context) error {
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(cookie)
+
+	// Set language cookie if user has a preference
+	if user.Language != "" {
+		middleware.SetLanguageCookie(c, user.Language)
+	}
 
 	// Update last login time
 	now := time.Now()

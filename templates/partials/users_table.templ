@@ -1,15 +1,17 @@
 package partials
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 )
 
 // UserFilters renders the filter controls
-templ UserFilters() {
+templ UserFilters(ctx context.Context) {
 	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10">
 		<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
 			<div class="flex items-center gap-2 w-full sm:w-auto">
-				<label class="text-sm font-medium text-muted-foreground min-w-fit">Role:</label>
+				<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "users.filters.role") }</label>
 				<select
 					class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					hx-get="/api/users/list"
@@ -19,16 +21,16 @@ templ UserFilters() {
 					name="role"
 					id="role-filter"
 				>
-					<option value="">All Roles</option>
-					<option value="admin">Admin</option>
-					<option value="lawyer">Lawyer</option>
-					<option value="staff">Staff</option>
-					<option value="client">Client</option>
+					<option value="">{ i18n.T(ctx, "users.filters.all_roles") }</option>
+					<option value="admin">{ i18n.T(ctx, "users.roles.admin") }</option>
+					<option value="lawyer">{ i18n.T(ctx, "users.roles.lawyer") }</option>
+					<option value="staff">{ i18n.T(ctx, "users.roles.staff") }</option>
+					<option value="client">{ i18n.T(ctx, "users.roles.client") }</option>
 				</select>
 			</div>
 
 			<div class="flex items-center gap-2 w-full sm:w-auto">
-				<label class="text-sm font-medium text-muted-foreground min-w-fit">Status:</label>
+				<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "users.filters.status") }</label>
 				<select
 					class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					hx-get="/api/users/list"
@@ -38,9 +40,9 @@ templ UserFilters() {
 					name="status"
 					id="status-filter"
 				>
-					<option value="">All Status</option>
-					<option value="active">Active</option>
-					<option value="inactive">Inactive</option>
+					<option value="">{ i18n.T(ctx, "users.filters.all_status") }</option>
+					<option value="active">{ i18n.T(ctx, "users.filters.active") }</option>
+					<option value="inactive">{ i18n.T(ctx, "users.filters.inactive") }</option>
 				</select>
 			</div>
 		</div>
@@ -48,10 +50,10 @@ templ UserFilters() {
 }
 
 // UsersTable renders the users table (without filters)
-templ UsersTable(users []models.User, currentUserRole string) {
+templ UsersTable(ctx context.Context, users []models.User, currentUserRole string) {
 	if len(users) == 0 {
 		<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
-			<p class="text-muted-foreground">No users found</p>
+			<p class="text-muted-foreground">{ i18n.T(ctx, "users.table.empty") }</p>
 		</div>
 	} else {
 		<!-- Table Container with Horizontal Scroll -->
@@ -60,17 +62,17 @@ templ UsersTable(users []models.User, currentUserRole string) {
 				<table class="w-full">
 					<thead>
 						<tr class="border-b border-white/10 bg-white/5">
-							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
-							<th class="hidden md:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</th>
-							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Role</th>
-							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-							<th class="hidden lg:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Last Login</th>
-							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "users.table.name") }</th>
+							<th class="hidden md:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "users.table.email") }</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "users.table.role") }</th>
+							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "users.table.status") }</th>
+							<th class="hidden lg:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "users.table.last_login") }</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "users.table.actions") }</th>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-white/10">
 						for _, u := range users {
-							@UserRow(u, currentUserRole)
+							@UserRow(ctx, u, currentUserRole)
 						}
 					</tbody>
 				</table>
@@ -80,7 +82,7 @@ templ UsersTable(users []models.User, currentUserRole string) {
 }
 
 // UserRow renders a single table row for a user
-templ UserRow(user models.User, currentUserRole string) {
+templ UserRow(ctx context.Context, user models.User, currentUserRole string) {
 	<tr class="hover:bg-white/5 transition-colors duration-200">
 		<!-- Name -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
@@ -102,12 +104,12 @@ templ UserRow(user models.User, currentUserRole string) {
 
 		<!-- Role -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
-			@RoleBadge(user.Role)
+			@RoleBadge(ctx, user.Role)
 		</td>
 
 		<!-- Status (hidden on mobile) -->
 		<td class="hidden sm:table-cell px-4 md:px-6 py-4 md:py-5">
-			@UserStatusBadge(user.IsActive)
+			@UserStatusBadge(ctx, user.IsActive)
 		</td>
 
 		<!-- Last Login (hidden on small screens) -->
@@ -116,7 +118,7 @@ templ UserRow(user models.User, currentUserRole string) {
 				if user.LastLoginAt != nil {
 					{ formatRelativeTime(*user.LastLoginAt) }
 				} else {
-					Never
+					{ i18n.T(ctx, "users.table.never") }
 				}
 			</span>
 		</td>
@@ -134,7 +136,7 @@ templ UserRow(user models.User, currentUserRole string) {
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
 					</svg>
-					<span class="hidden sm:inline">Edit</span>
+					<span class="hidden sm:inline">{ i18n.T(ctx, "users.table.edit") }</span>
 				</button>
 				if currentUserRole == "admin" {
 					<button
@@ -147,7 +149,7 @@ templ UserRow(user models.User, currentUserRole string) {
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
 						</svg>
-						<span class="hidden sm:inline">Delete</span>
+						<span class="hidden sm:inline">{ i18n.T(ctx, "users.table.delete") }</span>
 					</button>
 				}
 			</div>
@@ -156,21 +158,21 @@ templ UserRow(user models.User, currentUserRole string) {
 }
 
 // RoleBadge renders a role badge
-templ RoleBadge(role string) {
+templ RoleBadge(ctx context.Context, role string) {
 	<span class={ "px-2 py-1 rounded-full text-xs font-semibold ", getRoleClass(role) }>
-		{ getRoleLabel(role) }
+		{ getRoleLabel(ctx, role) }
 	</span>
 }
 
 // UserStatusBadge renders a status badge
-templ UserStatusBadge(isActive bool) {
+templ UserStatusBadge(ctx context.Context, isActive bool) {
 	if isActive {
 		<span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30">
-			Active
+			{ i18n.T(ctx, "users.filters.active") }
 		</span>
 	} else {
 		<span class="px-2 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-400 border border-gray-500/30">
-			Inactive
+			{ i18n.T(ctx, "users.filters.inactive") }
 		</span>
 	}
 }
@@ -224,28 +226,28 @@ func getRoleClass(role string) string {
 	}
 }
 
-func getRoleLabel(role string) string {
+func getRoleLabel(ctx context.Context, role string) string {
 	switch role {
 	case "admin":
-		return "Admin"
+		return i18n.T(ctx, "users.roles.admin")
 	case "lawyer":
-		return "Lawyer"
+		return i18n.T(ctx, "users.roles.lawyer")
 	case "staff":
-		return "Staff"
+		return i18n.T(ctx, "users.roles.staff")
 	case "client":
-		return "Client"
+		return i18n.T(ctx, "users.roles.client")
 	default:
 		return role
 	}
 }
 
 // DeleteConfirmModal renders a confirmation modal for deleting a user
-templ DeleteConfirmModal(user models.User) {
+templ DeleteConfirmModal(ctx context.Context, user models.User) {
 	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4" id="delete-confirm-modal">
 		<div class="bg-background border border-white/10 rounded-xl md:rounded-2xl shadow-2xl max-w-md w-full">
 			<!-- Modal Header -->
 			<div class="px-4 md:px-6 py-3 md:py-4 border-b border-white/10">
-				<h2 class="text-lg md:text-xl font-bold text-red-400">Delete User</h2>
+				<h2 class="text-lg md:text-xl font-bold text-red-400">{ i18n.T(ctx, "users.delete_modal.title") }</h2>
 			</div>
 
 			<!-- Modal Body -->
@@ -258,10 +260,10 @@ templ DeleteConfirmModal(user models.User) {
 					</div>
 					<div class="flex-1">
 						<p class="text-foreground font-medium mb-2 text-sm md:text-base">
-							Are you sure you want to delete <span class="text-red-400">{ user.Name }</span>?
+							{ i18n.T(ctx, "users.delete_modal.confirm", map[string]interface{}{"name": user.Name}) }
 						</p>
 						<p class="text-xs md:text-sm text-muted-foreground">
-							This action cannot be undone. The user will be permanently removed from the system.
+							{ i18n.T(ctx, "users.delete_modal.warning") }
 						</p>
 					</div>
 				</div>
@@ -274,7 +276,7 @@ templ DeleteConfirmModal(user models.User) {
 					class="flex-1 px-4 py-2.5 md:py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-xl font-medium transition-all duration-200 text-sm md:text-base"
 					onclick="document.getElementById('delete-confirm-modal').remove()"
 				>
-					Cancel
+					{ i18n.T(ctx, "users.delete_modal.cancel") }
 				</button>
 				<button
 					type="button"
@@ -283,7 +285,7 @@ templ DeleteConfirmModal(user models.User) {
 					hx-trigger="click"
 					hx-on::after-request="document.getElementById('delete-confirm-modal').remove(); htmx.trigger('body', 'reload-users');"
 				>
-					Delete User
+					{ i18n.T(ctx, "users.delete_modal.delete_btn") }
 				</button>
 			</div>
 		</div>

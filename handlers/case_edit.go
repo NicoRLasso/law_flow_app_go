@@ -64,7 +64,7 @@ func GetCaseEditFormHandler(c echo.Context) error {
 	}
 
 	// Render the edit modal
-	component := partials.CaseEditModal(caseRecord, clients, lawyers)
+	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

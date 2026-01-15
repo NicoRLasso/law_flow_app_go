@@ -294,7 +294,7 @@ func UsersPageHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 
 	// Render the users page
-	component := pages.Users("User Management", currentUser, firm)
+	component := pages.Users(c.Request().Context(), "User Management", currentUser, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -334,14 +334,14 @@ func GetUsersListHTMX(c echo.Context) error {
 	}
 
 	// Render the users table
-	component := partials.UsersTable(users, currentUser.Role)
+	component := partials.UsersTable(c.Request().Context(), users, currentUser.Role)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
 // GetUserFormNew returns the form modal for creating a new user
 func GetUserFormNew(c echo.Context) error {
 	// Render the form modal with empty user
-	component := partials.UserFormModal(nil, false)
+	component := partials.UserFormModal(c.Request().Context(), nil, false)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -365,7 +365,7 @@ func GetUserFormEdit(c echo.Context) error {
 	}
 
 	// Render the form modal with user data
-	component := partials.UserFormModal(&user, true)
+	component := partials.UserFormModal(c.Request().Context(), &user, true)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -384,6 +384,6 @@ func GetUserDeleteConfirm(c echo.Context) error {
 	}
 
 	// Render the delete confirmation modal
-	component := partials.DeleteConfirmModal(user)
+	component := partials.DeleteConfirmModal(c.Request().Context(), user)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

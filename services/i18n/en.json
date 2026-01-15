@@ -1,0 +1,525 @@
+{
+  "app": {
+    "name": "Law Flow",
+    "description": "Legal Practice Management Simplified",
+    "tagline": "Practice Management Evolved"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "firm_settings": "Firm Settings",
+    "users": "Users",
+    "case_requests": "Case Requests",
+    "requests": "Requests",
+    "cases": "Cases",
+    "profile_settings": "Profile Settings",
+    "features": "Features",
+    "benefits": "Benefits",
+    "pricing": "Pricing"
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "status": "Status",
+    "actions": "Actions",
+    "language": "Language",
+    "english": "English",
+    "spanish": "Spanish",
+    "not_set": "Not set",
+    "na": "N/A",
+    "loading": "Loading...",
+    "close": "Close",
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} results",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "auth": {
+    "email": "Email Address",
+    "password": "Password",
+    "login_button": "Sign In",
+    "forgot_password_link": "Forgot Password?",
+    "forgot_password": {
+      "title": "Forgot your password?",
+      "desc": "Enter your email address and we'll send you a link to reset your password.",
+      "btn": "Send Reset Link"
+    },
+    "back_to_login": "Back to login",
+    "reset_password": {
+      "title": "Reset your password",
+      "desc": "Enter your new password below.",
+      "invalid_title": "Invalid or Expired Link",
+      "invalid_desc": "This password reset link is invalid or has expired. Please request a new one.",
+      "request_new": "Request new reset link",
+      "new_pass": "New Password",
+      "confirm_pass": "Confirm New Password",
+      "confirm_ph": "Confirm your password",
+      "btn": "Reset Password"
+    },
+    "dont_have_account": "Don't have an account?",
+    "register": "Register",
+    "welcome_back": "Welcome Back",
+    "login_subtitle": "Enter your credentials to access your workspace",
+    "request_access": "Request Access"
+  },
+  "public": {
+    "request": {
+      "title": "Request Legal Assistance",
+      "subtitle": "Request Legal Assistance",
+      "form_title": "Case Request Form",
+      "form_desc": "Please fill out the form below and we will contact you soon.",
+      "personal_info": "Personal Information",
+      "full_name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "doc_type": "Document Type",
+      "select_type": "Select type",
+      "doc_number": "Document Number",
+      "case_desc": "Case Description",
+      "case_desc_ph": "Please describe your legal matter in detail...",
+      "support_doc": "Supporting Document",
+      "optional": "Optional",
+      "pdf_only": "PDF only, maximum 10MB",
+      "submit_btn": "Submit Request",
+      "terms": "By submitting this form, you agree to our terms of service and privacy policy."
+    },
+    "success": {
+      "title": "Request Submitted",
+      "header": "Request Submitted Successfully!",
+      "thank_you": "Thank you for contacting",
+      "next_steps": "What happens next?",
+      "step1": "Our team will review your case request within 24-48 hours",
+      "step2": "We'll contact you via email or phone to discuss your case",
+      "step3": "If you uploaded a document, our lawyers will review it carefully",
+      "need_help": "Need immediate assistance?",
+      "call_us": "Call us at",
+      "email_us": "Email us at",
+      "another_request": "Submit Another Request",
+      "close_note": "You can close this page. We have all the information we need."
+    }
+  },
+  "firm": {
+    "setup": {
+      "welcome": "Welcome, {name}! Let's set up your firm.",
+      "create_title": "Create Your Firm",
+      "enter_info": "Enter your firm's information to get started",
+      "country": "Country",
+      "city": "City",
+      "address": "Address",
+      "noreply_email": "No-Reply Email",
+      "create_btn": "Create Firm & Continue"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {name}",
+    "overview": "Overview",
+    "subtitle": "Here's what's happening with your practice today.",
+    "stats": {
+      "active_cases": "Active Cases",
+      "total_clients": "Total Clients",
+      "completed_monthly": "Completed This Month",
+      "pending_tasks": "Pending Tasks",
+      "urgent_label": "Urgent"
+    },
+    "firm_info": {
+      "label": "Firm Information",
+      "name": "Firm Name",
+      "location": "Location",
+      "timezone": "Timezone",
+      "contact": "Contact",
+      "billing_email": "Billing Email",
+      "info_email": "Info Email"
+    },
+    "quick_actions": {
+      "label": "Quick Actions",
+      "case_requests_title": "Case Requests",
+      "case_requests_desc": "Manage incoming requests",
+      "users_title": "Manage Users",
+      "users_desc": "Add & edit users",
+      "upload_doc_title": "Upload Document",
+      "upload_doc_desc": "Add new document"
+    }
+  },
+  "landing": {
+    "hero": {
+      "label": "Legal Practice Management",
+      "title_prefix": "Transform Your",
+      "title_suffix": "Legal Workflow",
+      "description": "Streamline case management, automate workflows, and deliver exceptional client experiences with the modern practice management platform built for law firms.",
+      "cta_primary": "Start Free Trial",
+      "cta_secondary": "Explore Features",
+      "trial_note": "No credit card required · 14-day free trial"
+    },
+    "stats": {
+      "cases_label": "Cases Managed",
+      "uptime_label": "Uptime SLA",
+      "firms_label": "Law Firms",
+      "support_label": "Support"
+    },
+    "features": {
+      "label": "Features",
+      "title": "Everything You Need",
+      "subtitle": "Powerful tools designed specifically for modern law practices",
+      "case_mgmt_title": "Intelligent Case Management",
+      "case_mgmt_desc": "Centralize all case information with AI-powered organization, smart search, and automated workflows. Track deadlines, manage documents, and collaborate seamlessly with your team.",
+      "learn_more": "Learn more",
+      "automation_title": "Workflow Automation",
+      "automation_desc": "Automate repetitive tasks and create custom workflows.",
+      "portal_title": "Client Portal",
+      "portal_desc": "Secure client access to case updates and documents.",
+      "docs_title": "Document Management",
+      "docs_desc": "Store, organize, and share documents with version control, e-signatures, and advanced search capabilities.",
+      "time_title": "Time Tracking & Billing",
+      "time_desc": "Track billable hours effortlessly with integrated timers, automated invoicing, and detailed reporting."
+    }
+  },
+  "cases": {
+    "title": "Cases",
+    "description": {
+      "admin": "Manage all cases in your firm",
+      "user": "View and manage your assigned cases"
+    },
+    "filters": {
+      "status": "Status:",
+      "assigned_to": "Assigned To:",
+      "from": "From:",
+      "to": "To:",
+      "search_label": "Search:",
+      "search_placeholder": "Case number, title...",
+      "all_status": "All Status",
+      "all_lawyers": "All Lawyers"
+    },
+    "status": {
+      "open": "Open",
+      "on_hold": "On Hold",
+      "closed": "Closed"
+    },
+    "table": {
+      "number": "Case Number",
+      "title": "Title",
+      "client": "Client",
+      "assigned_to": "Assigned To",
+      "status": "Status",
+      "opened": "Opened",
+      "actions": "Actions",
+      "unassigned": "Unassigned",
+      "details": "Details",
+      "empty": "No cases found"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "description": "Manage users, admins, lawyers, staff, and clients",
+    "add_user": "Add User",
+    "filters": {
+      "role": "Role:",
+      "status": "Status:",
+      "all_roles": "All Roles",
+      "all_status": "All Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "last_login": "Last Login",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "never": "Never",
+      "empty": "No users found"
+    },
+    "modal": {
+      "add_title": "Add New User",
+      "edit_title": "Edit User",
+      "full_name": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "min_chars": "Minimum 8 characters",
+      "role": "Role",
+      "select_role": "Select a role",
+      "active_user": "Active User",
+      "inactive_desc": "Inactive users cannot log in",
+      "cancel": "Cancel",
+      "create_btn": "Create User",
+      "update_btn": "Update User",
+      "role_help": {
+        "admin": "Full access.",
+        "lawyer": "Manage cases.",
+        "staff": "Limited access.",
+        "client": "View own cases."
+      }
+    },
+    "roles": {
+      "admin": "Admin",
+      "lawyer": "Lawyer",
+      "staff": "Staff",
+      "client": "Client"
+    },
+    "delete_modal": {
+      "title": "Delete User",
+      "confirm": "Are you sure you want to delete {name}?",
+      "warning": "This action cannot be undone. The user will be permanently removed from the system.",
+      "cancel": "Cancel",
+      "delete_btn": "Delete User"
+    }
+  },
+  "case_requests": {
+    "title": "Case Requests",
+    "description": "Manage incoming case requests from your public form",
+    "filters": {
+      "status": "Status:",
+      "priority": "Priority:",
+      "all_status": "All Status",
+      "all_priorities": "All Priorities"
+    },
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "priority": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "table": {
+      "name": "Name",
+      "contact": "Contact",
+      "document": "Document",
+      "priority": "Priority",
+      "status": "Status",
+      "submitted": "Submitted",
+      "actions": "Actions",
+      "details": "Details",
+      "empty": "No case requests found"
+    },
+    "detail": {
+      "title": "Case Request Details",
+      "request_id": "Request ID: {id}",
+      "personal_info": "Personal Information",
+      "full_name": "Full Name",
+      "document": "Document",
+      "email": "Email",
+      "phone": "Phone",
+      "case_description": "Case Description",
+      "rejection_reason": "Rejection Reason",
+      "attached_documents": "Attached Documents",
+      "no_documents": "No documents attached",
+      "download": "Download",
+      "review_info": "Review Information",
+      "reviewed_by": "Reviewed By",
+      "reviewed_at": "Reviewed At",
+      "additional_info": "Additional Information",
+      "submitted": "Submitted",
+      "last_updated": "Last Updated",
+      "ip_address": "IP Address",
+      "close": "Close"
+    },
+    "reject_modal": {
+      "title": "Reject Case Request",
+      "from": "Request from: {name}",
+      "instruction": "Please provide a reason for rejecting this case request. This message will be sent to the client via email.",
+      "placeholder": "Please explain why this case request is being rejected...",
+      "cancel": "Cancel",
+      "reject_btn": "Reject & Send Email"
+    },
+    "accept_modal": {
+      "title": "Accept Case Request",
+      "step1": "Client",
+      "step2": "Lawyer",
+      "step3": "Classification",
+      "step4": "Review",
+      "cancel": "Cancel",
+      "next_lawyer": "Next: Assign Lawyer",
+      "next_class": "Next: Classification",
+      "next_review": "Next: Review",
+      "create_case": "Create Case"
+    }
+  },
+  "settings": {
+    "profile": {
+      "title": "Profile Settings",
+      "desc": "Manage your personal information and account settings",
+      "info_title": "Personal Information",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "language": "Language",
+      "address": "Address",
+      "doc_number": "Document Number",
+      "save_btn": "Save Changes"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "account": "Account Info"
+    },
+    "security": {
+      "title": "Change Password",
+      "current_pass": "Current Password",
+      "new_pass": "New Password",
+      "confirm_pass": "Confirm New Password",
+      "change_btn": "Change Password"
+    },
+    "account": {
+      "title": "Account Information",
+      "role": "Role",
+      "status": "Status",
+      "firm": "Firm"
+    },
+    "firm": {
+      "title": "Firm Settings",
+      "desc": "Manage your firm's information and configuration",
+      "info_title": "Firm Information",
+      "name": "Firm Name",
+      "country": "Country",
+      "timezone": "Timezone",
+      "address": "Address",
+      "city": "City",
+      "phone": "Phone Number",
+      "desc_label": "Description",
+      "desc_ph": "Brief description of your firm",
+      "save_btn": "Save Changes"
+    },
+    "nav": {
+      "general": "General",
+      "email": "Email Config",
+      "details": "Firm Details"
+    },
+    "email": {
+      "title": "Email Configuration",
+      "billing": "Billing Email",
+      "billing_desc": "Email for billing and invoices",
+      "info": "Info Email",
+      "info_desc": "General information email",
+      "noreply": "No-Reply Email",
+      "noreply_desc": "Email for automated notifications",
+      "save_btn": "Save Email Settings"
+    },
+    "details": {
+      "title": "Firm Details",
+      "id": "Firm ID",
+      "slug": "Slug",
+      "created": "Created"
+    }
+  },
+  "case": {
+    "detail": {
+      "title": "Case Details",
+      "case_number": "Case Number",
+      "edit_btn": "Edit Case",
+      "edit_short": "Edit",
+      "tab": {
+        "summary": "Summary",
+        "client": "Client",
+        "documents": "Documents"
+      },
+      "info_title": "Case Information",
+      "type": "Type",
+      "desc": "Description",
+      "timeline_title": "Timeline",
+      "opened": "Opened",
+      "closed": "Closed",
+      "assignment_title": "Assignment",
+      "assigned_lawyer": "Assigned Lawyer",
+      "unassigned": "Unassigned",
+      "classification_title": "Classification",
+      "domain": "Domain",
+      "branch": "Branch",
+      "subtypes": "Subtypes",
+      "upload_btn": "Upload Document",
+      "search_placeholder": "Search documents...",
+      "filter": {
+        "all_types": "All Types",
+        "apply": "Apply Filters"
+      },
+      "loading": "Loading documents...",
+      "client_title": "Client Information",
+      "phone": "Phone",
+      "no_client": "No client information available",
+      "modal": {
+        "title": "Case Details",
+        "case_number": "Case Number",
+        "case_info": "Case Information",
+        "client_info": "Client Information", 
+        "assignment": "Assignment",
+        "classification": "Classification",
+        "documents": "Documents",
+        "timeline": "Timeline",
+        "download": "Download",
+        "no_docs": "No documents attached",
+        "closed": "Closed",
+        "close_btn": "Close"
+      }
+    },
+    "document": {
+      "upload": {
+        "title": "Upload Document",
+        "file_label": "Document File",
+        "accepted_formats": "Accepted formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)",
+        "type_label": "Document Type",
+        "select_type": "Select a type...",
+        "desc_label": "Description",
+        "desc_placeholder": "Optional description of the document...",
+        "btn": "Upload",
+        "cancel": "Cancel"
+      },
+      "table": {
+        "file_name": "File Name",
+        "type": "Type",
+        "size": "Size",
+        "uploaded_by": "Uploaded By",
+        "uploaded_at": "Uploaded At",
+        "actions": "Actions",
+        "system": "System",
+        "view": "View",
+        "empty": "No documents found"
+      },
+      "viewer": {
+        "title": "Document Viewer",
+        "close_tooltip": "Close (Esc)"
+      },
+      "types": {
+        "initial_request": "Initial Request",
+        "evidence": "Evidence",
+        "contract": "Contract",
+        "correspondence": "Correspondence",
+        "legal_brief": "Legal Brief",
+        "court_filing": "Court Filing",
+        "invoice": "Invoice",
+        "other": "Other"
+      }
+    },
+    "edit": {
+      "title": "Edit Case",
+      "status": "Status",
+      "description": "Description",
+      "desc_placeholder": "Case description...",
+      "client": "Client",
+      "lawyer": "Assigned Lawyer",
+      "unassigned": "Unassigned",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "open": "Open",
+      "on_hold": "On Hold",
+      "closed": "Closed"
+    }
+  }
+}

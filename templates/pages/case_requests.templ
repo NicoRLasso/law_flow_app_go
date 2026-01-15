@@ -1,30 +1,32 @@
 package pages
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
 	"law_flow_app_go/templates/partials"
 )
 
-templ CaseRequests(title string, user *models.User, firm *models.Firm) {
-	@layouts.Base(title) {
+templ CaseRequests(ctx context.Context, title string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
-			@components.Navbar(user, firm, "/case-requests")
+			@components.Navbar(ctx, user, firm, "/case-requests")
 			<!-- Main Content -->
 			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
 				<div class="space-y-4 md:space-y-6">
 					<!-- Header -->
 					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 						<div>
-							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">Case Requests</h1>
-							<p class="text-muted-foreground mt-1 text-sm md:text-base">Manage incoming case requests from your public form</p>
+							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "case_requests.title") }</h1>
+							<p class="text-muted-foreground mt-1 text-sm md:text-base">{ i18n.T(ctx, "case_requests.description") }</p>
 						</div>
 					</div>
 
 					<!-- Case Requests Filters (static, not reloaded) -->
-					@partials.CaseRequestFilters()
+					@partials.CaseRequestFilters(ctx)
 					
 					<!-- Loading indicator (outside the replaceable content) -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">

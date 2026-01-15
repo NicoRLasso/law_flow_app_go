@@ -14,7 +14,7 @@ import (
 
 // ForgotPasswordHandler renders the forgot password page
 func ForgotPasswordHandler(c echo.Context) error {
-	component := pages.ForgotPassword("Forgot Password | Law Flow")
+	component := pages.ForgotPassword(c.Request().Context(), "Forgot Password | Law Flow")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -90,7 +90,7 @@ func ResetPasswordHandler(c echo.Context) error {
 	token := c.QueryParam("token")
 
 	if token == "" {
-		component := pages.ResetPassword("Reset Password | Law Flow", "", false)
+		component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", "", false)
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -98,7 +98,7 @@ func ResetPasswordHandler(c echo.Context) error {
 	_, err := services.ValidateResetToken(db.DB, token)
 	validToken := err == nil
 
-	component := pages.ResetPassword("Reset Password | Law Flow", token, validToken)
+	component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", token, validToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

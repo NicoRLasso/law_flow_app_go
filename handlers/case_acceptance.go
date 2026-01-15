@@ -35,7 +35,7 @@ func StartCaseAcceptanceHandler(c echo.Context) error {
 	}
 
 	// Render the acceptance modal
-	component := partials.CaseAcceptanceModal(request)
+	component := partials.CaseAcceptanceModal(c.Request().Context(), request)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -72,7 +72,7 @@ func ProcessClientStepHandler(c echo.Context) error {
 	c.Logger().Infof("Found %d lawyers", len(lawyers))
 
 	// Render Step 2
-	component := partials.LawyerSelectionStep(lawyers, isNewClient, request)
+	component := partials.LawyerSelectionStep(c.Request().Context(), lawyers, isNewClient, request)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -126,7 +126,7 @@ func AssignLawyerStepHandler(c echo.Context) error {
 	}
 
 	// Render Step 3
-	component := partials.ClassificationStep(domains, request, lawyerID)
+	component := partials.ClassificationStep(c.Request().Context(), domains, request, lawyerID)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -244,7 +244,7 @@ func SaveClassificationStepHandler(c echo.Context) error {
 	}
 
 	// Render Step 4 (Review)
-	component := partials.ReviewConfirmStep(request, lawyer, isNewClient, domain, branch, subtypes, domainID, branchID, subtypeIDs, lawyerID)
+	component := partials.ReviewConfirmStep(c.Request().Context(), request, lawyer, isNewClient, domain, branch, subtypes, domainID, branchID, subtypeIDs, lawyerID)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

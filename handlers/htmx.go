@@ -24,6 +24,6 @@ func GetUsersHTMX(c echo.Context) error {
 	}
 
 	// Return partial template
-	component := partials.UserList(users)
+	component := partials.UserList(c.Request().Context(), users)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

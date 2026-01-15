@@ -1,11 +1,13 @@
 package partials
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 )
 
 // CaseDetailModal renders a modal with detailed case information
-templ CaseDetailModal(caseRecord models.Case) {
+templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 	<div
 		id="case-detail-modal"
 		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
@@ -17,10 +19,10 @@ templ CaseDetailModal(caseRecord models.Case) {
 			<!-- Header -->
 			<div class="flex items-center justify-between p-8 border-b border-white/10">
 				<div>
-					<h2 class="text-2xl font-bold">Case Details</h2>
-					<p class="text-sm text-muted-foreground">Case Number: { caseRecord.CaseNumber }</p>
+					<h2 class="text-2xl font-bold">{ i18n.T(ctx, "case.detail.modal.title") }</h2>
+					<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "case.detail.modal.case_number") }: { caseRecord.CaseNumber }</p>
 				</div>
-				@CaseStatusBadge(caseRecord.Status)
+				@CaseStatusBadge(ctx, caseRecord.Status)
 			</div>
 
 			<!-- Body -->
@@ -28,24 +30,24 @@ templ CaseDetailModal(caseRecord models.Case) {
 				<div class="space-y-8">
 					<!-- Case Information -->
 					<div>
-						<h3 class="text-lg font-semibold mb-4">Case Information</h3>
+						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.case_info") }</h3>
 						<div class="glass-panel p-6 rounded-xl space-y-3">
 							<div class="flex items-start gap-2">
-								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Case Number:</span>
+								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.modal.case_number") }:</span>
 								<span class="text-sm text-foreground">{ caseRecord.CaseNumber }</span>
 							</div>
 							<div class="flex items-start gap-2">
-								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Type:</span>
+								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.type") }:</span>
 								<span class="text-sm text-foreground">{ caseRecord.CaseType }</span>
 							</div>
 							if caseRecord.Title != nil {
 								<div class="flex items-start gap-2">
-									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Title:</span>
+									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "cases.table.title") }:</span>
 									<span class="text-sm text-foreground">{ *caseRecord.Title }</span>
 								</div>
 							}
 							<div class="flex items-start gap-2">
-								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Description:</span>
+								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.desc") }:</span>
 								<span class="text-sm text-foreground">{ caseRecord.Description }</span>
 							</div>
 						</div>
@@ -54,19 +56,19 @@ templ CaseDetailModal(caseRecord models.Case) {
 					<!-- Client Information -->
 					if caseRecord.Client.ID != "" {
 						<div>
-							<h3 class="text-lg font-semibold mb-4">Client Information</h3>
+							<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.client_info") }</h3>
 							<div class="glass-panel p-6 rounded-xl space-y-3">
 								<div class="flex items-start gap-2">
-									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Name:</span>
+									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "users.table.name") }:</span>
 									<span class="text-sm text-foreground">{ caseRecord.Client.Name }</span>
 								</div>
 								<div class="flex items-start gap-2">
-									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Email:</span>
+									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "users.table.email") }:</span>
 									<span class="text-sm text-foreground">{ caseRecord.Client.Email }</span>
 								</div>
 								if caseRecord.Client.PhoneNumber != nil {
 									<div class="flex items-start gap-2">
-										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Phone:</span>
+										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.phone") }:</span>
 										<span class="text-sm text-foreground">{ *caseRecord.Client.PhoneNumber }</span>
 									</div>
 								}
@@ -77,10 +79,10 @@ templ CaseDetailModal(caseRecord models.Case) {
 					<!-- Assignment -->
 					if caseRecord.AssignedTo != nil {
 						<div>
-							<h3 class="text-lg font-semibold mb-4">Assignment</h3>
+							<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.assignment") }</h3>
 							<div class="glass-panel p-6 rounded-xl space-y-3">
 								<div class="flex items-start gap-2">
-									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Assigned Lawyer:</span>
+									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.assigned_lawyer") }:</span>
 									<span class="text-sm text-foreground">{ caseRecord.AssignedTo.Name }</span>
 								</div>
 							</div>
@@ -90,23 +92,23 @@ templ CaseDetailModal(caseRecord models.Case) {
 					<!-- Classification -->
 					if caseRecord.Domain != nil || caseRecord.Branch != nil {
 						<div>
-							<h3 class="text-lg font-semibold mb-4">Classification</h3>
+							<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.classification") }</h3>
 							<div class="glass-panel p-6 rounded-xl space-y-3">
 								if caseRecord.Domain != nil {
 									<div class="flex items-start gap-2">
-										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Domain:</span>
+										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.domain") }:</span>
 										<span class="text-sm text-foreground">{ caseRecord.Domain.Name }</span>
 									</div>
 								}
 								if caseRecord.Branch != nil {
 									<div class="flex items-start gap-2">
-										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Branch:</span>
+										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.branch") }:</span>
 										<span class="text-sm text-foreground">{ caseRecord.Branch.Name }</span>
 									</div>
 								}
 								if len(caseRecord.Subtypes) > 0 {
 									<div class="flex items-start gap-2">
-										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Subtypes:</span>
+										<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.subtypes") }:</span>
 										<div class="flex flex-wrap gap-2">
 											for _, subtype := range caseRecord.Subtypes {
 												<span class="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-foreground">
@@ -122,7 +124,7 @@ templ CaseDetailModal(caseRecord models.Case) {
 
 					<!-- Documents -->
 					<div>
-						<h3 class="text-lg font-semibold mb-4">Documents</h3>
+						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.documents") }</h3>
 						if len(caseRecord.Documents) > 0 {
 							<div class="glass-panel p-6 rounded-xl space-y-4">
 								for _, doc := range caseRecord.Documents {
@@ -140,29 +142,29 @@ templ CaseDetailModal(caseRecord models.Case) {
 											href={ templ.SafeURL("/api/cases/" + caseRecord.ID + "/documents/" + doc.ID + "/download") }
 											class="px-3 py-1.5 bg-accent/20 text-accent hover:bg-accent/30 rounded-lg text-sm font-medium transition-all duration-200"
 										>
-											Download
+											{ i18n.T(ctx, "case.detail.modal.download") }
 										</a>
 									</div>
 								}
 							</div>
 						} else {
 							<div class="glass-panel p-8 rounded-xl text-center">
-								<p class="text-sm text-muted-foreground">No documents attached</p>
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "case.detail.modal.no_docs") }</p>
 							</div>
 						}
 					</div>
 
 					<!-- Timeline -->
 					<div>
-						<h3 class="text-lg font-semibold mb-4">Timeline</h3>
+						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.timeline") }</h3>
 						<div class="glass-panel p-6 rounded-xl space-y-3">
 							<div class="flex items-start gap-2">
-								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Opened:</span>
+								<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.opened") }:</span>
 								<span class="text-sm text-foreground">{ caseRecord.OpenedAt.Format("Jan 2, 2006 3:04 PM") }</span>
 							</div>
 							if caseRecord.ClosedAt != nil {
 								<div class="flex items-start gap-2">
-									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">Closed:</span>
+									<span class="text-sm font-medium text-muted-foreground min-w-[140px]">{ i18n.T(ctx, "case.detail.modal.closed") }:</span>
 									<span class="text-sm text-foreground">{ caseRecord.ClosedAt.Format("Jan 2, 2006 3:04 PM") }</span>
 								</div>
 							}
@@ -177,7 +179,7 @@ templ CaseDetailModal(caseRecord models.Case) {
 					@click="show = false; setTimeout(() => document.getElementById('case-detail-modal').remove(), 300)"
 					class="px-6 py-2.5 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200"
 				>
-					Close
+					{ i18n.T(ctx, "case.detail.modal.close_btn") }
 				</button>
 			</div>
 		</div>

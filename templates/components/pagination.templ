@@ -1,6 +1,10 @@
 package components
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/services/i18n"
+)
 
 // PaginationData holds pagination information
 type PaginationData struct {
@@ -14,12 +18,16 @@ type PaginationData struct {
 }
 
 // Pagination renders pagination controls
-templ Pagination(data PaginationData) {
+templ Pagination(ctx context.Context, data PaginationData) {
 	if data.TotalPages > 1 {
 		<div class="flex items-center justify-between mt-6 px-4 py-3 glass-panel rounded-xl border border-white/10">
 			<!-- Pagination Info -->
 			<div class="text-sm text-muted-foreground">
-				Showing { fmt.Sprintf("%d", (data.CurrentPage-1)*data.Limit+1) } to { fmt.Sprintf("%d", min(data.CurrentPage*data.Limit, data.Total)) } of { fmt.Sprintf("%d", data.Total) } results
+				{ i18n.T(ctx, "common.pagination.showing", map[string]interface{}{
+					"start": fmt.Sprintf("%d", (data.CurrentPage-1)*data.Limit+1),
+					"end":   fmt.Sprintf("%d", min(data.CurrentPage*data.Limit, data.Total)),
+					"total": fmt.Sprintf("%d", data.Total),
+				}) }
 			</div>
 			
 			<!-- Pagination Controls -->
@@ -32,14 +40,14 @@ templ Pagination(data PaginationData) {
 						hx-swap="innerHTML"
 						class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium"
 					>
-						Previous
+						{ i18n.T(ctx, "common.pagination.previous") }
 					</button>
 				} else {
 					<button
 						disabled
 						class="px-3 py-2 rounded-lg bg-white/5 text-muted-foreground cursor-not-allowed text-sm font-medium opacity-50"
 					>
-						Previous
+						{ i18n.T(ctx, "common.pagination.previous") }
 					</button>
 				}
 				
@@ -75,14 +83,14 @@ templ Pagination(data PaginationData) {
 						hx-swap="innerHTML"
 						class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium"
 					>
-						Next
+						{ i18n.T(ctx, "common.pagination.next") }
 					</button>
 				} else {
 					<button
 						disabled
 						class="px-3 py-2 rounded-lg bg-white/5 text-muted-foreground cursor-not-allowed text-sm font-medium opacity-50"
 					>
-						Next
+						{ i18n.T(ctx, "common.pagination.next") }
 					</button>
 				}
 			</div>

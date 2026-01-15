@@ -1,0 +1,525 @@
+{
+  "app": {
+    "name": "Law Flow",
+    "description": "Gestión Legal Simplificada",
+    "tagline": "Gestión de Práctica Evolucionada"
+  },
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel de Control",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "firm_settings": "Configuración de Firma",
+    "users": "Usuarios",
+    "case_requests": "Solicitudes de Caso",
+    "requests": "Solicitudes",
+    "cases": "Casos",
+    "profile_settings": "Configuración de Perfil",
+    "features": "Características",
+    "benefits": "Beneficios",
+    "pricing": "Precios"
+  },
+  "common": {
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Volver",
+    "created_at": "Creado el",
+    "updated_at": "Actualizado el",
+    "status": "Estado",
+    "actions": "Acciones",
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "not_set": "No establecido",
+    "na": "N/A",
+    "loading": "Cargando...",
+    "close": "Cerrar",
+    "pagination": {
+      "showing": "Mostrando {start} a {end} de {total} resultados",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    }
+  },
+  "auth": {
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "login_button": "Iniciar Sesión",
+    "forgot_password_link": "¿Olvidaste tu contraseña?",
+    "forgot_password": {
+      "title": "¿Olvidaste tu contraseña?",
+      "desc": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "btn": "Enviar enlace de restablecimiento"
+    },
+    "back_to_login": "Volver a iniciar sesión",
+    "reset_password": {
+      "title": "Restablecer tu contraseña",
+      "desc": "Ingresa tu nueva contraseña a continuación.",
+      "invalid_title": "Enlace inválido o caducado",
+      "invalid_desc": "Este enlace de restablecimiento de contraseña es inválido o ha caducado. Por favor solicita uno nuevo.",
+      "request_new": "Solicitar nuevo enlace",
+      "new_pass": "Nueva Contraseña",
+      "confirm_pass": "Confirmar Nueva Contraseña",
+      "confirm_ph": "Confirma tu contraseña",
+      "btn": "Restablecer Contraseña"
+    },
+    "dont_have_account": "¿No tienes una cuenta?",
+    "register": "Registrarse",
+    "welcome_back": "Bienvenido de Nuevo",
+    "login_subtitle": "Ingresa tus credenciales para acceder a tu espacio de trabajo",
+    "request_access": "Solicitar Acceso"
+  },
+  "public": {
+    "request": {
+      "title": "Solicitar Asistencia Legal",
+      "subtitle": "Solicitar Asistencia Legal",
+      "form_title": "Formulario de Solicitud de Caso",
+      "form_desc": "Por favor complete el formulario a continuación y nos pondremos en contacto con usted pronto.",
+      "personal_info": "Información Personal",
+      "full_name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Número de Teléfono",
+      "doc_type": "Tipo de Documento",
+      "select_type": "Seleccionar tipo",
+      "doc_number": "Número de Documento",
+      "case_desc": "Descripción del Caso",
+      "case_desc_ph": "Por favor describa su asunto legal en detalle...",
+      "support_doc": "Documento de Soporte",
+      "optional": "Opcional",
+      "pdf_only": "Solo PDF, máximo 10MB",
+      "submit_btn": "Enviar Solicitud",
+      "terms": "Al enviar este formulario, usted acepta nuestros términos de servicio y política de privacidad."
+    },
+    "success": {
+      "title": "Solicitud Enviada",
+      "header": "¡Solicitud Enviada Exitosamente!",
+      "thank_you": "Gracias por contactar a",
+      "next_steps": "¿Qué sucede después?",
+      "step1": "Nuestro equipo revisará su solicitud de caso dentro de 24-48 horas",
+      "step2": "Nos pondremos en contacto con usted vía email o teléfono para discutir su caso",
+      "step3": "Si subió un documento, nuestros abogados lo revisarán cuidadosamente",
+      "need_help": "¿Necesita asistencia inmediata?",
+      "call_us": "Llámenos al",
+      "email_us": "Envíenos un email a",
+      "another_request": "Enviar Otra Solicitud",
+      "close_note": "Puede cerrar esta página. Tenemos toda la información que necesitamos."
+    }
+  },
+  "firm": {
+    "setup": {
+      "welcome": "¡Bienvenido, {name}! Configuremos su firma.",
+      "create_title": "Crear Su Firma",
+      "enter_info": "Ingrese la información de su firma para comenzar",
+      "country": "País",
+      "city": "Ciudad",
+      "address": "Dirección",
+      "noreply_email": "Email No-Reply",
+      "create_btn": "Crear Firma y Continuar"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bienvenido de nuevo, {name}",
+    "overview": "Resumen General",
+    "subtitle": "Esto es lo que está pasando con tu práctica hoy.",
+    "stats": {
+      "active_cases": "Casos Activos",
+      "total_clients": "Clientes Totales",
+      "completed_monthly": "Completados Este Mes",
+      "pending_tasks": "Tareas Pendientes",
+      "urgent_label": "Urgente"
+    },
+    "firm_info": {
+      "label": "Información de la Firma",
+      "name": "Nombre de la Firma",
+      "location": "Ubicación",
+      "timezone": "Zona Horaria",
+      "contact": "Contacto",
+      "billing_email": "Correo de Facturación",
+      "info_email": "Correo de Información"
+    },
+    "quick_actions": {
+      "label": "Acciones Rápidas",
+      "case_requests_title": "Solicitudes de Caso",
+      "case_requests_desc": "Gestionar solicitudes entrantes",
+      "users_title": "Gestionar Usuarios",
+      "users_desc": "Añadir y editar usuarios",
+      "upload_doc_title": "Subir Documento",
+      "upload_doc_desc": "Añadir nuevo documento"
+    }
+  },
+  "landing": {
+    "hero": {
+      "label": "Gestión de Práctica Legal",
+      "title_prefix": "Transforma Tu",
+      "title_suffix": "Flujo de Trabajo Legal",
+      "description": "Optimiza la gestión de casos, automatiza flujos de trabajo y ofrece experiencias excepcionales a los clientes con la plataforma moderna construida para firmas de abogados.",
+      "cta_primary": "Prueba Gratis",
+      "cta_secondary": "Explorar Funciones",
+      "trial_note": "Sin tarjeta de crédito · Prueba gratuita de 14 días"
+    },
+    "stats": {
+      "cases_label": "Casos Gestionados",
+      "uptime_label": "SLA de Tiempo de Actividad",
+      "firms_label": "Firmas de Abogados",
+      "support_label": "Soporte"
+    },
+    "features": {
+      "label": "Características",
+      "title": "Todo lo que Necesitas",
+      "subtitle": "Herramientas poderosas diseñadas específicamente para prácticas legales modernas",
+      "case_mgmt_title": "Gestión Inteligente de Casos",
+      "case_mgmt_desc": "Centraliza toda la información de casos con organización impulsada por IA, búsqueda inteligente y flujos de trabajo automatizados. Rastrea plazos, gestiona documentos y colabora sin problemas con tu equipo.",
+      "learn_more": "Aprende más",
+      "automation_title": "Automatización de Flujos",
+      "automation_desc": "Automatiza tareas repetitivas y crea flujos de trabajo personalizados.",
+      "portal_title": "Portal de Clientes",
+      "portal_desc": "Acceso seguro para clientes a actualizaciones de casos y documentos.",
+      "docs_title": "Gestión Documental",
+      "docs_desc": "Almacena, organiza y comparte documentos con control de versiones, firmas electrónicas y capacidades de búsqueda avanzada.",
+      "time_title": "Seguimiento de Tiempo y Facturación",
+      "time_desc": "Rastrea horas facturables sin esfuerzo con temporizadores integrados, facturación automatizada e informes detallados."
+    }
+  },
+  "cases": {
+    "title": "Casos",
+    "description": {
+      "admin": "Gestione todos los casos en su firma",
+      "user": "Vea y gestione sus casos asignados"
+    },
+    "filters": {
+      "status": "Estado:",
+      "assigned_to": "Asignado a:",
+      "from": "Desde:",
+      "to": "Hasta:",
+      "search_label": "Buscar:",
+      "search_placeholder": "Número de caso, título...",
+      "all_status": "Todos los Estados",
+      "all_lawyers": "Todos los Abogados"
+    },
+    "status": {
+      "open": "Abierto",
+      "on_hold": "En Espera",
+      "closed": "Cerrado"
+    },
+    "table": {
+      "number": "Número de Caso",
+      "title": "Título",
+      "client": "Cliente",
+      "assigned_to": "Asignado a",
+      "status": "Estado",
+      "opened": "Abierto",
+      "actions": "Acciones",
+      "unassigned": "Sin Asignar",
+      "details": "Detalles",
+      "empty": "No se encontraron casos"
+    }
+  },
+  "users": {
+    "title": "Gestión de Usuarios",
+    "description": "Gestione usuarios, administradores, abogados, personal y clientes",
+    "add_user": "Añadir Usuario",
+    "filters": {
+      "role": "Rol:",
+      "status": "Estado:",
+      "all_roles": "Todos los Roles",
+      "all_status": "Todos los Estados",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "table": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "status": "Estado",
+      "last_login": "Último Acceso",
+      "actions": "Acciones",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "never": "Nunca",
+      "empty": "No se encontraron usuarios"
+    },
+    "modal": {
+      "add_title": "Añadir Nuevo Usuario",
+      "edit_title": "Editar Usuario",
+      "full_name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "password": "Contraseña",
+      "min_chars": "Mínimo 8 caracteres",
+      "role": "Rol",
+      "select_role": "Seleccionar un rol",
+      "active_user": "Usuario Activo",
+      "inactive_desc": "Los usuarios inactivos no pueden iniciar sesión",
+      "cancel": "Cancelar",
+      "create_btn": "Crear Usuario",
+      "update_btn": "Actualizar Usuario",
+      "role_help": {
+        "admin": "Acceso total.",
+        "lawyer": "Gestionar casos.",
+        "staff": "Acceso limitado.",
+        "client": "Ver casos propios."
+      }
+    },
+    "roles": {
+      "admin": "Admin",
+      "lawyer": "Abogado",
+      "staff": "Personal",
+      "client": "Cliente"
+    },
+    "delete_modal": {
+      "title": "Eliminar Usuario",
+      "confirm": "¿Está seguro de que desea eliminar a {name}?",
+      "warning": "Esta acción no se puede deshacer. El usuario será eliminado permanentemente del sistema.",
+      "cancel": "Cancelar",
+      "delete_btn": "Eliminar Usuario"
+    }
+  },
+  "case_requests": {
+    "title": "Solicitudes de Caso",
+    "description": "Nuevas Solicitudes",
+    "filters": {
+      "status": "Estado:",
+      "priority": "Prioridad:",
+      "all_status": "Todos los Estados",
+      "all_priorities": "Todas las Prioridades"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "accepted": "Aceptado",
+      "rejected": "Rechazado"
+    },
+    "priority": {
+      "urgent": "Urgente",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "table": {
+      "name": "Nombre",
+      "contact": "Contacto",
+      "document": "Documento",
+      "priority": "Prioridad",
+      "status": "Estado",
+      "submitted": "Enviado",
+      "actions": "Acciones",
+      "details": "Detalles",
+      "empty": "No hay solicitudes de caso"
+    },
+    "detail": {
+      "title": "Detalles de Solicitud",
+      "request_id": "Solicitud ID: {id}",
+      "personal_info": "Información Personal",
+      "full_name": "Nombre Completo",
+      "document": "Documento",
+      "email": "Email",
+      "phone": "Teléfono",
+      "case_description": "Descripción del Caso",
+      "rejection_reason": "Razón de Rechazo",
+      "attached_documents": "Documentos Adjuntos",
+      "no_documents": "Sin documentos adjuntos",
+      "download": "Descargar",
+      "review_info": "Información de Revisión",
+      "reviewed_by": "Revisado Por",
+      "reviewed_at": "Revisado El",
+      "additional_info": "Información Adicional",
+      "submitted": "Enviado",
+      "last_updated": "Última Actualización",
+      "ip_address": "Dirección IP",
+      "close": "Cerrar"
+    },
+    "reject_modal": {
+      "title": "Rechazar Solicitud",
+      "from": "Solicitud de: {name}",
+      "instruction": "Por favor proporcione una razón para rechazar esta solicitud. Este mensaje será enviado al cliente vía email.",
+      "placeholder": "Por favor explique por qué se rechaza esta solicitud...",
+      "cancel": "Cancelar",
+      "reject_btn": "Rechazar y Enviar Email"
+    },
+    "accept_modal": {
+      "title": "Aceptar Solicitud",
+      "step1": "Cliente",
+      "step2": "Abogado",
+      "step3": "Clasificación",
+      "step4": "Revisión",
+      "cancel": "Cancelar",
+      "next_lawyer": "Siguiente: Asignar Abogado",
+      "next_class": "Siguiente: Clasificación",
+      "next_review": "Siguiente: Revisar",
+      "create_case": "Crear Caso"
+    }
+  },
+  "settings": {
+    "profile": {
+      "title": "Configuración de Perfil",
+      "desc": "Gestiona tu información personal y configuración de cuenta",
+      "info_title": "Información Personal",
+      "name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "language": "Idioma",
+      "address": "Dirección",
+      "doc_number": "Número de Documento",
+      "save_btn": "Guardar Cambios"
+    },
+    "tabs": {
+      "profile": "Perfil",
+      "security": "Seguridad",
+      "account": "Información de Cuenta"
+    },
+    "security": {
+      "title": "Cambiar Contraseña",
+      "current_pass": "Contraseña Actual",
+      "new_pass": "Nueva Contraseña",
+      "confirm_pass": "Confirmar Nueva Contraseña",
+      "change_btn": "Cambiar Contraseña"
+    },
+    "account": {
+      "title": "Información de Cuenta",
+      "role": "Rol",
+      "status": "Estado",
+      "firm": "Firma"
+    },
+    "firm": {
+      "title": "Configuración de Firma",
+      "desc": "Gestiona la información y configuración de tu firma",
+      "info_title": "Información de la Firma",
+      "name": "Nombre de la Firma",
+      "country": "País",
+      "timezone": "Zona Horaria",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "phone": "Número de Teléfono",
+      "desc_label": "Descripción",
+      "desc_ph": "Breve descripción de tu firma",
+      "save_btn": "Guardar Cambios"
+    },
+    "nav": {
+      "general": "General",
+      "email": "Config Email",
+      "details": "Detalles Firma"
+    },
+    "email": {
+      "title": "Configuración de Correo",
+      "billing": "Email de Facturación",
+      "billing_desc": "Email para facturación y recibos",
+      "info": "Email de Información",
+      "info_desc": "Email de información general",
+      "noreply": "Email No-Reply",
+      "noreply_desc": "Email para notificaciones automáticas",
+      "save_btn": "Guardar Configuración de Email"
+    },
+    "details": {
+      "title": "Detalles de la Firma",
+      "id": "ID de Firma",
+      "slug": "Slug",
+      "created": "Creado"
+    }
+  },
+  "case": {
+    "detail": {
+      "title": "Detalles del Caso",
+      "case_number": "Número de Caso",
+      "edit_btn": "Editar Caso",
+      "edit_short": "Editar",
+      "tab": {
+        "summary": "Resumen",
+        "client": "Cliente",
+        "documents": "Documentos"
+      },
+      "info_title": "Información del Caso",
+      "type": "Tipo",
+      "desc": "Descripción",
+      "timeline_title": "Línea de Tiempo",
+      "opened": "Abierto",
+      "closed": "Cerrado",
+      "assignment_title": "Asignación",
+      "assigned_lawyer": "Abogado Asignado",
+      "unassigned": "Sin Asignar",
+      "classification_title": "Clasificación",
+      "domain": "Dominio",
+      "branch": "Rama",
+      "subtypes": "Subtipos",
+      "upload_btn": "Subir Documento",
+      "search_placeholder": "Buscar documentos...",
+      "filter": {
+        "all_types": "Todos los Tipos",
+        "apply": "Aplicar Filtros"
+      },
+      "loading": "Cargando documentos...",
+      "client_title": "Información del Cliente",
+      "phone": "Teléfono",
+      "no_client": "No hay información del cliente disponible",
+      "modal": {
+        "title": "Detalles del Caso",
+        "case_number": "Número de Caso",
+        "case_info": "Información del Caso",
+        "client_info": "Información del Cliente",
+        "assignment": "Asignación",
+        "classification": "Clasificación",
+        "documents": "Documentos",
+        "timeline": "Línea de Tiempo",
+        "download": "Descargar",
+        "no_docs": "Sin documentos adjuntos",
+        "closed": "Cerrado",
+        "close_btn": "Cerrar"
+      }
+    },
+    "document": {
+      "upload": {
+        "title": "Subir Documento",
+        "file_label": "Archivo del Documento",
+        "accepted_formats": "Formatos aceptados: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)",
+        "type_label": "Tipo de Documento",
+        "select_type": "Seleccionar tipo...",
+        "desc_label": "Descripción",
+        "desc_placeholder": "Descripción opcional del documento...",
+        "btn": "Subir",
+        "cancel": "Cancelar"
+      },
+      "table": {
+        "file_name": "Nombre del Archivo",
+        "type": "Tipo",
+        "size": "Tamaño",
+        "uploaded_by": "Subido Por",
+        "uploaded_at": "Subido En",
+        "actions": "Acciones",
+        "system": "Sistema",
+        "view": "Ver",
+        "empty": "No se encontraron documentos"
+      },
+      "viewer": {
+        "title": "Visor de Documentos",
+        "close_tooltip": "Cerrar (Esc)"
+      },
+      "types": {
+        "initial_request": "Solicitud Inicial",
+        "evidence": "Evidencia",
+        "contract": "Contrato",
+        "correspondence": "Correspondencia",
+        "legal_brief": "Escrito Legal",
+        "court_filing": "Presentación Judicial",
+        "invoice": "Factura",
+        "other": "Otro"
+      }
+    },
+    "edit": {
+      "title": "Editar Caso",
+      "status": "Estado",
+      "description": "Descripción",
+      "desc_placeholder": "Descripción del caso...",
+      "client": "Cliente",
+      "lawyer": "Abogado Asignado",
+      "unassigned": "Sin Asignar",
+      "save": "Guardar Cambios",
+      "cancel": "Cancelar"
+    },
+    "status": {
+      "open": "Abierto",
+      "on_hold": "En Espera",
+      "closed": "Cerrado"
+    }
+  }
+}

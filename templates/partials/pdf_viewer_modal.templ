@@ -1,8 +1,12 @@
 package partials
 
-import "law_flow_app_go/models"
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
 
-templ PDFViewerModal(caseRecord models.Case) {
+templ PDFViewerModal(ctx context.Context, caseRecord models.Case) {
 	<!-- PDF Viewer Modal -->
 	<div
 		id="pdf-viewer-modal"
@@ -13,12 +17,12 @@ templ PDFViewerModal(caseRecord models.Case) {
 		<div class="glass-panel rounded-lg border border-white/10 w-full max-w-6xl h-full flex flex-col" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between px-3 py-1.5 border-b border-white/10">
-				<h3 id="pdf-title" class="text-sm font-semibold text-foreground truncate">Document Viewer</h3>
+				<h3 id="pdf-title" class="text-sm font-semibold text-foreground truncate">{ i18n.T(ctx, "case.document.viewer.title") }</h3>
 				<button
 					type="button"
 					onclick="closePDFViewerModal()"
 					class="p-1 hover:bg-white/5 rounded transition-all duration-200 flex-shrink-0 ml-2"
-					title="Close (Esc)"
+					title={ i18n.T(ctx, "case.document.viewer.close_tooltip") }
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

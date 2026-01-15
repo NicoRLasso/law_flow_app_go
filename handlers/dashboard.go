@@ -12,6 +12,6 @@ func DashboardHandler(c echo.Context) error {
 	user := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
 
-	component := pages.Dashboard("Dashboard | Law Flow", user, firm)
+	component := pages.Dashboard(c.Request().Context(), "Dashboard | Law Flow", user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

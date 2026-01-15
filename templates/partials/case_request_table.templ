@@ -1,7 +1,9 @@
 package partials
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"fmt"
 	"time"
@@ -9,11 +11,11 @@ import (
 
 
 // CaseRequestFilters renders the filter controls
-templ CaseRequestFilters() {
+templ CaseRequestFilters(ctx context.Context) {
 	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10">
 		<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
 			<div class="flex items-center gap-2 w-full sm:w-auto">
-				<label class="text-sm font-medium text-muted-foreground min-w-fit">Status:</label>
+				<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "case_requests.filters.status") }</label>
 				<select
 					class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					hx-get="/api/case-requests"
@@ -23,15 +25,15 @@ templ CaseRequestFilters() {
 					name="status"
 					id="status-filter"
 				>
-					<option value="">All Status</option>
-					<option value="pending">Pending</option>
-					<option value="accepted">Accepted</option>
-					<option value="rejected">Rejected</option>
+					<option value="">{ i18n.T(ctx, "case_requests.filters.all_status") }</option>
+					<option value="pending">{ i18n.T(ctx, "case_requests.status.pending") }</option>
+					<option value="accepted">{ i18n.T(ctx, "case_requests.status.accepted") }</option>
+					<option value="rejected">{ i18n.T(ctx, "case_requests.status.rejected") }</option>
 				</select>
 			</div>
 			
 			<div class="flex items-center gap-2 w-full sm:w-auto">
-				<label class="text-sm font-medium text-muted-foreground min-w-fit">Priority:</label>
+				<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "case_requests.filters.priority") }</label>
 				<select
 					class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					hx-get="/api/case-requests"
@@ -41,11 +43,11 @@ templ CaseRequestFilters() {
 					name="priority"
 					id="priority-filter"
 				>
-					<option value="">All Priorities</option>
-					<option value="urgent">Urgent</option>
-					<option value="high">High</option>
-					<option value="medium">Medium</option>
-					<option value="low">Low</option>
+					<option value="">{ i18n.T(ctx, "case_requests.filters.all_priorities") }</option>
+					<option value="urgent">{ i18n.T(ctx, "case_requests.priority.urgent") }</option>
+					<option value="high">{ i18n.T(ctx, "case_requests.priority.high") }</option>
+					<option value="medium">{ i18n.T(ctx, "case_requests.priority.medium") }</option>
+					<option value="low">{ i18n.T(ctx, "case_requests.priority.low") }</option>
 				</select>
 			</div>
 		</div>
@@ -53,10 +55,10 @@ templ CaseRequestFilters() {
 }
 
 // CaseRequestTable renders the case requests table (without filters)
-templ CaseRequestTable(requests []models.CaseRequest, currentPage int, totalPages int, limit int, total int) {
+templ CaseRequestTable(ctx context.Context, requests []models.CaseRequest, currentPage int, totalPages int, limit int, total int) {
 	if len(requests) == 0 {
 		<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
-			<p class="text-muted-foreground">No case requests found</p>
+			<p class="text-muted-foreground">{ i18n.T(ctx, "case_requests.table.empty") }</p>
 		</div>
 	} else {
 		<!-- Table Container with Horizontal Scroll -->
@@ -65,18 +67,18 @@ templ CaseRequestTable(requests []models.CaseRequest, currentPage int, totalPage
 				<table class="w-full">
 					<thead>
 						<tr class="border-b border-white/10 bg-white/5">
-							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Name</th>
-							<th class="hidden md:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Contact</th>
-							<th class="hidden lg:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Document</th>
-							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Priority</th>
-							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Submitted</th>
-							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.name") }</th>
+							<th class="hidden md:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.contact") }</th>
+							<th class="hidden lg:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.document") }</th>
+							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.priority") }</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.status") }</th>
+							<th class="hidden sm:table-cell px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.submitted") }</th>
+							<th class="px-4 md:px-6 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "case_requests.table.actions") }</th>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-white/10">
 						for _, request := range requests {
-							@CaseRequestRow(request)
+							@CaseRequestRow(ctx, request)
 						}
 					</tbody>
 				</table>
@@ -84,7 +86,7 @@ templ CaseRequestTable(requests []models.CaseRequest, currentPage int, totalPage
 		</div>
 		
 		<!-- Pagination Controls -->
-		@components.Pagination(components.PaginationData{
+		@components.Pagination(ctx, components.PaginationData{
 			CurrentPage: currentPage,
 			TotalPages:  totalPages,
 			Limit:       limit,
@@ -97,7 +99,7 @@ templ CaseRequestTable(requests []models.CaseRequest, currentPage int, totalPage
 }
 
 // CaseRequestRow renders a single table row for a case request
-templ CaseRequestRow(request models.CaseRequest) {
+templ CaseRequestRow(ctx context.Context, request models.CaseRequest) {
 	<tr class="hover:bg-white/5 transition-colors duration-200">
 		<!-- Name -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
@@ -138,12 +140,12 @@ templ CaseRequestRow(request models.CaseRequest) {
 		
 		<!-- Priority (hidden on mobile) -->
 		<td class="hidden sm:table-cell px-4 md:px-6 py-4 md:py-5">
-			@PriorityBadge(request.Priority)
+			@PriorityBadge(ctx, request.Priority)
 		</td>
 		
 		<!-- Status -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
-			@StatusBadge(request.Status)
+			@StatusBadge(ctx, request.Status)
 		</td>
 		
 		<!-- Submitted (hidden on mobile) -->
@@ -158,7 +160,7 @@ templ CaseRequestRow(request models.CaseRequest) {
 			<div class="flex items-center gap-2">
 				<button
 					class="px-3 md:px-4 py-2 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5"
-					hx-get={ "/api/case-requests/" + request.ID + "/detail" }
+					hx-get={ templ.URL("/api/case-requests/" + request.ID + "/detail") }
 					hx-target="body"
 					hx-swap="beforeend"
 					title="View Details"
@@ -167,7 +169,7 @@ templ CaseRequestRow(request models.CaseRequest) {
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
 					</svg>
-					<span class="hidden sm:inline">Details</span>
+					<span class="hidden sm:inline">{ i18n.T(ctx, "case_requests.table.details") }</span>
 				</button>
 			</div>
 		</td>
@@ -175,16 +177,16 @@ templ CaseRequestRow(request models.CaseRequest) {
 }
 
 // PriorityBadge renders a priority badge
-templ PriorityBadge(priority string) {
+templ PriorityBadge(ctx context.Context, priority string) {
 	<span class={ "px-2 py-1 rounded-full text-xs font-semibold ", getPriorityClass(priority) }>
-		{ getPriorityLabel(priority) }
+		{ getPriorityLabel(ctx, priority) }
 	</span>
 }
 
 // StatusBadge renders a status badge
-templ StatusBadge(status string) {
+templ StatusBadge(ctx context.Context, status string) {
 	<span class={ "px-2 py-1 rounded-full text-xs font-semibold ", getStatusClass(status) }>
-		{ getStatusLabel(status) }
+		{ getStatusLabel(ctx, status) }
 	</span>
 }
 
@@ -204,16 +206,16 @@ func getPriorityClass(priority string) string {
 	}
 }
 
-func getPriorityLabel(priority string) string {
+func getPriorityLabel(ctx context.Context, priority string) string {
 	switch priority {
 	case "urgent":
-		return "Urgent"
+		return i18n.T(ctx, "case_requests.priority.urgent")
 	case "high":
-		return "High"
+		return i18n.T(ctx, "case_requests.priority.high")
 	case "medium":
-		return "Medium"
+		return i18n.T(ctx, "case_requests.priority.medium")
 	case "low":
-		return "Low"
+		return i18n.T(ctx, "case_requests.priority.low")
 	default:
 		return priority
 	}
@@ -233,14 +235,14 @@ func getStatusClass(status string) string {
 	}
 }
 
-func getStatusLabel(status string) string {
+func getStatusLabel(ctx context.Context, status string) string {
 	switch status {
 	case "pending":
-		return "Pending"
+		return i18n.T(ctx, "case_requests.status.pending")
 	case "accepted":
-		return "Accepted"
+		return i18n.T(ctx, "case_requests.status.accepted")
 	case "rejected":
-		return "Rejected"
+		return i18n.T(ctx, "case_requests.status.rejected")
 	default:
 		return status
 	}

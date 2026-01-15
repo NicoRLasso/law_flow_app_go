@@ -1,10 +1,14 @@
 package pages
 
-import "law_flow_app_go/templates/layouts"
-import "law_flow_app_go/models"
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/services/i18n"
+)
 
-templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption) {
-	@layouts.Base("Request Legal Assistance - " + firm.Name) {
+templ PublicCaseRequest(ctx context.Context, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption) {
+	@layouts.Base(ctx, i18n.T(ctx, "public.request.title") + " - " + firm.Name) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">
@@ -25,14 +29,14 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 							{ firm.Country }
 						}
 					</p>
-					<p class="text-lg mt-4 text-foreground/80">Request Legal Assistance</p>
+					<p class="text-lg mt-4 text-foreground/80">{ i18n.T(ctx, "public.request.subtitle") }</p>
 				</div>
 
 				<!-- Request Form Card -->
 				<div class="glass-panel p-10 rounded-2xl border border-white/10">
 					<div class="mb-10">
-						<h2 class="text-2xl font-bold mb-3">Case Request Form</h2>
-						<p class="text-muted-foreground text-sm">Please fill out the form below and we will contact you soon.</p>
+						<h2 class="text-2xl font-bold mb-3">{ i18n.T(ctx, "public.request.form_title") }</h2>
+						<p class="text-muted-foreground text-sm">{ i18n.T(ctx, "public.request.form_desc") }</p>
 					</div>
 
 					<form
@@ -46,11 +50,11 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 						<!-- Personal Information Section -->
 						<div class="space-y-5">
-							<h3 class="text-lg font-semibold text-accent">Personal Information</h3>
+							<h3 class="text-lg font-semibold text-accent">{ i18n.T(ctx, "public.request.personal_info") }</h3>
 
 							<!-- Full Name -->
 							<div class="space-y-3">
-								<label for="name" class="text-sm font-medium text-muted-foreground ml-1">Full Name *</label>
+								<label for="name" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.full_name") } *</label>
 								<div class="relative group">
 									<input 
 										type="text" 
@@ -66,7 +70,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 							<!-- Email -->
 							<div class="space-y-3">
-								<label for="email" class="text-sm font-medium text-muted-foreground ml-1">Email Address *</label>
+								<label for="email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.email") } *</label>
 								<div class="relative group">
 									<input 
 										type="email" 
@@ -82,7 +86,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 							<!-- Phone -->
 							<div class="space-y-3">
-								<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">Phone Number *</label>
+								<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.phone") } *</label>
 								<div class="relative group">
 									<input 
 										type="tel" 
@@ -100,7 +104,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<!-- Document Type -->
 								<div class="space-y-3">
-									<label for="document_type" class="text-sm font-medium text-muted-foreground ml-1">Document Type *</label>
+									<label for="document_type" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.doc_type") } *</label>
 									<div class="relative group">
 										<select 
 											id="document_type" 
@@ -108,7 +112,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 											required
 											class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
 										>
-											<option value="">Select type</option>
+											<option value="">{ i18n.T(ctx, "public.request.select_type") }</option>
 											for _, opt := range documentTypes {
 												<option value={ opt.Code }>{ opt.Label }</option>
 											}
@@ -119,7 +123,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 								<!-- Document Number -->
 								<div class="space-y-3">
-									<label for="document_number" class="text-sm font-medium text-muted-foreground ml-1">Document Number *</label>
+									<label for="document_number" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.doc_number") } *</label>
 									<div class="relative group">
 										<input 
 											type="text" 
@@ -137,11 +141,11 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 						<!-- Case Details Section -->
 						<div class="space-y-5">
-							<h3 class="text-lg font-semibold text-accent">Case Details</h3>
+							<h3 class="text-lg font-semibold text-accent">{ i18n.T(ctx, "cases.detail.title") }</h3>
 
 							<!-- Priority -->
 							<div class="space-y-3">
-								<label for="priority" class="text-sm font-medium text-muted-foreground ml-1">Priority / Urgency</label>
+								<label for="priority" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "case_requests.filters.priority") }</label>
 								<div class="relative group">
 									<select 
 										id="priority" 
@@ -162,14 +166,14 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 							<!-- Description -->
 							<div class="space-y-3">
-								<label for="description" class="text-sm font-medium text-muted-foreground ml-1">Case Description *</label>
+								<label for="description" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.case_desc") } *</label>
 								<div class="relative group">
 									<textarea 
 										id="description" 
 										name="description"
 										required
 										rows="6"
-										placeholder="Please describe your legal matter in detail..."
+										placeholder={ i18n.T(ctx, "public.request.case_desc_ph") }
 										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 resize-none"
 									></textarea>
 									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -178,7 +182,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 
 							<!-- File Upload -->
 							<div class="space-y-3">
-								<label for="file" class="text-sm font-medium text-muted-foreground ml-1">Supporting Document (Optional)</label>
+								<label for="file" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.support_doc") } ({ i18n.T(ctx, "public.request.optional") })</label>
 								<div class="relative group">
 									<input 
 										type="file" 
@@ -189,7 +193,7 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 									/>
 									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 								</div>
-								<p class="text-xs text-muted-foreground ml-1">PDF only, maximum 10MB</p>
+								<p class="text-xs text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.pdf_only") }</p>
 							</div>
 						</div>
 
@@ -198,12 +202,12 @@ templ PublicCaseRequest(firm models.Firm, documentTypes []models.ChoiceOption, p
 							type="submit"
 							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
 						>
-							<span class="relative z-10">Submit Request</span>
+							<span class="relative z-10">{ i18n.T(ctx, "public.request.submit_btn") }</span>
 							<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
 						</button>
 
 						<p class="text-center text-xs text-muted-foreground mt-4">
-							By submitting this form, you agree to our terms of service and privacy policy.
+							{ i18n.T(ctx, "public.request.terms") }
 						</p>
 					</form>
 				</div>

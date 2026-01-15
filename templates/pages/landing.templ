@@ -1,25 +1,34 @@
 package pages
 
-import "law_flow_app_go/templates/layouts"
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/components"
+)
 
-templ Landing(title string) {
-	@layouts.Base(title) {
+templ Landing(ctx context.Context, title string) {
+	@layouts.Base(ctx, title) {
 		<!-- Navigation -->
 		<nav class="border-b border-white/[0.06] backdrop-blur-xl bg-background/80 sticky top-0 z-50">
 			<div class="container mx-auto px-6">
 				<div class="flex justify-between items-center h-20">
 					<a href="/" class="text-h3 tracking-tight">
-						<span class="text-gradient">Law Flow</span>
+						<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
 					</a>
 					<div class="hidden md:flex gap-8 items-center">
-						<a href="#features" class="text-body text-muted hover:text-foreground transition-colors duration-200">Features</a>
-						<a href="#benefits" class="text-body text-muted hover:text-foreground transition-colors duration-200">Benefits</a>
-						<a href="#pricing" class="text-body text-muted hover:text-foreground transition-colors duration-200">Pricing</a>
-						<a href="/login" class="btn btn-ghost btn-sm">Sign In</a>
-						<a href="#" class="btn btn-primary btn-sm">Get Started</a>
+						<a href="#features" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.features") }</a>
+						<a href="#benefits" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.benefits") }</a>
+						<a href="#pricing" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.pricing") }</a>
+						<a href="/login" class="btn btn-ghost btn-sm">{ i18n.T(ctx, "nav.login") }</a>
+						<a href="#" class="btn btn-primary btn-sm">{ i18n.T(ctx, "auth.register") }</a>
+						@components.LanguageSwitcher(ctx)
 					</div>
 					<!-- Mobile menu button -->
-					<button class="md:hidden btn btn-ghost btn-sm">Menu</button>
+					<div class="flex items-center gap-4 md:hidden">
+						@components.LanguageSwitcher(ctx)
+						<button class="btn btn-ghost btn-sm">Menu</button>
+					</div>
 				</div>
 			</div>
 		</nav>
@@ -29,20 +38,20 @@ templ Landing(title string) {
 			<div class="container mx-auto px-6">
 				<div class="max-w-4xl mx-auto text-center">
 					<div class="mb-6 fade-up">
-						<span class="text-label text-accent">Legal Practice Management</span>
+						<span class="text-label text-accent">{ i18n.T(ctx, "landing.hero.label") }</span>
 					</div>
 					<h1 class="text-display text-gradient mb-8 fade-up stagger-1">
-						Transform Your
-						<span class="text-accent-gradient block mt-2">Legal Workflow</span>
+						{ i18n.T(ctx, "landing.hero.title_prefix") }
+						<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "landing.hero.title_suffix") }</span>
 					</h1>
 					<p class="text-body-lg text-muted mb-12 max-w-2xl mx-auto leading-relaxed fade-up stagger-2">
-						Streamline case management, automate workflows, and deliver exceptional client experiences with the modern practice management platform built for law firms.
+						{ i18n.T(ctx, "landing.hero.description") }
 					</p>
 					<div class="flex gap-4 justify-center flex-wrap fade-up stagger-3">
-						<a href="#" class="btn btn-primary btn-lg">Start Free Trial</a>
-						<a href="#features" class="btn btn-secondary btn-lg">Explore Features</a>
+						<a href="#" class="btn btn-primary btn-lg">{ i18n.T(ctx, "landing.hero.cta_primary") }</a>
+						<a href="#features" class="btn btn-secondary btn-lg">{ i18n.T(ctx, "landing.hero.cta_secondary") }</a>
 					</div>
-					<p class="text-body text-subtle mt-6 fade-up stagger-4">No credit card required · 14-day free trial</p>
+					<p class="text-body text-subtle mt-6 fade-up stagger-4">{ i18n.T(ctx, "landing.hero.trial_note") }</p>
 				</div>
 			</div>
 

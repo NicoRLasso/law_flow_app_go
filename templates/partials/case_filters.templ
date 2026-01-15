@@ -1,33 +1,35 @@
 package partials
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 )
 
 // CaseFilters renders the filter controls for cases
-templ CaseFilters(user *models.User) {
+templ CaseFilters(ctx context.Context, user *models.User) {
 	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10">
 		<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
 			
 			if user.Role == "admin" {
-				@StatusSelect()
-				@AssignedToSelect()
+				@StatusSelect(ctx)
+				@AssignedToSelect(ctx)
 			}
 			
-			@DateFromInput()
-			@DateToInput()
+			@DateFromInput(ctx)
+			@DateToInput(ctx)
 			
 			<!-- Search takes remaining width on desktop, full width on mobile -->
-			@KeywordInput()
+			@KeywordInput(ctx)
 		</div>
 	</div>
 }
 
 // Helper Components for Inputs to avoid duplication
 
-templ StatusSelect() {
+templ StatusSelect(ctx context.Context) {
 	<div class="flex items-center gap-2 w-full sm:w-auto">
-		<label class="text-sm font-medium text-muted-foreground min-w-fit">Status:</label>
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "cases.filters.status") }</label>
 		<select
 			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 			hx-get="/api/cases"
@@ -37,17 +39,17 @@ templ StatusSelect() {
 			name="status"
 			id="status-filter"
 		>
-			<option value="">All Status</option>
-			<option value="OPEN">Open</option>
-			<option value="ON_HOLD">On Hold</option>
-			<option value="CLOSED">Closed</option>
+			<option value="">{ i18n.T(ctx, "cases.filters.all_status") }</option>
+			<option value="OPEN">{ i18n.T(ctx, "cases.status.open") }</option>
+			<option value="ON_HOLD">{ i18n.T(ctx, "cases.status.on_hold") }</option>
+			<option value="CLOSED">{ i18n.T(ctx, "cases.status.closed") }</option>
 		</select>
 	</div>
 }
 
-templ AssignedToSelect() {
+templ AssignedToSelect(ctx context.Context) {
 	<div class="flex items-center gap-2 w-full sm:w-auto">
-		<label class="text-sm font-medium text-muted-foreground min-w-fit">Assigned To:</label>
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "cases.filters.assigned_to") }</label>
 		<select
 			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 			hx-get="/api/cases"
@@ -57,15 +59,15 @@ templ AssignedToSelect() {
 			name="assigned_to"
 			id="assigned-to-filter"
 		>
-			<option value="">All Lawyers</option>
+			<option value="">{ i18n.T(ctx, "cases.filters.all_lawyers") }</option>
 			<!-- Options will be populated via HTMX from /api/lawyers -->
 		</select>
 	</div>
 }
 
-templ DateFromInput() {
+templ DateFromInput(ctx context.Context) {
 	<div class="flex items-center gap-2 w-full sm:w-auto">
-		<label class="text-sm font-medium text-muted-foreground min-w-fit">From:</label>
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "cases.filters.from") }</label>
 		<input
 			type="date"
 			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
@@ -79,9 +81,9 @@ templ DateFromInput() {
 	</div>
 }
 
-templ DateToInput() {
+templ DateToInput(ctx context.Context) {
 	<div class="flex items-center gap-2 w-full sm:w-auto">
-		<label class="text-sm font-medium text-muted-foreground min-w-fit">To:</label>
+		<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "cases.filters.to") }</label>
 		<input
 			type="date"
 			class="flex-1 sm:flex-none px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
@@ -95,12 +97,12 @@ templ DateToInput() {
 	</div>
 }
 
-templ KeywordInput() {
+templ KeywordInput(ctx context.Context) {
 	<div class="flex items-center gap-2 w-full sm:flex-1 min-w-[200px]">
-		<label class="text-sm font-medium text-muted-foreground min-w-fit sm:hidden md:block">Search:</label>
+		<label class="text-sm font-medium text-muted-foreground min-w-fit sm:hidden md:block">{ i18n.T(ctx, "cases.filters.search_label") }</label>
 		<input
 			type="text"
-			placeholder="Case number, title..."
+			placeholder={ i18n.T(ctx, "cases.filters.search_placeholder") }
 			class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 			hx-get="/api/cases"
 			hx-target="#cases-table"

@@ -21,7 +21,7 @@ func CasesPageHandler(c echo.Context) error {
 	user := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
 
-	component := pages.Cases("Cases | Law Flow", user, firm)
+	component := pages.Cases(c.Request().Context(), "Cases | Law Flow", user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -123,7 +123,7 @@ func GetCasesHandler(c echo.Context) error {
 
 	// Check if HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
-		component := partials.CaseTable(cases, page, totalPages, limit, int(total))
+		component := partials.CaseTable(c.Request().Context(), cases, page, totalPages, limit, int(total))
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -168,7 +168,7 @@ func GetCaseDetailHandler(c echo.Context) error {
 	}
 
 	// Render detail page
-	component := pages.CaseDetail("Case Details | Law Flow", currentUser, currentFirm, caseRecord)
+	component := pages.CaseDetail(c.Request().Context(), "Case Details | Law Flow", currentUser, currentFirm, caseRecord)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -266,7 +266,7 @@ func GetCaseDocumentsHandler(c echo.Context) error {
 
 	// Check if HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
-		component := partials.CaseDocumentTable(documents, page, totalPages, limit, int(total), caseID)
+		component := partials.CaseDocumentTable(c.Request().Context(), documents, page, totalPages, limit, int(total), caseID)
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 

@@ -20,6 +20,6 @@ func PublicCaseRequestSuccessHandler(c echo.Context) error {
 	}
 
 	// Render success template
-	component := pages.CaseRequestSuccess(firm)
+	component := pages.CaseRequestSuccess(c.Request().Context(), firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

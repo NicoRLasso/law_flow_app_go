@@ -22,7 +22,7 @@ func CaseRequestsPageHandler(c echo.Context) error {
 	user := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
 
-	component := pages.CaseRequests("Case Requests | Law Flow", user, firm)
+	component := pages.CaseRequests(c.Request().Context(), "Case Requests | Law Flow", user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -51,7 +51,7 @@ func PublicCaseRequestHandler(c echo.Context) error {
 	}
 
 	// Render public form template
-	component := pages.PublicCaseRequest(firm, documentTypes, priorities)
+	component := pages.PublicCaseRequest(c.Request().Context(), firm, documentTypes, priorities)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -225,7 +225,7 @@ func GetCaseRequestsHandler(c echo.Context) error {
 
 	// Check if HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
-		component := partials.CaseRequestTable(requests, page, totalPages, limit, int(total))
+		component := partials.CaseRequestTable(c.Request().Context(), requests, page, totalPages, limit, int(total))
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -267,7 +267,7 @@ func GetCaseRequestDetailHandler(c echo.Context) error {
 	}
 
 	// Render detail modal
-	component := partials.CaseRequestDetailModal(request)
+	component := partials.CaseRequestDetailModal(c.Request().Context(), request)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

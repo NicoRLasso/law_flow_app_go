@@ -1,20 +1,22 @@
 package partials
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 )
 
 // UserFormModal renders a modal for creating a new user
-templ UserFormModal(user *models.User, isEdit bool) {
+templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 	<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4" id="user-modal">
 		<div class="bg-background border border-white/10 rounded-xl md:rounded-2xl shadow-2xl max-w-md w-full max-h-[98vh] md:max-h-[90vh] flex flex-col">
 			<!-- Modal Header -->
 			<div class="flex-shrink-0 bg-background border-b border-white/10 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between rounded-t-xl md:rounded-t-2xl">
 				<h2 class="text-lg md:text-xl font-bold">
 					if isEdit {
-						Edit User
+						{ i18n.T(ctx, "users.modal.edit_title") }
 					} else {
-						Add New User
+						{ i18n.T(ctx, "users.modal.add_title") }
 					}
 				</h2>
 				<button
@@ -42,7 +44,7 @@ templ UserFormModal(user *models.User, isEdit bool) {
 				<!-- Name -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
-						Full Name <span class="text-red-400">*</span>
+						{ i18n.T(ctx, "users.modal.full_name") } <span class="text-red-400">*</span>
 					</label>
 					<input
 						type="text"
@@ -57,7 +59,7 @@ templ UserFormModal(user *models.User, isEdit bool) {
 				<!-- Email -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
-						Email <span class="text-red-400">*</span>
+						{ i18n.T(ctx, "users.modal.email") } <span class="text-red-400">*</span>
 					</label>
 					<input
 						type="email"
@@ -73,7 +75,7 @@ templ UserFormModal(user *models.User, isEdit bool) {
 				if !isEdit {
 					<div>
 						<label class="block text-sm font-medium text-foreground mb-2">
-							Password <span class="text-red-400">*</span>
+							{ i18n.T(ctx, "users.modal.password") } <span class="text-red-400">*</span>
 						</label>
 						<input
 							type="password"
@@ -83,28 +85,31 @@ templ UserFormModal(user *models.User, isEdit bool) {
 							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 							placeholder="••••••••"
 						/>
-						<p class="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
+						<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "users.modal.min_chars") }</p>
 					</div>
 				}
 
 				<!-- Role -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
-						Role <span class="text-red-400">*</span>
+						{ i18n.T(ctx, "users.modal.role") } <span class="text-red-400">*</span>
 					</label>
 					<select
 						name="role"
 						required
 						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200"
 					>
-						<option value="" disabled>Select a role</option>
-						<option value="admin" selected?={ getUserRole(user) == "admin" }>Admin</option>
-						<option value="lawyer" selected?={ getUserRole(user) == "lawyer" }>Lawyer</option>
-						<option value="staff" selected?={ getUserRole(user) == "staff" || (!isEdit && getUserRole(user) == "") }>Staff</option>
-						<option value="client" selected?={ getUserRole(user) == "client" }>Client</option>
+						<option value="" disabled>{ i18n.T(ctx, "users.modal.select_role") }</option>
+						<option value="admin" selected?={ getUserRole(user) == "admin" }>{ i18n.T(ctx, "users.roles.admin") }</option>
+						<option value="lawyer" selected?={ getUserRole(user) == "lawyer" }>{ i18n.T(ctx, "users.roles.lawyer") }</option>
+						<option value="staff" selected?={ getUserRole(user) == "staff" || (!isEdit && getUserRole(user) == "") }>{ i18n.T(ctx, "users.roles.staff") }</option>
+						<option value="client" selected?={ getUserRole(user) == "client" }>{ i18n.T(ctx, "users.roles.client") }</option>
 					</select>
 					<p class="text-xs text-muted-foreground mt-1">
-						<strong>Admin:</strong> Full access. <strong>Lawyer:</strong> Manage cases. <strong>Staff:</strong> Limited access. <strong>Client:</strong> View own cases.
+						<strong>{ i18n.T(ctx, "users.roles.admin") }:</strong> { i18n.T(ctx, "users.modal.role_help.admin") } 
+						<strong>{ i18n.T(ctx, "users.roles.lawyer") }:</strong> { i18n.T(ctx, "users.modal.role_help.lawyer") } 
+						<strong>{ i18n.T(ctx, "users.roles.staff") }:</strong> { i18n.T(ctx, "users.modal.role_help.staff") } 
+						<strong>{ i18n.T(ctx, "users.roles.client") }:</strong> { i18n.T(ctx, "users.modal.role_help.client") }
 					</p>
 				</div>
 
@@ -118,9 +123,9 @@ templ UserFormModal(user *models.User, isEdit bool) {
 							checked?={ !isEdit || (user != nil && user.IsActive) }
 							class="w-5 h-5 rounded border-white/10 bg-white/5 text-accent focus:ring-2 focus:ring-accent"
 						/>
-						<span class="text-sm font-medium text-foreground">Active User</span>
+						<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "users.modal.active_user") }</span>
 					</label>
-					<p class="text-xs text-muted-foreground mt-1 ml-8">Inactive users cannot log in</p>
+					<p class="text-xs text-muted-foreground mt-1 ml-8">{ i18n.T(ctx, "users.modal.inactive_desc") }</p>
 				</div>
 
 				<!-- Form Actions -->
@@ -130,16 +135,16 @@ templ UserFormModal(user *models.User, isEdit bool) {
 						class="flex-1 px-4 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-xl font-medium transition-all duration-200"
 						onclick="document.getElementById('user-modal').remove()"
 					>
-						Cancel
+						{ i18n.T(ctx, "users.modal.cancel") }
 					</button>
 					<button
 						type="submit"
 						class="flex-1 px-4 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200"
 					>
 						if isEdit {
-							Update User
+							{ i18n.T(ctx, "users.modal.update_btn") }
 						} else {
-							Create User
+							{ i18n.T(ctx, "users.modal.create_btn") }
 						}
 					</button>
 				</div>

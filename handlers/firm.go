@@ -25,7 +25,7 @@ func FirmSetupHandler(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 
-	component := pages.FirmSetup("Setup Your Firm | Law Flow", user)
+	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | Law Flow", user)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -139,7 +139,7 @@ func FirmSettingsPageHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 
 	// Render the firm settings page
-	component := pages.FirmSettings("Firm Settings | Law Flow", user, firm)
+	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | Law Flow", user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

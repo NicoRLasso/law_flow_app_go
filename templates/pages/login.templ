@@ -1,9 +1,13 @@
 package pages
 
-import "law_flow_app_go/templates/layouts"
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+)
 
-templ Login(title string) {
-	@layouts.Base(title) {
+templ Login(ctx context.Context, title string) {
+	@layouts.Base(ctx, title) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">
@@ -15,16 +19,16 @@ templ Login(title string) {
 				<!-- Brand Header -->
 				<div class="text-center mb-10">
 					<h1 class="text-4xl md:text-5xl font-bold font-space-grotesk tracking-tighter mb-2">
-						LAW <span class="text-accent">FLOW</span>
+						<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
 					</h1>
-					<p class="text-muted-foreground">Practice Management Evolved</p>
+					<p class="text-muted-foreground">{ i18n.T(ctx, "app.tagline") }</p>
 				</div>
 
 				<!-- Login Card -->
 				<div class="card glass-panel p-10 w-full relative z-10">
 					<div class="mb-8 text-center">
-						<h2 class="text-2xl font-bold mb-3">Welcome Back</h2>
-						<p class="text-muted-foreground text-sm">Enter your credentials to access your workspace</p>
+						<h2 class="text-2xl font-bold mb-3">{ i18n.T(ctx, "auth.welcome_back") }</h2>
+						<p class="text-muted-foreground text-sm">{ i18n.T(ctx, "auth.login_subtitle") }</p>
 					</div>
 
 					<form hx-post="/login" hx-target="#error-message" hx-swap="innerHTML" class="space-y-6">
@@ -33,7 +37,7 @@ templ Login(title string) {
 
 					<!-- Email Field -->
 						<div class="space-y-3">
-							<label for="email" class="text-sm font-medium text-muted-foreground ml-1">Email Address</label>
+							<label for="email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "auth.email") }</label>
 							<div class="relative group">
 								<input
 									type="email"
@@ -49,8 +53,8 @@ templ Login(title string) {
 						<!-- Password Field -->
 						<div class="space-y-3">
 							<div class="flex items-center justify-between ml-1">
-								<label for="password" class="text-sm font-medium text-muted-foreground">Password</label>
-								<a href="/forgot-password" class="text-xs text-accent hover:underline hover:text-accent/80 transition-colors">Forgot password?</a>
+								<label for="password" class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "auth.password") }</label>
+								<a href="/forgot-password" class="text-xs text-accent hover:underline hover:text-accent/80 transition-colors">{ i18n.T(ctx, "auth.forgot_password_link") }</a>
 							</div>
 							<div class="relative group">
 								<input
@@ -69,13 +73,13 @@ templ Login(title string) {
 							type="submit"
 							class="btn btn-primary btn-lg w-full font-bold shadow-lg shadow-accent/20 mt-8"
 						>
-							<span class="relative z-10">Sign In</span>
+							<span class="relative z-10">{ i18n.T(ctx, "auth.login_button") }</span>
 						</button>
 					</form>
 
 					<p class="text-center text-sm text-muted-foreground mt-10">
-						Don't have an account?
-						<a href="#" class="text-foreground font-medium hover:text-accent transition-colors">Request Access</a>
+						{ i18n.T(ctx, "auth.dont_have_account") }
+						<a href="#" class="text-foreground font-medium hover:text-accent transition-colors">{ i18n.T(ctx, "auth.request_access") }</a>
 					</p>
 				</div>
 			</div>

@@ -24,7 +24,7 @@ func ProfileSettingsPageHandler(c echo.Context) error {
 	}
 
 	// Render the profile settings page
-	component := pages.ProfileSettings("Profile Settings | Law Flow", &user, firm)
+	component := pages.ProfileSettings(c.Request().Context(), "Profile Settings | Law Flow", &user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -40,22 +40,24 @@ func UpdateProfileHandler(c echo.Context) error {
 	// Read form values
 	name := strings.TrimSpace(c.FormValue("name"))
 	email := strings.TrimSpace(c.FormValue("email"))
+	language := strings.TrimSpace(c.FormValue("language"))
 	phoneNumber := strings.TrimSpace(c.FormValue("phone_number"))
 	address := strings.TrimSpace(c.FormValue("address"))
 	documentTypeID := strings.TrimSpace(c.FormValue("document_type_id"))
 	documentNumber := strings.TrimSpace(c.FormValue("document_number"))
 
 	// Validate required fields
-	if name == "" || email == "" {
+	if name == "" || email == "" || language == "" {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Name and email are required</div>`)
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Name, email, and language are required</div>`)
 		}
-		return echo.NewHTTPError(http.StatusBadRequest, "Name and email are required")
+		return echo.NewHTTPError(http.StatusBadRequest, "Name, email, and language are required")
 	}
 
 	// Update fields
 	user.Name = name
 	user.Email = email
+	user.Language = language
 
 	// Handle optional fields
 	if phoneNumber != "" {
@@ -90,11 +92,18 @@ func UpdateProfileHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update profile")
 	}
 
+	// Update language cookie
+	middleware.SetLanguageCookie(c, user.Language)
+
 	// Log security event
 	services.LogSecurityEvent("PROFILE_UPDATED", user.ID, "User updated their profile")
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
+		// Trigger a page reload to apply language changes if language changed
+		if language != middleware.GetLocale(c) {
+			c.Response().Header().Set("HX-Redirect", c.Request().Referer())
+		}
 		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm mt-2">Profile updated successfully!</div>`)
 	}
 

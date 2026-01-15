@@ -1,11 +1,13 @@
 package partials
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 )
 
 // CaseAcceptanceModal renders the main acceptance modal container
-templ CaseAcceptanceModal(request models.CaseRequest) {
+templ CaseAcceptanceModal(ctx context.Context, request models.CaseRequest) {
 	<div
 		id="case-acceptance-modal"
 		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
@@ -53,7 +55,7 @@ templ CaseAcceptanceModal(request models.CaseRequest) {
 						</svg>
 					</div>
 					<div>
-						<h2 class="text-2xl font-bold text-foreground">Accept Case Request</h2>
+						<h2 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.title") }</h2>
 						<p class="text-sm text-muted-foreground">{ request.Name }</p>
 					</div>
 				</div>
@@ -68,19 +70,19 @@ templ CaseAcceptanceModal(request models.CaseRequest) {
 			</div>
 
 			<!-- Step Indicator -->
-			@StepIndicator()
+			@StepIndicator(ctx)
 
 			<!-- Modal Body - Will be replaced by HTMX -->
 			<div id="acceptance-step-container" class="flex-1 overflow-y-auto">
 				<!-- Step 1: Client Review -->
-				@ClientReviewStep(request)
+				@ClientReviewStep(ctx, request)
 			</div>
 		</div>
 	</div>
 }
 
 // StepIndicator shows the progress through the 4 steps
-templ StepIndicator() {
+templ StepIndicator(ctx context.Context) {
 	<div class="px-6 py-4 border-b border-white/10">
 		<div class="flex items-center justify-between max-w-2xl mx-auto">
 			<!-- Step 1 -->
@@ -88,8 +90,8 @@ templ StepIndicator() {
 				<div class="flex items-center gap-2">
 					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 1">1</div>
 					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 1">1</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 1">Client</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 1">Client</span>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 1">{ i18n.T(ctx, "case_requests.accept_modal.step1") }</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 1">{ i18n.T(ctx, "case_requests.accept_modal.step1") }</span>
 				</div>
 				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 1 ? 'bg-accent' : 'bg-white/10'"></div>
 			</div>
@@ -99,8 +101,8 @@ templ StepIndicator() {
 				<div class="flex items-center gap-2">
 					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 2">2</div>
 					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 2">2</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 2">Lawyer</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 2">Lawyer</span>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 2">{ i18n.T(ctx, "case_requests.accept_modal.step2") }</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 2">{ i18n.T(ctx, "case_requests.accept_modal.step2") }</span>
 				</div>
 				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 2 ? 'bg-accent' : 'bg-white/10'"></div>
 			</div>
@@ -110,8 +112,8 @@ templ StepIndicator() {
 				<div class="flex items-center gap-2">
 					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 3">3</div>
 					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 3">3</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 3">Classification</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 3">Classification</span>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 3">{ i18n.T(ctx, "case_requests.accept_modal.step3") }</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 3">{ i18n.T(ctx, "case_requests.accept_modal.step3") }</span>
 				</div>
 				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 3 ? 'bg-accent' : 'bg-white/10'"></div>
 			</div>
@@ -121,8 +123,8 @@ templ StepIndicator() {
 				<div class="flex items-center gap-2">
 					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 4">4</div>
 					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 4">4</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 4">Review</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 4">Review</span>
+					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 4">{ i18n.T(ctx, "case_requests.accept_modal.step4") }</span>
+					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 4">{ i18n.T(ctx, "case_requests.accept_modal.step4") }</span>
 				</div>
 			</div>
 		</div>
@@ -130,7 +132,7 @@ templ StepIndicator() {
 }
 
 // ClientReviewStep shows the client information from the request
-templ ClientReviewStep(request models.CaseRequest) {
+templ ClientReviewStep(ctx context.Context, request models.CaseRequest) {
 	<div class="p-6">
 		<h3 class="text-lg font-semibold text-foreground mb-4">Review Client Information</h3>
 		
@@ -173,7 +175,7 @@ templ ClientReviewStep(request models.CaseRequest) {
 				class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
 				@click="document.getElementById('case-acceptance-modal').remove()"
 			>
-				Cancel
+				{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 			</button>
 			<button
 				type="button"
@@ -182,14 +184,14 @@ templ ClientReviewStep(request models.CaseRequest) {
 				hx-target="#acceptance-step-container"
 				hx-swap="innerHTML"
 			>
-				Next: Assign Lawyer
+				{ i18n.T(ctx, "case_requests.accept_modal.next_lawyer") }
 			</button>
 		</div>
 	</div>
 }
 
 // LawyerSelectionStep shows the lawyer selection interface
-templ LawyerSelectionStep(lawyers []models.User, isNewClient bool, request models.CaseRequest) {
+templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClient bool, request models.CaseRequest) {
 	<div class="p-6">
 		<div class="flex items-center justify-between mb-4">
 			<h3 class="text-lg font-semibold text-foreground">Assign Lawyer</h3>
@@ -241,7 +243,7 @@ templ LawyerSelectionStep(lawyers []models.User, isNewClient bool, request model
 					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
-					Cancel
+					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
@@ -250,7 +252,7 @@ templ LawyerSelectionStep(lawyers []models.User, isNewClient bool, request model
 						disabled
 					}
 				>
-					Next: Classification
+					{ i18n.T(ctx, "case_requests.accept_modal.next_class") }
 				</button>
 			</div>
 		</form>
@@ -258,7 +260,7 @@ templ LawyerSelectionStep(lawyers []models.User, isNewClient bool, request model
 }
 
 // ClassificationStep shows the classification selection interface
-templ ClassificationStep(domains []models.CaseDomain, request models.CaseRequest, lawyerID string) {
+templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, request models.CaseRequest, lawyerID string) {
 	<div class="p-6">
 		<h3 class="text-lg font-semibold text-foreground mb-4">Case Classification (Optional)</h3>
 		
@@ -348,13 +350,13 @@ templ ClassificationStep(domains []models.CaseDomain, request models.CaseRequest
 					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
-					Cancel
+					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
 					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200"
 				>
-					Next: Review
+					{ i18n.T(ctx, "case_requests.accept_modal.next_review") }
 				</button>
 			</div>
 		</form>
@@ -363,6 +365,7 @@ templ ClassificationStep(domains []models.CaseDomain, request models.CaseRequest
 
 // ReviewConfirmStep shows the final review before creating the case
 templ ReviewConfirmStep(
+	ctx context.Context,
 	request models.CaseRequest,
 	lawyer models.User,
 	isNewClient bool,
@@ -446,7 +449,7 @@ templ ReviewConfirmStep(
 					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
-					Cancel
+					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
@@ -455,7 +458,7 @@ templ ReviewConfirmStep(
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 					</svg>
-					Create Case
+					{ i18n.T(ctx, "case_requests.accept_modal.create_case") }
 				</button>
 			</div>
 		</form>
