@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"law_flow_app_go/config"
 	"law_flow_app_go/services/i18n"
 	"net/http"
 	"strings"
@@ -16,7 +17,7 @@ import (
 // 2. Cookie "lang"
 // 3. Accept-Language header
 // 4. Default ("en")
-func Locale() echo.MiddlewareFunc {
+func Locale(cfg *config.Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			// Check query param
@@ -33,6 +34,11 @@ func Locale() echo.MiddlewareFunc {
 				cookie.Value = lang
 				cookie.Expires = time.Now().Add(24 * 365 * time.Hour) // 1 year
 				cookie.Path = "/"
+				cookie.HttpOnly = true
+				cookie.SameSite = http.SameSiteLaxMode
+				if cfg.Environment == "production" {
+					cookie.Secure = true
+				}
 				c.SetCookie(cookie)
 			} else {
 				// Check cookie
@@ -67,11 +73,21 @@ func Locale() echo.MiddlewareFunc {
 
 // SetLanguageCookie sets the language cookie
 func SetLanguageCookie(c echo.Context, lang string) {
+	// Get config from context if available
+	cfg, ok := c.Get("config").(*config.Config)
+
 	cookie := new(http.Cookie)
 	cookie.Name = "lang"
 	cookie.Value = lang
 	cookie.Expires = time.Now().Add(24 * 365 * time.Hour) // 1 year
 	cookie.Path = "/"
+	cookie.HttpOnly = true
+	cookie.SameSite = http.SameSiteLaxMode
+
+	if ok && cfg.Environment == "production" {
+		cookie.Secure = true
+	}
+
 	c.SetCookie(cookie)
 }
 

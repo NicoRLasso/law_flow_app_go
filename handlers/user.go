@@ -104,6 +104,13 @@ func CreateUser(c echo.Context) error {
 	// Force user to be in the same firm as creator
 	user.FirmID = currentUser.FirmID
 
+	// Validate password strength
+	if err := services.ValidatePassword(user.Password); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
 	// Hash password
 	hashedPassword, err := services.HashPassword(user.Password)
 	if err != nil {

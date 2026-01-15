@@ -1,22 +1,19 @@
 package services
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const (
-	MaxUploadSize   = 10 * 1024 * 1024 // 10MB
-	AllowedMimeType = "application/pdf"
-)
-
+// UploadResult contains information about the uploaded file
 type UploadResult struct {
 	FileName         string
 	FileOriginalName string
@@ -25,224 +22,123 @@ type UploadResult struct {
 	MimeType         string
 }
 
-// ValidatePDFUpload checks if the uploaded file is a valid PDF within size limits
-func ValidatePDFUpload(fileHeader *multipart.FileHeader) error {
-	// Check file size
-	if fileHeader.Size > MaxUploadSize {
-		return fmt.Errorf("file size exceeds maximum allowed size of 10MB")
+// ValidateDocumentUpload checks if the uploaded file is valid
+// It checks file size, extension, and content type (magic bytes)
+func ValidateDocumentUpload(file *multipart.FileHeader) error {
+	// 1. Check file size (max 10MB)
+	const maxFileSize = 10 * 1024 * 1024 // 10MB
+	if file.Size > maxFileSize {
+		return fmt.Errorf("file size exceeds the maximum limit of 10MB")
 	}
 
-	// Check file extension
-	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
-	if ext != ".pdf" {
-		return fmt.Errorf("only PDF files are allowed")
+	// 2. Check file extension
+	allowedExtensions := map[string]bool{
+		".pdf":  true,
+		".doc":  true,
+		".docx": true,
+		".jpg":  true,
+		".jpeg": true,
+		".png":  true,
 	}
 
-	// Open file to check MIME type
-	file, err := fileHeader.Open()
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+	if !allowedExtensions[ext] {
+		return fmt.Errorf("file type not allowed. Allowed types: PDF, DOC, DOCX, JPG, PNG")
+	}
+
+	// 3. Check magic bytes (content type)
+	src, err := file.Open()
 	if err != nil {
-		return fmt.Errorf("failed to open uploaded file: %w", err)
+		return fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer src.Close()
 
 	// Read first 512 bytes to detect content type
 	buffer := make([]byte, 512)
-	_, err = file.Read(buffer)
+	_, err = src.Read(buffer)
 	if err != nil && err != io.EOF {
 		return fmt.Errorf("failed to read file content: %w", err)
 	}
 
-	// Check if it's a PDF (PDF files start with %PDF)
-	if len(buffer) < 4 || string(buffer[0:4]) != "%PDF" {
-		return fmt.Errorf("file is not a valid PDF")
+	// Reset file pointer
+	if _, err := src.Seek(0, 0); err != nil {
+		return fmt.Errorf("failed to reset file pointer: %w", err)
+	}
+
+	contentType := http.DetectContentType(buffer)
+
+	// Map of allowed MIME types
+	allowedMimeTypes := map[string]bool{
+		"application/pdf":    true,
+		"application/msword": true,
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": true,
+		"image/jpeg": true,
+		"image/png":  true,
+	}
+
+	// Note: http.DetectContentType isn't perfect for all formats (especially DOC/DOCX which might show as application/zip or application/octet-stream)
+	// For stricter checking we might need specific magic number checks, but this is a good baseline.
+	// We'll be lenient with DOCX/DOC if the extension matches, as they are often complex composite formats.
+
+	isImage := strings.HasPrefix(contentType, "image/")
+	isPDF := contentType == "application/pdf"
+
+	if (ext == ".jpg" || ext == ".jpeg" || ext == ".png") && !isImage {
+		return fmt.Errorf("invalid image file content")
+	}
+
+	if ext == ".pdf" && !isPDF {
+		return fmt.Errorf("invalid PDF file content")
 	}
 
 	return nil
 }
 
-// SaveUploadedFile saves the uploaded file to disk with a secure filename
-func SaveUploadedFile(fileHeader *multipart.FileHeader, uploadDir string, firmID string) (*UploadResult, error) {
-	// Create firm-specific directory with better organization
-	firmDir := filepath.Join(uploadDir, "firms", firmID, "case_requests")
-	if err := os.MkdirAll(firmDir, 0755); err != nil {
+// SaveCaseDocument saves the uploaded file to the specified directory
+func SaveCaseDocument(file *multipart.FileHeader, baseDir string, firmID string, caseID string) (*UploadResult, error) {
+	src, err := file.Open()
+	if err != nil {
+		return nil, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer src.Close()
+
+	// Create directory structure: uploads/firms/{firm_id}/cases/{case_id}/
+	uploadDir := filepath.Join(baseDir, "firms", firmID, "cases", caseID)
+	if err := os.MkdirAll(uploadDir, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create upload directory: %w", err)
 	}
 
-	// Generate secure filename using SHA256 hash + timestamp
-	file, err := fileHeader.Open()
-	if err != nil {
-		return nil, fmt.Errorf("failed to open uploaded file: %w", err)
-	}
-	defer file.Close()
-
-	// Calculate hash
-	hash := sha256.New()
-	if _, err := io.Copy(hash, file); err != nil {
-		return nil, fmt.Errorf("failed to calculate file hash: %w", err)
-	}
-	hashStr := hex.EncodeToString(hash.Sum(nil))[:16] // Use first 16 chars
-
-	// Generate filename: hash_timestamp.pdf
-	timestamp := time.Now().Unix()
-	fileName := fmt.Sprintf("%s_%d.pdf", hashStr, timestamp)
-	filePath := filepath.Join(firmDir, fileName)
-
-	// Verify path is within upload directory (prevent path traversal)
-	absUploadDir, err := filepath.Abs(uploadDir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve upload directory: %w", err)
-	}
-	absFilePath, err := filepath.Abs(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve file path: %w", err)
-	}
-	if !strings.HasPrefix(absFilePath, absUploadDir) {
-		return nil, fmt.Errorf("invalid file path: path traversal detected")
-	}
-
-	// Reset file pointer to beginning
-	if _, err := file.Seek(0, 0); err != nil {
-		return nil, fmt.Errorf("failed to reset file pointer: %w", err)
-	}
+	// Generate safe filename
+	ext := filepath.Ext(file.Filename)
+	uniqueID := uuid.New().String()
+	safeFilename := fmt.Sprintf("%s_%d%s", uniqueID, time.Now().Unix(), ext)
+	dstPath := filepath.Join(uploadDir, safeFilename)
 
 	// Create destination file
-	dst, err := os.Create(filePath)
+	dst, err := os.Create(dstPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create destination file: %w", err)
 	}
 	defer dst.Close()
 
-	// Copy file content
-	written, err := io.Copy(dst, file)
-	if err != nil {
-		// Clean up on error
-		os.Remove(filePath)
-		return nil, fmt.Errorf("failed to save file: %w", err)
+	// Copy content
+	if _, err := io.Copy(dst, src); err != nil {
+		return nil, fmt.Errorf("failed to save file content: %w", err)
 	}
 
 	return &UploadResult{
-		FileName:         fileName,
-		FileOriginalName: fileHeader.Filename,
-		FilePath:         filePath,
-		FileSize:         written,
+		FileName:         safeFilename,
+		FileOriginalName: file.Filename,
+		FilePath:         dstPath,
+		FileSize:         file.Size,
+		MimeType:         file.Header.Get("Content-Type"),
 	}, nil
 }
 
-// DeleteUploadedFile removes a file from disk
-func DeleteUploadedFile(filePath string) error {
-	if filePath == "" {
+// DeleteUploadedFile deletes a file from the filesystem
+func DeleteUploadedFile(path string) error {
+	if path == "" {
 		return nil
 	}
-
-	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("failed to delete file: %w", err)
-	}
-
-	return nil
-}
-
-// GetFileURL generates a URL for file access (for authenticated downloads)
-func GetFileURL(requestID string) string {
-	return fmt.Sprintf("/api/case-requests/%s/file", requestID)
-}
-
-// ValidateDocumentUpload checks if the uploaded file is valid within size limits
-func ValidateDocumentUpload(fileHeader *multipart.FileHeader) error {
-	// Check file size
-	if fileHeader.Size > MaxUploadSize {
-		return fmt.Errorf("file size exceeds maximum allowed size of 10MB")
-	}
-
-	// Check file extension
-	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
-	allowedExtensions := []string{".pdf", ".doc", ".docx", ".txt", ".jpg", ".jpeg", ".png"}
-
-	isAllowed := false
-	for _, allowed := range allowedExtensions {
-		if ext == allowed {
-			isAllowed = true
-			break
-		}
-	}
-
-	if !isAllowed {
-		return fmt.Errorf("file type not allowed. Accepted formats: PDF, DOC, DOCX, TXT, JPG, PNG")
-	}
-
-	return nil
-}
-
-// SaveCaseDocument saves a document file for a specific case
-func SaveCaseDocument(fileHeader *multipart.FileHeader, uploadDir string, firmID string, caseID string) (*UploadResult, error) {
-	// Create case-specific directory
-	caseDir := filepath.Join(uploadDir, "firms", firmID, "cases", caseID)
-	if err := os.MkdirAll(caseDir, 0755); err != nil {
-		return nil, fmt.Errorf("failed to create upload directory: %w", err)
-	}
-
-	// Generate secure filename using SHA256 hash + timestamp
-	file, err := fileHeader.Open()
-	if err != nil {
-		return nil, fmt.Errorf("failed to open uploaded file: %w", err)
-	}
-	defer file.Close()
-
-	// Calculate hash
-	hash := sha256.New()
-	if _, err := io.Copy(hash, file); err != nil {
-		return nil, fmt.Errorf("failed to calculate file hash: %w", err)
-	}
-	hashStr := hex.EncodeToString(hash.Sum(nil))[:16] // Use first 16 chars
-
-	// Get file extension
-	ext := filepath.Ext(fileHeader.Filename)
-
-	// Generate filename: hash_timestamp.ext
-	timestamp := time.Now().Unix()
-	fileName := fmt.Sprintf("%s_%d%s", hashStr, timestamp, ext)
-	filePath := filepath.Join(caseDir, fileName)
-
-	// Verify path is within upload directory (prevent path traversal)
-	absUploadDir, err := filepath.Abs(uploadDir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve upload directory: %w", err)
-	}
-	absFilePath, err := filepath.Abs(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve file path: %w", err)
-	}
-	if !strings.HasPrefix(absFilePath, absUploadDir) {
-		return nil, fmt.Errorf("invalid file path: path traversal detected")
-	}
-
-	// Reset file pointer to beginning
-	if _, err := file.Seek(0, 0); err != nil {
-		return nil, fmt.Errorf("failed to reset file pointer: %w", err)
-	}
-
-	// Create destination file
-	dst, err := os.Create(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer dst.Close()
-
-	// Copy file content
-	written, err := io.Copy(dst, file)
-	if err != nil {
-		// Clean up on error
-		os.Remove(filePath)
-		return nil, fmt.Errorf("failed to save file: %w", err)
-	}
-
-	// Get MIME type
-	mimeType := fileHeader.Header.Get("Content-Type")
-
-	return &UploadResult{
-		FileName:         fileName,
-		FileOriginalName: fileHeader.Filename,
-		FilePath:         filePath,
-		FileSize:         written,
-		MimeType:         mimeType,
-	}, nil
+	return os.Remove(path)
 }

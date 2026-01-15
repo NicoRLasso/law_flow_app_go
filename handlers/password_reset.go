@@ -127,6 +127,15 @@ func ResetPasswordPostHandler(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/reset-password?token="+token)
 	}
 
+	// Validate password strength
+	if err := services.ValidatePassword(password); err != nil {
+		errorMsg := fmt.Sprintf(`<div class="text-red-500 text-sm">%s</div>`, err.Error())
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, errorMsg)
+		}
+		return c.Redirect(http.StatusSeeOther, "/reset-password?token="+token)
+	}
+
 	// Reset password
 	if err := services.ResetPassword(db.DB, token, password); err != nil {
 		errorMsg := fmt.Sprintf(`<div class="text-red-500 text-sm">%s</div>`, err.Error())

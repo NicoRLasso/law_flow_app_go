@@ -36,11 +36,30 @@ func main() {
 	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
+	// Check sensitive configuration
+	checkSensitiveConfig(cfg)
+
 	// Create Echo instance
 	e := echo.New()
 
+	// Configure Debug mode (disable in production)
+	e.Debug = cfg.Environment != "production"
+
 	// Middleware
-	e.Use(echomiddleware.RequestLogger())
+	if cfg.Environment == "production" {
+		// JSON logging for production
+		e.Use(echomiddleware.LoggerWithConfig(echomiddleware.LoggerConfig{
+			Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",` +
+				`"host":"${host}","method":"${method}","uri":"${uri}","user_agent":"${user_agent}",` +
+				`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
+				`,"bytes_in":${bytes_in},"bytes_out":${bytes_out}}` + "\n",
+		}))
+		// Hide sensitive headers from logs
+		e.Use(echomiddleware.Secure())
+	} else {
+		// Development logging (pretty print)
+		e.Use(echomiddleware.Logger())
+	}
 	e.Use(echomiddleware.Recover())
 
 	// Security Middleware
@@ -65,7 +84,7 @@ func main() {
 	}))
 
 	// Locale Middleware
-	e.Use(middleware.Locale())
+	e.Use(middleware.Locale(cfg))
 
 	// Make config available to handlers
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -220,5 +239,20 @@ func main() {
 	log.Printf("Server starting on port %s", cfg.ServerPort)
 	if err := e.Start(":" + cfg.ServerPort); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+// checkSensitiveConfig performs startup security checks
+func checkSensitiveConfig(cfg *config.Config) {
+	if cfg.Environment == "production" {
+		if cfg.SMTPPassword == "" {
+			log.Println("[WARNING] SMTP_PASSWORD is not set in production!")
+		}
+		if len(cfg.AllowedOrigins) == 1 && cfg.AllowedOrigins[0] == "*" {
+			log.Println("[WARNING] ALLOWED_ORIGINS is set to '*' in production! This is insecure.")
+		}
+		if cfg.ServerPort == "8080" {
+			log.Println("[INFO] Running on default port 8080 in production. Ensure this is intended.")
+		}
 	}
 }

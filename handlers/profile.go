@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -151,12 +152,12 @@ func ChangePasswordHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "New passwords do not match")
 	}
 
-	// Validate password strength (minimum 8 characters)
-	if len(newPassword) < 8 {
+	// Validate password strength
+	if err := services.ValidatePassword(newPassword); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Password must be at least 8 characters long</div>`)
+			return c.HTML(http.StatusBadRequest, fmt.Sprintf(`<div class="text-red-500 text-sm mt-2">%s</div>`, err.Error()))
 		}
-		return echo.NewHTTPError(http.StatusBadRequest, "Password must be at least 8 characters long")
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// Hash new password
