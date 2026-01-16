@@ -17,6 +17,7 @@
     "requests": "Requests",
     "cases": "Cases",
     "availability": "Availability",
+    "appointments": "Appointments",
     "profile_settings": "Profile Settings",
     "features": "Features",
     "benefits": "Benefits",
@@ -45,7 +46,8 @@
       "showing": "Showing {start} to {end} of {total} results",
       "previous": "Previous",
       "next": "Next"
-    }
+    },
+    "reset": "Reset"
   },
   "auth": {
     "email": "Email Address",
@@ -464,7 +466,7 @@
         "title": "Case Details",
         "case_number": "Case Number",
         "case_info": "Case Information",
-        "client_info": "Client Information", 
+        "client_info": "Client Information",
         "assignment": "Assignment",
         "classification": "Classification",
         "documents": "Documents",
@@ -580,6 +582,53 @@
       "thursday": "Thursday",
       "friday": "Friday",
       "saturday": "Saturday"
+    }
+  },
+  "appointments": {
+    "title": "Appointments",
+    "description": "Manage scheduled appointments with clients",
+    "new": "New Appointment",
+    "filter": {
+      "all_status": "All Status"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No Show"
+    },
+    "table": {
+      "datetime": "Date & Time",
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "status": "Status",
+      "actions": "Actions",
+      "empty": "No appointments found"
+    },
+    "form": {
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "date": "Date",
+      "time_slot": "Available Time Slots",
+      "notes": "Notes",
+      "notes_placeholder": "Optional notes about the appointment...",
+      "select_client": "Select a client...",
+      "select_lawyer": "Select a lawyer...",
+      "select_date_first": "Select a date to see available slots"
+    },
+    "create": {
+      "title": "Schedule Appointment",
+      "submit": "Book Appointment"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "description": "Manage your schedule and appointments",
+    "events": {
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "status": "Status"
     }
   }
 }

@@ -1,0 +1,142 @@
+package pages
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, csrfToken string, aptTypes []models.AppointmentType) {
+	@layouts.Base(ctx, "Calendar", csrfToken) {
+		<div class="min-h-screen bg-background">
+			<!-- Navigation Bar -->
+			@components.Navbar(ctx, user, firm, "/calendar")
+			
+			<main class="w-full mx-auto px-4 md:px-6 py-8">
+				<div class="space-y-6">
+					<!-- Header -->
+					<div class="flex items-center justify-between">
+						<div>
+							<h1 class="text-3xl font-bold text-gradient">{ i18n.T(ctx, "calendar.title") }</h1>
+							<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "calendar.description") }</p>
+						</div>
+					</div>
+
+					<!-- Calendar Container -->
+					<div class="glass-panel p-6 rounded-3xl border border-white/10">
+						<div 
+							id="calendar" 
+							style="height: calc(100vh - 220px); min-height: 700px;"
+							data-locale={ i18n.GetLocale(ctx) }
+							data-label-client={ i18n.T(ctx, "calendar.events.client") }
+							data-label-lawyer={ i18n.T(ctx, "calendar.events.lawyer") }
+							data-label-status={ i18n.T(ctx, "calendar.events.status") }
+						></div>
+					</div>
+
+					<!-- Legend -->
+					if len(aptTypes) > 0 {
+						<div class="flex flex-wrap gap-4 mt-4">
+							for _, t := range aptTypes {
+								<div class="flex items-center gap-2">
+									<div class="w-3 h-3 rounded-full" style={ "background-color: " + t.Color }></div>
+									<span class="text-sm text-muted-foreground">{ t.Name }</span>
+								</div>
+							}
+						</div>
+					}
+				</div>
+			</main>
+		</div>
+
+		<!-- Include FullCalendar -->
+		<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales-all.global.min.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				console.log('Calendar page loaded, initializing FullCalendar...');
+				var calendarEl = document.getElementById('calendar');
+				if (!calendarEl) {
+					console.error('Calendar element not found!');
+					return;
+				}
+
+				if (typeof FullCalendar === 'undefined') {
+					console.error('FullCalendar is not defined! Check script loading.');
+					return;
+				}
+
+				// Data from data attributes
+				const locale = calendarEl.getAttribute('data-locale') || 'en';
+				const labelClient = calendarEl.getAttribute('data-label-client') || 'Client';
+				const labelLawyer = calendarEl.getAttribute('data-label-lawyer') || 'Lawyer';
+				const labelStatus = calendarEl.getAttribute('data-label-status') || 'Status';
+
+				var calendar = new FullCalendar.Calendar(calendarEl, {
+					initialView: 'timeGridWeek',
+					locale: locale,
+					headerToolbar: {
+						left: 'prev,next today',
+						center: 'title',
+						right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+					},
+					themeSystem: 'standard',
+					height: '100%',
+					slotMinTime: '08:00:00',
+					slotMaxTime: '20:00:00',
+					allDaySlot: false,
+					events: '/api/calendar/events',
+					eventClick: function(info) {
+						const props = info.event.extendedProps;
+						alert(`${labelClient}: ${props.clientName}\n${labelLawyer}: ${props.lawyer}\n${labelStatus}: ${props.status}`);
+					},
+					eventDidMount: function(info) {
+						console.log('Event mounted:', info.event.title);
+					}
+				});
+				calendar.render();
+				console.log('FullCalendar rendered with locale:', locale);
+			});
+		</script>
+		
+		<style>
+			/* FullCalendar Dark Mode Overrides */
+			:root {
+				--fc-page-bg-color: transparent;
+				--fc-neutral-bg-color: rgba(255,255,255,0.05);
+				--fc-neutral-text-color: #e2e8f0;
+				--fc-border-color: rgba(255,255,255,0.1);
+				
+				--fc-button-text-color: #fff;
+				--fc-button-bg-color: rgba(255,255,255,0.05);
+				--fc-button-border-color: rgba(255,255,255,0.1);
+				--fc-button-hover-bg-color: rgba(255,255,255,0.1);
+				--fc-button-hover-border-color: rgba(255,255,255,0.1);
+				--fc-button-active-bg-color: rgba(255,255,255,0.15);
+				--fc-button-active-border-color: rgba(255,255,255,0.1);
+				
+				--fc-event-bg-color: #3B82F6;
+				--fc-event-border-color: #3B82F6;
+				--fc-event-text-color: #fff;
+				--fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+				
+				--fc-today-bg-color: rgba(255,255,255,0.02);
+				--fc-now-indicator-color: #ef4444;
+			}
+			
+			.fc-theme-standard .fc-scrollgrid {
+				border: 1px solid var(--fc-border-color);
+			}
+			
+			.fc-col-header-cell-cushion, .fc-timegrid-slot-label-cushion {
+				color: var(--fc-neutral-text-color);
+			}
+			
+			.fc .fc-toolbar-title {
+				color: white;
+			}
+		</style>
+	}
+}

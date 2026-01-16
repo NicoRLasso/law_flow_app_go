@@ -380,3 +380,132 @@ func BuildCollaboratorAddedEmail(collaboratorEmail, collaboratorName, caseNumber
 		TextBody: textBody,
 	}
 }
+
+// AppointmentConfirmationEmailData contains data for appointment confirmation email
+type AppointmentConfirmationEmailData struct {
+	ClientName      string
+	FirmName        string
+	Date            string
+	Time            string
+	Duration        int
+	LawyerName      string
+	AppointmentType string
+	MeetingURL      string
+	ManageLink      string
+}
+
+// BuildAppointmentConfirmationEmail creates a confirmation email for new appointments
+func BuildAppointmentConfirmationEmail(clientEmail string, data AppointmentConfirmationEmailData) *Email {
+	htmlBody, textBody, err := loadTemplate("appointment_confirmation", data)
+	if err != nil {
+		log.Printf("Error loading appointment confirmation email template: %v", err)
+		textBody = fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been confirmed.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been confirmed.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+	}
+
+	return &Email{
+		To:       []string{clientEmail},
+		Subject:  fmt.Sprintf("Appointment Confirmed - %s", data.FirmName),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
+// AppointmentReminderEmailData contains data for appointment reminder email
+type AppointmentReminderEmailData struct {
+	ClientName string
+	FirmName   string
+	Date       string
+	Time       string
+	Duration   int
+	LawyerName string
+	MeetingURL string
+	ManageLink string
+}
+
+// BuildAppointmentReminderEmail creates a reminder email for upcoming appointments
+func BuildAppointmentReminderEmail(clientEmail string, data AppointmentReminderEmailData) *Email {
+	htmlBody, textBody, err := loadTemplate("appointment_reminder", data)
+	if err != nil {
+		log.Printf("Error loading appointment reminder email template: %v", err)
+		textBody = fmt.Sprintf("Dear %s,\n\nReminder: You have an appointment tomorrow with %s.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Reminder: You have an appointment tomorrow with %s.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+	}
+
+	return &Email{
+		To:       []string{clientEmail},
+		Subject:  fmt.Sprintf("Appointment Reminder - Tomorrow @ %s", data.Time),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
+// AppointmentCancelledEmailData contains data for appointment cancellation email
+type AppointmentCancelledEmailData struct {
+	ClientName         string
+	FirmName           string
+	Date               string
+	Time               string
+	LawyerName         string
+	CancellationReason string
+	BookingLink        string
+}
+
+// BuildAppointmentCancelledEmail creates a cancellation notification email
+func BuildAppointmentCancelledEmail(clientEmail string, data AppointmentCancelledEmailData) *Email {
+	htmlBody, textBody, err := loadTemplate("appointment_cancelled", data)
+	if err != nil {
+		log.Printf("Error loading appointment cancelled email template: %v", err)
+		textBody = fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been cancelled.\n\nDate: %s\nTime: %s\n\nTo book a new appointment: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
+		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been cancelled.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s</p><p><a href=\"%s\">Book a new appointment</a></p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
+	}
+
+	return &Email{
+		To:       []string{clientEmail},
+		Subject:  fmt.Sprintf("Appointment Cancelled - %s", data.FirmName),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
+// LawyerAppointmentNotificationEmailData contains data for lawyer notification email
+type LawyerAppointmentNotificationEmailData struct {
+	LawyerName      string
+	ClientName      string
+	ClientEmail     string
+	ClientPhone     string
+	Date            string
+	Time            string
+	Duration        int
+	AppointmentType string
+	Notes           string
+}
+
+// BuildLawyerAppointmentNotificationEmail notifies lawyer of new appointment
+func BuildLawyerAppointmentNotificationEmail(lawyerEmail string, data LawyerAppointmentNotificationEmailData) *Email {
+	textBody := fmt.Sprintf("New Appointment Scheduled\n\nDear %s,\n\nA new appointment has been booked:\n\nClient: %s\nEmail: %s\nPhone: %s\nDate: %s\nTime: %s\nDuration: %d minutes\nType: %s\nNotes: %s\n\nPlease log in to view more details.",
+		data.LawyerName, data.ClientName, data.ClientEmail, data.ClientPhone, data.Date, data.Time, data.Duration, data.AppointmentType, data.Notes)
+
+	htmlBody := fmt.Sprintf(`<h2>New Appointment Scheduled</h2>
+		<p>Dear %s,</p>
+		<p>A new appointment has been booked:</p>
+		<ul>
+			<li><strong>Client:</strong> %s</li>
+			<li><strong>Email:</strong> %s</li>
+			<li><strong>Phone:</strong> %s</li>
+			<li><strong>Date:</strong> %s</li>
+			<li><strong>Time:</strong> %s</li>
+			<li><strong>Duration:</strong> %d minutes</li>
+			<li><strong>Type:</strong> %s</li>
+			<li><strong>Notes:</strong> %s</li>
+		</ul>
+		<p>Please log in to view more details.</p>`,
+		data.LawyerName, data.ClientName, data.ClientEmail, data.ClientPhone, data.Date, data.Time, data.Duration, data.AppointmentType, data.Notes)
+
+	return &Email{
+		To:       []string{lawyerEmail},
+		Subject:  fmt.Sprintf("New Appointment: %s - %s @ %s", data.ClientName, data.Date, data.Time),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/services/jobs"
 
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -33,7 +34,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.Availability{}, &models.BlockedDate{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	// Check sensitive configuration
@@ -110,6 +111,14 @@ func main() {
 	e.GET("/firm/:slug/request", handlers.PublicCaseRequestHandler)
 	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler)
 	e.GET("/firm/:slug/request/success", handlers.PublicCaseRequestSuccessHandler)
+
+	// Public appointment booking routes (no authentication)
+	e.GET("/firm/:slug/book", handlers.PublicBookingPageHandler)
+	e.GET("/firm/:slug/book/lawyers", handlers.PublicGetLawyersHandler)
+	e.GET("/firm/:slug/book/slots", handlers.PublicGetSlotsHandler)
+	e.POST("/firm/:slug/book", handlers.PublicSubmitBookingHandler)
+	e.GET("/appointment/:token", handlers.PublicAppointmentDetailHandler)
+	e.POST("/appointment/:token/cancel", handlers.PublicCancelAppointmentHandler)
 
 	// Firm setup routes (authenticated but no firm required)
 	firmSetup := e.Group("/firm")
@@ -228,6 +237,38 @@ func main() {
 
 		// Buffer settings (admin only)
 		adminRoutes.PUT("/api/firm/buffer-settings", handlers.UpdateBufferSettingsHandler)
+
+		// Calendar View
+		protected.GET("/calendar", handlers.CalendarPageHandler)
+		protected.GET("/api/calendar/events", handlers.CalendarEventsHandler)
+
+		// Appointments page (lawyer and admin only)
+		protected.GET("/appointments", handlers.AppointmentsPageHandler)
+
+		// Appointment routes (lawyer and admin only)
+		appointmentRoutes := protected.Group("/api/appointments")
+		appointmentRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			appointmentRoutes.GET("", handlers.GetAppointmentsHandler)
+			appointmentRoutes.GET("/slots", handlers.GetAvailableSlotsHandler)
+			appointmentRoutes.GET("/clients", handlers.GetClientsForAppointmentHandler)
+			appointmentRoutes.GET("/lawyers", handlers.GetLawyersForAppointmentHandler)
+			appointmentRoutes.GET("/types", handlers.GetActiveAppointmentTypesHandler)
+			appointmentRoutes.POST("", handlers.CreateAppointmentHandler)
+			appointmentRoutes.GET("/:id", handlers.GetAppointmentHandler)
+			appointmentRoutes.PUT("/:id/status", handlers.UpdateAppointmentStatusHandler)
+			appointmentRoutes.PUT("/:id/reschedule", handlers.RescheduleAppointmentHandler)
+			appointmentRoutes.DELETE("/:id", handlers.CancelAppointmentHandler)
+		}
+
+		// Appointment Type management (admin only)
+		appointmentTypeRoutes := adminRoutes.Group("/appointment-types")
+		{
+			appointmentTypeRoutes.GET("", handlers.GetAppointmentTypesHandler)
+			appointmentTypeRoutes.POST("", handlers.CreateAppointmentTypeHandler)
+			appointmentTypeRoutes.PUT("/:id", handlers.UpdateAppointmentTypeHandler)
+			appointmentTypeRoutes.DELETE("/:id", handlers.DeleteAppointmentTypeHandler)
+		}
 	}
 
 	// Development-only routes
@@ -258,11 +299,21 @@ func main() {
 		}
 	}()
 
+	// Start background jobs
+	go func() {
+		// Run immediately on startup (for demo/testing)
+		jobs.SendAppointmentReminders(cfg)
+
+		// Then run every hour
+		ticker := time.NewTicker(1 * time.Hour)
+		defer ticker.Stop()
+		for range ticker.C {
+			jobs.SendAppointmentReminders(cfg)
+		}
+	}()
+
 	// Start server
-	log.Printf("Server starting on port %s", cfg.ServerPort)
-	if err := e.Start(":" + cfg.ServerPort); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
+	e.Logger.Fatal(e.Start(":" + cfg.ServerPort))
 }
 
 // checkSensitiveConfig performs startup security checks

@@ -18,6 +18,7 @@ type Config struct {
 	EmailFrom      string
 	EmailFromName  string
 	AllowedOrigins []string
+	AppURL         string
 }
 
 func Load() *Config {
@@ -33,6 +34,7 @@ func Load() *Config {
 		EmailFrom:      getEnv("EMAIL_FROM", "noreply@lawflowapp.com"),
 		EmailFromName:  getEnv("EMAIL_FROM_NAME", "LawFlow App"),
 		AllowedOrigins: strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
+		AppURL:         getEnv("APP_URL", "http://localhost:8080"),
 	}
 }
 

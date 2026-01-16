@@ -45,7 +45,8 @@
       "showing": "Mostrando {start} a {end} de {total} resultados",
       "previous": "Anterior",
       "next": "Siguiente"
-    }
+    },
+    "reset": "Restablecer"
   },
   "auth": {
     "email": "Correo Electrónico",
@@ -580,6 +581,15 @@
       "thursday": "Jueves",
       "friday": "Viernes",
       "saturday": "Sábado"
+    }
+  },
+  "calendar": {
+    "title": "Calendario",
+    "description": "Gestiona tu horario y citas",
+    "events": {
+      "client": "Cliente",
+      "lawyer": "Abogado",
+      "status": "Estado"
     }
   }
 }

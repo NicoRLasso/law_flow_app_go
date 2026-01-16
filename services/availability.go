@@ -121,7 +121,7 @@ func DeleteBlockedDate(id string) error {
 }
 
 // IsTimeSlotAvailable checks if a time slot is available for a lawyer
-// It considers both weekly availability and blocked dates
+// It considers weekly availability, blocked dates, and existing appointments
 func IsTimeSlotAvailable(lawyerID string, checkStart, checkEnd time.Time) (bool, error) {
 	// 1. Check if the time falls within regular availability
 	dayOfWeek := int(checkStart.Weekday())
@@ -153,6 +153,19 @@ func IsTimeSlotAvailable(lawyerID string, checkStart, checkEnd time.Time) (bool,
 		if blocked.IsBlocking(checkStart, checkEnd) {
 			return false, nil // Blocked
 		}
+	}
+
+	// 3. Check for existing appointments
+	var appointmentCount int64
+	err = db.DB.Model(&models.Appointment{}).
+		Where("lawyer_id = ? AND status NOT IN (?, ?) AND start_time < ? AND end_time > ?",
+			lawyerID, models.AppointmentStatusCancelled, models.AppointmentStatusNoShow, checkEnd, checkStart).
+		Count(&appointmentCount).Error
+	if err != nil {
+		return false, err
+	}
+	if appointmentCount > 0 {
+		return false, nil // Conflicting appointment exists
 	}
 
 	return true, nil

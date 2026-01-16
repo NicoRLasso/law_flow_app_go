@@ -1,0 +1,255 @@
+package pages
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
+)
+
+templ Appointments(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title, csrfToken) {
+		<div class="min-h-screen bg-background" x-data="appointmentPage()">
+			<!-- Navigation Bar -->
+			@components.Navbar(ctx, user, firm, "/appointments")
+			<!-- Main Content -->
+			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
+				<div class="space-y-4 md:space-y-6">
+					<!-- Header -->
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+						<div>
+							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "appointments.title") }</h1>
+							<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "appointments.description") }</p>
+						</div>
+						<button 
+							@click="showCreateModal = true"
+							class="px-4 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20"
+						>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+							</svg>
+							<span>{ i18n.T(ctx, "appointments.new") }</span>
+						</button>
+					</div>
+
+					<!-- Filters -->
+					@partials.AppointmentFilters(ctx, user)
+					
+					<!-- Loading indicator -->
+					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
+						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+					</div>
+					
+					<!-- Appointments Table -->
+					<div 
+						id="appointments-table"
+						hx-get="/api/appointments"
+						hx-trigger="load, reload-appointments from:body"
+						hx-indicator="#loading-indicator"
+					>
+					</div>
+				</div>
+			</main>
+
+			<!-- Create Appointment Modal -->
+			<div 
+				x-show="showCreateModal" 
+				x-transition:enter="transition ease-out duration-300"
+				x-transition:enter-start="opacity-0"
+				x-transition:enter-end="opacity-100"
+				x-transition:leave="transition ease-in duration-200"
+				x-transition:leave-start="opacity-100"
+				x-transition:leave-end="opacity-0"
+				class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+				@click.self="showCreateModal = false"
+				@keydown.escape.window="showCreateModal = false"
+			>
+				<div 
+					x-show="showCreateModal"
+					x-transition:enter="transition ease-out duration-300"
+					x-transition:enter-start="opacity-0 scale-95"
+					x-transition:enter-end="opacity-100 scale-100"
+					x-transition:leave="transition ease-in duration-200"
+					x-transition:leave-start="opacity-100 scale-100"
+					x-transition:leave-end="opacity-0 scale-95"
+					class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-white/10"
+					@click.stop
+				>
+					<div class="flex items-center justify-between mb-6">
+						<h2 class="text-xl font-bold">{ i18n.T(ctx, "appointments.create.title") }</h2>
+						<button @click="showCreateModal = false" class="text-muted-foreground hover:text-foreground">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+							</svg>
+						</button>
+					</div>
+
+					<form 
+						hx-post="/api/appointments" 
+						hx-target="#create-result"
+						hx-swap="innerHTML"
+						@htmx:after-request="if(event.detail.successful && event.detail.xhr.status === 201) { showCreateModal = false; htmx.trigger('body', 'reload-appointments'); }"
+						class="space-y-4"
+					>
+						<input type="hidden" name="_csrf" value={ csrfToken }/>
+						
+						<!-- Client Selection -->
+						<div>
+							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.client") }</label>
+							<select 
+								name="client_id" 
+								x-model="selectedClient"
+								required
+								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+								hx-get="/api/appointments/clients"
+								hx-trigger="load"
+								hx-swap="innerHTML"
+							>
+								<option value="">{ i18n.T(ctx, "appointments.form.select_client") }</option>
+							</select>
+						</div>
+
+						<!-- Lawyer Selection (for admins) -->
+						if user.Role == "admin" {
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.lawyer") }</label>
+								<select 
+									name="lawyer_id" 
+									x-model="selectedLawyer"
+									@change="loadSlots()"
+									required
+									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+									hx-get="/api/appointments/lawyers"
+									hx-trigger="load"
+									hx-swap="innerHTML"
+								>
+									<option value="">{ i18n.T(ctx, "appointments.form.select_lawyer") }</option>
+								</select>
+							</div>
+						} else {
+							<input type="hidden" name="lawyer_id" value={ user.ID }/>
+						}
+
+						<!-- Date Selection -->
+						<div>
+							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.date") }</label>
+							<input 
+								type="date" 
+								x-model="selectedDate"
+								@change="loadSlots()"
+								required
+								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+							/>
+						</div>
+
+						<!-- Available Slots -->
+						<div x-show="selectedDate">
+							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.time_slot") }</label>
+							<div id="available-slots" class="grid grid-cols-3 gap-2">
+								<p class="col-span-3 text-muted-foreground text-sm">{ i18n.T(ctx, "appointments.form.select_date_first") }</p>
+							</div>
+						</div>
+
+						<!-- Hidden inputs for selected time -->
+						<input type="hidden" name="start_time" x-model="selectedStartTime"/>
+						<input type="hidden" name="end_time" x-model="selectedEndTime"/>
+
+						<!-- Notes -->
+						<div>
+							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.notes") }</label>
+							<textarea 
+								name="notes"
+								rows="3"
+								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+								placeholder={ i18n.T(ctx, "appointments.form.notes_placeholder") }
+							></textarea>
+						</div>
+
+						<!-- Result/Error Display -->
+						<div id="create-result"></div>
+
+						<!-- Buttons -->
+						<div class="flex gap-3 pt-4">
+							<button 
+								type="button"
+								@click="showCreateModal = false"
+								class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all"
+							>
+								{ i18n.T(ctx, "common.cancel") }
+							</button>
+							<button 
+								type="submit"
+								:disabled="!selectedStartTime"
+								class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all"
+							>
+								{ i18n.T(ctx, "appointments.create.submit") }
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function appointmentPage() {
+				return {
+					showCreateModal: false,
+					selectedClient: '',
+					selectedLawyer: '',
+					selectedDate: '',
+					selectedStartTime: '',
+					selectedEndTime: '',
+					slots: [],
+					
+					loadSlots() {
+						if (!this.selectedDate) return;
+						
+						const lawyerId = this.selectedLawyer || document.querySelector('input[name="lawyer_id"]')?.value;
+						if (!lawyerId) return;
+						
+						fetch(`/api/appointments/slots?date=${this.selectedDate}&lawyer_id=${lawyerId}`)
+							.then(res => res.json())
+							.then(data => {
+								this.slots = data.slots || [];
+								this.renderSlots();
+							});
+					},
+					
+					renderSlots() {
+						const container = document.getElementById('available-slots');
+						if (!container) return;
+						
+						if (this.slots.length === 0) {
+							container.innerHTML = '<p class="col-span-3 text-muted-foreground text-sm">No available slots for this date</p>';
+							return;
+						}
+						
+						container.innerHTML = this.slots.map(slot => {
+							const start = new Date(slot.start_time);
+							const end = new Date(slot.end_time);
+							const timeStr = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+							return `
+								<button 
+									type="button"
+									@click="selectSlot('${slot.start_time}', '${slot.end_time}')"
+									class="px-3 py-2 text-sm rounded-lg transition-all ${this.selectedStartTime === slot.start_time ? 'bg-accent text-white' : 'bg-white/5 hover:bg-white/10 text-foreground'}"
+								>${timeStr}</button>
+							`;
+						}).join('');
+						
+						// Re-init Alpine on new elements
+						Alpine.initTree(container);
+					},
+					
+					selectSlot(start, end) {
+						this.selectedStartTime = start;
+						this.selectedEndTime = end;
+						this.renderSlots();
+					}
+				}
+			}
+		</script>
+	}
+}

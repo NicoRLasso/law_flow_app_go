@@ -1,0 +1,21 @@
+Appointment Confirmed
+
+Dear {{.ClientName}},
+
+Your appointment with {{.FirmName}} has been confirmed.
+
+APPOINTMENT DETAILS:
+- Date: {{.Date}}
+- Time: {{.Time}}
+- Duration: {{.Duration}} minutes
+- Lawyer: {{.LawyerName}}
+{{if .AppointmentType}}- Type: {{.AppointmentType}}{{end}}
+{{if .MeetingURL}}- Meeting Link: {{.MeetingURL}}{{end}}
+
+Need to make changes?
+Manage your appointment: {{.ManageLink}}
+
+Please arrive 10 minutes early if this is an in-person meeting.
+
+Best regards,
+{{.FirmName}}
