@@ -22,6 +22,10 @@ type User struct {
 	Language    string     `gorm:"not null;default:'en'" json:"language"` // en, es
 	LastLoginAt *time.Time `json:"last_login_at"`
 
+	// Security / Lockout
+	FailedLoginAttempts int        `gorm:"default:0" json:"-"`
+	LockoutUntil        *time.Time `json:"-"`
+
 	// Optional personal information
 	Address        *string `json:"address,omitempty"`
 	PhoneNumber    *string `json:"phone_number,omitempty"`

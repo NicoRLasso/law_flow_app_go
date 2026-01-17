@@ -9,6 +9,7 @@ import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -57,19 +58,90 @@ func main() {
 	e.Debug = cfg.Environment != "production"
 
 	// Middleware
+	// Body Limit (2MB) - prevent large payloads
+	e.Use(echomiddleware.BodyLimit("2M"))
+	// Gzip Compression
+	e.Use(echomiddleware.Gzip())
+
 	if cfg.Environment == "production" {
-		// JSON logging for production
-		e.Use(echomiddleware.LoggerWithConfig(echomiddleware.LoggerConfig{
-			Format: `{"time":"${time_rfc3339_nano}","id":"${id}","remote_ip":"${remote_ip}",` +
-				`"host":"${host}","method":"${method}","uri":"${uri}","user_agent":"${user_agent}",` +
-				`"status":${status},"error":"${error}","latency":${latency},"latency_human":"${latency_human}"` +
-				`,"bytes_in":${bytes_in},"bytes_out":${bytes_out}}` + "\n",
+		// Initialize Slog with JSON handler for production
+		logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+		slog.SetDefault(logger)
+
+		// Request Logger (Structured Logging)
+		e.Use(echomiddleware.RequestLoggerWithConfig(echomiddleware.RequestLoggerConfig{
+			LogStatus:        true,
+			LogURI:           true,
+			LogError:         true,
+			HandleError:      true,
+			LogRequestID:     true,
+			LogRemoteIP:      true,
+			LogHost:          true,
+			LogMethod:        true,
+			LogUserAgent:     true,
+			LogLatency:       true,
+			LogContentLength: true,
+			LogResponseSize:  true,
+			LogValuesFunc: func(c echo.Context, v echomiddleware.RequestLoggerValues) error {
+				// Log using global slog
+				attrs := []any{
+					slog.String("id", v.RequestID),
+					slog.String("remote_ip", v.RemoteIP),
+					slog.String("host", v.Host),
+					slog.String("method", v.Method),
+					slog.String("uri", v.URI),
+					slog.String("user_agent", v.UserAgent),
+					slog.Int("status", v.Status),
+					slog.Duration("latency", v.Latency),
+					slog.String("latency_human", v.Latency.String()),
+					slog.String("bytes_in", v.ContentLength),
+					slog.Int64("bytes_out", v.ResponseSize),
+				}
+				if v.Error != nil {
+					attrs = append(attrs, slog.String("error", v.Error.Error()))
+				}
+				slog.Info("request", attrs...)
+				return nil
+			},
 		}))
-		// Hide sensitive headers from logs
-		e.Use(echomiddleware.Secure())
+		// Security Headers
+		e.Use(echomiddleware.SecureWithConfig(echomiddleware.SecureConfig{
+			XSSProtection:         "1; mode=block",
+			ContentTypeNosniff:    "nosniff",
+			XFrameOptions:         "SAMEORIGIN",
+			HSTSMaxAge:            31536000,
+			HSTSExcludeSubdomains: true,
+			ContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'",
+		}))
 	} else {
-		// Development logging (pretty print)
-		e.Use(echomiddleware.Logger())
+		// Development logging (Structured Text)
+		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+		slog.SetDefault(logger)
+
+		e.Use(echomiddleware.RequestLoggerWithConfig(echomiddleware.RequestLoggerConfig{
+			LogStatus:   true,
+			LogURI:      true,
+			LogError:    true,
+			HandleError: true,
+			LogMethod:   true,
+			LogLatency:  true,
+			LogValuesFunc: func(c echo.Context, v echomiddleware.RequestLoggerValues) error {
+				// Simple text logging for dev
+				args := []any{
+					slog.String("method", v.Method),
+					slog.String("uri", v.URI),
+					slog.Int("status", v.Status),
+					slog.String("latency", v.Latency.String()),
+				}
+				if v.Error != nil {
+					args = append(args, slog.String("error", v.Error.Error()))
+					slog.Error("request", args...)
+				} else {
+					slog.Info("request", args...)
+				}
+				return nil
+			},
+		}))
 	}
 	e.Use(echomiddleware.Recover())
 
@@ -106,7 +178,18 @@ func main() {
 	})
 
 	// Static files
-	e.Static("/static", "static")
+	// Use a group to apply middleware specifically for static files
+	staticGroup := e.Group("/static")
+	if cfg.Environment == "production" {
+		staticGroup.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+			return func(c echo.Context) error {
+				// Cache static assets for 1 year
+				c.Response().Header().Set("Cache-Control", "public, max-age=31536000")
+				return next(c)
+			}
+		})
+	}
+	staticGroup.Static("/", "static")
 
 	// Health check endpoint for load balancers
 	e.GET("/health", func(c echo.Context) error {

@@ -26,8 +26,13 @@ COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/services/i18n ./services/i18n
 
-# Create directories for data
-RUN mkdir -p /app/db /app/uploads
+# Create directories for data and a non-root user
+RUN mkdir -p /app/db /app/uploads && \
+    adduser -D -h /app appuser && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
 
 EXPOSE 8080
 
