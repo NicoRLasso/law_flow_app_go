@@ -65,10 +65,19 @@ type Case struct {
 	DeletedAt2 *time.Time `json:"deleted_at_custom,omitempty"` // Custom deleted timestamp (separate from GORM's DeletedAt)
 	DeletedBy  *string    `gorm:"type:uuid" json:"deleted_by,omitempty"`
 
+	// Historical case tracking (for migrating paper cases)
+	IsHistorical         bool       `gorm:"not null;default:false;index" json:"is_historical"`
+	OriginalFilingDate   *time.Time `json:"original_filing_date,omitempty"`
+	HistoricalCaseNumber *string    `json:"historical_case_number,omitempty"` // Original paper case reference
+	MigrationNotes       *string    `gorm:"type:text" json:"migration_notes,omitempty"`
+	MigratedAt           *time.Time `json:"migrated_at,omitempty"`
+	MigratedBy           *string    `gorm:"type:uuid" json:"migrated_by,omitempty"`
+
 	// Relationships
 	StatusChanger *User          `gorm:"foreignKey:StatusChangedBy" json:"status_changer,omitempty"`
 	Classifier    *User          `gorm:"foreignKey:ClassifiedBy" json:"classifier,omitempty"`
 	Deleter       *User          `gorm:"foreignKey:DeletedBy" json:"deleter,omitempty"`
+	Migrator      *User          `gorm:"foreignKey:MigratedBy" json:"migrator,omitempty"`
 	Subtypes      []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
 	Documents     []CaseDocument `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
 	Collaborators []User         `gorm:"many2many:case_collaborators;" json:"collaborators,omitempty"`

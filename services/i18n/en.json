@@ -16,6 +16,7 @@
     "case_requests": "Case Requests",
     "requests": "Requests",
     "cases": "Cases",
+    "historical_cases": "Historical Cases",
     "availability": "Availability",
     "appointments": "Appointments",
     "profile_settings": "Profile Settings",
@@ -47,7 +48,8 @@
       "previous": "Previous",
       "next": "Next"
     },
-    "reset": "Reset"
+    "reset": "Reset",
+    "optional": "Optional"
   },
   "auth": {
     "email": "Email Address",
@@ -220,7 +222,33 @@
       "unassigned": "Unassigned",
       "details": "Details",
       "empty": "No cases found"
-    }
+    },
+    "history": {
+      "page_title": "Historical Cases",
+      "page_description": "View and manage migrated paper cases",
+      "title": "Add Historical Case",
+      "description": "Migrate a paper-based case to the system",
+      "add_button": "Add Paper Case",
+      "original_date": "Original Filing Date",
+      "original_number": "Original Case Number",
+      "migration_notes": "Migration Notes",
+      "migration_notes_placeholder": "Notes about this paper case migration...",
+      "create": "Create Historical Case",
+      "badge": "Paper"
+    },
+    "title_label": "Case Title",
+    "title_placeholder": "Brief case title...",
+    "description_placeholder": "Describe the case...",
+    "client": "Client",
+    "select_client": "Select a client",
+    "assigned_lawyer": "Assigned Lawyer",
+    "select_lawyer": "Select a lawyer",
+    "classification": "Classification",
+    "domain": "Domain",
+    "select_domain": "Select domain",
+    "branch": "Branch",
+    "select_branch": "Select branch",
+    "subtypes": "Subtypes"
   },
   "users": {
     "title": "User Management",

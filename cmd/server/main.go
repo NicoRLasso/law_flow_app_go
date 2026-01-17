@@ -214,7 +214,15 @@ func main() {
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)
 			caseRoutes.GET("/:id/collaborators/available", handlers.GetAvailableCollaboratorsHandler)
+			// Historical case routes
+			caseRoutes.GET("/history/new", handlers.GetHistoricalCaseFormHandler)
+			caseRoutes.POST("/history", handlers.CreateHistoricalCaseHandler)
+			caseRoutes.GET("/history/branches", handlers.GetHistoricalCaseBranchesHandler)
+			caseRoutes.GET("/history/subtypes", handlers.GetHistoricalCaseSubtypesHandler)
 		}
+
+		// Historical Cases page
+		protected.GET("/historical-cases", handlers.HistoricalCasesPageHandler)
 
 		// Lawyer filter route (admin only) - add to adminRoutes
 		adminRoutes.GET("/api/lawyers", handlers.GetLawyersForFilterHandler)

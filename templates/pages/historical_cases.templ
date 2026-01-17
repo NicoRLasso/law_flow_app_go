@@ -1,0 +1,63 @@
+package pages
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
+)
+
+templ HistoricalCases(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title, csrfToken) {
+		<div class="min-h-screen bg-background">
+			<!-- Navigation Bar -->
+			@components.Navbar(ctx, user, firm, "/historical-cases")
+			<!-- Main Content -->
+			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
+				<div class="space-y-4 md:space-y-6">
+					<!-- Header -->
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+						<div>
+							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "cases.history.page_title") }</h1>
+							<p class="text-muted-foreground mt-1">
+								{ i18n.T(ctx, "cases.history.page_description") }
+							</p>
+						</div>
+						if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+							<button
+								hx-get="/api/cases/history/new"
+								hx-target="body"
+								hx-swap="beforeend"
+								class="inline-flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-lg shadow-accent/20"
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+								</svg>
+								{ i18n.T(ctx, "cases.history.add_button") }
+							</button>
+						}
+					</div>
+
+					<!-- Case Filters -->
+					@partials.CaseFilters(ctx, user)
+					
+					<!-- Loading indicator -->
+					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
+						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+					</div>
+					
+					<!-- Historical Cases Table -->
+					<div 
+						id="cases-table"
+						hx-get="/api/cases?historical=true"
+						hx-trigger="load, reload-cases from:body"
+						hx-indicator="#loading-indicator"
+					>
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}

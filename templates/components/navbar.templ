@@ -27,7 +27,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 								@click="casesOpen = !casesOpen"
 								class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
 									func() string {
-										if currentPath == "/cases" || currentPath == "/case-requests" {
+										if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" {
 											return "text-foreground bg-white/5 border border-white/10 hover:bg-white/10"
 										}
 										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
@@ -72,6 +72,17 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 											{ i18n.T(ctx, "nav.requests") }
 										</a>
 									}
+							if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+								<a href="/historical-cases" class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+									func() string {
+										if currentPath == "/historical-cases" {
+											return "text-foreground bg-white/10"
+										}
+										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+									}() }>
+									{ i18n.T(ctx, "nav.historical_cases") }
+								</a>
+							}
 								</div>
 							</div>
 						</div>

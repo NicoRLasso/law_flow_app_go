@@ -16,7 +16,9 @@
     "case_requests": "Solicitudes de Caso",
     "requests": "Solicitudes",
     "cases": "Casos",
+    "historical_cases": "Casos Históricos",
     "availability": "Disponibilidad",
+    "appointments": "Citas",
     "profile_settings": "Configuración de Perfil",
     "features": "Características",
     "benefits": "Beneficios",
@@ -46,7 +48,8 @@
       "previous": "Anterior",
       "next": "Siguiente"
     },
-    "reset": "Restablecer"
+    "reset": "Restablecer",
+    "optional": "Opcional"
   },
   "auth": {
     "email": "Correo Electrónico",
@@ -219,7 +222,34 @@
       "unassigned": "Sin Asignar",
       "details": "Detalles",
       "empty": "No se encontraron casos"
-    }
+    },
+    "history": {
+      "page_title": "Casos Históricos",
+      "page_description": "Ver y gestionar casos migrados de papel",
+      "title": "Agregar Caso Histórico",
+      "description": "Migrar un caso en papel al sistema",
+      "add_button": "Agregar Caso en Papel",
+      "original_date": "Fecha Original de Presentación",
+      "original_number": "Número de Caso Original",
+      "migration_notes": "Notas de Migración",
+      "migration_notes_placeholder": "Notas sobre esta migración de caso en papel...",
+      "create": "Crear Caso Histórico",
+      "badge": "Papel"
+    },
+    "title_label": "Título del Caso",
+    "title_placeholder": "Título breve del caso...",
+    "description": "Descripción",
+    "description_placeholder": "Describir el caso...",
+    "client": "Cliente",
+    "select_client": "Seleccionar cliente",
+    "assigned_lawyer": "Abogado Asignado",
+    "select_lawyer": "Seleccionar abogado",
+    "classification": "Clasificación",
+    "domain": "Dominio",
+    "select_domain": "Seleccionar dominio",
+    "branch": "Rama",
+    "select_branch": "Seleccionar rama",
+    "subtypes": "Subtipos"
   },
   "users": {
     "title": "Gestión de Usuarios",

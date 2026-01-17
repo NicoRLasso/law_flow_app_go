@@ -64,6 +64,15 @@ func GetCasesHandler(c echo.Context) error {
 	}
 	// Admins see all cases (no additional filter)
 
+	// Apply historical filter
+	historical := c.QueryParam("historical")
+	if historical == "true" {
+		query = query.Where("is_historical = ?", true)
+	} else {
+		// By default, show only non-historical cases
+		query = query.Where("is_historical = ? OR is_historical IS NULL", false)
+	}
+
 	// Apply status filter
 	if status != "" && models.IsValidCaseStatus(status) {
 		query = query.Where("status = ?", status)
