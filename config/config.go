@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -19,9 +21,15 @@ type Config struct {
 	EmailFromName  string
 	AllowedOrigins []string
 	AppURL         string
+	SessionSecret  string
 }
 
 func Load() *Config {
+	// Load .env file (ignore error if not present - use system env vars)
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
 	return &Config{
 		ServerPort:     getEnv("SERVER_PORT", "8080"),
 		DBPath:         getEnv("DB_PATH", "db/app.db"),
@@ -35,6 +43,7 @@ func Load() *Config {
 		EmailFromName:  getEnv("EMAIL_FROM_NAME", "LawFlow App"),
 		AllowedOrigins: strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
 		AppURL:         getEnv("APP_URL", "http://localhost:8080"),
+		SessionSecret:  getEnv("SESSION_SECRET", ""),
 	}
 }
 

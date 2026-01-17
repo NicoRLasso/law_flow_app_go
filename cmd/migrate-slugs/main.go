@@ -17,7 +17,7 @@ func main() {
 	cfg := config.Load()
 
 	// Initialize database
-	if err := db.Initialize(cfg.DBPath); err != nil {
+	if err := db.Initialize(cfg.DBPath, cfg.Environment); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()

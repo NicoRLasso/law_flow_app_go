@@ -11,19 +11,28 @@ import (
 
 var DB *gorm.DB
 
-// Initialize sets up the database connection and runs migrations
-func Initialize(dbPath string) error {
+// Initialize sets up the database connection with WAL mode for concurrency
+func Initialize(dbPath string, environment string) error {
 	var err error
 
-	DB, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+	// Determine log level based on environment
+	logLevel := logger.Info
+	if environment == "production" {
+		logLevel = logger.Warn
+	}
+
+	// Enable WAL mode for better concurrency support
+	dsn := dbPath + "?_journal_mode=WAL"
+
+	DB, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logLevel),
 	})
 
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	log.Println("Database connection established")
+	log.Println("Database connection established (WAL mode enabled)")
 	return nil
 }
 

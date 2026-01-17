@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/handlers"
@@ -9,6 +10,9 @@ import (
 	"law_flow_app_go/services"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"law_flow_app_go/services/i18n"
@@ -27,8 +31,8 @@ func main() {
 		log.Fatalf("Failed to load translations: %v", err)
 	}
 
-	// Initialize database
-	if err := db.Initialize(cfg.DBPath); err != nil {
+	// Initialize database with environment for logging config
+	if err := db.Initialize(cfg.DBPath, cfg.Environment); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
@@ -97,6 +101,11 @@ func main() {
 
 	// Static files
 	e.Static("/static", "static")
+
+	// Health check endpoint for load balancers
+	e.GET("/health", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{"status": "healthy"})
+	})
 
 	// Public routes (no authentication required)
 	e.GET("/", handlers.LandingHandler)
@@ -320,8 +329,29 @@ func main() {
 		}
 	}()
 
-	// Start server
-	e.Logger.Fatal(e.Start(":" + cfg.ServerPort))
+	// Graceful shutdown setup
+	go func() {
+		if err := e.Start(":" + cfg.ServerPort); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("Shutting down the server")
+		}
+	}()
+
+	// Wait for interrupt signal (SIGINT or SIGTERM)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down server...")
+
+	// Give outstanding requests 10 seconds to complete
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
+
+	log.Println("Server gracefully stopped")
 }
 
 // checkSensitiveConfig performs startup security checks
@@ -335,6 +365,9 @@ func checkSensitiveConfig(cfg *config.Config) {
 		}
 		if cfg.ServerPort == "8080" {
 			log.Println("[INFO] Running on default port 8080 in production. Ensure this is intended.")
+		}
+		if cfg.SessionSecret == "" {
+			log.Println("[WARNING] SESSION_SECRET is not set in production!")
 		}
 	}
 }
