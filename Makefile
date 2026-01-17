@@ -1,4 +1,4 @@
-.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css-build css-watch
+.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css-build css-watch docker-build docker-run
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -50,3 +50,9 @@ tidy: ## Tidy dependencies
 
 create-user: ## Create a new user (interactive CLI)
 	@go run cmd/create-user/main.go
+
+docker-build: ## Build Docker image
+	docker build -t lawflow-app .
+
+docker-run: ## Run Docker container locally
+	docker run -p 8080:8080 --env-file .env -v $(PWD)/db:/app/db lawflow-app

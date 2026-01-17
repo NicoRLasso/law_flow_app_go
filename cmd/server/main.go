@@ -41,6 +41,12 @@ func main() {
 	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
+
+	// Seed admin user from environment variables (for Railway deployment)
+	if err := services.SeedAdminFromEnv(db.DB); err != nil {
+		log.Printf("[WARNING] Failed to seed admin user: %v", err)
+	}
+
 	// Check sensitive configuration
 	checkSensitiveConfig(cfg)
 

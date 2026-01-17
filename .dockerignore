@@ -1,0 +1,31 @@
+# Build artifacts
+bin/
+tmp/
+
+# Database files (will be on Railway volume)
+*.db
+*.db-wal
+*.db-shm
+db/*.db
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# Test files
+*_test.go
+
+# Git
+.git/
+.gitignore
