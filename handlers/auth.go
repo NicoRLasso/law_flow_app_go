@@ -14,6 +14,20 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const dummyHash = "$2a$10$123456789012345678901uABCDEFGHIJabcdefghijABCDEFGHIJabc" // valid-looking bcrypt hash length
+
+func init() {
+	// Generate a real dummy hash at startup to ensure consistent timing
+	// We ignore error here as it should not fail in normal operation
+	hash, _ := services.HashPassword("dummy_password_for_timing_mitigation")
+	if hash != "" {
+		globalDummyHash = hash
+	}
+}
+
+// Package level variable to hold the dummy hash
+var globalDummyHash string = "$2a$10$X7.G.t8./.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t" // Fallback
+
 // LoginHandler renders the login page
 func LoginHandler(c echo.Context) error {
 	csrfToken := middleware.GetCSRFToken(c)
@@ -38,6 +52,12 @@ func LoginPostHandler(c echo.Context) error {
 	var user models.User
 	err := db.DB.Preload("Firm").Where("email = ?", email).First(&user).Error
 	if err != nil {
+		// Timing attack mitigation:
+		// Determine a valid hash to use (either from found user or dummy) to ensure VerifyPassword is always called
+		// However, since we are in the "user not found" block, we MUST use the dummy hash.
+		// We perform the check against the provided password.
+		services.VerifyPassword(globalDummyHash, password)
+
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Invalid email or password</span></div>`)
 		}

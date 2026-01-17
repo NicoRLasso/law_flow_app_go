@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"law_flow_app_go/db"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/templates/partials"
 
@@ -24,8 +25,14 @@ func GetCaseLogsHandler(c echo.Context) error {
 	entryType := c.QueryParam("type")
 	search := c.QueryParam("search")
 
+	// Verify case belongs to firm
+	var caseRecord models.Case
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&caseRecord, "id = ?", caseID).Error; err != nil {
+		return c.String(http.StatusNotFound, "Case not found")
+	}
+
 	var logs []models.CaseLog
-	query := db.DB.Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC")
+	query := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC")
 
 	if entryType != "" && entryType != "all" {
 		query = query.Where("entry_type = ?", entryType)
@@ -52,8 +59,15 @@ func GetCaseLogFormHandler(c echo.Context) error {
 	caseID := c.Param("id")
 
 	// We need to fetch documents to populate the select dropdown
+	// Verify case belongs to firm
+	var caseRecord models.Case
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&caseRecord, "id = ?", caseID).Error; err != nil {
+		return c.String(http.StatusNotFound, "Case not found")
+	}
+
+	// We need to fetch documents to populate the select dropdown (firm scoped)
 	var documents []models.CaseDocument
-	if err := db.DB.Where("case_id = ?", caseID).Find(&documents).Error; err != nil {
+	if err := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Find(&documents).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching documents")
 	}
 
@@ -65,6 +79,12 @@ func CreateCaseLogHandler(c echo.Context) error {
 	caseID := c.Param("id")
 	user := c.Get("user").(*models.User)
 	firmID := user.FirmID
+
+	// Verify case belongs to firm
+	var caseRecord models.Case
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&caseRecord, "id = ?", caseID).Error; err != nil {
+		return c.String(http.StatusNotFound, "Case not found")
+	}
 
 	entryType := c.FormValue("entry_type")
 	title := c.FormValue("title")
@@ -132,12 +152,13 @@ func GetCaseLogHandler(c echo.Context) error {
 	caseID := c.Param("id")
 
 	var logEntry models.CaseLog
-	if err := db.DB.First(&logEntry, "id = ?", id).Error; err != nil {
+	// Use firm-scoped query to prevent IDOR
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&logEntry, "id = ?", id).Error; err != nil {
 		return c.String(http.StatusNotFound, "Log entry not found")
 	}
 
 	var documents []models.CaseDocument
-	if err := db.DB.Where("case_id = ?", caseID).Find(&documents).Error; err != nil {
+	if err := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Find(&documents).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching documents")
 	}
 
@@ -147,7 +168,8 @@ func GetCaseLogHandler(c echo.Context) error {
 // helper to fetch logs and render the table
 func fetchAndRenderLogs(c echo.Context, caseID string) error {
 	var logs []models.CaseLog
-	if err := db.DB.Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC").Find(&logs).Error; err != nil {
+	// Use firm-scoped query
+	if err := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC").Find(&logs).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching logs")
 	}
 	return render(c, partials.CaseLogTable(context.Background(), logs, caseID))
@@ -159,7 +181,8 @@ func UpdateCaseLogHandler(c echo.Context) error {
 	// caseID := c.Param("id")
 
 	var logEntry models.CaseLog
-	if err := db.DB.First(&logEntry, "id = ?", id).Error; err != nil {
+	// Use firm-scoped query to prevent IDOR
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&logEntry, "id = ?", id).Error; err != nil {
 		return c.String(http.StatusNotFound, "Log entry not found")
 	}
 
@@ -227,7 +250,8 @@ func UpdateCaseLogHandler(c echo.Context) error {
 func DeleteCaseLogHandler(c echo.Context) error {
 	id := c.Param("logId")
 
-	if err := db.DB.Delete(&models.CaseLog{}, "id = ?", id).Error; err != nil {
+	// Use firm-scoped query to ensure user owns the log entry
+	if err := middleware.GetFirmScopedQuery(c, db.DB).Delete(&models.CaseLog{}, "id = ?", id).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error deleting log entry")
 	}
 

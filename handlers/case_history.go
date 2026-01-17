@@ -102,9 +102,9 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 	}
 
 	// Parse original filing date
-	originalFilingDate, err := time.Parse("2006-01-02", originalFilingDateStr)
+	originalFilingDate, err := services.ParseDate(originalFilingDateStr)
 	if err != nil {
-		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid date format</div>`)
+		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid date format (expected YYYY-MM-DD)</div>`)
 	}
 
 	// Validate client exists and belongs to firm
