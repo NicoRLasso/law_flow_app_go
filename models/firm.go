@@ -27,6 +27,7 @@ type Firm struct {
 	BillingEmail string `gorm:"not null" json:"billing_email"`
 	InfoEmail    string `json:"info_email"`
 	NoreplyEmail string `json:"noreply_email"`
+	IsActive     bool   `gorm:"not null;default:true" json:"is_active"`
 
 	// Availability settings
 	BufferMinutes int `gorm:"not null;default:15" json:"buffer_minutes"` // Buffer between appointments (30, 45, or 60 min)

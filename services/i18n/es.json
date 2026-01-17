@@ -17,7 +17,27 @@
     "requests": "Solicitudes",
     "cases": "Casos",
     "historical_cases": "Casos Históricos",
-    "availability": "Disponibilidad",
+    "info_title": "Información de la Firma",
+    "info": {
+      "name": "Nombre de la Firma",
+      "billing_email": "Email de Facturación",
+      "noreply_email": "Email No-Reply",
+      "country": "País",
+      "city": "Ciudad",
+      "address": "Dirección"
+    },
+    "setup": {
+      "title": "Configuración de Firma",
+      "subtitle": "Configure los detalles de su firma",
+      "create_title": "Crear Nueva Firma",
+      "create_btn": "Crear Firma",
+      "country": "País",
+      "city": "Ciudad"
+    },
+    "delete": {
+        "confirm_message": "¿Está seguro de que desea eliminar la firma {name}?",
+        "warning_message": "Esto eliminará todos los usuarios, casos y datos asociados con esta firma."
+    },
     "appointments": "Citas",
     "profile_settings": "Configuración de Perfil",
     "features": "Características",
@@ -666,5 +686,87 @@
     "create": "Crear Entrada",
     "edit_title": "Editar Entrada",
     "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?"
+  },
+  "superadmin": {
+    "dashboard": {
+      "title": "Panel de Superadmin",
+      "total_firms": "Firmas Totales",
+      "total_users": "Usuarios Totales",
+      "active_users": "Usuarios Activos",
+      "pending_users": "Pendientes de Config",
+      "quick_actions": "Acciones Rápidas",
+      "manage_users": "Gestionar Usuarios",
+      "manage_firms": "Gestionar Firmas",
+      "create_user": "Crear Usuario",
+      "recent_activity": {
+        "new_firms": "Nuevas Firmas",
+        "new_users": "Nuevos Usuarios",
+        "no_firms": "No hay firmas creadas aún",
+        "no_users": "No hay usuarios creados aún"
+      }
+    },
+    "users": {
+        "title": "Gestión de Usuarios",
+        "subtitle": "Gestionar todos los usuarios de la plataforma.",
+        "create_user": "Crear Usuario",
+        "search_placeholder": "Buscar usuarios...",
+        "role_filter": {
+             "all": "Todos los Roles",
+             "superadmin": "Superadmin",
+             "admin": "Admin",
+             "lawyer": "Abogado",
+             "staff": "Personal",
+             "client": "Cliente"
+        },
+        "firm_filter": {
+             "all": "Todas las Firmas",
+             "none": "Sin Firma"
+        },
+        "status_filter": {
+             "all": "Todos los Estados",
+             "active": "Activo",
+             "inactive": "Inactivo"
+        },
+        "table": {
+             "user": "Usuario",
+             "role": "Rol",
+             "status": "Estado",
+             "firm": "Firma",
+             "joined": "Unido",
+             "actions": "Acciones",
+             "no_results": "No se encontraron usuarios con esos criterios.",
+             "no_firm": "Sin Firma"
+        },
+        "modal": {
+             "create_title": "Crear Nuevo Usuario",
+             "edit_title": "Editar Usuario",
+             "full_name": "Nombre Completo",
+             "email": "Correo Electrónico",
+             "password": "Contraseña",
+             "password_edit_hint": "Contraseña (dejar en blanco para mantener actual)",
+             "role": "Rol",
+             "status": "Estado",
+             "firm": "Firma",
+             "firm_no_firm": "Sin Firma (Usuario la configurará)",
+             "active": "Activo",
+             "inactive": "Inactivo",
+             "cancel": "Cancelar",
+             "save": "Guardar Cambios",
+             "create": "Crear Usuario"
+        },
+         "delete_modal": {
+             "title": "Eliminar Usuario",
+             "confirm": "¿Estás seguro de que deseas eliminar a {name}?",
+             "warning": "Esta acción realizará un borrado lógico. El usuario será desactivado y ocultado, pero los datos permanecerán en la base de datos.",
+             "cancel": "Cancelar",
+             "delete": "Eliminar Usuario"
+        }
+    },
+    "nav": {
+        "dashboard": "Tablero",
+        "users": "Usuarios",
+        "firms": "Firmas",
+        "logout": "Cerrar Sesión"
+    }
   }
 }

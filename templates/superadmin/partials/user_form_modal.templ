@@ -1,0 +1,162 @@
+package superadmin_partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ UserFormModal(ctx context.Context, user *models.User, firms []models.Firm, isEdit bool) {
+	<div class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+		<div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+			<!-- Background overlay -->
+			<div class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="document.getElementById('modal-container').innerHTML = ''"></div>
+
+			<!-- Modal panel -->
+			<div class="inline-block align-bottom bg-[#0A0A0B] rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-white/10 ring-1 ring-white/5">
+				<div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+					<h3 class="text-lg font-bold font-space-grotesk" id="modal-title">
+						if isEdit {
+							{ i18n.T(ctx, "superadmin.users.modal.edit_title") }
+						} else {
+							{ i18n.T(ctx, "superadmin.users.modal.create_title") }
+						}
+					</h3>
+					<button onclick="document.getElementById('modal-container').innerHTML = ''" class="text-muted-foreground hover:text-foreground transition-colors">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+					</button>
+				</div>
+				
+				<form 
+					if isEdit {
+						hx-put={ "/superadmin/users/" + user.ID }
+					} else {
+						hx-post="/superadmin/users"
+					}
+					hx-target="#users-table-container"
+					hx-swap="innerHTML"
+					class="p-6 space-y-4"
+				>
+					<!-- Name -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "superadmin.users.modal.full_name") }</label>
+						<input 
+							type="text" 
+							name="name" 
+							if user != nil {
+								value={ user.Name }
+							}
+							required
+							class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+							placeholder="John Doe"
+						/>
+					</div>
+
+					<!-- Email -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "superadmin.users.modal.email") }</label>
+						<input 
+							type="email" 
+							name="email" 
+							if user != nil {
+								value={ user.Email }
+							}
+							required
+							class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+							placeholder="john@example.com"
+						/>
+					</div>
+
+					<!-- Password (only required for new users, optional for edit) -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1.5">
+							if isEdit {
+								{ i18n.T(ctx, "superadmin.users.modal.password_edit_hint") }
+							} else {
+								{ i18n.T(ctx, "superadmin.users.modal.password") }
+							}
+						</label>
+						<input 
+							type="password" 
+							name="password" 
+							if !isEdit {
+								required
+							}
+							class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+							placeholder={ i18n.T(ctx, "superadmin.users.modal.min_chars") }
+						/>
+					</div>
+
+					<div class="grid grid-cols-2 gap-4">
+						<!-- Role -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "superadmin.users.modal.role") }</label>
+							<select 
+								name="role" 
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all appearance-none"
+							>
+								<option value="admin" selected?={ user != nil && user.Role == "admin" }>{ i18n.T(ctx, "superadmin.users.role_filter.admin") }</option>
+								<option value="lawyer" selected?={ user != nil && user.Role == "lawyer" }>{ i18n.T(ctx, "superadmin.users.role_filter.lawyer") }</option>
+								<option value="staff" selected?={ user != nil && user.Role == "staff" }>{ i18n.T(ctx, "superadmin.users.role_filter.staff") }</option>
+								<option value="client" selected?={ user != nil && user.Role == "client" }>{ i18n.T(ctx, "superadmin.users.role_filter.client") }</option>
+								if user != nil && user.Role == "superadmin" {
+									<option value="superadmin" selected>{ i18n.T(ctx, "superadmin.users.role_filter.superadmin") }</option>
+								}
+							</select>
+						</div>
+
+						<!-- Status -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "superadmin.users.modal.status") }</label>
+							<select 
+								name="is_active" 
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all appearance-none"
+							>
+								<option value="true" selected?={ user == nil || user.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.active") }</option>
+								<option value="false" selected?={ user != nil && !user.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.inactive") }</option>
+							</select>
+						</div>
+					</div>
+
+					<!-- Firm Assignment -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "superadmin.users.modal.firm") }</label>
+						<select 
+							name="firm_id" 
+							class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all appearance-none"
+						>
+							<option value="">{ i18n.T(ctx, "superadmin.users.modal.firm_no_firm") }</option>
+							for _, firm := range firms {
+								<option value={ firm.ID } selected?={ user != nil && user.FirmID != nil && *user.FirmID == firm.ID }>{ firm.Name }</option>
+							}
+						</select>
+					</div>
+
+					<!-- Feedback Area -->
+					<div id="modal-feedback" class="text-sm"></div>
+
+					<!-- Actions -->
+					<div class="flex justify-end gap-3 pt-4 border-t border-white/10 mt-6">
+						<button 
+							type="button" 
+							onclick="document.getElementById('modal-container').innerHTML = ''"
+							class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+						>
+							{ i18n.T(ctx, "superadmin.users.modal.cancel") }
+						</button>
+						<button 
+							type="submit"
+							class="px-6 py-2 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white font-medium rounded-xl transition-all shadow-lg shadow-accent/20"
+						>
+							if isEdit {
+								{ i18n.T(ctx, "superadmin.users.modal.save") }
+							} else {
+								{ i18n.T(ctx, "superadmin.users.modal.create") }
+							}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}

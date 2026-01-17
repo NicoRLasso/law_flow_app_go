@@ -1,0 +1,149 @@
+package superadmin_partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
+	<div class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+		<div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+			<!-- Background overlay -->
+			<div class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="document.getElementById('modal-container').innerHTML = ''"></div>
+
+			<!-- Modal panel -->
+			<div class="inline-block align-bottom bg-[#0A0A0B] rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-white/10 ring-1 ring-white/5">
+				<div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+					<h3 class="text-lg font-bold font-space-grotesk" id="modal-title">
+						if firm.ID != "" {
+							{ i18n.T(ctx, "superadmin.dashboard.manage_firms") } - { i18n.T(ctx, "common.edit") }
+						} else {
+							{ i18n.T(ctx, "firm.setup.create_title") }
+						}
+					</h3>
+					<button onclick="document.getElementById('modal-container').innerHTML = ''" class="text-muted-foreground hover:text-foreground transition-colors">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+					</button>
+				</div>
+				
+				<form 
+					if firm.ID != "" {
+						hx-put={ "/superadmin/firms/" + firm.ID }
+					} else {
+						hx-post="/superadmin/firms"
+					}
+					hx-target="#firms-table-container"
+					hx-swap="innerHTML"
+					class="p-6 space-y-4"
+				>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<!-- Name -->
+						<div class="col-span-2">
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "firm.info.name") }</label>
+							<input 
+								type="text" 
+								name="name" 
+								value={ firm.Name }
+								required
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+								placeholder="Acme Legal Corp"
+							/>
+						</div>
+
+						<!-- Emails -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "firm.info.billing_email") }</label>
+							<input 
+								type="email" 
+								name="billing_email" 
+								value={ firm.BillingEmail }
+								required
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+								placeholder="billing@example.com"
+							/>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "firm.info.noreply_email") } ({ i18n.T(ctx, "common.optional") })</label>
+							<input 
+								type="email" 
+								name="noreply_email" 
+								value={ firm.NoreplyEmail }
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+								placeholder="noreply@example.com"
+							/>
+						</div>
+
+						<!-- Location -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "firm.info.country") }</label>
+							<input 
+								type="text" 
+								name="country" 
+								value={ firm.Country }
+								required
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+								placeholder="United States"
+							/>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "firm.info.city") } ({ i18n.T(ctx, "common.optional") })</label>
+							<input 
+								type="text" 
+								name="city" 
+								value={ firm.City }
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+								placeholder="New York"
+							/>
+						</div>
+
+						<!-- Address -->
+						<div class="col-span-2">
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "firm.info.address") } ({ i18n.T(ctx, "common.optional") })</label>
+							<input 
+								type="text" 
+								name="address" 
+								value={ firm.Address }
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+								placeholder="123 Legal Avenue, Suite 100"
+							/>
+						</div>
+						
+						<!-- Status -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-1.5">{ i18n.T(ctx, "superadmin.users.modal.status") }</label>
+							<select 
+								name="is_active" 
+								class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all appearance-none"
+							>
+								<option value="true" selected?={ firm.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.active") }</option>
+								<option value="false" selected?={ !firm.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.inactive") }</option>
+							</select>
+						</div>
+					</div>
+
+					<!-- Actions -->
+					<div class="flex justify-end gap-3 pt-4 border-t border-white/10 mt-6">
+						<button 
+							type="button" 
+							onclick="document.getElementById('modal-container').innerHTML = ''"
+							class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+						>
+							{ i18n.T(ctx, "common.cancel") }
+						</button>
+						<button 
+							type="submit"
+							class="px-6 py-2 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white font-medium rounded-xl transition-all shadow-lg shadow-accent/20"
+						>
+							if firm.ID != "" {
+								{ i18n.T(ctx, "common.save") }
+							} else {
+								{ i18n.T(ctx, "firm.setup.create_btn") }
+							}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}

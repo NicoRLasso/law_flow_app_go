@@ -1,0 +1,83 @@
+package superadmin
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	superadmin_partials "law_flow_app_go/templates/superadmin/partials"
+	"law_flow_app_go/services/i18n"
+)
+
+templ FirmsPage(
+	ctx context.Context, 
+	title string, 
+	csrfToken string, 
+	user *models.User, 
+	currentPath string,
+	firms []models.Firm,
+) {
+	@Layout(ctx, title, csrfToken, user, currentPath) {
+		<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+			<div>
+				<h2 class="text-3xl font-bold mb-2 font-space-grotesk tracking-tight">{ i18n.T(ctx, "superadmin.dashboard.manage_firms") }</h2>
+				<p class="text-muted-foreground">{ i18n.T(ctx, "superadmin.dashboard.manage_firms") }</p>
+			</div>
+			<button 
+				hx-get="/superadmin/firms/new" 
+				hx-target="#modal-container" 
+				hx-swap="innerHTML"
+				class="px-5 py-2.5 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white font-medium rounded-xl transition-all shadow-lg shadow-accent/20 flex items-center gap-2"
+			>
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+				{ i18n.T(ctx, "firm.setup.create_title") }
+			</button>
+		</div>
+
+		<!-- Filters & Search -->
+		<div x-data="{ 
+			search: '', 
+			status: '',
+			updateFilters() {
+				// Construct query string
+				let params = new URLSearchParams();
+				if (this.search) params.append('search', this.search);
+				if (this.status) params.append('status', this.status);
+				
+				// Trigger HTMX request
+				htmx.ajax('GET', '/superadmin/firms/list?' + params.toString(), '#firms-table-container');
+			}
+		}" class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+			<!-- Search -->
+			<div class="relative md:col-span-2">
+				<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+				<input 
+					type="text" 
+					x-model="search"
+					@input.debounce.300ms="updateFilters()"
+					placeholder={ i18n.T(ctx, "common.search_placeholder") }
+					class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+				/>
+			</div>
+
+			<!-- Status Filter -->
+			<div>
+				<select 
+					x-model="status"
+					@change="updateFilters()"
+					class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all appearance-none"
+				>
+					<option value="">{ i18n.T(ctx, "superadmin.users.status_filter.all") }</option>
+					<option value="active">{ i18n.T(ctx, "superadmin.users.status_filter.active") }</option>
+					<option value="inactive">{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }</option>
+				</select>
+			</div>
+		</div>
+
+		<!-- Firms Table Container -->
+		<div id="firms-table-container" class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+			@superadmin_partials.FirmsTable(ctx, firms)
+		</div>
+
+		<!-- Modal Container -->
+		<div id="modal-container"></div>
+	}
+}

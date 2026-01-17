@@ -148,8 +148,33 @@ func main() {
 	superadminRoutes.Use(middleware.RequireAuth())
 	superadminRoutes.Use(middleware.RequireSuperadmin())
 	{
-		superadminRoutes.GET("", handlers.SuperadminDashboardHandler)
+		// Dashboard
+		superadminRoutes.GET("", func(c echo.Context) error {
+			return c.Redirect(http.StatusMovedPermanently, "/superadmin/dashboard")
+		})
+		superadminRoutes.GET("/dashboard", handlers.SuperadminDashboardHandler)
+
+		// User Management
+		superadminRoutes.GET("/users", handlers.SuperadminUsersPageHandler)
+		superadminRoutes.GET("/users/list", handlers.SuperadminGetUsersListHTMX)
+		superadminRoutes.GET("/users/new", handlers.SuperadminGetUserFormNew)
 		superadminRoutes.POST("/users", handlers.SuperadminCreateUserHandler)
+		superadminRoutes.GET("/users/:id/edit", handlers.SuperadminGetUserFormEdit)
+		superadminRoutes.PUT("/users/:id", handlers.SuperadminUpdateUser)
+		superadminRoutes.PATCH("/users/:id/toggle-active", handlers.SuperadminToggleUserActive)
+		superadminRoutes.GET("/users/:id/delete-confirm", handlers.SuperadminGetUserDeleteConfirm)
+		superadminRoutes.DELETE("/users/:id", handlers.SuperadminDeleteUser)
+
+		// Firm Management
+		superadminRoutes.GET("/firms", handlers.SuperadminFirmsPageHandler)
+		superadminRoutes.GET("/firms/list", handlers.SuperadminGetFirmsListHTMX)
+		superadminRoutes.GET("/firms/new", handlers.SuperadminGetFirmFormNew)
+		superadminRoutes.POST("/firms", handlers.SuperadminCreateFirmHandler)
+		superadminRoutes.GET("/firms/:id/edit", handlers.SuperadminGetFirmFormEdit)
+		superadminRoutes.PUT("/firms/:id", handlers.SuperadminUpdateFirm)
+		superadminRoutes.PATCH("/firms/:id/toggle-active", handlers.SuperadminToggleFirmActive)
+		superadminRoutes.GET("/firms/:id/delete-confirm", handlers.SuperadminGetFirmDeleteConfirm)
+		superadminRoutes.DELETE("/firms/:id", handlers.SuperadminDeleteFirm)
 	}
 
 	// Protected routes (authentication + firm required)

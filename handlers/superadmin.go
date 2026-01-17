@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"law_flow_app_go/templates/superadmin"
+	superadmin_partials "law_flow_app_go/templates/superadmin/partials"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -17,110 +17,461 @@ func SuperadminDashboardHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
 	csrfToken := middleware.GetCSRFToken(c)
 
-	// Get all firms
-	var firms []models.Firm
-	if err := db.DB.Order("created_at DESC").Find(&firms).Error; err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	// Stats: Total Firms
+	var totalFirms int64
+	db.DB.Model(&models.Firm{}).Count(&totalFirms)
+
+	// Stats: Total Users
+	var totalUsers int64
+	db.DB.Model(&models.User{}).Count(&totalUsers)
+
+	// Stats: Active Users
+	var activeUsers int64
+	db.DB.Model(&models.User{}).Where("is_active = ?", true).Count(&activeUsers)
+
+	// Stats: Users Pending Setup (FirmID is null)
+	var pendingUsers int64
+	db.DB.Model(&models.User{}).Where("firm_id IS NULL").Count(&pendingUsers)
+
+	// Recent Firms (Top 5)
+	var recentFirms []models.Firm
+	if err := db.DB.Order("created_at DESC").Limit(5).Find(&recentFirms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch recent firms")
 	}
 
-	// Get user counts per firm
-	type FirmStats struct {
-		FirmID    string
-		UserCount int64
-	}
-	var firmStats []FirmStats
-	db.DB.Model(&models.User{}).
-		Select("firm_id, count(*) as user_count").
-		Where("firm_id IS NOT NULL").
-		Group("firm_id").
-		Scan(&firmStats)
-
-	// Create a map for quick lookup
-	statsMap := make(map[string]int64)
-	for _, stat := range firmStats {
-		statsMap[stat.FirmID] = stat.UserCount
+	// Recent Users (Top 5) with Firm preloaded
+	var recentUsers []models.User
+	if err := db.DB.Preload("Firm").Order("created_at DESC").Limit(5).Find(&recentUsers).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch recent users")
 	}
 
 	// Render the superadmin dashboard
-	component := superadmin.Dashboard(c.Request().Context(), "Superadmin Dashboard", csrfToken, currentUser, firms, statsMap)
+	component := superadmin.Dashboard(
+		c.Request().Context(),
+		"Superadmin Dashboard",
+		csrfToken,
+		currentUser,
+		c.Request().URL.Path,
+		totalFirms,
+		totalUsers,
+		activeUsers,
+		pendingUsers,
+		recentFirms,
+		recentUsers,
+	)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
-// SuperadminCreateUserHandler creates a new user without a firm
+// SuperadminUsersPageHandler renders the users management page
+func SuperadminUsersPageHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	csrfToken := middleware.GetCSRFToken(c)
+
+	// Fetch all firms for filter
+	var firms []models.Firm
+	if err := db.DB.Order("name ASC").Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	// Fetch initial users (limit 50)
+	var users []models.User
+	if err := db.DB.Preload("Firm").Order("created_at DESC").Limit(50).Find(&users).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch users")
+	}
+
+	component := superadmin.UsersPage(
+		c.Request().Context(),
+		"User Management",
+		csrfToken,
+		currentUser,
+		c.Request().URL.Path,
+		users,
+		firms,
+	)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminGetUsersListHTMX returns the filtered users table
+func SuperadminGetUsersListHTMX(c echo.Context) error {
+	query := db.DB.Model(&models.User{}).Preload("Firm")
+
+	// Filters
+	if search := c.QueryParam("search"); search != "" {
+		searchLike := "%" + search + "%"
+		query = query.Where("name LIKE ? OR email LIKE ?", searchLike, searchLike)
+	}
+	if role := c.QueryParam("role"); role != "" {
+		query = query.Where("role = ?", role)
+	}
+	if firmID := c.QueryParam("firm_id"); firmID != "" {
+		if firmID == "none" {
+			query = query.Where("firm_id IS NULL")
+		} else {
+			query = query.Where("firm_id = ?", firmID)
+		}
+	}
+	if status := c.QueryParam("status"); status != "" {
+		if status == "active" {
+			query = query.Where("is_active = ?", true)
+		} else if status == "inactive" {
+			query = query.Where("is_active = ?", false)
+		}
+	}
+
+	var users []models.User
+	if err := query.Order("created_at DESC").Limit(50).Find(&users).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch users")
+	}
+
+	component := superadmin_partials.UsersTable(c.Request().Context(), users)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminGetUserFormNew renders the create user modal
+func SuperadminGetUserFormNew(c echo.Context) error {
+	var firms []models.Firm
+	if err := db.DB.Order("name ASC").Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	component := superadmin_partials.UserFormModal(c.Request().Context(), nil, firms, false)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminGetUserFormEdit renders the edit user modal
+func SuperadminGetUserFormEdit(c echo.Context) error {
+	id := c.Param("id")
+	var user models.User
+	if err := db.DB.First(&user, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "User not found")
+	}
+
+	var firms []models.Firm
+	if err := db.DB.Order("name ASC").Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	component := superadmin_partials.UserFormModal(c.Request().Context(), &user, firms, true)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminCreateUserHandler creates a new user (Updated to handle modal)
 func SuperadminCreateUserHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
 
-	// Read form values
 	name := c.FormValue("name")
 	email := c.FormValue("email")
 	password := c.FormValue("password")
+	role := c.FormValue("role")
+	isActive := c.FormValue("is_active") == "true"
+	firmID := c.FormValue("firm_id")
 
-	// Validate required fields
+	// Basic validation
 	if name == "" || email == "" || password == "" {
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Name, email, and password are required</span></div>`)
-		}
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Name, email, and password are required",
-		})
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Name, email, and password are required</div>")
 	}
 
-	// Check if email already exists
-	var existingUser models.User
-	if err := db.DB.Where("email = ?", email).First(&existingUser).Error; err == nil {
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">A user with this email already exists</span></div>`)
-		}
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "A user with this email already exists",
-		})
-	}
-
-	// Validate password strength
+	// Password strength
 	if err := services.ValidatePassword(password); err != nil {
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">`+err.Error()+`</span></div>`)
-		}
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": err.Error(),
-		})
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>"+err.Error()+"</div>")
 	}
 
-	// Hash password
 	hashedPassword, err := services.HashPassword(password)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to hash password")
 	}
 
-	// Create user without firm (FirmID = nil)
-	// Role defaults to "admin" since they will set up their own firm
 	user := &models.User{
 		Name:     name,
 		Email:    email,
 		Password: hashedPassword,
-		Role:     "admin",
-		IsActive: true,
-		FirmID:   nil, // No firm assigned - user will set up on first login
+		Role:     role,
+		IsActive: isActive,
+	}
+
+	if firmID != "" {
+		user.FirmID = &firmID
 	}
 
 	if err := db.DB.Create(user).Error; err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create user")
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to create user. Email might be taken.</div>")
 	}
 
-	// Log security event
-	services.LogSecurityEvent("SUPERADMIN_USER_CREATED", currentUser.ID, "Created user without firm: "+user.ID)
+	services.LogSecurityEvent("SUPERADMIN_USER_CREATED", currentUser.ID, "Created user: "+user.ID)
 
-	// Send welcome email asynchronously
-	cfg := config.Load()
-	email_obj := services.BuildWelcomeEmail(user.Email, user.Name)
-	services.SendEmailAsync(cfg, email_obj)
+	// Return updated list
+	// We need to fetch and render the list again to close modal and show new data
+	// But simply returning the table HTMX will replace the modal target?
+	// The modal target is #users-table-container.
+	// So returning the table will replace the table content, AND we need to close the modal.
+	// To close the modal, we can return OOB swap to empty the modal container.
 
-	// Return success response
-	if c.Request().Header.Get("HX-Request") == "true" {
-		c.Response().Header().Set("HX-Trigger", "reload-dashboard")
-		return c.HTML(http.StatusOK, `<div class="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-xl flex items-center gap-3"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span class="text-sm font-medium">User created successfully! They can now log in and set up their firm.</span></div>`)
+	// Fetch updated users
+	return SuperadminGetUsersListHTMX(c)
+	// Note: This replaces the table. But the modal background is in #modal-container.
+	// If the modal form targets #users-table-container, it replaces the table.
+	// The modal itself (which is in #modal-container) remains open?
+	// Ah, the UserFormModal template has `hx-target="#users-table-container"`.
+	// The modal is OVER the table. If I update the table, the modal is still there.
+	// I need to close the modal too.
+	// I can use `hx-swap-oob` to close the modal.
+	// I will return the table AND an OOB swap for #modal-container.
+}
+
+// SuperadminUpdateUser updates a user
+func SuperadminUpdateUser(c echo.Context) error {
+	id := c.Param("id")
+	currentUser := middleware.GetCurrentUser(c)
+
+	var user models.User
+	if err := db.DB.First(&user, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "User not found")
 	}
 
-	user.Password = "" // Don't return password
-	return c.JSON(http.StatusCreated, user)
+	user.Name = c.FormValue("name")
+	user.Email = c.FormValue("email")
+	user.Role = c.FormValue("role")
+	user.IsActive = c.FormValue("is_active") == "true"
+
+	firmID := c.FormValue("firm_id")
+	if firmID != "" {
+		user.FirmID = &firmID
+	} else {
+		user.FirmID = nil
+	}
+
+	if password := c.FormValue("password"); password != "" {
+		if err := services.ValidatePassword(password); err != nil {
+			return c.String(http.StatusBadRequest, "<div class='text-red-400'>"+err.Error()+"</div>")
+		}
+		hashed, _ := services.HashPassword(password)
+		user.Password = hashed
+	}
+
+	if err := db.DB.Save(&user).Error; err != nil {
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to update user</div>")
+	}
+
+	services.LogSecurityEvent("SUPERADMIN_USER_UPDATED", currentUser.ID, "Updated user: "+user.ID)
+
+	// Return updated list + close modal via OOB
+	c.Response().Header().Set("HX-Trigger", "closeModal") // Or I can use OOB
+
+	return SuperadminGetUsersListHTMX(c)
+}
+
+// SuperadminToggleUserActive toggles user status
+func SuperadminToggleUserActive(c echo.Context) error {
+	id := c.Param("id")
+	var user models.User
+	if err := db.DB.First(&user, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "User not found")
+	}
+
+	user.IsActive = !user.IsActive
+	db.DB.Save(&user)
+
+	return SuperadminGetUsersListHTMX(c)
+}
+
+// SuperadminGetUserDeleteConfirm renders delete confirmation
+func SuperadminGetUserDeleteConfirm(c echo.Context) error {
+	id := c.Param("id")
+	var user models.User
+	if err := db.DB.First(&user, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "User not found")
+	}
+
+	component := superadmin_partials.UserDeleteConfirmModal(c.Request().Context(), &user)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminDeleteUser soft deletes a user
+func SuperadminDeleteUser(c echo.Context) error {
+	id := c.Param("id")
+	currentUser := middleware.GetCurrentUser(c)
+
+	if err := db.DB.Delete(&models.User{}, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete user")
+	}
+
+	services.LogSecurityEvent("SUPERADMIN_USER_DELETED", currentUser.ID, "Deleted user: "+id)
+
+	return SuperadminGetUsersListHTMX(c)
+}
+
+// --- Firm Management Handlers ---
+
+// SuperadminFirmsPageHandler renders the firms management page
+func SuperadminFirmsPageHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	csrfToken := middleware.GetCSRFToken(c)
+
+	// Fetch firms (limit 50 initially)
+	var firms []models.Firm
+	if err := db.DB.Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	component := superadmin.FirmsPage(
+		c.Request().Context(),
+		"Firm Management",
+		csrfToken,
+		currentUser,
+		c.Request().URL.Path,
+		firms,
+	)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminGetFirmsListHTMX returns the filtered firms table
+func SuperadminGetFirmsListHTMX(c echo.Context) error {
+	query := db.DB.Model(&models.Firm{})
+
+	// Filters
+	if search := c.QueryParam("search"); search != "" {
+		searchLike := "%" + search + "%"
+		query = query.Where("name LIKE ? OR billing_email LIKE ?", searchLike, searchLike)
+	}
+
+	if status := c.QueryParam("status"); status != "" {
+		if status == "active" {
+			query = query.Where("is_active = ?", true)
+		} else if status == "inactive" {
+			query = query.Where("is_active = ?", false)
+		}
+	}
+
+	var firms []models.Firm
+	if err := query.Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	component := superadmin_partials.FirmsTable(c.Request().Context(), firms)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminGetFirmFormNew renders the create firm modal
+func SuperadminGetFirmFormNew(c echo.Context) error {
+	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{})
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminGetFirmFormEdit renders the edit firm modal
+func SuperadminGetFirmFormEdit(c echo.Context) error {
+	id := c.Param("id")
+	var firm models.Firm
+	if err := db.DB.First(&firm, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
+	}
+
+	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminCreateFirmHandler creates a new firm
+func SuperadminCreateFirmHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+
+	name := c.FormValue("name")
+	billingEmail := c.FormValue("billing_email")
+	country := c.FormValue("country")
+
+	// Basic Validation
+	if name == "" || billingEmail == "" || country == "" {
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Name, billing email and country are required</div>")
+	}
+
+	firm := &models.Firm{
+		Name:         name,
+		BillingEmail: billingEmail,
+		NoreplyEmail: c.FormValue("noreply_email"),
+		Country:      country,
+		City:         c.FormValue("city"),
+		Address:      c.FormValue("address"),
+		IsActive:     c.FormValue("is_active") == "true",
+	}
+
+	if err := db.DB.Create(firm).Error; err != nil {
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to create firm: "+err.Error()+"</div>")
+	}
+
+	services.LogSecurityEvent("SUPERADMIN_FIRM_CREATED", currentUser.ID, "Created firm: "+firm.ID)
+
+	return SuperadminGetFirmsListHTMX(c)
+}
+
+// SuperadminUpdateFirm updates a firm
+func SuperadminUpdateFirm(c echo.Context) error {
+	id := c.Param("id")
+	currentUser := middleware.GetCurrentUser(c)
+
+	var firm models.Firm
+	if err := db.DB.First(&firm, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
+	}
+
+	firm.Name = c.FormValue("name")
+	firm.BillingEmail = c.FormValue("billing_email")
+	firm.NoreplyEmail = c.FormValue("noreply_email")
+	firm.Country = c.FormValue("country")
+	firm.City = c.FormValue("city")
+	firm.Address = c.FormValue("address")
+	firm.IsActive = c.FormValue("is_active") == "true"
+
+	if err := db.DB.Save(&firm).Error; err != nil {
+		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to update firm: "+err.Error()+"</div>")
+	}
+
+	services.LogSecurityEvent("SUPERADMIN_FIRM_UPDATED", currentUser.ID, "Updated firm: "+firm.ID)
+
+	// Return updated list, relying on client-side modal removal (like user update)
+	// But unlike user updated, we are replacing the LIST only.
+	// We need to close the modal too.
+	// The modal is in #modal-container. The list is #firms-table-container.
+	// If the form target is #firms-table-container, the modal stays open.
+	// We can add an OOB swap to close the modal or use a trigger.
+	c.Response().Header().Set("HX-Trigger", "closeModal") // Requires JS handling or OOB
+
+	return SuperadminGetFirmsListHTMX(c)
+}
+
+// SuperadminToggleFirmActive toggles firm status
+func SuperadminToggleFirmActive(c echo.Context) error {
+	id := c.Param("id")
+	var firm models.Firm
+	if err := db.DB.First(&firm, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
+	}
+
+	firm.IsActive = !firm.IsActive
+	db.DB.Save(&firm)
+
+	return SuperadminGetFirmsListHTMX(c)
+}
+
+// SuperadminGetFirmDeleteConfirm renders delete confirmation for firm
+func SuperadminGetFirmDeleteConfirm(c echo.Context) error {
+	id := c.Param("id")
+	var firm models.Firm
+	if err := db.DB.First(&firm, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
+	}
+
+	component := superadmin_partials.FirmDeleteConfirmModal(c.Request().Context(), &firm)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// SuperadminDeleteFirm soft deletes a firm
+func SuperadminDeleteFirm(c echo.Context) error {
+	id := c.Param("id")
+	currentUser := middleware.GetCurrentUser(c)
+
+	if err := db.DB.Delete(&models.Firm{}, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete firm")
+	}
+
+	services.LogSecurityEvent("SUPERADMIN_FIRM_DELETED", currentUser.ID, "Deleted firm: "+id)
+
+	return SuperadminGetFirmsListHTMX(c)
 }

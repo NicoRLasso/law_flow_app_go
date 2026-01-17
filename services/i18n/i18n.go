@@ -151,3 +151,4 @@ func GetLocale(ctx context.Context) string {
 
 	return defaultLang
 }
+type Args map[string]interface{}
