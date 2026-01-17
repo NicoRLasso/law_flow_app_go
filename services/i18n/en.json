@@ -238,6 +238,7 @@
     },
     "title_label": "Case Title",
     "title_placeholder": "Brief case title...",
+    "description_label": "Description",
     "description_placeholder": "Describe the case...",
     "client": "Client",
     "select_client": "Select a client",

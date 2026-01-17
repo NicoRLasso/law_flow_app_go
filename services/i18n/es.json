@@ -238,7 +238,7 @@
     },
     "title_label": "Título del Caso",
     "title_placeholder": "Título breve del caso...",
-    "description": "Descripción",
+    "description_label": "Descripción",
     "description_placeholder": "Describir el caso...",
     "client": "Cliente",
     "select_client": "Seleccionar cliente",
