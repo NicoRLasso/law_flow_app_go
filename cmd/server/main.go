@@ -415,7 +415,7 @@ func checkSensitiveConfig(cfg *config.Config) {
 			log.Println("[INFO] Running on default port 8080 in production. Ensure this is intended.")
 		}
 		if cfg.SessionSecret == "" {
-			log.Println("[WARNING] SESSION_SECRET is not set in production!")
+			log.Fatal("[CRITICAL] SESSION_SECRET is not set in production! App cannot start securely.")
 		}
 	}
 }

@@ -31,7 +31,7 @@ run: generate ## Run the application
 	go run cmd/server/main.go
 
 build: generate ## Build the application
-	go build -o bin/server cmd/server/main.go
+	go build -trimpath -o bin/server cmd/server/main.go
 
 clean: ## Clean build artifacts
 	rm -rf bin/
