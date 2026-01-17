@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -44,9 +45,8 @@ func GetAppointmentsHandler(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid start date format")
 		}
 	} else {
-		// Default to start of current week
-		now := time.Now()
-		startDate = now.AddDate(0, 0, -int(now.Weekday()))
+		// Default to 1 year ago to show past appointments too
+		startDate = time.Now().AddDate(-1, 0, 0)
 		startDate = time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, time.UTC)
 	}
 
@@ -57,8 +57,8 @@ func GetAppointmentsHandler(c echo.Context) error {
 		}
 		endDate = endDate.Add(24 * time.Hour) // Include the end date
 	} else {
-		// Default to end of current week
-		endDate = startDate.AddDate(0, 0, 7)
+		// Default to 1 year from now to show all upcoming appointments
+		endDate = time.Now().AddDate(1, 0, 0)
 	}
 
 	var appointments []models.Appointment
@@ -199,12 +199,59 @@ func CreateAppointmentHandler(c echo.Context) error {
 	}
 
 	if err := services.CreateAppointment(apt); err != nil {
+		// For HTMX requests, return error as HTML
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusConflict, fmt.Sprintf(`<div class="text-red-500 text-sm">%s</div>`, err.Error()))
+		}
 		return echo.NewHTTPError(http.StatusConflict, err.Error())
 	}
 
-	// Reload with relationships
-	apt, _ = services.GetAppointmentByID(apt.ID)
+	// Send confirmation emails asynchronously
+	cfg := c.Get("config").(*config.Config)
 
+	// Get firm for email data
+	var firm models.Firm
+	db.DB.First(&firm, "id = ?", apt.FirmID)
+
+	// Send confirmation to client
+	clientEmailData := services.AppointmentConfirmationEmailData{
+		ClientName: client.Name,
+		FirmName:   firm.Name,
+		Date:       apt.StartTime.Format("January 2, 2006"),
+		Time:       apt.StartTime.Format("3:04 PM"),
+		Duration:   int(apt.EndTime.Sub(apt.StartTime).Minutes()),
+		LawyerName: lawyer.Name,
+	}
+	clientEmail := services.BuildAppointmentConfirmationEmail(client.Email, clientEmailData)
+	services.SendEmailAsync(cfg, clientEmail)
+
+	// Notify lawyer about new appointment
+	lawyerEmailData := services.LawyerAppointmentNotificationEmailData{
+		LawyerName:  lawyer.Name,
+		ClientName:  client.Name,
+		ClientEmail: client.Email,
+		ClientPhone: "",
+		Date:        apt.StartTime.Format("January 2, 2006"),
+		Time:        apt.StartTime.Format("3:04 PM"),
+		Duration:    int(apt.EndTime.Sub(apt.StartTime).Minutes()),
+	}
+	if client.PhoneNumber != nil {
+		lawyerEmailData.ClientPhone = *client.PhoneNumber
+	}
+	if apt.Notes != nil {
+		lawyerEmailData.Notes = *apt.Notes
+	}
+	lawyerEmail := services.BuildLawyerAppointmentNotificationEmail(lawyer.Email, lawyerEmailData)
+	services.SendEmailAsync(cfg, lawyerEmail)
+
+	// For HTMX requests, return success with trigger to reload table
+	if c.Request().Header.Get("HX-Request") == "true" {
+		c.Response().Header().Set("HX-Trigger", "reload-appointments")
+		return c.HTML(http.StatusCreated, `<div class="text-green-500 text-sm">Appointment created successfully!</div>`)
+	}
+
+	// Reload with relationships for API response
+	apt, _ = services.GetAppointmentByID(apt.ID)
 	return c.JSON(http.StatusCreated, apt)
 }
 

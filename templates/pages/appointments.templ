@@ -55,7 +55,7 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 
 			<!-- Create Appointment Modal -->
 			<div 
-				x-show="showCreateModal" 
+				x-show="showCreateModal"
 				x-transition:enter="transition ease-out duration-300"
 				x-transition:enter-start="opacity-0"
 				x-transition:enter-end="opacity-100"
@@ -99,36 +99,33 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 						<div>
 							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.client") }</label>
 							<select 
+								id="client-select"
 								name="client_id" 
 								x-model="selectedClient"
 								required
 								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-								hx-get="/api/appointments/clients"
-								hx-trigger="load"
-								hx-swap="innerHTML"
 							>
 								<option value="">{ i18n.T(ctx, "appointments.form.select_client") }</option>
 							</select>
 						</div>
 
-						<!-- Lawyer Selection (for admins) -->
+						<!-- Lawyer Selection (for admins only) -->
 						if user.Role == "admin" {
 							<div>
 								<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.lawyer") }</label>
 								<select 
+									id="lawyer-select"
 									name="lawyer_id" 
 									x-model="selectedLawyer"
 									@change="loadSlots()"
 									required
 									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-									hx-get="/api/appointments/lawyers"
-									hx-trigger="load"
-									hx-swap="innerHTML"
 								>
 									<option value="">{ i18n.T(ctx, "appointments.form.select_lawyer") }</option>
 								</select>
 							</div>
 						} else {
+							<!-- For lawyers, default to their own ID -->
 							<input type="hidden" name="lawyer_id" value={ user.ID }/>
 						}
 
@@ -202,6 +199,45 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 					selectedStartTime: '',
 					selectedEndTime: '',
 					slots: [],
+					clientsLoaded: false,
+					lawyersLoaded: false,
+					
+					init() {
+						this.$watch('showCreateModal', (value) => {
+							if (value) {
+								this.loadClients();
+								this.loadLawyers();
+							}
+						});
+					},
+					
+					loadClients() {
+						if (this.clientsLoaded) return;
+						const select = document.getElementById('client-select');
+						if (!select) return;
+						
+						fetch('/api/appointments/clients')
+							.then(res => res.text())
+							.then(html => {
+								select.innerHTML = html;
+								this.clientsLoaded = true;
+							})
+							.catch(err => console.error('Error loading clients:', err));
+					},
+					
+					loadLawyers() {
+						if (this.lawyersLoaded) return;
+						const select = document.getElementById('lawyer-select');
+						if (!select) return;
+						
+						fetch('/api/appointments/lawyers')
+							.then(res => res.text())
+							.then(html => {
+								select.innerHTML = html;
+								this.lawyersLoaded = true;
+							})
+							.catch(err => console.error('Error loading lawyers:', err));
+					},
 					
 					loadSlots() {
 						if (!this.selectedDate) return;
