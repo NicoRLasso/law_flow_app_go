@@ -665,7 +665,6 @@
     "by": "Por",
     "create": "Crear Entrada",
     "edit_title": "Editar Entrada",
-    "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?",
+    "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?"
   }
-
 }

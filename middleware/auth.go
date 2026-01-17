@@ -99,6 +99,22 @@ func RequireRole(roles ...string) echo.MiddlewareFunc {
 	}
 }
 
+// RequireSuperadmin is middleware that requires the user to be a superadmin
+// Unlike regular routes, this does NOT require a firm
+func RequireSuperadmin() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			user := c.Get(ContextKeyUser).(*models.User)
+
+			if !user.IsSuperadmin() {
+				return echo.NewHTTPError(http.StatusForbidden, "Superadmin access required")
+			}
+
+			return next(c)
+		}
+	}
+}
+
 // GetCurrentUser retrieves the current user from context
 func GetCurrentUser(c echo.Context) *models.User {
 	user, ok := c.Get(ContextKeyUser).(*models.User)

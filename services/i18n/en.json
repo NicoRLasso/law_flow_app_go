@@ -702,7 +702,6 @@
     "by": "By",
     "create": "Create Entry",
     "edit_title": "Edit Entry",
-    "delete_confirm": "Are you sure you want to delete this entry?",
+    "delete_confirm": "Are you sure you want to delete this entry?"
   }
-
 }

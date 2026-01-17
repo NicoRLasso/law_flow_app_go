@@ -42,9 +42,9 @@ func main() {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
-	// Seed admin user from environment variables (for Railway deployment)
-	if err := services.SeedAdminFromEnv(db.DB); err != nil {
-		log.Printf("[WARNING] Failed to seed admin user: %v", err)
+	// Seed superadmin user from environment variables
+	if err := services.SeedSuperadminFromEnv(db.DB); err != nil {
+		log.Printf("[WARNING] Failed to seed superadmin user: %v", err)
 	}
 
 	// Check sensitive configuration
@@ -141,6 +141,15 @@ func main() {
 	{
 		firmSetup.GET("/setup", handlers.FirmSetupHandler)
 		firmSetup.POST("/setup", handlers.FirmSetupPostHandler)
+	}
+
+	// Superadmin routes (authenticated, superadmin role, no firm required)
+	superadminRoutes := e.Group("/superadmin")
+	superadminRoutes.Use(middleware.RequireAuth())
+	superadminRoutes.Use(middleware.RequireSuperadmin())
+	{
+		superadminRoutes.GET("", handlers.SuperadminDashboardHandler)
+		superadminRoutes.POST("/users", handlers.SuperadminCreateUserHandler)
 	}
 
 	// Protected routes (authentication + firm required)

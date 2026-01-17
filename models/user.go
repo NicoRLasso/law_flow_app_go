@@ -17,7 +17,7 @@ type User struct {
 	Email       string     `gorm:"uniqueIndex;not null" json:"email"`
 	Password    string     `gorm:"not null" json:"-"`
 	FirmID      *string    `gorm:"type:uuid;index" json:"firm_id"`     // Nullable - user may not have firm yet
-	Role        string     `gorm:"not null;default:staff" json:"role"` // admin, lawyer, staff, client
+	Role        string     `gorm:"not null;default:staff" json:"role"` // superadmin, admin, lawyer, staff, client
 	IsActive    bool       `gorm:"not null;default:true" json:"is_active"`
 	Language    string     `gorm:"not null;default:'en'" json:"language"` // en, es
 	LastLoginAt *time.Time `json:"last_login_at"`
@@ -44,6 +44,11 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 // HasFirm checks if the user has a firm assigned
 func (u *User) HasFirm() bool {
 	return u.FirmID != nil && *u.FirmID != ""
+}
+
+// IsSuperadmin checks if the user is a superadmin
+func (u *User) IsSuperadmin() bool {
+	return u.Role == "superadmin"
 }
 
 // TableName specifies the table name for User model

@@ -100,6 +100,15 @@ func LoginPostHandler(c echo.Context) error {
 	user.LastLoginAt = &now
 	db.DB.Save(&user)
 
+	// Check if user is superadmin - redirect to superadmin dashboard
+	if user.IsSuperadmin() {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			c.Response().Header().Set("HX-Redirect", "/superadmin")
+			return c.NoContent(http.StatusOK)
+		}
+		return c.Redirect(http.StatusSeeOther, "/superadmin")
+	}
+
 	// Check if user has a firm
 	if !user.HasFirm() {
 		// User needs to set up their firm first

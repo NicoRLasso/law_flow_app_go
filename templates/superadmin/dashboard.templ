@@ -1,0 +1,148 @@
+package superadmin
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"strconv"
+)
+
+templ Dashboard(ctx context.Context, title string, csrfToken string, user *models.User, firms []models.Firm, firmStats map[string]int64) {
+	@Layout(ctx, title, csrfToken, user) {
+		<!-- Welcome Section -->
+		<div class="mb-8">
+			<h2 class="text-3xl font-bold mb-2">Superadmin Dashboard</h2>
+			<p class="text-muted-foreground">Manage firms and create new users for the platform.</p>
+		</div>
+		<!-- Stats Overview -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+			<!-- Total Firms -->
+			<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
+				<div class="flex items-center justify-between mb-4">
+					<div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+						</svg>
+					</div>
+				</div>
+				<h3 class="text-2xl font-bold mb-1">{ strconv.Itoa(len(firms)) }</h3>
+				<p class="text-sm text-muted-foreground">Total Firms</p>
+			</div>
+			<!-- Total Users -->
+			<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
+				<div class="flex items-center justify-between mb-4">
+					<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+						</svg>
+					</div>
+				</div>
+				<h3 class="text-2xl font-bold mb-1">{ strconv.FormatInt(getTotalUsers(firmStats), 10) }</h3>
+				<p class="text-sm text-muted-foreground">Total Users</p>
+			</div>
+			<!-- Pending Setup -->
+			<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
+				<div class="flex items-center justify-between mb-4">
+					<div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+						<svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+					</div>
+				</div>
+				<h3 class="text-2xl font-bold mb-1">-</h3>
+				<p class="text-sm text-muted-foreground">Users Pending Setup</p>
+			</div>
+		</div>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+			<!-- Create User Form -->
+			<div class="glass-panel p-8 rounded-2xl border border-white/10">
+				<h3 class="text-xl font-bold mb-6">Create New User</h3>
+				<p class="text-sm text-muted-foreground mb-6">Create a new user who will set up their own firm on first login.</p>
+				<form
+					hx-post="/superadmin/users"
+					hx-target="#create-user-feedback"
+					hx-swap="innerHTML"
+					class="space-y-4"
+				>
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">Name</label>
+						<input
+							type="text"
+							name="name"
+							required
+							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+							placeholder="Enter user's name"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">Email</label>
+						<input
+							type="email"
+							name="email"
+							required
+							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+							placeholder="Enter user's email"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">Password</label>
+						<input
+							type="password"
+							name="password"
+							required
+							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
+							placeholder="Enter password (min 8 chars)"
+						/>
+						<p class="text-xs text-muted-foreground mt-1">Minimum 8 characters</p>
+					</div>
+					<div id="create-user-feedback" class="min-h-[48px]"></div>
+					<button
+						type="submit"
+						class="w-full px-6 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white font-medium rounded-xl transition-all duration-300"
+					>
+						Create User
+					</button>
+				</form>
+			</div>
+			<!-- Firms List -->
+			<div class="glass-panel p-8 rounded-2xl border border-white/10">
+				<h3 class="text-xl font-bold mb-6">Existing Firms</h3>
+				if len(firms) == 0 {
+					<div class="text-center py-8">
+						<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+							<svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+							</svg>
+						</div>
+						<p class="text-muted-foreground">No firms have been created yet.</p>
+						<p class="text-sm text-muted-foreground mt-1">Create a user above and they will set up their firm.</p>
+					</div>
+				} else {
+					<div class="space-y-3 max-h-[400px] overflow-y-auto">
+						for _, firm := range firms {
+							<div class="p-4 bg-white/5 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+								<div class="flex items-center justify-between">
+									<div>
+										<h4 class="font-medium text-foreground">{ firm.Name }</h4>
+										<p class="text-sm text-muted-foreground">{ firm.City }, { firm.Country }</p>
+									</div>
+									<div class="text-right">
+										<span class="text-sm font-medium text-accent">{ strconv.FormatInt(firmStats[firm.ID], 10) } users</span>
+										<p class="text-xs text-muted-foreground">{ firm.Slug }</p>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				}
+			</div>
+		</div>
+	}
+}
+
+func getTotalUsers(stats map[string]int64) int64 {
+	var total int64
+	for _, count := range stats {
+		total += count
+	}
+	return total
+}
