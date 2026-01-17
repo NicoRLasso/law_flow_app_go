@@ -68,7 +68,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
 									</svg>
-									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'client' ? '" + i18n.T(ctx, "case.detail.tab.client") + "' : '" + i18n.T(ctx, "case.detail.tab.documents") + "'" }></span>
+									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'client' ? '" + i18n.T(ctx, "case.detail.tab.client") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "case.detail.tab.documents") + "' : '" + i18n.T(ctx, "case.detail.tab.bitacora") + "'" }></span>
 								</span>
 								<svg 
 									class="w-5 h-5 transition-transform duration-200"
@@ -125,6 +125,21 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 											<span>{ i18n.T(ctx, "case.detail.tab.documents") }</span>
 										</button>
 									</li>
+                                    <!-- Bitácora Tab -->
+                                    if user.Role != "client" {
+                                        <li>
+                                            <button
+                                                @click={ "activeTab = 'bitacora'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-logs-container')) htmx.ajax('GET', '/api/cases/" + caseRecord.ID + "/logs', {target: '#case-logs-wrapper', swap: 'innerHTML'}) }, 50)" }
+                                                :class="activeTab === 'bitacora' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+                                                class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+                                            >
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                                <span>{ i18n.T(ctx, "case.detail.tab.bitacora") }</span>
+                                            </button>
+                                        </li>
+                                    }
 								</ul>
 							</nav>
 						</aside>
@@ -145,6 +160,20 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							<div x-show="activeTab === 'documents'" x-transition class="space-y-6">
 								@CaseDocumentsTab(ctx, caseRecord)
 							</div>
+
+                            <!-- Bitácora Tab Content -->
+                            if user.Role != "client" {
+                                <div x-show="activeTab === 'bitacora'" x-transition class="space-y-6">
+                                    <h2 class="text-xl font-semibold">{ i18n.T(ctx, "bitacora.title") }</h2>
+                                    <div id="case-logs-wrapper">
+                                        <!-- Will be loaded via HTMX on tab click -->
+                                        <div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
+                                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+                                            <p class="text-muted-foreground">{ i18n.T(ctx, "bitacora.loading") }</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
 						</div>
 					</div>
 
@@ -201,6 +230,9 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 
 			<!-- Edit Case Modal Container -->
 			<div id="edit-case-modal-container"></div>
+            
+            <!-- Log Entry Modal Container -->
+            <div id="log-entry-modal-container"></div>
 		</div>
 	}
 }

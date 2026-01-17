@@ -38,7 +38,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -230,6 +230,13 @@ func main() {
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)
 			caseRoutes.GET("/:id/collaborators/available", handlers.GetAvailableCollaboratorsHandler)
+			// Case Log routes
+			caseRoutes.GET("/:id/logs", handlers.GetCaseLogsHandler)
+			caseRoutes.GET("/:id/logs/new", handlers.GetCaseLogFormHandler)
+			caseRoutes.POST("/:id/logs", handlers.CreateCaseLogHandler)
+			caseRoutes.GET("/:id/logs/:logId", handlers.GetCaseLogHandler)
+			caseRoutes.PUT("/:id/logs/:logId", handlers.UpdateCaseLogHandler)
+			caseRoutes.DELETE("/:id/logs/:logId", handlers.DeleteCaseLogHandler)
 			// Historical case routes
 			caseRoutes.GET("/history/new", handlers.GetHistoricalCaseFormHandler)
 			caseRoutes.POST("/history", handlers.CreateHistoricalCaseHandler)

@@ -460,7 +460,8 @@
       "tab": {
         "summary": "Resumen",
         "client": "Cliente",
-        "documents": "Documentos"
+        "documents": "Documentos",
+        "bitacora": "Bitácora"
       },
       "info_title": "Información del Caso",
       "type": "Tipo",
@@ -629,5 +630,42 @@
       "lawyer": "Abogado",
       "status": "Estado"
     }
+  },
+  "bitacora": {
+    "title": "Bitácora",
+    "add_entry": "Agregar Entrada",
+    "search_placeholder": "Buscar entradas...",
+    "loading": "Cargando bitácora...",
+    "empty": "No hay entradas en la bitácora",
+    "create_first_hint": "Haz clic en 'Agregar Entrada' para comenzar",
+    "filter": {
+      "all_types": "Todos los Tipos"
+    },
+    "types": {
+      "note": "Nota",
+      "document": "Documento",
+      "call": "Llamada",
+      "meeting": "Reunión"
+    },
+    "entry_type": "Tipo de Entrada",
+    "title_label": "Título",
+    "title_placeholder": "Breve descripción...",
+    "content_label": "Contenido",
+    "content_placeholder": "Notas detalladas...",
+    "document_reference": "Referencia de Documento",
+    "select_document": "Seleccionar documento...",
+    "contact_name": "Nombre del Contacto",
+    "contact_name_placeholder": "Persona contactada",
+    "contact_phone": "Teléfono",
+    "occurred_at": "Fecha y Hora",
+    "duration": "Duración",
+    "duration_unit": "en minutos",
+    "minutes": "min",
+    "contact": "Contacto",
+    "by": "Por",
+    "create": "Crear Entrada",
+    "edit_title": "Editar Entrada",
+    "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?",
   }
+
 }
