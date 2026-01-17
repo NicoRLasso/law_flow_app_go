@@ -541,6 +541,14 @@
         "court_filing": "Court Filing",
         "invoice": "Invoice",
         "other": "Other"
+      },
+      "visibility": {
+        "label": "Visibility",
+        "public": "Public",
+        "private": "Private",
+        "toggle_public": "Make visible to client",
+        "toggle_private": "Hide from client",
+        "public_desc": "Client can view this document"
       }
     },
     "edit": {

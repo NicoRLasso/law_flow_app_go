@@ -542,6 +542,14 @@
         "court_filing": "Presentación Judicial",
         "invoice": "Factura",
         "other": "Otro"
+      },
+      "visibility": {
+        "label": "Visibilidad",
+        "public": "Público",
+        "private": "Privado",
+        "toggle_public": "Hacer visible al cliente",
+        "toggle_private": "Ocultar del cliente",
+        "public_desc": "El cliente puede ver este documento"
       }
     },
     "edit": {

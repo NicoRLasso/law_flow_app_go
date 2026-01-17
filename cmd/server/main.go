@@ -225,6 +225,7 @@ func main() {
 			caseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
 			caseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
 			caseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
+			caseRoutes.PATCH("/:id/documents/:docId/visibility", handlers.ToggleDocumentVisibilityHandler)
 			// Collaborator routes
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)

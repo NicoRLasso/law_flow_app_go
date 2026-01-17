@@ -602,6 +602,22 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 						></textarea>
 					</div>
 
+					<!-- Visibility Toggle -->
+					<div class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-lg">
+						<label class="flex items-center gap-3 cursor-pointer flex-1">
+							<input
+								type="checkbox"
+								name="is_public"
+								value="true"
+								class="w-5 h-5 rounded border-white/20 bg-white/5 text-accent focus:ring-accent focus:ring-offset-0"
+							/>
+							<div class="flex flex-col">
+								<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "case.document.visibility.public") }</span>
+								<span class="text-xs text-muted-foreground">{ i18n.T(ctx, "case.document.visibility.public_desc") }</span>
+							</div>
+						</label>
+					</div>
+
 					<!-- Response Container -->
 					<div id="upload-response"></div>
 

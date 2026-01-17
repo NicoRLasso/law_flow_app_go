@@ -35,6 +35,7 @@ type CaseDocument struct {
 	// Document metadata
 	DocumentType string  `json:"document_type,omitempty"` // e.g., "initial_request", "evidence", "contract", etc.
 	Description  *string `gorm:"type:text" json:"description,omitempty"`
+	IsPublic     bool    `gorm:"default:false" json:"is_public"` // If true, clients can view this document
 
 	// Upload tracking
 	UploadedByID *string `gorm:"type:uuid" json:"uploaded_by_id,omitempty"`

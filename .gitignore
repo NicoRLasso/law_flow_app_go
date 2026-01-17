@@ -24,6 +24,8 @@ go.work
 db/*.db
 db/*.sqlite
 db/*.sqlite3
+db/*.db-shm
+db/*.db-wal
 *.db
 *.sqlite
 *.sqlite3

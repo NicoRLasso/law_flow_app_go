@@ -466,6 +466,9 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to upload file")
 	}
 
+	// Get visibility setting (defaults to false/private)
+	isPublic := c.FormValue("is_public") == "true" || c.FormValue("is_public") == "on"
+
 	// Create document record
 	document := models.CaseDocument{
 		FirmID:           currentFirm.ID,
@@ -477,6 +480,7 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 		MimeType:         uploadResult.MimeType,
 		DocumentType:     documentType,
 		UploadedByID:     &currentUser.ID,
+		IsPublic:         isPublic,
 	}
 
 	if description != "" {
@@ -511,5 +515,69 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message":  "Document uploaded successfully",
 		"document": document,
+	})
+}
+
+// ToggleDocumentVisibilityHandler toggles a document's public/private visibility
+func ToggleDocumentVisibilityHandler(c echo.Context) error {
+	caseID := c.Param("id")
+	docID := c.Param("docId")
+	currentUser := middleware.GetCurrentUser(c)
+
+	// Only admin and lawyer can toggle visibility
+	if currentUser.Role != "admin" && currentUser.Role != "lawyer" {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusForbidden, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Permission denied</div>`)
+		}
+		return echo.NewHTTPError(http.StatusForbidden, "Permission denied")
+	}
+
+	// First verify the case exists and user has access
+	caseQuery := middleware.GetFirmScopedQuery(c, db.DB)
+	if currentUser.Role == "lawyer" {
+		caseQuery = caseQuery.Where(
+			db.DB.Where("assigned_to_id = ?", currentUser.ID).
+				Or("EXISTS (SELECT 1 FROM case_collaborators WHERE case_collaborators.case_id = cases.id AND case_collaborators.user_id = ?)", currentUser.ID),
+		)
+	}
+
+	var caseRecord models.Case
+	if err := caseQuery.First(&caseRecord, "id = ?", caseID).Error; err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusNotFound, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Case not found</div>`)
+		}
+		return echo.NewHTTPError(http.StatusNotFound, "Case not found")
+	}
+
+	// Fetch document with firm-scoping
+	var document models.CaseDocument
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+	if err := query.First(&document, "id = ? AND case_id = ?", docID, caseID).Error; err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusNotFound, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Document not found</div>`)
+		}
+		return echo.NewHTTPError(http.StatusNotFound, "Document not found")
+	}
+
+	// Toggle the visibility
+	document.IsPublic = !document.IsPublic
+	if err := db.DB.Save(&document).Error; err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to update visibility</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update visibility")
+	}
+
+	// Return updated document row for HTMX
+	if c.Request().Header.Get("HX-Request") == "true" {
+		// Preload uploader for display
+		db.DB.Preload("UploadedBy").First(&document, "id = ?", docID)
+		component := partials.CaseDocumentRow(c.Request().Context(), document, caseID)
+		return component.Render(c.Request().Context(), c.Response().Writer)
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":   "Visibility updated",
+		"is_public": document.IsPublic,
 	})
 }
