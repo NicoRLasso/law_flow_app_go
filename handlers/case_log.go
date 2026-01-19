@@ -251,10 +251,15 @@ func DeleteCaseLogHandler(c echo.Context) error {
 	id := c.Param("logId")
 
 	// Use firm-scoped query to ensure user owns the log entry
-	if err := middleware.GetFirmScopedQuery(c, db.DB).Delete(&models.CaseLog{}, "id = ?", id).Error; err != nil {
+	var logEntry models.CaseLog
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&logEntry, "id = ?", id).Error; err != nil {
+		return c.String(http.StatusNotFound, "Log entry not found")
+	}
+
+	if err := db.DB.Delete(&logEntry).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error deleting log entry")
 	}
 
-	c.Response().Header().Set("HX-Trigger", "refreshCaseLogs")
-	return c.NoContent(204)
+	// Make sure to return the updated list so HTMX can swap the container content
+	return fetchAndRenderLogs(c, logEntry.CaseID)
 }

@@ -233,6 +233,8 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
             
             <!-- Log Entry Modal Container -->
             <div id="log-entry-modal-container"></div>
+
+			@components.ConfirmationModal(ctx)
 		</div>
 	}
 }
@@ -327,10 +329,7 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 										if user.Role == "admin" {
 											<button
 												type="button"
-												hx-delete={ "/api/cases/" + caseRecord.ID + "/collaborators/" + collab.ID }
-												hx-target="#collaborator-response"
-												hx-swap="innerHTML"
-												hx-confirm={ i18n.T(ctx, "case.detail.remove_collaborator_confirm") }
+												{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "case.detail.remove_collaborator") + "', message: '" + i18n.T(ctx, "case.detail.remove_collaborator_confirm") + "', confirmUrl: '/api/cases/" + caseRecord.ID + "/collaborators/" + collab.ID + "', target: '#collaborator-response', swap: 'innerHTML' }, this)" }... }
 												class="text-red-400 hover:text-red-300 transition-colors"
 												title={ i18n.T(ctx, "case.detail.remove_collaborator") }
 											>

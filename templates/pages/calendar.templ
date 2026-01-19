@@ -14,21 +14,21 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/calendar")
 			
-			<main class="w-full mx-auto px-4 md:px-6 py-8">
+			<main class="w-full mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
 				<div class="space-y-6">
 					<!-- Header -->
-					<div class="flex items-center justify-between">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
 						<div>
-							<h1 class="text-3xl font-bold text-gradient">{ i18n.T(ctx, "calendar.title") }</h1>
-							<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "calendar.description") }</p>
+							<h1 class="text-2xl sm:text-3xl font-bold text-gradient">{ i18n.T(ctx, "calendar.title") }</h1>
+							<p class="text-sm sm:text-base text-muted-foreground mt-1">{ i18n.T(ctx, "calendar.description") }</p>
 						</div>
 					</div>
 
 					<!-- Calendar Container -->
-					<div class="glass-panel p-6 rounded-3xl border border-white/10">
-						<div 
-							id="calendar" 
-							style="height: calc(100vh - 220px); min-height: 700px;"
+					<div class="glass-panel p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl md:rounded-3xl border border-white/10">
+						<div
+							id="calendar"
+							class="calendar-container"
 							data-locale={ i18n.GetLocale(ctx) }
 							data-label-client={ i18n.T(ctx, "calendar.events.client") }
 							data-label-lawyer={ i18n.T(ctx, "calendar.events.lawyer") }
@@ -38,11 +38,11 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 
 					<!-- Legend -->
 					if len(aptTypes) > 0 {
-						<div class="flex flex-wrap gap-4 mt-4">
+						<div class="flex flex-wrap gap-x-4 gap-y-2 mt-3 sm:mt-4">
 							for _, t := range aptTypes {
-								<div class="flex items-center gap-2">
-									<div class="w-3 h-3 rounded-full" style={ "background-color: " + t.Color }></div>
-									<span class="text-sm text-muted-foreground">{ t.Name }</span>
+								<div class="flex items-center gap-1.5 sm:gap-2">
+									<div class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0" style={ "background-color: " + t.Color }></div>
+									<span class="text-xs sm:text-sm text-muted-foreground">{ t.Name }</span>
 								</div>
 							}
 						</div>
@@ -51,53 +51,269 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 			</main>
 		</div>
 
+		<!-- Event Detail Modal -->
+		<div
+			id="event-detail-modal"
+			class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4"
+		>
+			<div class="glass-panel rounded-xl sm:rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden">
+				<!-- Header -->
+				<div class="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
+					<h2 id="modal-event-title" class="text-lg sm:text-xl font-bold text-foreground truncate pr-4"></h2>
+					<button
+						onclick="closeEventModal()"
+						class="p-1.5 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
+					>
+						<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				</div>
+
+				<!-- Body -->
+				<div class="p-4 sm:p-6 space-y-4">
+					<!-- Time -->
+					<div class="flex items-start gap-3">
+						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						<div>
+							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.modal.time") }</p>
+							<p id="modal-event-time" class="text-sm text-foreground"></p>
+						</div>
+					</div>
+
+					<!-- Client -->
+					<div class="flex items-start gap-3">
+						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+						</svg>
+						<div>
+							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.events.client") }</p>
+							<p id="modal-event-client" class="text-sm text-foreground"></p>
+						</div>
+					</div>
+
+					<!-- Lawyer -->
+					<div class="flex items-start gap-3">
+						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+						</svg>
+						<div>
+							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.events.lawyer") }</p>
+							<p id="modal-event-lawyer" class="text-sm text-foreground"></p>
+						</div>
+					</div>
+
+					<!-- Status -->
+					<div class="flex items-start gap-3">
+						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						<div>
+							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.events.status") }</p>
+							<p id="modal-event-status" class="text-sm text-foreground"></p>
+						</div>
+					</div>
+
+					<!-- Notes (if available) -->
+					<div id="modal-notes-container" class="hidden">
+						<div class="flex items-start gap-3">
+							<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+							</svg>
+							<div>
+								<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.modal.notes") }</p>
+								<p id="modal-event-notes" class="text-sm text-foreground"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Footer -->
+				<div class="flex items-center justify-between p-4 sm:p-6 border-t border-white/10">
+					<button
+						onclick="cancelEvent()"
+						class="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all duration-200"
+					>
+						{ i18n.T(ctx, "common.cancel") }
+					</button>
+					<button
+						onclick="closeEventModal()"
+						class="px-4 py-2 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200"
+					>
+						{ i18n.T(ctx, "calendar.modal.close") }
+					</button>
+				</div>
+			</div>
+		</div>
+
 		<!-- Include FullCalendar -->
 		<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales-all.global.min.js"></script>
 		<script>
+			// Modal functions (global scope)
+			function openEventModal(event) {
+				const modal = document.getElementById('event-detail-modal');
+				const props = event.extendedProps;
+				
+				// Store current event ID for actions
+				modal.dataset.eventId = event.id;
+
+				// Populate modal
+				document.getElementById('modal-event-title').textContent = event.title;
+				document.getElementById('modal-event-client').textContent = props.clientName || '-';
+				document.getElementById('modal-event-lawyer').textContent = props.lawyer || '-';
+				document.getElementById('modal-event-status').textContent = props.status || '-';
+
+				// Format time
+				const startTime = event.start ? event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+				const endTime = event.end ? event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+				const dateStr = event.start ? event.start.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
+				document.getElementById('modal-event-time').textContent = `${dateStr}, ${startTime} - ${endTime}`;
+
+				// Notes (optional)
+				const notesContainer = document.getElementById('modal-notes-container');
+				if (props.notes && props.notes.trim()) {
+					document.getElementById('modal-event-notes').textContent = props.notes;
+					notesContainer.classList.remove('hidden');
+				} else {
+					notesContainer.classList.add('hidden');
+				}
+
+				// Show modal
+				modal.classList.remove('hidden');
+				modal.classList.add('flex');
+				document.body.style.overflow = 'hidden';
+			}
+
+			function closeEventModal() {
+				const modal = document.getElementById('event-detail-modal');
+				modal.classList.add('hidden');
+				modal.classList.remove('flex');
+				document.body.style.overflow = '';
+			}
+
+			function cancelEvent() {
+				const modal = document.getElementById('event-detail-modal');
+				const id = modal.dataset.eventId;
+				if(!id) return;
+
+				if(!confirm('Are you sure you want to cancel this appointment?')) return;
+
+				fetch('/api/appointments/' + id + '/cancel', {
+					method: 'POST',
+					headers: {
+						'X-CSRF-Token': document.querySelector('input[name="gorilla.csrf.Token"]').value
+					}
+				})
+				.then(response => {
+					if(!response.ok) throw new Error('Failed to cancel');
+					return response.json();
+				})
+				.then(() => {
+					closeEventModal();
+					// Refresh calendar events without reloading page
+					var calendarEl = document.getElementById('calendar');
+					var calendar = calendarEl._fullCalendar; // Hacky but works if we assign it
+					if (calendar) {
+						calendar.refetchEvents();
+					} else {
+						// Fallback if we can't get instance
+						window.location.reload();
+					}
+				})
+				.catch(err => {
+					console.error(err);
+					alert('Error cancelling appointment');
+				});
+			}
+
+			// Close modal on backdrop click
+			document.getElementById('event-detail-modal')?.addEventListener('click', function(e) {
+				if (e.target === this) closeEventModal();
+			});
+
+			// Close modal on Escape key
+			document.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape') closeEventModal();
+			});
+
 			document.addEventListener('DOMContentLoaded', function() {
 				console.log('Calendar page loaded, initializing FullCalendar...');
-				var calendarEl = document.getElementById('calendar');
-				if (!calendarEl) {
-					console.error('Calendar element not found!');
-					return;
-				}
-
-				if (typeof FullCalendar === 'undefined') {
-					console.error('FullCalendar is not defined! Check script loading.');
-					return;
-				}
-
-				// Data from data attributes
-				const locale = calendarEl.getAttribute('data-locale') || 'en';
-				const labelClient = calendarEl.getAttribute('data-label-client') || 'Client';
-				const labelLawyer = calendarEl.getAttribute('data-label-lawyer') || 'Lawyer';
-				const labelStatus = calendarEl.getAttribute('data-label-status') || 'Status';
-
-				var calendar = new FullCalendar.Calendar(calendarEl, {
-					initialView: 'timeGridWeek',
-					locale: locale,
-					headerToolbar: {
-						left: 'prev,next today',
-						center: 'title',
-						right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-					},
-					themeSystem: 'standard',
-					height: '100%',
-					slotMinTime: '08:00:00',
-					slotMaxTime: '20:00:00',
-					allDaySlot: false,
-					events: '/api/calendar/events',
-					eventClick: function(info) {
-						const props = info.event.extendedProps;
-						alert(`${labelClient}: ${props.clientName}\n${labelLawyer}: ${props.lawyer}\n${labelStatus}: ${props.status}`);
-					},
-					eventDidMount: function(info) {
-						console.log('Event mounted:', info.event.title);
+				
+				try {
+					var calendarEl = document.getElementById('calendar');
+					if (!calendarEl) {
+						console.error('Calendar element not found!');
+						return;
 					}
-				});
-				calendar.render();
-				console.log('FullCalendar rendered with locale:', locale);
+
+					if (typeof FullCalendar === 'undefined') {
+						console.error('FullCalendar is not defined! Check script loading.');
+						return;
+					}
+
+					// Data from data attributes
+					const locale = calendarEl.getAttribute('data-locale') || 'en';
+
+					// Responsive view helpers
+					function getInitialView() {
+						if (window.innerWidth < 640) return 'listWeek';
+						if (window.innerWidth < 768) return 'timeGridDay';
+						return 'timeGridWeek';
+					}
+
+					function getToolbarConfig() {
+						if (window.innerWidth < 640) {
+							return { left: 'prev,next', center: 'title', right: 'today' };
+						}
+						if (window.innerWidth < 768) {
+							return { left: 'prev,next today', center: 'title', right: 'timeGridDay,listWeek' };
+						}
+						return { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' };
+					}
+
+					var calendar = new FullCalendar.Calendar(calendarEl, {
+						initialView: getInitialView(),
+						locale: locale,
+						headerToolbar: getToolbarConfig(),
+						themeSystem: 'standard',
+						height: '100%',
+						slotMinTime: '08:00:00',
+						slotMaxTime: '20:00:00',
+						allDaySlot: false,
+						navLinks: true,
+						nowIndicator: true,
+						events: '/api/calendar/events',
+						windowResize: function(view) {
+							try {
+								const newView = getInitialView();
+								if (calendar.view.type !== newView) {
+									calendar.changeView(newView);
+								}
+								calendar.setOption('headerToolbar', getToolbarConfig());
+							} catch (e) {
+								console.error('Error in windowResize:', e);
+							}
+						},
+						eventClick: function(info) {
+							openEventModal(info.event);
+						},
+						eventDidMount: function(info) {
+							// console.log('Event mounted:', info.event.title);
+						}
+					});
+					
+					// Store instance on element for easy access
+					calendarEl._fullCalendar = calendar;
+					
+					calendar.render();
+					console.log('FullCalendar rendered with locale:', locale);
+				} catch (e) {
+					console.error('CRITICAL ERROR initializing calendar:', e);
+					alert('Failed to initialize calendar: ' + e.message);
+				}
 			});
 		</script>
 		
@@ -136,6 +352,85 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 			
 			.fc .fc-toolbar-title {
 				color: white;
+			}
+
+			/* Responsive Calendar Container */
+			.calendar-container {
+				height: calc(100dvh - 280px);
+				min-height: 400px;
+				max-height: 600px;
+			}
+
+			@media (min-width: 640px) {
+				.calendar-container {
+					height: calc(100dvh - 250px);
+					min-height: 450px;
+					max-height: none;
+				}
+			}
+
+			@media (min-width: 768px) {
+				.calendar-container {
+					height: calc(100vh - 220px);
+					min-height: 500px;
+				}
+			}
+
+			@media (min-width: 1024px) {
+				.calendar-container {
+					height: calc(100vh - 200px);
+					min-height: 600px;
+				}
+			}
+
+			/* Landscape mobile */
+			@media (max-height: 500px) and (orientation: landscape) {
+				.calendar-container {
+					height: calc(100dvh - 120px);
+					min-height: 280px;
+				}
+			}
+
+			/* FullCalendar Mobile Overrides */
+			@media (max-width: 767px) {
+				.fc .fc-toolbar {
+					flex-direction: column;
+					gap: 0.75rem;
+				}
+				.fc .fc-toolbar-title {
+					font-size: 1.125rem !important;
+				}
+				.fc .fc-button {
+					padding: 0.375rem 0.5rem;
+					font-size: 0.75rem;
+				}
+				.fc .fc-timegrid-axis {
+					width: 45px !important;
+				}
+				.fc .fc-timegrid-slot-label {
+					font-size: 0.625rem;
+				}
+				.fc .fc-col-header-cell-cushion {
+					font-size: 0.75rem;
+					padding: 0.375rem 0.25rem;
+				}
+				.fc-event {
+					font-size: 0.625rem !important;
+				}
+				.fc-scroller {
+					-webkit-overflow-scrolling: touch;
+				}
+			}
+
+			/* Touch-friendly */
+			@media (pointer: coarse) {
+				.fc-event {
+					min-height: 28px;
+				}
+				.fc .fc-button {
+					min-height: 36px;
+					min-width: 36px;
+				}
 			}
 		</style>
 	}

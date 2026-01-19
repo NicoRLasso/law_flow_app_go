@@ -1,0 +1,108 @@
+package components
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+)
+
+templ ConfirmationModal(ctx context.Context) {
+	<!-- Confirmation Modal -->
+	<div id="confirmation-modal" class="hidden fixed inset-0 z-[100]" role="dialog" aria-modal="true">
+		<!-- Backdrop -->
+		<div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeConfirmationModal()"></div>
+
+		<div class="fixed inset-0 z-10 overflow-y-auto">
+			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+				<!-- Modal Content -->
+				<div 
+					class="relative transform overflow-hidden rounded-xl bg-[#0A0A0B] border border-white/10 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+					onclick="event.stopPropagation()"
+				>
+					<div class="px-6 py-6">
+						<div class="flex items-start gap-4 mb-4">
+							<div class="p-3 bg-red-500/10 rounded-xl shrink-0">
+								<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+								</svg>
+							</div>
+							<div>
+								<h3 id="confirmation-modal-title" class="text-xl font-bold font-space-grotesk text-foreground">
+									{ i18n.T(ctx, "common.confirm") }
+								</h3>
+								<p id="confirmation-modal-message" class="text-sm text-muted-foreground mt-1">
+									<!-- Message injected via JS -->
+								</p>
+							</div>
+						</div>
+
+						<div class="flex items-center justify-end gap-3 mt-6">
+							<button
+								type="button"
+								onclick="closeConfirmationModal()"
+								class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hover:bg-white/5 rounded-lg"
+							>
+								{ i18n.T(ctx, "common.cancel") }
+							</button>
+							<button
+								id="confirmation-modal-btn"
+								type="button"
+								class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all shadow-lg shadow-red-600/20"
+							>
+								{ i18n.T(ctx, "common.confirm") }
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		let confirmationModalTriggerElement = null;
+
+		function openConfirmationModal(options, triggerElement) {
+			const modal = document.getElementById('confirmation-modal');
+			const titleEl = document.getElementById('confirmation-modal-title');
+			const msgEl = document.getElementById('confirmation-modal-message');
+			const confirmBtn = document.getElementById('confirmation-modal-btn');
+
+			// Store the element that triggered the modal for relative target resolution
+			confirmationModalTriggerElement = triggerElement || event.currentTarget;
+
+			if (options.title) titleEl.textContent = options.title;
+			if (options.message) msgEl.textContent = options.message;
+
+			// Replace button to remove old event listeners
+			const newBtn = confirmBtn.cloneNode(true);
+			confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+			newBtn.onclick = function() {
+				if (options.confirmUrl) {
+					// Resolve target relative to the original trigger element
+					let targetEl = null;
+					if (options.target && confirmationModalTriggerElement) {
+						if (options.target.startsWith('closest ')) {
+							const selector = options.target.replace('closest ', '');
+							targetEl = confirmationModalTriggerElement.closest(selector);
+						} else {
+							targetEl = document.querySelector(options.target);
+						}
+					}
+
+					htmx.ajax(options.confirmMethod || 'DELETE', options.confirmUrl, {
+						target: targetEl || options.target,
+						swap: options.swap || 'innerHTML'
+					});
+				}
+				closeConfirmationModal();
+			};
+
+			modal.classList.remove('hidden');
+		}
+
+		function closeConfirmationModal() {
+			document.getElementById('confirmation-modal').classList.add('hidden');
+			confirmationModalTriggerElement = null;
+		}
+	</script>
+}

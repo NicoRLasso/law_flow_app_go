@@ -124,9 +124,7 @@ templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string) {
                                             </button>
                                             <button 
                                                 class="p-2 hover:bg-red-500/10 text-red-400 rounded-lg transition-colors"
-                                                hx-delete={ "/api/cases/" + caseID + "/logs/" + log.ID }
-                                                hx-target="#case-logs-container"
-                                                hx-confirm={ i18n.T(ctx, "bitacora.delete_confirm") }
+												{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "bitacora.delete_confirm_title") + "', message: '" + i18n.T(ctx, "bitacora.delete_confirm") + "', confirmUrl: '/api/cases/" + caseID + "/logs/" + log.ID + "', target: '#case-logs-container', swap: 'outerHTML' }, this)" }... }
                                                 title={ i18n.T(ctx, "common.delete") }
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

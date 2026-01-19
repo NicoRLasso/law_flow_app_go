@@ -343,12 +343,24 @@ func CancelAppointmentHandler(c echo.Context) error {
 	}
 
 	if err := services.CancelAppointment(id); err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusOK, fmt.Sprintf(`<div class="text-red-500">Error: %s</div>`, err.Error()))
+		}
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// Audit logging (Cancel)
 	auditCtx := middleware.GetAuditContext(c)
 	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionUpdate, "Appointment", id, fmt.Sprintf("Appointment with %s", apt.ClientName), "Cancelled appointment", nil, map[string]string{"status": "cancelled"})
+
+	if c.Request().Header.Get("HX-Request") == "true" {
+		// Reload the appointment to get updated status
+		updatedApt, _ := services.GetAppointmentByID(id)
+		if updatedApt == nil {
+			return c.NoContent(http.StatusNotFound)
+		}
+		return partials.AppointmentRow(c.Request().Context(), *updatedApt).Render(c.Request().Context(), c.Response().Writer)
+	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Appointment cancelled"})
 }

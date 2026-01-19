@@ -127,6 +127,14 @@ func CreateUser(c echo.Context) error {
 		})
 	}
 
+	// Create default availability for lawyers and admins
+	if user.Role == "lawyer" || user.Role == "admin" {
+		if err := services.CreateDefaultAvailability(user.ID); err != nil {
+			// Log error but don't fail user creation
+			services.LogSecurityEvent("AVAILABILITY_SEED_FAILED", user.ID, "Failed to create default availability: "+err.Error())
+		}
+	}
+
 	// Log security event
 	services.LogSecurityEvent("USER_CREATED", currentUser.ID, "Created user: "+user.ID)
 

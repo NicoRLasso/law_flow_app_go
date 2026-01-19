@@ -199,6 +199,7 @@
     }
   },
   "common": {
+    "confirm": "Confirm",
     "submit": "Submit",
     "cancel": "Cancel",
     "save": "Save",
@@ -998,7 +999,9 @@
     "create": {
       "title": "Schedule Appointment",
       "submit": "Book Appointment"
-    }
+    },
+    "cancel_confirm_title": "Cancel Appointment",
+    "cancel_confirm_msg": "Are you sure you want to cancel this appointment?"
   },
   "calendar": {
     "title": "Calendar",
@@ -1007,6 +1010,11 @@
       "client": "Client",
       "lawyer": "Lawyer",
       "status": "Status"
+    },
+    "modal": {
+      "time": "Time",
+      "notes": "Notes",
+      "close": "Close"
     }
   },
   "bitacora": {
@@ -1043,6 +1051,7 @@
     "by": "By",
     "create": "Create Entry",
     "edit_title": "Edit Entry",
+    "delete_confirm_title": "Delete Entry",
     "delete_confirm": "Are you sure you want to delete this entry?"
   },
   "superadmin": {

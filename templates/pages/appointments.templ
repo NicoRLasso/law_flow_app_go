@@ -53,6 +53,8 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 				</div>
 			</main>
 
+			@components.ConfirmationModal(ctx)
+
 			<!-- Create Appointment Modal -->
 			<div 
 				x-show="showCreateModal"

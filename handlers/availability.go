@@ -27,14 +27,13 @@ func AvailabilityPageHandler(c echo.Context) error {
 	// Get lawyer ID (for admins viewing their own availability, use their ID)
 	lawyerID := currentUser.ID
 
-	// Check if lawyer has availability slots, if not, create defaults
+	// Fallback: create default availability if none exists (for users created before availability seeding was added to user creation)
 	hasSlots, err := services.HasAvailabilitySlots(lawyerID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check availability slots")
 	}
 
 	if !hasSlots {
-		// Create default availability (Mon-Fri, 9-12 & 14-17)
 		if err := services.CreateDefaultAvailability(lawyerID); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create default availability")
 		}

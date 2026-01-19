@@ -199,6 +199,7 @@
     }
   },
   "common": {
+    "confirm": "Confirmar",
     "submit": "Enviar",
     "cancel": "Cancelar",
     "save": "Guardar",
@@ -962,6 +963,46 @@
       "saturday": "Sábado"
     }
   },
+  "appointments": {
+    "title": "Citas",
+    "description": "Gestiona tus citas programadas con clientes",
+    "new": "Nueva Cita",
+    "filter": {
+      "all_status": "Todos los Estados"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "no_show": "No presentó"
+    },
+    "table": {
+      "datetime": "Fecha y Hora",
+      "client": "Cliente",
+      "lawyer": "Abogado",
+      "status": "Estado",
+      "actions": "Acciones",
+      "empty": "No hay citas encontradas"
+    },
+    "form": {
+      "client": "Cliente",
+      "lawyer": "Abogado",
+      "date": "Fecha",
+      "time_slot": "Horarios Disponibles",
+      "notes": "Notas",
+      "notes_placeholder": "Notas opcionales sobre la cita...",
+      "select_client": "Seleccionar cliente...",
+      "select_lawyer": "Seleccionar abogado...",
+      "select_date_first": "Selecciona una fecha para ver horarios"
+    },
+    "create": {
+      "title": "Programar Cita",
+      "submit": "Reservar Cita"
+    },
+    "cancel_confirm_title": "Cancelar Cita",
+    "cancel_confirm_msg": "¿Está seguro de que desea cancelar esta cita?"
+  },
   "calendar": {
     "title": "Calendario",
     "description": "Gestiona tu horario y citas",
@@ -969,6 +1010,11 @@
       "client": "Cliente",
       "lawyer": "Abogado",
       "status": "Estado"
+    },
+    "modal": {
+      "time": "Horario",
+      "notes": "Notas",
+      "close": "Cerrar"
     }
   },
   "bitacora": {
@@ -1005,6 +1051,7 @@
     "by": "Por",
     "create": "Crear Entrada",
     "edit_title": "Editar Entrada",
+    "delete_confirm_title": "Eliminar Entrada",
     "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?"
   },
   "superadmin": {

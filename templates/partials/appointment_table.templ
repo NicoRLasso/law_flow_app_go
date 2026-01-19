@@ -154,10 +154,7 @@ templ AppointmentRow(ctx context.Context, apt models.Appointment) {
 					}
 					<!-- Cancel -->
 					<button 
-						hx-delete={ fmt.Sprintf("/api/appointments/%s", apt.ID) }
-						hx-confirm="Are you sure you want to cancel this appointment?"
-						hx-target="closest tr"
-						hx-swap="outerHTML swap:1s"
+						{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "appointments.cancel_confirm_title") + "', message: '" + i18n.T(ctx, "appointments.cancel_confirm_msg") + "', confirmUrl: '/api/appointments/" + apt.ID + "', target: 'closest tr', swap: 'outerHTML swap:1s' }, this)" }... }
 						class="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all"
 						title="Cancel"
 					>
