@@ -39,7 +39,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -273,6 +273,7 @@ func main() {
 	protected := e.Group("")
 	protected.Use(middleware.RequireAuth())
 	protected.Use(middleware.RequireFirm()) // Ensure user has a firm
+	protected.Use(middleware.AuditContext())
 	{
 		// All users with a firm can access dashboard and their own profile
 		protected.GET("/dashboard", handlers.DashboardHandler)
@@ -306,6 +307,11 @@ func main() {
 			// Firm settings (admin only)
 			adminRoutes.GET("/firm/settings", handlers.FirmSettingsPageHandler)
 			adminRoutes.PUT("/api/firm/settings", handlers.UpdateFirmHandler)
+
+			// Audit Logs (admin only)
+			adminRoutes.GET("/audit-logs", handlers.AuditLogsPageHandler)
+			adminRoutes.GET("/api/audit-logs", handlers.GetAuditLogsHandler)
+			adminRoutes.GET("/api/audit-logs/:type/:id", handlers.GetResourceHistoryHandler)
 		}
 
 		// Case request routes (admin and lawyer only)

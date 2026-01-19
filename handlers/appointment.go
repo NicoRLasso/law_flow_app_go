@@ -252,6 +252,11 @@ func CreateAppointmentHandler(c echo.Context) error {
 
 	// Reload with relationships for API response
 	apt, _ = services.GetAppointmentByID(apt.ID)
+
+	// Audit logging (Create Appointment)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionCreate, "Appointment", apt.ID, fmt.Sprintf("Appointment with %s", apt.ClientName), "Created appointment", nil, apt)
+
 	return c.JSON(http.StatusCreated, apt)
 }
 
@@ -311,6 +316,11 @@ func UpdateAppointmentStatusHandler(c echo.Context) error {
 	}
 
 	apt, _ = services.GetAppointmentByID(id)
+
+	// Audit logging (Update Status)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionUpdate, "Appointment", apt.ID, fmt.Sprintf("Appointment with %s", apt.ClientName), "Updated appointment status to "+req.Status, nil, apt)
+
 	return c.JSON(http.StatusOK, apt)
 }
 
@@ -335,6 +345,10 @@ func CancelAppointmentHandler(c echo.Context) error {
 	if err := services.CancelAppointment(id); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
+	// Audit logging (Cancel)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionUpdate, "Appointment", id, fmt.Sprintf("Appointment with %s", apt.ClientName), "Cancelled appointment", nil, map[string]string{"status": "cancelled"})
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Appointment cancelled"})
 }
@@ -381,6 +395,11 @@ func RescheduleAppointmentHandler(c echo.Context) error {
 	}
 
 	apt, _ = services.GetAppointmentByID(id)
+
+	// Audit logging (Reschedule)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionUpdate, "Appointment", id, fmt.Sprintf("Appointment with %s", apt.ClientName), "Rescheduled appointment", nil, apt)
+
 	return c.JSON(http.StatusOK, apt)
 }
 

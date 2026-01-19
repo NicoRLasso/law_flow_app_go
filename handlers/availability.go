@@ -135,6 +135,13 @@ func CreateAvailabilityHandler(c echo.Context) error {
 	// For HTMX, reload the availability list
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Trigger", "availability-updated")
+	}
+
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionCreate, "Availability", slot.ID, "Availability Slot", "Created availability slot", nil, slot)
+
+	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm">Slot added successfully!</div>`)
 	}
 
@@ -205,6 +212,10 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update slot")
 	}
 
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionUpdate, "Availability", slot.ID, "Availability Slot", "Updated availability slot", nil, slot)
+
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Trigger", "availability-updated")
 		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm">Slot updated!</div>`)
@@ -234,6 +245,10 @@ func DeleteAvailabilityHandler(c echo.Context) error {
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete slot")
 	}
+
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete, "Availability", slotID, "Availability Slot", "Deleted availability slot", slot, nil)
 
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Trigger", "availability-updated")
@@ -308,6 +323,10 @@ func CreateBlockedDateHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save block")
 	}
 
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionCreate, "BlockedDate", blockedDate.ID, "Blocked Date", "Created blocked date: "+reason, nil, blockedDate)
+
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Trigger", "blocked-dates-updated")
 		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm">Blocked successfully!</div>`)
@@ -337,6 +356,10 @@ func DeleteBlockedDateHandler(c echo.Context) error {
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete blocked date")
 	}
+
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete, "BlockedDate", dateID, "Blocked Date", "Deleted blocked date", blockedDate, nil)
 
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Trigger", "blocked-dates-updated")

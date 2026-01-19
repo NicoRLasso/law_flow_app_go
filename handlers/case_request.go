@@ -411,6 +411,10 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 		services.SendEmailAsync(cfg, emailMsg)
 	}
 
+	// Audit logging (Status Update)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionUpdate, "CaseRequest", request.ID, "Request from "+request.Name, "Updated request status to "+request.Status, nil, request)
+
 	// Return success (NoContent for HTMX to avoid swapping JSON, JSON for API)
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.NoContent(http.StatusOK)
@@ -451,6 +455,10 @@ func DeleteCaseRequestHandler(c echo.Context) error {
 	if err := db.DB.Delete(&request).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete request")
 	}
+
+	// Audit logging (Delete)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete, "CaseRequest", id, "Request from "+request.Name, "Deleted case request", request, nil)
 
 	// Return success for HTMX
 	if c.Request().Header.Get("HX-Request") == "true" {

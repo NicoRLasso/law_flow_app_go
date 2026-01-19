@@ -152,6 +152,20 @@ func UpdateFirmHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 	updateType := c.FormValue("update_type")
 
+	// Capture old values for audit
+	oldValues := map[string]interface{}{
+		"name":          firm.Name,
+		"country":       firm.Country,
+		"timezone":      firm.Timezone,
+		"address":       firm.Address,
+		"city":          firm.City,
+		"phone":         firm.Phone,
+		"description":   firm.Description,
+		"billing_email": firm.BillingEmail,
+		"info_email":    firm.InfoEmail,
+		"noreply_email": firm.NoreplyEmail,
+	}
+
 	// Helper function for HTMX error response
 	htmxError := func(msg string) error {
 		if c.Request().Header.Get("HX-Request") == "true" {
@@ -228,6 +242,17 @@ func UpdateFirmHandler(c echo.Context) error {
 
 	// Log security event
 	services.LogSecurityEvent("FIRM_UPDATED", currentUser.ID, "Admin updated firm settings ("+updateType+"): "+firm.ID)
+
+	// Log audit event
+	services.LogAuditEvent(db.DB, services.AuditContext{
+		UserID:    currentUser.ID,
+		UserName:  currentUser.Name,
+		UserRole:  currentUser.Role,
+		FirmID:    firm.ID,
+		FirmName:  firm.Name,
+		IPAddress: c.RealIP(),
+		UserAgent: c.Request().UserAgent(),
+	}, models.AuditActionUpdate, "firm", firm.ID, firm.Name, "Updated firm settings ("+updateType+")", oldValues, firm)
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {

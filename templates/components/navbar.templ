@@ -242,6 +242,16 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 									</div>
 									<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.firm_settings") }</span>
 								</a>
+
+								if user.Role == "admin" {
+									<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
+										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
+										<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+										</div>
+										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "audit.title") }</span>
+									</a>
+								}
 								
 								<div class="h-px bg-white/5 my-1 mx-2"></div>
 								
@@ -352,22 +362,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						</a>
 					}
 
-					if currentPath == "/availability" {
-						<a href="/availability" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.availability") }</span>
-						</a>
-					} else {
-						<a href="/availability" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.availability") }</span>
-						</a>
-					}
+
 					if currentPath == "/appointments" {
 						<a href="/appointments" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
 							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
@@ -402,6 +397,26 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						</div>
 						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.users") }</span>
 					</a>
+				}
+
+				// Audit Logs (Admin)
+				if user.Role == "admin" {
+					if currentPath == "/audit-logs" {
+						<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
+							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+							</div>
+							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "audit.title") }</span>
+						</a>
+					} else {
+						<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
+							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
+							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+							</div>
+							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "audit.title") }</span>
+						</a>
+					}
 				}
 			</div>
 		</div>

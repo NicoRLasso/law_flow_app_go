@@ -347,6 +347,20 @@ func DownloadCaseDocumentHandler(c echo.Context) error {
 	// Set the Content-Disposition header to suggest the original filename
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=\""+document.FileOriginalName+"\"")
 
+	// Audit logging (Download)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(
+		db.DB,
+		auditCtx,
+		models.AuditActionDownload,
+		"CaseDocument",
+		document.ID,
+		document.FileOriginalName,
+		"Document downloaded",
+		nil,
+		nil,
+	)
+
 	// Serve file
 	return c.File(document.FilePath)
 }
@@ -402,6 +416,20 @@ func ViewCaseDocumentHandler(c echo.Context) error {
 	// Set headers for inline display
 	c.Response().Header().Set("Content-Type", "application/pdf")
 	c.Response().Header().Set("Content-Disposition", "inline; filename=\""+document.FileOriginalName+"\"")
+
+	// Audit logging (View)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(
+		db.DB,
+		auditCtx,
+		models.AuditActionView,
+		"CaseDocument",
+		document.ID,
+		document.FileOriginalName,
+		"Document viewed",
+		nil,
+		nil,
+	)
 
 	// Serve file
 	return c.File(document.FilePath)
@@ -497,6 +525,20 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save document")
 	}
 
+	// Audit logging (Upload)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(
+		db.DB,
+		auditCtx,
+		models.AuditActionCreate,
+		"CaseDocument",
+		document.ID,
+		document.FileOriginalName,
+		"Document uploaded",
+		nil,
+		document,
+	)
+
 	// Return success message and trigger document list reload
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.HTML(http.StatusOK, `
@@ -575,6 +617,20 @@ func ToggleDocumentVisibilityHandler(c echo.Context) error {
 		component := partials.CaseDocumentRow(c.Request().Context(), document, caseID)
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
+
+	// Audit logging (Visibility Change)
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(
+		db.DB,
+		auditCtx,
+		models.AuditActionVisibilityChange,
+		"CaseDocument",
+		document.ID,
+		document.FileOriginalName,
+		"Document visibility changed",
+		map[string]bool{"is_public": !document.IsPublic}, // Old value
+		map[string]bool{"is_public": document.IsPublic},  // New value
+	)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message":   "Visibility updated",

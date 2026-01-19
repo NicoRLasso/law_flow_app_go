@@ -143,6 +143,18 @@ func LoginPostHandler(c echo.Context) error {
 	}
 	c.SetCookie(cookie)
 
+	// Audit logging (Login)
+	auditCtx := services.AuditContext{
+		UserID:    user.ID,
+		UserName:  user.Name,
+		UserRole:  user.Role,
+		FirmID:    firmID,
+		FirmName:  user.Firm.Name, // Assuming firm preloaded (it is: Preload("Firm") at line 66)
+		IPAddress: ipAddress,
+		UserAgent: userAgent,
+	}
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionLogin, "User", user.ID, user.Name, "User logged in", nil, nil)
+
 	// Set language cookie if user has a preference
 	if user.Language != "" {
 		middleware.SetLanguageCookie(c, user.Language)
@@ -183,6 +195,30 @@ func LoginPostHandler(c echo.Context) error {
 
 // LogoutHandler handles user logout
 func LogoutHandler(c echo.Context) error {
+	// Audit logging (Logout) - capture user before session deletion
+	if user := middleware.GetCurrentUser(c); user != nil {
+		firmID := ""
+		if user.FirmID != nil {
+			firmID = *user.FirmID
+		}
+		// Try to get firm name if possible, or leave empty if not critical
+		firmName := ""
+		if user.Firm != nil {
+			firmName = user.Firm.Name
+		}
+
+		auditCtx := services.AuditContext{
+			UserID:    user.ID,
+			UserName:  user.Name,
+			UserRole:  user.Role,
+			FirmID:    firmID,
+			FirmName:  firmName,
+			IPAddress: c.RealIP(),
+			UserAgent: c.Request().UserAgent(),
+		}
+		services.LogAuditEvent(db.DB, auditCtx, models.AuditActionLogout, "User", user.ID, user.Name, "User logged out", nil, nil)
+	}
+
 	// Get session cookie
 	cookie, err := c.Cookie(middleware.SessionCookieName)
 	if err == nil {

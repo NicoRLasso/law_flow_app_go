@@ -42,7 +42,8 @@
     "profile_settings": "Configuración de Perfil",
     "features": "Características",
     "benefits": "Beneficios",
-    "pricing": "Precios"
+    "pricing": "Precios",
+    "availability": "Disponibilidad"
   },
   "footer": {
     "product": "Producto",
@@ -217,6 +218,11 @@
     "na": "N/A",
     "loading": "Cargando...",
     "close": "Cerrar",
+    "all": "Todos",
+    "showing": "Mostrando",
+    "to": "a",
+    "of": "de",
+    "results": "resultados",
     "pagination": {
       "showing": "Mostrando {start} a {end} de {total} resultados",
       "previous": "Anterior",
@@ -1081,6 +1087,51 @@
         "users": "Usuarios",
         "firms": "Firmas",
         "logout": "Cerrar Sesión"
+    }
+  },
+  "audit": {
+    "title": "Registros de Auditoría",
+    "noLogs": "No se encontraron registros que coincidan con su búsqueda.",
+    "viewChanges": "Ver Cambios",
+    "changeDetails": "Detalles del Cambio",
+    "oldValues": "Valores Anteriores",
+    "newValues": "Valores Nuevos",
+    "filters": {
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "resourceType": "Tipo de Recurso",
+      "action": "Acción",
+      "searchPlaceholder": "Buscar registros..."
+    },
+    "resources": {
+      "case": "Caso",
+      "user": "Usuario",
+      "document": "Documento",
+      "appointment": "Cita"
+    },
+    "actions": {
+      "create": "Crear",
+      "update": "Actualizar",
+      "delete": "Eliminar",
+      "view": "Ver",
+      "download": "Descargar",
+      "visibility": "Visibilidad"
+    },
+    "verbs": {
+      "created": "creó",
+      "updated": "actualizó",
+      "deleted": "eliminó",
+      "viewed": "vio",
+      "downloaded": "descargó",
+      "visibility": "cambió la visibilidad de"
+    },
+    "table": {
+      "timestamp": "Fecha y Hora",
+      "user": "Usuario",
+      "action": "Acción",
+      "resource": "Recurso",
+      "description": "Descripción",
+      "details": "Detalles"
     }
   }
 }

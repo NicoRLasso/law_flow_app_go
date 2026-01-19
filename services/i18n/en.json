@@ -42,7 +42,8 @@
     "profile_settings": "Profile Settings",
     "features": "Features",
     "benefits": "Benefits",
-    "pricing": "Pricing"
+    "pricing": "Pricing",
+    "availability": "Availability"
   },
   "footer": {
     "product": "Product",
@@ -217,6 +218,11 @@
     "na": "N/A",
     "loading": "Loading...",
     "close": "Close",
+    "all": "All",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
     "pagination": {
       "showing": "Showing {start} to {end} of {total} results",
       "previous": "Previous",
@@ -1119,6 +1125,51 @@
         "users": "Users",
         "firms": "Firms",
         "logout": "Log out"
+    }
+  },
+  "audit": {
+    "title": "Audit Logs",
+    "noLogs": "No audit logs found matching your criteria.",
+    "viewChanges": "View Changes",
+    "changeDetails": "Change Details",
+    "oldValues": "Old Values",
+    "newValues": "New Values",
+    "filters": {
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "resourceType": "Resource Type",
+      "action": "Action",
+      "searchPlaceholder": "Search logs..."
+    },
+    "resources": {
+      "case": "Case",
+      "user": "User",
+      "document": "Document",
+      "appointment": "Appointment"
+    },
+    "actions": {
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete",
+      "view": "View",
+      "download": "Download",
+      "visibility": "Visibility"
+    },
+    "verbs": {
+      "created": "created",
+      "updated": "updated",
+      "deleted": "deleted",
+      "viewed": "viewed",
+      "downloaded": "downloaded",
+      "visibility": "changed visibility of"
+    },
+    "table": {
+      "timestamp": "Timestamp",
+      "user": "User",
+      "action": "Action",
+      "resource": "Resource",
+      "description": "Description",
+      "details": "Details"
     }
   }
 }

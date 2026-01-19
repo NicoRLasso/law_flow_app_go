@@ -4,6 +4,7 @@ import (
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services"
 	"law_flow_app_go/templates/partials"
 	"net/http"
 	"strings"
@@ -90,6 +91,9 @@ func UpdateCaseHandler(c echo.Context) error {
 		}
 		return echo.NewHTTPError(http.StatusNotFound, "Case not found")
 	}
+
+	// Capture old state for audit logging
+	oldCase := caseRecord
 
 	// Get form values
 	status := c.FormValue("status")
@@ -198,6 +202,20 @@ func UpdateCaseHandler(c echo.Context) error {
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update case")
 	}
+
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(
+		db.DB,
+		auditCtx,
+		models.AuditActionUpdate,
+		"Case",
+		caseRecord.ID,
+		caseRecord.CaseNumber,
+		"Case details updated",
+		oldCase,
+		caseRecord,
+	)
 
 	// Return success response with page reload
 	if c.Request().Header.Get("HX-Request") == "true" {

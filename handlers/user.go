@@ -54,6 +54,7 @@ func GetUser(c echo.Context) error {
 // CreateUser creates a new user (admin only)
 func CreateUser(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
 
 	// Only admins can create users (enforced by route middleware)
 	user := new(models.User)
@@ -129,6 +130,17 @@ func CreateUser(c echo.Context) error {
 	// Log security event
 	services.LogSecurityEvent("USER_CREATED", currentUser.ID, "Created user: "+user.ID)
 
+	// Log audit event
+	services.LogAuditEvent(db.DB, services.AuditContext{
+		UserID:    currentUser.ID,
+		UserName:  currentUser.Name,
+		UserRole:  currentUser.Role,
+		FirmID:    firm.ID,
+		FirmName:  firm.Name,
+		IPAddress: c.RealIP(),
+		UserAgent: c.Request().UserAgent(),
+	}, models.AuditActionCreate, "user", user.ID, user.Name, "Created new user", nil, user)
+
 	// Send welcome email asynchronously (non-blocking)
 	cfg := config.Load()
 	if user.Email != "" {
@@ -176,6 +188,19 @@ func UpdateUser(c echo.Context) error {
 	originalRole := user.Role
 	originalPassword := user.Password
 	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	// Capture old values for audit
+	oldValues := map[string]interface{}{
+		"name":             user.Name,
+		"email":            user.Email,
+		"role":             user.Role,
+		"is_active":        user.IsActive,
+		"address":          user.Address,
+		"phone_number":     user.PhoneNumber,
+		"document_type_id": user.DocumentTypeID,
+		"document_number":  user.DocumentNumber,
+	}
 
 	// Read form values
 	name := c.FormValue("name")
@@ -242,6 +267,17 @@ func UpdateUser(c echo.Context) error {
 		services.LogSecurityEvent("USER_MODIFIED", currentUser.ID, "Modified user: "+user.ID)
 	}
 
+	// Log audit event
+	services.LogAuditEvent(db.DB, services.AuditContext{
+		UserID:    currentUser.ID,
+		UserName:  currentUser.Name,
+		UserRole:  currentUser.Role,
+		FirmID:    firm.ID,
+		FirmName:  firm.Name,
+		IPAddress: c.RealIP(),
+		UserAgent: c.Request().UserAgent(),
+	}, models.AuditActionUpdate, "user", user.ID, user.Name, "Updated user details", oldValues, user)
+
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
 		// Close modal and reload users table
@@ -258,6 +294,7 @@ func UpdateUser(c echo.Context) error {
 func DeleteUser(c echo.Context) error {
 	id := c.Param("id")
 	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
 
 	var user models.User
 
@@ -286,6 +323,17 @@ func DeleteUser(c echo.Context) error {
 
 	// Log security event
 	services.LogSecurityEvent("USER_DELETED", currentUser.ID, "Deleted user: "+user.ID)
+
+	// Log audit event
+	services.LogAuditEvent(db.DB, services.AuditContext{
+		UserID:    currentUser.ID,
+		UserName:  currentUser.Name,
+		UserRole:  currentUser.Role,
+		FirmID:    firm.ID,
+		FirmName:  firm.Name,
+		IPAddress: c.RealIP(),
+		UserAgent: c.Request().UserAgent(),
+	}, models.AuditActionDelete, "user", user.ID, user.Name, "Deleted user", user, nil)
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
