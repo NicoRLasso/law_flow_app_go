@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
@@ -67,9 +68,9 @@ func FirmSetupPostHandler(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/firm/setup")
 	}
 
-	// Set default timezone if not provided
-	if timezone == "" {
-		timezone = "UTC"
+	// Force timezone based on location
+	if defaultTz := services.GetDefaultTimezone(country); defaultTz != "" {
+		timezone = defaultTz
 	}
 
 	// Create the firm
@@ -168,11 +169,18 @@ func UpdateFirmHandler(c echo.Context) error {
 			return htmxError("Firm name and country are required")
 		}
 
-		if timezone == "" {
-			timezone = "UTC"
+		// Check if name has changed
+		if firm.Name != name {
+			firm.Name = name
+			// Regenerate slug
+			firm.Slug = models.GenerateSlug(db.DB, name)
 		}
 
-		firm.Name = name
+		// Force timezone based on location
+		if defaultTz := services.GetDefaultTimezone(country); defaultTz != "" {
+			timezone = defaultTz
+		}
+
 		firm.Country = country
 		firm.Timezone = timezone
 		firm.Address = strings.TrimSpace(c.FormValue("address"))
@@ -223,7 +231,18 @@ func UpdateFirmHandler(c echo.Context) error {
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
-		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm mt-2">Firm settings updated successfully!</div>`)
+		successMsg := `<div class="text-green-500 text-sm mt-2">Firm settings updated successfully!</div>`
+
+		// If slug changed, append OOB swap for the details tab
+		if updateType == "general" && firm.Slug != "" {
+			// We can assume slug might have changed if we are here and saved successfully.
+			// Ideally we should have tracked if it changed.
+			// But sending the OOB update even if it didn't change is harmless (idempotent).
+			// Just to be safe and simple, we send it.
+			successMsg += fmt.Sprintf(`<span id="firm-slug-display" hx-swap-oob="true" class="font-mono text-xs text-foreground">%s</span>`, firm.Slug)
+		}
+
+		return c.HTML(http.StatusOK, successMsg)
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{

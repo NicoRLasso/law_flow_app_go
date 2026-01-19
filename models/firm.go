@@ -1,8 +1,9 @@
 package models
 
 import (
+	"fmt"
+	"math/rand"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -42,13 +43,13 @@ func (f *Firm) BeforeCreate(tx *gorm.DB) error {
 		f.ID = uuid.New().String()
 	}
 	if f.Slug == "" {
-		f.Slug = generateSlug(tx, f.Name)
+		f.Slug = GenerateSlug(tx, f.Name)
 	}
 	return nil
 }
 
-// generateSlug creates a URL-friendly slug from the firm name
-func generateSlug(tx *gorm.DB, name string) string {
+// GenerateSlug creates a URL-friendly slug from the firm name with a random suffix
+func GenerateSlug(tx *gorm.DB, name string) string {
 	// Convert to lowercase
 	slug := strings.ToLower(name)
 
@@ -66,26 +67,41 @@ func generateSlug(tx *gorm.DB, name string) string {
 	// Trim hyphens from start and end
 	slug = strings.Trim(slug, "-")
 
-	// Limit to 50 characters
-	if len(slug) > 50 {
-		slug = slug[:50]
+	// Limit base slug length to 40 characters to leave room for suffix
+	if len(slug) > 40 {
+		slug = slug[:40]
 		slug = strings.TrimRight(slug, "-")
 	}
 
-	// Ensure uniqueness
-	originalSlug := slug
-	counter := 1
+	// Generate a random 6-character alphanumeric suffix
+	suffix := generateRandomString(6)
+
+	// Combine base slug and suffix
+	finalSlug := fmt.Sprintf("%s-%s", slug, suffix)
+
+	// Ensure uniqueness (extremely unlikely to collide but safe to check)
 	for {
 		var count int64
-		tx.Model(&Firm{}).Where("slug = ?", slug).Count(&count)
+		tx.Model(&Firm{}).Where("slug = ?", finalSlug).Count(&count)
 		if count == 0 {
 			break
 		}
-		slug = originalSlug + "-" + strconv.Itoa(counter)
-		counter++
+		// Regenerate suffix if collision occurs
+		suffix = generateRandomString(6)
+		finalSlug = fmt.Sprintf("%s-%s", slug, suffix)
 	}
 
-	return slug
+	return finalSlug
+}
+
+// generateRandomString generates a random alphanumeric string of length n
+func generateRandomString(n int) string {
+	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }
 
 // TableName specifies the table name for Firm model
