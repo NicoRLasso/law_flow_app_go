@@ -1,0 +1,142 @@
+package partials
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate) {
+	if len(templates) == 0 {
+		<div class="p-8 md:p-12 text-center">
+			<svg class="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+			</svg>
+			<p class="text-muted-foreground">{ i18n.T(ctx, "templates.no_templates") }</p>
+		</div>
+	} else {
+		<!-- Mobile Cards View -->
+		<div class="md:hidden divide-y divide-white/10">
+			for _, template := range templates {
+				<div class="p-4">
+					<div class="flex items-start justify-between mb-2">
+						<div class="flex-1 min-w-0">
+							<h3 class="font-medium text-foreground truncate">{ template.Name }</h3>
+							if template.Category != nil {
+								<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-accent/20 text-accent mt-1">
+									{ template.Category.Name }
+								</span>
+							}
+						</div>
+						@templateStatusBadge(ctx, template.IsActive)
+					</div>
+					if template.Description != nil && *template.Description != "" {
+						<p class="text-sm text-muted-foreground line-clamp-2 mb-3">{ *template.Description }</p>
+					}
+					<div class="flex items-center gap-2 mt-3">
+						<a
+							href={ templ.SafeURL("/templates/" + template.ID + "/edit") }
+							class="flex-1 px-3 py-2 text-sm font-medium text-foreground bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-center"
+						>
+							{ i18n.T(ctx, "common.edit") }
+						</a>
+						<button
+							type="button"
+							@click={ "openConfirmationModal({title: '" + i18n.T(ctx, "templates.delete_confirm_title") + "', message: '" + i18n.T(ctx, "templates.delete_confirm_msg") + "', confirmUrl: '/api/admin/templates/" + template.ID + "', confirmMethod: 'DELETE', target: '#templates-table-container', swap: 'innerHTML'}, $el)" }
+							class="px-3 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors"
+						>
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+							</svg>
+						</button>
+					</div>
+				</div>
+			}
+		</div>
+
+		<!-- Desktop Table View -->
+		<div class="hidden md:block overflow-x-auto">
+			<table class="w-full">
+				<thead>
+					<tr class="border-b border-white/10 text-left">
+						<th class="px-6 py-4 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.name") }</th>
+						<th class="px-6 py-4 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.category") }</th>
+						<th class="px-6 py-4 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.version") }</th>
+						<th class="px-6 py-4 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "common.status") }</th>
+						<th class="px-6 py-4 text-sm font-medium text-muted-foreground text-right">{ i18n.T(ctx, "common.actions") }</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-white/5">
+					for _, template := range templates {
+						<tr class="hover:bg-white/5 transition-colors">
+							<td class="px-6 py-4">
+								<div>
+									<p class="font-medium text-foreground">{ template.Name }</p>
+									if template.Description != nil && *template.Description != "" {
+										<p class="text-sm text-muted-foreground line-clamp-1 mt-0.5">{ *template.Description }</p>
+									}
+								</div>
+							</td>
+							<td class="px-6 py-4">
+								if template.Category != nil {
+									<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-accent/20 text-accent">
+										{ template.Category.Name }
+									</span>
+								} else {
+									<span class="text-muted-foreground">-</span>
+								}
+							</td>
+							<td class="px-6 py-4">
+								<span class="text-sm text-muted-foreground">v{ templateIntToString(template.Version) }</span>
+							</td>
+							<td class="px-6 py-4">
+								@templateStatusBadge(ctx, template.IsActive)
+							</td>
+							<td class="px-6 py-4 text-right">
+								<div class="flex items-center justify-end gap-2">
+									<a
+										href={ templ.SafeURL("/templates/" + template.ID + "/edit") }
+										class="p-2 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
+										title={ i18n.T(ctx, "common.edit") }
+									>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+										</svg>
+									</a>
+									<button
+										type="button"
+										@click={ "openConfirmationModal({title: '" + i18n.T(ctx, "templates.delete_confirm_title") + "', message: '" + i18n.T(ctx, "templates.delete_confirm_msg") + "', confirmUrl: '/api/admin/templates/" + template.ID + "', confirmMethod: 'DELETE', target: '#templates-table-container', swap: 'innerHTML'}, $el)" }
+										class="p-2 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+										title={ i18n.T(ctx, "common.delete") }
+									>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+										</svg>
+									</button>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+}
+
+templ templateStatusBadge(ctx context.Context, isActive bool) {
+	if isActive {
+		<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400">
+			{ i18n.T(ctx, "common.active") }
+		</span>
+	} else {
+		<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400">
+			{ i18n.T(ctx, "common.inactive") }
+		</span>
+	}
+}
+
+func templateIntToString(n int) string {
+	return fmt.Sprintf("%d", n)
+}
+

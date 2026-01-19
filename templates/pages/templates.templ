@@ -1,0 +1,90 @@
+package pages
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/services/i18n"
+)
+
+templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, categories []models.TemplateCategory) {
+	@layouts.Base(ctx, title, csrfToken) {
+		<div class="min-h-screen bg-background">
+			@components.Navbar(ctx, user, firm, "/templates")
+			
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="w-full ">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 md:mb-8">
+						<div>
+							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "templates.title") }</h1>
+							<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "templates.description") }</p>
+						</div>
+						<a
+							href="/templates/new"
+							class="btn-primary flex items-center gap-2 w-full sm:w-auto justify-center px-4 py-2.5 rounded-lg"
+						>
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+							</svg>
+							{ i18n.T(ctx, "templates.create") }
+						</a>
+					</div>
+
+					<!-- Filters -->
+					<div class="glass-panel rounded-2xl p-4 md:p-6 border border-white/10 mb-6">
+						<div class="flex flex-col sm:flex-row gap-4">
+							<div class="flex-1">
+								<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "common.search") }</label>
+								<input
+									type="text"
+									name="search"
+									placeholder={ i18n.T(ctx, "templates.search_placeholder") }
+									hx-get="/api/admin/templates"
+									hx-target="#templates-table-container"
+									hx-trigger="keyup changed delay:300ms"
+									hx-include="[name='category_id']"
+									class="input-field w-full"
+								/>
+							</div>
+							<div class="flex-1 w-full sm:w-48">
+								<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "templates.category") }</label>
+								<select
+									name="category_id"
+									hx-get="/api/admin/templates"
+									hx-target="#templates-table-container"
+									hx-trigger="change"
+									hx-include="[name='search']"
+									class="input-field w-full"
+								>
+									<option value="">{ i18n.T(ctx, "common.all") }</option>
+									for _, cat := range categories {
+										<option value={ cat.ID }>{ cat.Name }</option>
+									}
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<!-- Templates Table -->
+					<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+						<div
+							id="templates-table-container"
+							hx-get="/api/admin/templates"
+							hx-trigger="load"
+							hx-swap="innerHTML"
+						>
+							<div class="p-8 text-center text-muted-foreground">
+								{ i18n.T(ctx, "common.loading") }
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+
+			@components.ConfirmationModal(ctx)
+			<!-- Modal Container -->
+			<div id="template-modal-container"></div>
+		</div>
+	}
+}

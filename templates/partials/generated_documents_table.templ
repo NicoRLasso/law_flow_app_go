@@ -1,0 +1,141 @@
+package partials
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"time"
+)
+
+templ GeneratedDocumentsTable(ctx context.Context, docs []models.GeneratedDocument, caseID string) {
+	if len(docs) == 0 {
+		<div class="p-8 text-center">
+			<svg class="w-10 h-10 mx-auto text-muted-foreground/50 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+			</svg>
+			<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "templates.no_generated_documents") }</p>
+		</div>
+	} else {
+		<!-- Mobile View -->
+		<div class="md:hidden divide-y divide-white/10">
+			for _, doc := range docs {
+				<div class="p-4">
+					<div class="flex items-start justify-between mb-2">
+						<div class="flex-1 min-w-0">
+							<h4 class="font-medium text-foreground truncate">{ doc.Name }</h4>
+							<p class="text-xs text-muted-foreground mt-1">
+								{ formatGenDocDate(doc.CreatedAt) }
+							</p>
+						</div>
+						<a
+							href={ templ.SafeURL("/api/cases/" + caseID + "/generated/" + doc.ID + "/download") }
+							class="p-2 text-accent hover:bg-accent/10 rounded-lg transition-colors"
+							title={ i18n.T(ctx, "common.download") }
+						>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+							</svg>
+						</a>
+					</div>
+					<div class="flex items-center gap-2 text-xs text-muted-foreground">
+						if doc.Template.ID != "" {
+							<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-white/5">
+								{ doc.Template.Name }
+							</span>
+						}
+						<span>·</span>
+						<span>{ formatDocFileSize(doc.FileSize) }</span>
+					</div>
+				</div>
+			}
+		</div>
+
+		<!-- Desktop View -->
+		<div class="hidden md:block overflow-x-auto">
+			<table class="w-full">
+				<thead>
+					<tr class="border-b border-white/10 text-left">
+						<th class="px-6 py-3 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.document_name") }</th>
+						<th class="px-6 py-3 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.template") }</th>
+						<th class="px-6 py-3 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.generated_by") }</th>
+						<th class="px-6 py-3 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.date") }</th>
+						<th class="px-6 py-3 text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "templates.size") }</th>
+						<th class="px-6 py-3 text-sm font-medium text-muted-foreground text-right">{ i18n.T(ctx, "common.actions") }</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-white/5">
+					for _, doc := range docs {
+						<tr class="hover:bg-white/5 transition-colors">
+							<td class="px-6 py-4">
+								<div class="flex items-center gap-3">
+									<div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center">
+										<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+										</svg>
+									</div>
+									<span class="font-medium text-foreground">{ doc.Name }</span>
+								</div>
+							</td>
+							<td class="px-6 py-4">
+								if doc.Template.ID != "" {
+									<span class="text-sm text-muted-foreground">{ doc.Template.Name } (v{ genDocIntToString(doc.TemplateVersion) })</span>
+								} else {
+									<span class="text-sm text-muted-foreground">-</span>
+								}
+							</td>
+							<td class="px-6 py-4">
+								if doc.GeneratedBy.ID != "" {
+									<span class="text-sm text-muted-foreground">{ doc.GeneratedBy.Name }</span>
+								} else {
+									<span class="text-sm text-muted-foreground">-</span>
+								}
+							</td>
+							<td class="px-6 py-4">
+								<span class="text-sm text-muted-foreground">{ formatGenDocDate(doc.CreatedAt) }</span>
+							</td>
+							<td class="px-6 py-4">
+								<span class="text-sm text-muted-foreground">{ formatDocFileSize(doc.FileSize) }</span>
+							</td>
+							<td class="px-6 py-4 text-right">
+								<a
+									href={ templ.SafeURL("/api/cases/" + caseID + "/generated/" + doc.ID + "/download") }
+									class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/10 rounded-lg transition-colors"
+								>
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+									</svg>
+									{ i18n.T(ctx, "common.download") }
+								</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+}
+
+func formatGenDocDate(t time.Time) string {
+	return t.Format("Jan 2, 2006")
+}
+
+func formatDocFileSize(size int64) string {
+	const (
+		KB = 1024
+		MB = KB * 1024
+	)
+	switch {
+	case size >= MB:
+		return fmt.Sprintf("%.1f MB", float64(size)/float64(MB))
+	case size >= KB:
+		return fmt.Sprintf("%.1f KB", float64(size)/float64(KB))
+	default:
+		return fmt.Sprintf("%d B", size)
+	}
+}
+
+func genDocIntToString(n int) string {
+	return fmt.Sprintf("%d", n)
+}
+

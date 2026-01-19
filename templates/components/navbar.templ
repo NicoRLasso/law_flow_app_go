@@ -22,7 +22,14 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 					<!-- Desktop Navigation -->
 					<div class="hidden md:flex items-center gap-1">
 						
-						// Cases Dropdown
+						// Users (first)
+						if currentPath == "/users" {
+							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.users") }</a>
+						} else {
+							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.users") }</a>
+						}
+
+						// Cases Dropdown (second)
 						<div x-data="{ casesOpen: false }" class="relative">
 							<button 
 								@click="casesOpen = !casesOpen"
@@ -88,15 +95,17 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 							</div>
 						</div>
 
-						// Users (kept as is)
-						if currentPath == "/users" {
-							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.users") }</a>
-						} else {
-							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.users") }</a>
+						// Templates (third - admin only)
+						if user.Role == "admin" {
+							if currentPath == "/templates" {
+								<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.templates") }</a>
+							} else {
+								<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.templates") }</a>
+							}
 						}
 
 						if user.Role == "admin" || user.Role == "lawyer" {
-							// Calendars Dropdown
+							// Calendars Dropdown (fourth)
 							<div x-data="{ calendarsOpen: false }" class="relative">
 								<button 
 									@click="calendarsOpen = !calendarsOpen"
@@ -250,6 +259,13 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
 										</div>
 										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "audit.title") }</span>
+									</a>
+									<a href="/templates" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
+										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
+										<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+										</div>
+										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.templates") }</span>
 									</a>
 								}
 								

@@ -1,0 +1,127 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+)
+
+templ VariablesSidebar(ctx context.Context) {
+	<div class="space-y-4 max-h-[400px] overflow-y-auto pr-2" x-data="{ expandedCategory: null }">
+		<!-- Client Variables -->
+		<div class="border border-white/10 rounded-lg overflow-hidden">
+			<button
+				type="button"
+				@click="expandedCategory = expandedCategory === 'client' ? null : 'client'"
+				class="w-full flex items-center justify-between px-3 py-2 bg-white/5 hover:bg-white/10 transition-colors text-left"
+			>
+				<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "templates.variables.client") }</span>
+				<svg class="w-4 h-4 text-muted-foreground transition-transform" :class="{ 'rotate-180': expandedCategory === 'client' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+			<div x-show="expandedCategory === 'client'" x-collapse class="p-2 space-y-1">
+				@variableButton("client.name", "Name")
+				@variableButton("client.email", "Email")
+				@variableButton("client.phone", "Phone")
+				@variableButton("client.document_type", "Doc Type")
+				@variableButton("client.document_number", "Doc Number")
+				@variableButton("client.address", "Address")
+			</div>
+		</div>
+
+		<!-- Case Variables -->
+		<div class="border border-white/10 rounded-lg overflow-hidden">
+			<button
+				type="button"
+				@click="expandedCategory = expandedCategory === 'case' ? null : 'case'"
+				class="w-full flex items-center justify-between px-3 py-2 bg-white/5 hover:bg-white/10 transition-colors text-left"
+			>
+				<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "templates.variables.case") }</span>
+				<svg class="w-4 h-4 text-muted-foreground transition-transform" :class="{ 'rotate-180': expandedCategory === 'case' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+			<div x-show="expandedCategory === 'case'" x-collapse class="p-2 space-y-1">
+				@variableButton("case.number", "Number")
+				@variableButton("case.title", "Title")
+				@variableButton("case.description", "Description")
+				@variableButton("case.status", "Status")
+				@variableButton("case.domain", "Domain")
+				@variableButton("case.branch", "Branch")
+				@variableButton("case.subtypes", "Subtypes")
+				@variableButton("case.opened_at", "Opened At")
+			</div>
+		</div>
+
+		<!-- Firm Variables -->
+		<div class="border border-white/10 rounded-lg overflow-hidden">
+			<button
+				type="button"
+				@click="expandedCategory = expandedCategory === 'firm' ? null : 'firm'"
+				class="w-full flex items-center justify-between px-3 py-2 bg-white/5 hover:bg-white/10 transition-colors text-left"
+			>
+				<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "templates.variables.firm") }</span>
+				<svg class="w-4 h-4 text-muted-foreground transition-transform" :class="{ 'rotate-180': expandedCategory === 'firm' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+			<div x-show="expandedCategory === 'firm'" x-collapse class="p-2 space-y-1">
+				@variableButton("firm.name", "Name")
+				@variableButton("firm.address", "Address")
+				@variableButton("firm.city", "City")
+				@variableButton("firm.phone", "Phone")
+				@variableButton("firm.billing_email", "Billing Email")
+				@variableButton("firm.info_email", "Info Email")
+			</div>
+		</div>
+
+		<!-- Lawyer Variables -->
+		<div class="border border-white/10 rounded-lg overflow-hidden">
+			<button
+				type="button"
+				@click="expandedCategory = expandedCategory === 'lawyer' ? null : 'lawyer'"
+				class="w-full flex items-center justify-between px-3 py-2 bg-white/5 hover:bg-white/10 transition-colors text-left"
+			>
+				<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "templates.variables.lawyer") }</span>
+				<svg class="w-4 h-4 text-muted-foreground transition-transform" :class="{ 'rotate-180': expandedCategory === 'lawyer' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+			<div x-show="expandedCategory === 'lawyer'" x-collapse class="p-2 space-y-1">
+				@variableButton("lawyer.name", "Name")
+				@variableButton("lawyer.email", "Email")
+				@variableButton("lawyer.phone", "Phone")
+			</div>
+		</div>
+
+		<!-- Date Variables -->
+		<div class="border border-white/10 rounded-lg overflow-hidden">
+			<button
+				type="button"
+				@click="expandedCategory = expandedCategory === 'dates' ? null : 'dates'"
+				class="w-full flex items-center justify-between px-3 py-2 bg-white/5 hover:bg-white/10 transition-colors text-left"
+			>
+				<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "templates.variables.dates") }</span>
+				<svg class="w-4 h-4 text-muted-foreground transition-transform" :class="{ 'rotate-180': expandedCategory === 'dates' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+			<div x-show="expandedCategory === 'dates'" x-collapse class="p-2 space-y-1">
+				@variableButton("today.date", "Date (Short)")
+				@variableButton("today.date_long", "Date (Long)")
+				@variableButton("today.year", "Year")
+			</div>
+		</div>
+	</div>
+}
+
+templ variableButton(variable string, label string) {
+	<button
+		type="button"
+		@click={ "insertVariable('" + variable + "')" }
+		class="w-full text-left px-2 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 rounded transition-colors flex items-center justify-between group"
+	>
+		<span>{ label }</span>
+		<code class="text-[10px] text-accent/70 group-hover:text-accent">{ "{{" + variable + "}}" }</code>
+	</button>
+}

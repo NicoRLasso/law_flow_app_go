@@ -43,7 +43,78 @@
     "features": "Características",
     "benefits": "Beneficios",
     "pricing": "Precios",
-    "availability": "Disponibilidad"
+    "availability": "Disponibilidad",
+    "templates": "Plantillas"
+  },
+  "templates": {
+    "title": "Plantillas de Documentos",
+    "page_description": "Crea y gestiona plantillas de documentos reutilizables para documentos legales",
+    "create": "Nueva Plantilla",
+    "edit": "Editar Plantilla",
+    "name": "Nombre de Plantilla",
+    "name_placeholder": "Nombre de la plantilla...",
+    "description": "Descripción",
+    "description_placeholder": "Breve descripción de esta plantilla...",
+    "category": "Categoría",
+    "select_category": "Seleccionar categoría",
+    "content": "Contenido",
+    "version": "Versión",
+    "page_settings": "Configuración de Página",
+    "orientation": "Orientación",
+    "page_size": "Tamaño de Página",
+    "active": "Activo",
+    "search_placeholder": "Buscar plantillas...",
+    "no_templates": "No se encontraron plantillas",
+    "create_first": "Crea tu primera plantilla para comenzar",
+    "delete_confirm": "¿Estás seguro de que deseas eliminar esta plantilla?",
+    "delete_confirm_title": "Eliminar Plantilla",
+    "delete_confirm_msg": "¿Estás seguro de que deseas eliminar esta plantilla? Esta acción no se puede deshacer.",
+    "variables_title": "Variables de Plantilla",
+    "insert_variable": "Haz clic en una variable para insertarla en la posición del cursor",
+    "select_template": "Seleccionar Plantilla",
+    "generate": "Generar Documento",
+    "generate_pdf": "Generar PDF",
+    "preview": "Vista Previa",
+    "document_name": "Nombre del Documento",
+    "generated_documents": "Documentos Generados",
+    "no_generated_documents": "Aún no se han generado documentos",
+    "template": "Plantilla",
+    "generated_by": "Generado Por",
+    "date": "Fecha",
+    "size": "Tamaño",
+    "variables": {
+      "client": "Cliente",
+      "client_name": "Nombre del Cliente",
+      "client_email": "Email del Cliente",
+      "client_phone": "Teléfono del Cliente",
+      "client_doc_type": "Tipo de Documento",
+      "client_doc_number": "Número de Documento",
+      "client_address": "Dirección del Cliente",
+      "case": "Caso",
+      "case_number": "Número de Caso",
+      "case_title": "Título del Caso",
+      "case_description": "Descripción del Caso",
+      "case_status": "Estado del Caso",
+      "case_domain": "Dominio Legal",
+      "case_branch": "Rama Legal",
+      "case_subtypes": "Subtipos del Caso",
+      "case_opened_at": "Fecha de Apertura",
+      "firm": "Firma",
+      "firm_name": "Nombre de la Firma",
+      "firm_address": "Dirección de la Firma",
+      "firm_city": "Ciudad de la Firma",
+      "firm_phone": "Teléfono de la Firma",
+      "firm_billing_email": "Email de Facturación",
+      "firm_info_email": "Email de Información",
+      "lawyer": "Abogado",
+      "lawyer_name": "Nombre del Abogado",
+      "lawyer_email": "Email del Abogado",
+      "lawyer_phone": "Teléfono del Abogado",
+      "dates": "Fechas",
+      "today_date": "Fecha de Hoy",
+      "today_date_long": "Hoy (Formato Largo)",
+      "today_year": "Año Actual"
+    }
   },
   "footer": {
     "product": "Producto",
@@ -230,7 +301,12 @@
       "next": "Siguiente"
     },
     "reset": "Restablecer",
-    "optional": "Opcional"
+    "optional": "Opcional",
+    "settings": "Configuración",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "download": "Descargar",
+    "search": "Buscar"
   },
   "auth": {
     "email": "Correo Electrónico",
@@ -773,7 +849,8 @@
     "nav": {
       "general": "General",
       "email": "Config Email",
-      "details": "Detalles Firma"
+      "details": "Detalles Firma",
+      "templates": "Plantillas"
     },
     "email": {
       "title": "Configuración de Correo",
@@ -790,6 +867,16 @@
       "id": "ID de Firma",
       "slug": "Slug",
       "created": "Creado"
+    },
+    "templates": {
+      "categories_title": "Categorías de Plantillas",
+      "categories_desc": "Organiza tus plantillas de documentos en categorías para una mejor gestión.",
+      "add_category": "Agregar Categoría",
+      "category_modal_title": "Categoría",
+      "category_name": "Nombre de la Categoría",
+      "category_description": "Descripción (opcional)",
+      "no_categories": "No hay categorías aún. Crea una para organizar tus plantillas.",
+      "delete_category_confirm": "¿Estás seguro de que deseas eliminar esta categoría?"
     }
   },
   "case": {

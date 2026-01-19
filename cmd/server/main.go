@@ -39,7 +39,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -312,6 +312,21 @@ func main() {
 			adminRoutes.GET("/audit-logs", handlers.AuditLogsPageHandler)
 			adminRoutes.GET("/api/audit-logs", handlers.GetAuditLogsHandler)
 			adminRoutes.GET("/api/audit-logs/:type/:id", handlers.GetResourceHistoryHandler)
+
+			// Document Templates (admin only)
+			adminRoutes.GET("/templates", handlers.TemplatesPageHandler)
+			adminRoutes.GET("/templates/new", handlers.TemplateEditorPageHandler)
+			adminRoutes.GET("/templates/:id/edit", handlers.TemplateEditorPageHandler)
+			adminRoutes.GET("/api/admin/templates", handlers.GetTemplatesHandler)
+			adminRoutes.POST("/api/admin/templates", handlers.CreateTemplateHandler)
+			adminRoutes.PUT("/api/admin/templates/:id", handlers.UpdateTemplateHandler)
+			adminRoutes.DELETE("/api/admin/templates/:id", handlers.DeleteTemplateHandler)
+			adminRoutes.GET("/api/admin/templates/variables", handlers.GetTemplateVariablesHandler)
+			// Template Categories
+			adminRoutes.GET("/api/admin/templates/categories", handlers.GetCategoriesHandler)
+			adminRoutes.POST("/api/admin/templates/categories", handlers.CreateCategoryHandler)
+			adminRoutes.PUT("/api/admin/templates/categories/:id", handlers.UpdateCategoryHandler)
+			adminRoutes.DELETE("/api/admin/templates/categories/:id", handlers.DeleteCategoryHandler)
 		}
 
 		// Case request routes (admin and lawyer only)
@@ -369,6 +384,12 @@ func main() {
 			caseRoutes.GET("/:id/logs/:logId", handlers.GetCaseLogHandler)
 			caseRoutes.PUT("/:id/logs/:logId", handlers.UpdateCaseLogHandler)
 			caseRoutes.DELETE("/:id/logs/:logId", handlers.DeleteCaseLogHandler)
+			// Document Generation routes
+			caseRoutes.GET("/:id/generate", handlers.GetGenerateDocumentTabHandler)
+			caseRoutes.GET("/:id/generate/preview", handlers.PreviewTemplateHandler)
+			caseRoutes.POST("/:id/generate", handlers.GenerateDocumentHandler)
+			caseRoutes.GET("/:id/generated", handlers.GetGeneratedDocumentsHandler)
+			caseRoutes.GET("/:id/generated/:docId/download", handlers.DownloadGeneratedDocumentHandler)
 			// Historical case routes
 			caseRoutes.GET("/history/new", handlers.GetHistoricalCaseFormHandler)
 			caseRoutes.POST("/history", handlers.CreateHistoricalCaseHandler)

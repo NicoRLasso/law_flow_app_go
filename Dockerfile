@@ -16,7 +16,20 @@ RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go
 # Runtime stage - minimal image
 FROM alpine:3.21
 
-RUN apk add --no-cache ca-certificates tzdata
+# Install runtime dependencies including Chromium for PDF generation
+RUN apk add --no-cache \
+    ca-certificates \
+    tzdata \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ttf-freefont \
+    font-noto-emoji
+
+# Set Chromium flags for headless operation
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV CHROME_PATH=/usr/lib/chromium/
 
 WORKDIR /app
 
@@ -37,3 +50,4 @@ USER appuser
 EXPOSE 8080
 
 CMD ["./server"]
+
