@@ -106,6 +106,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										hx-swap="innerHTML"
 										class="space-y-4"
 									>
+										<input type="hidden" name="update_type" value="general" />
 										<!-- Firm Name -->
 										<div>
 											<label for="name" class="block text-sm font-medium text-foreground mb-2">
@@ -239,6 +240,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										hx-swap="innerHTML"
 										class="space-y-4"
 									>
+										<input type="hidden" name="update_type" value="email" />
 										<!-- Billing Email -->
 										<div>
 											<label for="billing_email" class="block text-sm font-medium text-foreground mb-2">

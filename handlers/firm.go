@@ -149,54 +149,77 @@ func FirmSettingsPageHandler(c echo.Context) error {
 func UpdateFirmHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
+	updateType := c.FormValue("update_type")
 
-	// Parse form data
-	name := strings.TrimSpace(c.FormValue("name"))
-	country := strings.TrimSpace(c.FormValue("country"))
-	timezone := strings.TrimSpace(c.FormValue("timezone"))
-	address := strings.TrimSpace(c.FormValue("address"))
-	city := strings.TrimSpace(c.FormValue("city"))
-	phone := strings.TrimSpace(c.FormValue("phone"))
-	description := strings.TrimSpace(c.FormValue("description"))
-	billingEmail := strings.TrimSpace(c.FormValue("billing_email"))
-	infoEmail := strings.TrimSpace(c.FormValue("info_email"))
-	noreplyEmail := strings.TrimSpace(c.FormValue("noreply_email"))
-
-	// Validate required fields
-	if name == "" || country == "" || billingEmail == "" {
+	// Helper function for HTMX error response
+	htmxError := func(msg string) error {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Firm name, country, and billing email are required</div>`)
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">`+msg+`</div>`)
 		}
-		return echo.NewHTTPError(http.StatusBadRequest, "Firm name, country, and billing email are required")
+		return echo.NewHTTPError(http.StatusBadRequest, msg)
 	}
 
-	// Set default timezone if not provided
-	if timezone == "" {
-		timezone = "UTC"
-	}
+	if updateType == "general" {
+		name := strings.TrimSpace(c.FormValue("name"))
+		country := strings.TrimSpace(c.FormValue("country"))
+		timezone := strings.TrimSpace(c.FormValue("timezone"))
 
-	// Update firm fields
-	firm.Name = name
-	firm.Country = country
-	firm.Timezone = timezone
-	firm.Address = address
-	firm.City = city
-	firm.Phone = phone
-	firm.Description = description
-	firm.BillingEmail = billingEmail
-	firm.InfoEmail = infoEmail
-	firm.NoreplyEmail = noreplyEmail
+		if name == "" || country == "" {
+			return htmxError("Firm name and country are required")
+		}
+
+		if timezone == "" {
+			timezone = "UTC"
+		}
+
+		firm.Name = name
+		firm.Country = country
+		firm.Timezone = timezone
+		firm.Address = strings.TrimSpace(c.FormValue("address"))
+		firm.City = strings.TrimSpace(c.FormValue("city"))
+		firm.Phone = strings.TrimSpace(c.FormValue("phone"))
+		firm.Description = strings.TrimSpace(c.FormValue("description"))
+
+	} else if updateType == "email" {
+		billingEmail := strings.TrimSpace(c.FormValue("billing_email"))
+
+		if billingEmail == "" {
+			return htmxError("Billing email is required")
+		}
+
+		firm.BillingEmail = billingEmail
+		firm.InfoEmail = strings.TrimSpace(c.FormValue("info_email"))
+		firm.NoreplyEmail = strings.TrimSpace(c.FormValue("noreply_email"))
+
+	} else {
+		// Fallback for legacy requests or unknown types
+		// Try to parse everything but only if critical fields are present
+		name := strings.TrimSpace(c.FormValue("name"))
+		billingEmail := strings.TrimSpace(c.FormValue("billing_email"))
+
+		if name != "" && billingEmail != "" {
+			firm.Name = name
+			firm.BillingEmail = billingEmail
+			// Update other fields if they look present?
+			// Safer to just require update_type for robust partial updates.
+			// But to be safe against the error currently seen (missing one or the other),
+			// we just return error if we can't determine intent.
+			return htmxError("Invalid update request type")
+		}
+		return htmxError("Invalid update request")
+	}
 
 	// Save changes
 	if err := db.DB.Save(firm).Error; err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to update firm settings. Please try again.</div>`)
 		}
+		c.Logger().Errorf("Error saving firm: %v", err)
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update firm settings")
 	}
 
 	// Log security event
-	services.LogSecurityEvent("FIRM_UPDATED", currentUser.ID, "Admin updated firm settings: "+firm.ID)
+	services.LogSecurityEvent("FIRM_UPDATED", currentUser.ID, "Admin updated firm settings ("+updateType+"): "+firm.ID)
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
