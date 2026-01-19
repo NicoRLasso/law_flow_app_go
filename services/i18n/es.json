@@ -42,8 +42,7 @@
     "profile_settings": "Configuración de Perfil",
     "features": "Características",
     "benefits": "Beneficios",
-    "pricing": "Precios",
-    "login": "Iniciar Sesión"
+    "pricing": "Precios"
   },
   "footer": {
     "product": "Producto",
@@ -70,33 +69,27 @@
     "slogan": "Gestión moderna para firmas de abogados modernas. Optimiza tu flujo de trabajo y enfócate en lo que importa."
   },
   "pages": {
-    "about": {
-      "title": "Sobre Nosotros",
-      "mission_label": "Nuestra Misión",
-      "mission_title": "Empoderando Firmas para",
-      "mission_highlight": "Trabajar Inteligente",
-      "mission_desc": "Estamos construyendo el sistema operativo para la práctica legal moderna. Nuestra misión es eliminar el trabajo administrativo para que los abogados puedan enfocarse en lo que hacen mejor: ejercer el derecho.",
-      "values": {
-        "innovation_title": "Innovación",
-        "innovation_desc": "Constantemente empujamos los límites de la tecnología legal, usando IA y automatización para resolver problemas reales.",
-        "trust_title": "Confianza",
-        "trust_desc": "La seguridad y confiabilidad son el núcleo de todo lo que construimos. Sus datos son nuestra prioridad.",
-        "partnership_title": "Asociación",
-        "partnership_desc": "Tenemos éxito cuando nuestros clientes tienen éxito. No somos solo un proveedor; somos un socio en su crecimiento."
-      },
-      "team_title": "Conozca al Equipo",
-      "team_desc": "Un equipo diverso de ingenieros, diseñadores y expertos legales."
-    },
     "contact": {
       "title": "Contáctenos",
       "label": "Póngase en Contacto",
       "desc": "¿Tiene preguntas? Nos encantaría saber de usted. Envíenos un mensaje y responderemos lo antes posible.",
       "form": {
+        "title": "Envíenos un Mensaje",
         "name": "Nombre",
         "email": "Email",
         "message": "Mensaje",
         "send": "Enviar Mensaje",
         "or_email": "O envíenos un email directamente a"
+      },
+      "promo": {
+        "tagline": "Construyamos Algo Grande Juntos",
+        "desc": "Ya sea que busque optimizar su práctica o tenga preguntas sobre nuestra plataforma, estamos aquí para ayudar.",
+        "fast_title": "Respuesta Rápida",
+        "fast_desc": "Respondemos a todas las consultas en 24 horas",
+        "secure_title": "Seguro y Confidencial",
+        "secure_desc": "Su información está protegida con encriptación de grado bancario",
+        "support_title": "Soporte Experto",
+        "support_desc": "Nuestro equipo de especialistas en tecnología legal está listo para ayudar"
       }
     },
     "security": {
@@ -112,22 +105,60 @@
       "compliance_title": "Cumplimiento",
       "compliance_desc": "Estamos comprometidos a mantener el cumplimiento con estándares globales incluyendo GDPR, CCPA y regulaciones de la industria legal para el manejo de datos.",
       "access_title": "Control de Acceso",
-      "access_desc": "Control de acceso basado en roles (RBAC), autenticación multifactor (MFA) y registros de auditoría detallados le dan control total y visibilidad sobre sus datos."
+      "access_desc": "Control de acceso basado en roles (RBAC), autenticación multifactor (MFA) y registros de auditoría detallados le dan control total y visibilidad sobre sus datos.",
+      "cta_title": "¿Listo para proteger su práctica?",
+      "cta_desc": "Únase a cientos de firmas de abogados que confían en Law Flow con sus datos."
     },
     "privacy": {
       "title": "Política de Privacidad",
       "updated": "Última actualización: Enero 2026",
-      "intro": "En Law Flow, tomamos su privacidad en serio. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestro sitio web o utiliza nuestra aplicación."
+      "intro": "En Law Flow, tomamos su privacidad en serio. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestro sitio web o utiliza nuestra aplicación.",
+      "section1_title": "1. Información que Recopilamos",
+      "section1_content": "Recopilamos información que usted nos proporciona directamente cuando se registra para una cuenta, crea o modifica su perfil, establece preferencias, se suscribe a nuestro boletín o contacta al soporte al cliente. Esta información puede incluir su nombre, dirección de email, número de teléfono, información de pago y cualquier otra información que elija proporcionar.",
+      "section2_title": "2. Cómo Usamos Su Información",
+      "section2_content": "Usamos la información que recopilamos para operar, mantener y proporcionarle las características y funcionalidad del Servicio, para comunicarnos con usted, para monitorear y analizar tendencias y uso, y para mejorar nuestro Servicio y desarrollar nuevos productos, servicios, características y funcionalidades.",
+      "section3_title": "3. Seguridad de Datos",
+      "section3_content": "Implementamos medidas técnicas y organizativas apropiadas para proteger la seguridad de su información personal. Sin embargo, tenga en cuenta que ningún método de transmisión por internet o método de almacenamiento electrónico es 100% seguro.",
+      "section4_title": "4. Retención de Datos",
+      "section4_content": "Retenemos su información personal durante el tiempo necesario para cumplir con los propósitos descritos en esta Política de Privacidad, a menos que la ley requiera o permita un período de retención más largo.",
+      "section5_title": "5. Sus Derechos",
+      "section5_content": "Dependiendo de su ubicación, puede tener ciertos derechos respecto a su información personal, incluyendo el derecho a acceder, corregir, eliminar o portar sus datos. Contáctenos para ejercer estos derechos.",
+      "section6_title": "6. Contáctenos",
+      "section6_content": "Si tiene alguna pregunta sobre esta Política de Privacidad, contáctenos en"
     },
     "terms": {
       "title": "Términos de Servicio",
       "updated": "Última actualización: Enero 2026",
-      "intro": "Por favor lea estos Términos de Servicio cuidadosamente antes de usar la aplicación Law Flow."
+      "intro": "Por favor lea estos Términos de Servicio cuidadosamente antes de usar la aplicación Law Flow.",
+      "section1_title": "1. Aceptación de Términos",
+      "section1_content": "Al acceder o usar el Servicio, usted acepta estar sujeto a estos Términos. Si no está de acuerdo con alguna parte de los términos, entonces no puede acceder al Servicio.",
+      "section2_title": "2. Cuentas",
+      "section2_content": "Cuando crea una cuenta con nosotros, debe proporcionarnos información que sea precisa, completa y actual en todo momento. No hacerlo constituye una violación de los Términos, lo que puede resultar en la terminación inmediata de su cuenta en nuestro Servicio.",
+      "section3_title": "3. Propiedad Intelectual",
+      "section3_content": "El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de Law Flow Inc y sus licenciantes.",
+      "section4_title": "4. Contenido del Usuario",
+      "section4_content": "Usted conserva todos los derechos sobre el contenido que sube al Servicio. Al subir contenido, nos otorga una licencia para almacenar y mostrar ese contenido según sea necesario para proporcionar el Servicio.",
+      "section5_title": "5. Terminación",
+      "section5_content": "Podemos terminar o suspender el acceso a nuestro Servicio inmediatamente, sin previo aviso ni responsabilidad, por cualquier motivo, incluyendo sin limitación si usted viola los Términos.",
+      "section6_title": "6. Limitación de Responsabilidad",
+      "section6_content": "En ningún caso Law Flow Inc, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos.",
+      "section7_title": "7. Ley Aplicable",
+      "section7_content": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de Delaware, Estados Unidos, sin tener en cuenta sus disposiciones sobre conflictos de leyes."
     },
     "cookies": {
       "title": "Política de Cookies",
       "updated": "Última actualización: Enero 2026",
-      "intro": "Esta Política de Cookies explica qué son las cookies y cómo las usamos."
+      "intro": "Esta Política de Cookies explica qué son las cookies y cómo las usamos.",
+      "section1_title": "¿Qué son las cookies?",
+      "section1_content": "Las cookies son pequeños archivos de texto que un sitio web que visita envía a su navegador web. Un archivo de cookie se almacena en su navegador web y permite que el Servicio o un tercero lo reconozca y haga que su próxima visita sea más fácil y el Servicio más útil para usted.",
+      "section2_title": "Cómo usa Law Flow las cookies",
+      "section2_content": "Cuando usa y accede al Servicio, podemos colocar varios archivos de cookies en su navegador web. Usamos cookies para los siguientes propósitos: para habilitar ciertas funciones del Servicio, para proporcionar análisis, para almacenar sus preferencias, para habilitar la entrega de anuncios, incluyendo publicidad conductual.",
+      "section3_title": "Cookies Esenciales",
+      "section3_content": "Usamos cookies esenciales para autenticar usuarios y prevenir el uso fraudulento de cuentas de usuario.",
+      "section4_title": "Cookies de Análisis",
+      "section4_content": "Usamos cookies de análisis para rastrear información sobre cómo se usa el Servicio para poder hacer mejoras. También podemos usar cookies de análisis para probar nuevas características o páginas.",
+      "section5_title": "Sus Opciones",
+      "section5_content": "Puede controlar y/o eliminar cookies como desee. Puede eliminar todas las cookies que ya están en su computadora y puede configurar la mayoría de los navegadores para evitar que se coloquen. Sin embargo, si hace esto, es posible que tenga que ajustar manualmente algunas preferencias cada vez que visite un sitio y algunos servicios y funcionalidades pueden no funcionar."
     },
     "compliance": {
       "title": "Cumplimiento",
@@ -138,7 +169,32 @@
       "soc2_title": "SOC 2 Tipo II",
       "soc2_desc": "Completamos con éxito la auditoría SOC 2 Tipo II de AICPA.",
       "gdpr_title": "Cumplimiento GDPR",
-      "gdpr_desc": "Cumplimos totalmente con el Reglamento General de Protección de Datos (GDPR)."
+      "gdpr_desc": "Cumplimos totalmente con el Reglamento General de Protección de Datos (GDPR).",
+      "hipaa_title": "Listo para HIPAA",
+      "hipaa_desc": "Nuestra infraestructura cumple con los requisitos de HIPAA para firmas que manejan asuntos legales relacionados con la salud.",
+      "iso_title": "ISO 27001",
+      "iso_desc": "Sistema de gestión de seguridad de la información certificado según estándares internacionales.",
+      "cta_title": "¿Preguntas sobre cumplimiento?",
+      "cta_desc": "Nuestro equipo está listo para discutir sus requisitos específicos de cumplimiento."
+    },
+    "about": {
+      "title": "Sobre Nosotros",
+      "mission_label": "Nuestra Misión",
+      "mission_title": "Empoderando Firmas para",
+      "mission_highlight": "Trabajar Inteligente",
+      "mission_desc": "Estamos construyendo el sistema operativo para la práctica legal moderna. Nuestra misión es eliminar el trabajo administrativo para que los abogados puedan enfocarse en lo que hacen mejor: ejercer el derecho.",
+      "values": {
+        "innovation_title": "Innovación",
+        "innovation_desc": "Constantemente empujamos los límites de la tecnología legal, usando IA y automatización para resolver problemas reales.",
+        "trust_title": "Confianza",
+        "trust_desc": "La seguridad y confiabilidad son el núcleo de todo lo que construimos. Sus datos son nuestra prioridad.",
+        "partnership_title": "Asociación",
+        "partnership_desc": "Tenemos éxito cuando nuestros clientes tienen éxito. No somos solo un proveedor; somos un socio en su crecimiento."
+      },
+      "team_title": "Conozca al Equipo",
+      "team_desc": "Un equipo diverso de ingenieros, diseñadores y expertos legales.",
+      "cta_title": "¿Listo para unirse?",
+      "cta_desc": "Comience a transformar su práctica hoy."
     }
   },
   "common": {
@@ -148,6 +204,7 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "back": "Volver",
+    "learn_more": "Saber más",
     "created_at": "Creado el",
     "updated_at": "Actualizado el",
     "status": "Estado",
@@ -276,36 +333,196 @@
   },
   "landing": {
     "hero": {
-      "label": "La Ventaja Desleal",
-      "title_prefix": "Elimina el",
-      "title_suffix": "Caos Administrativo",
-      "description": "Tu firma está sangrando horas facturables. Law Flow detiene la hemorragia con automatización de grado militar e IA que realmente funciona. Deja de actuar como secretario. Empieza a ejercer como socio.",
-      "cta_primary": "Reclama tu Ventaja",
-      "cta_secondary": "Atestigua el Poder",
-      "trial_note": "Despliegue en 2 minutos · Sin tarjeta de crédito"
+      "label": "Ahora con Automatización con IA",
+      "title_prefix": "Transforma Tu",
+      "title_suffix": "Práctica Legal",
+      "description": "Optimiza las operaciones de tu firma con gestión inteligente de casos, flujos de trabajo automatizados y colaboración segura con clientes. Enfócate en ejercer el derecho, no en el papeleo.",
+      "cta_primary": "Iniciar Prueba Gratis",
+      "cta_secondary": "Ver Demo",
+      "trial_note": "Prueba gratis de 14 días · Sin tarjeta de crédito",
+      "social_proof": "Únete a más de 500 firmas que ya usan Law Flow"
+    },
+    "logos": {
+      "title": "Confiado por más de 500 firmas de abogados en todo el mundo"
     },
     "stats": {
-      "cases_label": "Casos Gestionados",
-      "uptime_label": "SLA de Tiempo de Actividad",
-      "firms_label": "Firmas de Abogados",
-      "support_label": "Soporte"
+      "cases": "Casos Gestionados",
+      "uptime": "SLA de Disponibilidad",
+      "firms": "Firmas de Abogados",
+      "support": "Soporte"
     },
     "features": {
-      "label": "Arsenal",
-      "title": "Armas para el Abogado Moderno",
-      "subtitle": "La vieja escuela está muriendo. Equipa tu firma con herramientas que aniquilan la ineficiencia.",
-      "case_mgmt_title": "Centro de Mando",
-      "case_mgmt_desc": "Conciencia situacional total. Organización impulsada por IA que predice tu próximo movimiento, rastrea cada plazo y asegura que ningún detalle se escape.",
-      "learn_more": "Desplegar Función",
-      "automation_title": "Automatización Implacable",
-      "automation_desc": "Erradica las tareas repetitivas. Deja que la máquina haga el trabajo sucio mientras tú manejas la estrategia.",
-      "portal_title": "Nexo de Cliente Fortificado",
-      "portal_desc": "Canales encriptados de nivel bancario que mantienen a tus clientes informados y tu práctica segura.",
-      "docs_title": "Archivo de Inteligencia",
-      "docs_desc": "Recuperación instantánea de cualquier documento, donde sea, cuando sea. Indexación inteligente que parece leer tu mente.",
-      "time_title": "Captura de Ingresos",
-      "time_desc": "Nunca pierdas un minuto facturable de nuevo. Rastreo pasivo que paga el software en tu primera hora."
-    }
+      "label": "Características",
+      "title": "Todo lo que Necesitas",
+      "subtitle": "Herramientas poderosas diseñadas específicamente para prácticas legales modernas",
+      "cta": "Ver Todas las Características",
+      "case_management": {
+        "title": "Gestión Inteligente de Casos",
+        "description": "Centraliza toda la información de casos con organización impulsada por IA, búsqueda inteligente y flujos de trabajo automatizados. Rastrea plazos, gestiona documentos y colabora sin problemas con tu equipo."
+      },
+      "automation": {
+        "title": "Automatización de Flujos",
+        "description": "Automatiza tareas repetitivas y crea flujos de trabajo personalizados que ahorran horas cada semana."
+      },
+      "portal": {
+        "title": "Portal de Clientes",
+        "description": "Acceso seguro del cliente a actualizaciones de casos, documentos y comunicación en tiempo real."
+      },
+      "documents": {
+        "title": "Gestión de Documentos",
+        "description": "Almacena, organiza y comparte documentos con control de versiones, firmas electrónicas y capacidades de búsqueda avanzada."
+      },
+      "time": {
+        "title": "Control de Tiempo y Facturación",
+        "description": "Rastrea horas facturables sin esfuerzo con temporizadores integrados, facturación automatizada e informes detallados."
+      }
+    },
+    "showcase": {
+      "label": "Véalo en Acción",
+      "title": "Todo lo que Necesitas, Un Solo Panel",
+      "subtitle": "Interfaz intuitiva diseñada para profesionales legales que valoran su tiempo",
+      "cta": "Pruébalo Gratis",
+      "feature1": "Sincronización en Tiempo Real",
+      "feature2": "Búsqueda Inteligente",
+      "feature3": "Respaldo Automático"
+    },
+    "benefits": {
+      "label": "Beneficios",
+      "title": "Por Qué Elegir Law Flow",
+      "time": {
+        "title": "Ahorra Tiempo",
+        "description": "Automatiza tareas rutinarias y reduce la carga administrativa. Enfócate en lo que más importa: servir a los clientes y ganar casos.",
+        "metric": "Tiempo Admin"
+      },
+      "revenue": {
+        "title": "Aumenta Ingresos",
+        "description": "Captura cada hora facturable con seguimiento preciso del tiempo. Las firmas que usan Law Flow reportan aumentos significativos en horas facturables.",
+        "metric": "Horas Facturables"
+      },
+      "collaboration": {
+        "title": "Mejora la Colaboración",
+        "description": "Mantén a tu equipo alineado con actualizaciones en tiempo real, calendarios compartidos, gestión de tareas y herramientas de comunicación integradas.",
+        "metric": "Más Eficiente"
+      },
+      "security": {
+        "title": "Seguridad Empresarial",
+        "description": "Encriptación de nivel bancario, cumplimiento SOC 2 Tipo II y estándares de seguridad líderes en la industria mantienen tus datos sensibles protegidos."
+      }
+    },
+    "how_it_works": {
+      "label": "Cómo Funciona",
+      "title": "Comienza en 3 Simples Pasos",
+      "step1": {
+        "title": "Regístrate",
+        "description": "Crea tu cuenta en menos de 2 minutos. No se requiere tarjeta de crédito para iniciar tu prueba gratuita."
+      },
+      "step2": {
+        "title": "Importa tus Datos",
+        "description": "Migramos tus casos, clientes y documentos existentes automáticamente desde tu sistema actual."
+      },
+      "step3": {
+        "title": "Empieza a Gestionar",
+        "description": "Comienza a optimizar tu práctica inmediatamente con nuestra interfaz intuitiva y configuración guiada."
+      }
+    },
+    "testimonials": {
+      "label": "Testimonios",
+      "title": "Confiado por Firmas Líderes",
+      "testimonial1": {
+        "quote": "Law Flow transformó nuestra práctica. Hemos reducido el tiempo administrativo en un 60% y a nuestros clientes les encanta el portal.",
+        "name": "Sarah Chen",
+        "title": "Socia, Chen & Asociados"
+      },
+      "testimonial2": {
+        "quote": "La automatización de flujos de trabajo es revolucionaria. Manejamos 3 veces más casos con el mismo tamaño de equipo.",
+        "name": "Michael Rodriguez",
+        "title": "Abogado Director, Rodriguez Law"
+      },
+      "testimonial3": {
+        "quote": "La mejor inversión que hemos hecho. Solo el seguimiento del tiempo aumentó nuestras horas facturables en un 25%.",
+        "name": "Emily Thompson",
+        "title": "Fundadora, Thompson Legal"
+      }
+    },
+    "pricing": {
+      "label": "Precios",
+      "title": "Precios Simples y Transparentes",
+      "subtitle": "Elige el plan que se adapte a tu práctica",
+      "per_month": "mes",
+      "get_started": "Comenzar",
+      "contact_sales": "Contactar Ventas",
+      "popular": "Más Popular",
+      "starter": {
+        "name": "Inicial",
+        "description": "Perfecto para profesionales independientes",
+        "feature1": "Hasta 50 casos activos",
+        "feature2": "2 miembros del equipo",
+        "feature3": "Flujos de automatización básicos",
+        "feature4": "Acceso al portal de clientes",
+        "feature5": "Soporte por email"
+      },
+      "professional": {
+        "name": "Profesional",
+        "description": "Para firmas en crecimiento",
+        "feature1": "Casos ilimitados",
+        "feature2": "10 miembros del equipo",
+        "feature3": "Automatización avanzada de flujos",
+        "feature4": "Integraciones personalizadas",
+        "feature5": "Soporte prioritario",
+        "feature6": "Analíticas avanzadas"
+      },
+      "enterprise": {
+        "name": "Empresarial",
+        "description": "Para grandes organizaciones",
+        "feature1": "Todo en Profesional",
+        "feature2": "Miembros del equipo ilimitados",
+        "feature3": "Opciones de marca blanca",
+        "feature4": "Gerente de cuenta dedicado",
+        "feature5": "Soporte telefónico 24/7",
+        "feature6": "Desarrollo personalizado"
+      }
+    },
+    "trust": {
+      "label": "Seguridad Empresarial",
+      "title": "Tus Datos, Totalmente Protegidos",
+      "soc2": "Certificado",
+      "gdpr": "Cumplimiento",
+      "encryption": "Encriptación de grado bancario",
+      "aba": "Aprobado por Tecnología"
+    },
+    "faq": {
+      "label": "Preguntas Frecuentes",
+      "title": "Preguntas Frecuentes",
+      "q1": {
+        "question": "¿Qué tan seguros están mis datos?",
+        "answer": "Usamos encriptación de nivel bancario de 256 bits para todos los datos en tránsito y en reposo. Nuestra infraestructura está certificada SOC 2 Tipo II y nos sometemos a auditorías de seguridad regulares de terceros. Tus datos se respaldan diariamente y se almacenan en centros de datos distribuidos geográficamente."
+      },
+      "q2": {
+        "question": "¿Puedo migrar desde mi sistema actual?",
+        "answer": "¡Sí! Ofrecemos asistencia gratuita de migración de datos para todos los nuevos clientes. Nuestro equipo trabajará contigo para importar tus casos, contactos y documentos existentes desde la mayoría de los principales sistemas de gestión de prácticas."
+      },
+      "q3": {
+        "question": "¿Hay una prueba gratuita?",
+        "answer": "¡Por supuesto! Ofrecemos una prueba gratuita de 14 días con acceso completo a todas las características. No se requiere tarjeta de crédito. Puedes actualizar, degradar o cancelar en cualquier momento."
+      },
+      "q4": {
+        "question": "¿Qué tipo de soporte ofrecen?",
+        "answer": "Todos los planes incluyen soporte por email con tiempos de respuesta menores a 24 horas. Los planes Profesional y Empresarial obtienen soporte prioritario con tiempos de respuesta más rápidos. Los clientes empresariales también reciben un gerente de cuenta dedicado y soporte telefónico 24/7."
+      },
+      "q5": {
+        "question": "¿Puedo personalizar los flujos de trabajo?",
+        "answer": "¡Sí! Nuestro constructor de flujos de trabajo te permite crear automatización personalizada adaptada a tu práctica. Los planes Profesional y Empresarial incluyen características avanzadas de flujo de trabajo e integraciones personalizadas con tus herramientas existentes."
+      }
+    },
+    "final_cta": {
+      "title": "¿Listo para Transformar tu Práctica?",
+      "subtitle": "Únete a cientos de firmas de abogados que ya usan Law Flow para optimizar operaciones, aumentar ingresos y ofrecer experiencias excepcionales a los clientes.",
+      "email_placeholder": "Ingresa tu email",
+      "button": "Iniciar Prueba Gratis",
+      "no_credit_card": "Sin tarjeta de crédito",
+      "cancel_anytime": "Cancela cuando quieras"
+    },
+    "mobile_cta": "Iniciar Prueba Gratis"
   },
   "cases": {
     "title": "Casos",

@@ -8,60 +8,185 @@ import (
 
 templ Landing(ctx context.Context, title string, csrfToken string) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken) {
-		<!-- Hero Section -->
-		<section class="section-lg relative overflow-hidden">
-			<div class="container mx-auto px-6">
-				<div class="w-full mx-auto text-center">
-					<div class="mb-6 fade-up">
-						<span class="text-label text-accent">{ i18n.T(ctx, "landing.hero.label") }</span>
+		<!-- Hero Section - Split Layout -->
+		<section class="section-lg relative overflow-hidden min-h-[90vh] flex items-center">
+			<!-- Animated background elements -->
+			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
+			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
+
+			<div class="container mx-auto px-6 relative z-10">
+				<div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+					<!-- Left: Text Content -->
+					<div class="reveal">
+						<!-- Badge -->
+						<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/30 mb-6">
+							<span class="badge-dot bg-green-400"></span>
+							<span class="text-label text-accent">{ i18n.T(ctx, "landing.hero.label") }</span>
+						</div>
+
+						<h1 class="text-display mb-6">
+							<span class="text-gradient">{ i18n.T(ctx, "landing.hero.title_prefix") }</span>
+							<span class="block text-accent-gradient mt-2 mb-4">{ i18n.T(ctx, "landing.hero.title_suffix") }</span>
+						</h1>
+
+						<p class="text-body-lg text-muted mt-8 mb-8 max-w-lg leading-relaxed">
+							{ i18n.T(ctx, "landing.hero.description") }
+						</p>
+
+						<!-- Dual CTA -->
+						<div class="flex flex-col sm:flex-row gap-4 mb-8">
+							<a href="/register" class="btn btn-cta btn-lg animate-pulse-glow">
+								{ i18n.T(ctx, "landing.hero.cta_primary") }
+								<span class="ml-2">→</span>
+							</a>
+							<a href="#demo" class="btn btn-cta-secondary btn-lg group">
+								<span class="mr-2">▶</span>
+								{ i18n.T(ctx, "landing.hero.cta_secondary") }
+							</a>
+						</div>
+
+						<!-- Social proof mini-bar -->
+						<div class="flex items-center gap-4 text-body text-muted">
+							<div class="avatar-stack">
+								<div class="w-8 h-8 rounded-full bg-accent/30 border-2 border-background"></div>
+								<div class="w-8 h-8 rounded-full bg-accent/40 border-2 border-background"></div>
+								<div class="w-8 h-8 rounded-full bg-accent/50 border-2 border-background"></div>
+							</div>
+							<span>{ i18n.T(ctx, "landing.hero.social_proof") }</span>
+						</div>
 					</div>
-					<h1 class="text-display text-gradient mb-8 fade-up stagger-1">
-						{ i18n.T(ctx, "landing.hero.title_prefix") }
-						<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "landing.hero.title_suffix") }</span>
-					</h1>
-					<p class="text-body-lg text-muted mb-12 max-w-2xl mx-auto leading-relaxed fade-up stagger-2">
-						{ i18n.T(ctx, "landing.hero.description") }
-					</p>
-					<div class="flex gap-4 justify-center flex-wrap fade-up stagger-3">
-						<a href="#" class="btn btn-primary btn-lg">{ i18n.T(ctx, "landing.hero.cta_primary") }</a>
-						<a href="#features" class="btn btn-secondary btn-lg">{ i18n.T(ctx, "landing.hero.cta_secondary") }</a>
-					</div>
-					<p class="text-body text-subtle mt-6 fade-up stagger-4">{ i18n.T(ctx, "landing.hero.trial_note") }</p>
-				</div>
-				
-				<!-- 3D Hero Image -->
-				<div class="mt-20 fade-up stagger-5 perspective-container hero-tilt-wrapper px-4">
-					<div class="relative w-full mx-auto">
-						<!-- Glow behind -->
-						<div class="absolute -inset-1 bg-gradient-to-r from-accent to-accent-bright rounded-xl blur-2xl opacity-20 animate-pulse"></div>
-						
-						<img 
-							src="/static/images/hero_dashboard_mockup.png" 
-							alt="Law Flow Dashboard Interface" 
-							class="relative w-full rounded-xl border border-white/10 shadow-2xl hero-tilt"
-						/>
+
+					<!-- Right: Product Screenshot -->
+					<div class="reveal-right relative">
+						<!-- Glow effect behind -->
+						<div class="absolute -inset-4 bg-gradient-to-r from-accent/20 via-accent/10 to-accent/20 rounded-2xl blur-3xl opacity-50"></div>
+
+						<!-- Main screenshot with 3D tilt -->
+						<div class="relative perspective-container">
+							<div class="hero-tilt-wrapper">
+								<img
+									src="/static/images/hero_dashboard_mockup.png"
+									alt="Law Flow Dashboard"
+									class="hero-tilt rounded-xl border border-white/20 shadow-2xl w-full"
+								/>
+
+								<!-- Floating feature callouts -->
+								<div class="absolute -left-4 lg:-left-8 top-1/4 card card-glass p-3 animate-float hidden md:flex">
+									<div class="flex items-center gap-2">
+										<span class="text-xl">⚡</span>
+										<span class="text-body font-semibold">60% faster</span>
+									</div>
+								</div>
+
+								<div class="absolute -right-4 lg:-right-8 bottom-1/3 card card-glass p-3 animate-float-delayed hidden md:flex">
+									<div class="flex items-center gap-2">
+										<span class="text-xl">📈</span>
+										<span class="text-body font-semibold">+25% revenue</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
+		</section>
 
-			<!-- Stats Grid -->
-			<div class="container mx-auto px-6 mt-24">
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-8 w-full mx-auto">
-					<div class="text-center fade-up stagger-1">
-						<div class="text-5xl font-semibold text-gradient mb-2">10K+</div>
-						<div class="text-body text-muted">Cases Managed</div>
+		<!-- Logo Carousel Section -->
+		<section class="py-12 border-y border-white/[0.06] overflow-hidden">
+			<div class="container mx-auto px-6">
+				<p class="text-label text-muted text-center mb-8">
+					{ i18n.T(ctx, "landing.logos.title") }
+				</p>
+				<div class="marquee marquee-slow">
+					<div class="marquee-content flex gap-16 items-center">
+						<!-- Partner logos (duplicated for seamless loop) -->
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">⚖️</span>
+							<span class="text-body font-semibold text-muted">Wilson & Partners</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🏛️</span>
+							<span class="text-body font-semibold text-muted">Sterling Law Group</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">📜</span>
+							<span class="text-body font-semibold text-muted">Atlas Legal</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🔱</span>
+							<span class="text-body font-semibold text-muted">Trident Associates</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🦁</span>
+							<span class="text-body font-semibold text-muted">Lionheart Law</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🌟</span>
+							<span class="text-body font-semibold text-muted">Polaris Legal</span>
+						</div>
+						<!-- Duplicate for seamless loop -->
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">⚖️</span>
+							<span class="text-body font-semibold text-muted">Wilson & Partners</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🏛️</span>
+							<span class="text-body font-semibold text-muted">Sterling Law Group</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">📜</span>
+							<span class="text-body font-semibold text-muted">Atlas Legal</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🔱</span>
+							<span class="text-body font-semibold text-muted">Trident Associates</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🦁</span>
+							<span class="text-body font-semibold text-muted">Lionheart Law</span>
+						</div>
+						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+							<span class="text-2xl">🌟</span>
+							<span class="text-body font-semibold text-muted">Polaris Legal</span>
+						</div>
 					</div>
-					<div class="text-center fade-up stagger-2">
+				</div>
+			</div>
+		</section>
+
+		<!-- Stats Section with Animated Counters -->
+		<section class="section-sm">
+			<div class="container mx-auto px-6">
+				<div
+					class="grid grid-cols-2 md:grid-cols-4 gap-8"
+					x-data="{ shown: false }"
+					x-intersect.once="shown = true"
+				>
+					<div class="text-center reveal reveal-stagger-1" :class="shown && 'visible'">
+						<div
+							class="text-5xl font-semibold text-gradient mb-2 counter-value"
+							x-data="{ count: 0 }"
+							x-init="$watch('shown', (value) => { if(value) animateCounter($el, 10000, 2000) })"
+							x-text="count.toLocaleString()"
+						>0</div>
+						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.cases") }</div>
+					</div>
+					<div class="text-center reveal reveal-stagger-2" :class="shown && 'visible'">
 						<div class="text-5xl font-semibold text-gradient mb-2">99.9%</div>
-						<div class="text-body text-muted">Uptime SLA</div>
+						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.uptime") }</div>
 					</div>
-					<div class="text-center fade-up stagger-3">
-						<div class="text-5xl font-semibold text-gradient mb-2">500+</div>
-						<div class="text-body text-muted">Law Firms</div>
+					<div class="text-center reveal reveal-stagger-3" :class="shown && 'visible'">
+						<div
+							class="text-5xl font-semibold text-gradient mb-2 counter-value"
+							x-data="{ count: 0 }"
+							x-init="$watch('shown', (value) => { if(value) animateCounter($el, 500, 2000) })"
+							x-text="count.toLocaleString()"
+						>0</div>
+						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.firms") }</div>
 					</div>
-					<div class="text-center fade-up stagger-4">
+					<div class="text-center reveal reveal-stagger-4" :class="shown && 'visible'">
 						<div class="text-5xl font-semibold text-gradient mb-2">24/7</div>
-						<div class="text-body text-muted">Support</div>
+						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.support") }</div>
 					</div>
 				</div>
 			</div>
@@ -70,148 +195,216 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 		<!-- Features Bento Grid -->
 		<section class="section relative" id="features">
 			<div class="container mx-auto px-6">
-				<div class="text-center mb-20">
-					<span class="text-label text-accent mb-4 block">Features</span>
-					<h2 class="text-h1 text-gradient mb-6">Everything You Need</h2>
-					<p class="text-body-lg text-muted max-w-2xl mx-auto">
-						Powerful tools designed specifically for modern law practices
+				<div class="text-center mb-20 reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.features.label") }</span>
+					<h2 class="text-h1 text-gradient mb-6">{ i18n.T(ctx, "landing.features.title") }</h2>
+					<p class="text-body-lg text-muted mx-auto">
+						{ i18n.T(ctx, "landing.features.subtitle") }
 					</p>
 				</div>
 
-				<!-- Asymmetric Bento Grid -->
+				<!-- Asymmetric Bento Grid with Gradient Borders -->
 				<div class="grid grid-cols-1 md:grid-cols-6 gap-6 w-full mx-auto">
-					<!-- Large Feature Card - Case Management (spans 4 cols, 2 rows) -->
-					<div class="md:col-span-4 md:row-span-2 card card-gradient card-hover p-12 fade-up flex flex-col items-center text-center w-full">
+					<!-- Large Feature Card - Case Management -->
+					<div class="md:col-span-6 card-gradient-border card-glow-hover card-hover p-8 reveal flex flex-col items-center text-center group">
 						<div class="flex flex-col h-full items-center w-full">
 							<div class="mb-6 w-full flex flex-col items-center">
-								<div class="w-16 h-16 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6">
+								<div class="icon-container-lg mb-6">
 									<span class="text-3xl">📁</span>
 								</div>
-								<h3 class="text-h2 mb-4">Intelligent Case Management</h3>
+								<h3 class="text-h2 mb-4">{ i18n.T(ctx, "landing.features.case_management.title") }</h3>
 								<p class="text-body text-muted leading-relaxed max-w-2xl mx-auto">
-									Centralize all case information with AI-powered organization, smart search, and automated workflows. Track deadlines, manage documents, and collaborate seamlessly with your team.
+									{ i18n.T(ctx, "landing.features.case_management.description") }
 								</p>
 							</div>
 							<div class="mt-auto">
 								<a href="#" class="text-body text-accent hover:text-accent-bright inline-flex items-center gap-2 transition-colors">
-									Learn more <span>→</span>
+									{ i18n.T(ctx, "common.learn_more") } <span>→</span>
 								</a>
 							</div>
 						</div>
 					</div>
 
 					<!-- Small Card 1 - Workflow Automation -->
-					<div class="md:col-span-2 card card-hover p-8 fade-up stagger-1 flex flex-col items-center text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
+					<div class="md:col-span-4 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-1 flex flex-col items-center text-center group">
+						<div class="icon-container mb-4">
 							<span class="text-2xl">⚡</span>
 						</div>
-						<h3 class="text-h3 mb-3">Workflow Automation</h3>
+						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.automation.title") }</h3>
 						<p class="text-body text-muted">
-							Automate repetitive tasks and create custom workflows.
+							{ i18n.T(ctx, "landing.features.automation.description") }
 						</p>
 					</div>
 
 					<!-- Small Card 2 - Client Portal -->
-					<div class="md:col-span-2 card card-hover p-8 fade-up stagger-2 flex flex-col items-center text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
+					<div class="md:col-span-2 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-2 flex flex-col items-center text-center group">
+						<div class="icon-container mb-4">
 							<span class="text-2xl">👥</span>
 						</div>
-						<h3 class="text-h3 mb-3">Client Portal</h3>
+						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.portal.title") }</h3>
 						<p class="text-body text-muted">
-							Secure client access to case updates and documents.
+							{ i18n.T(ctx, "landing.features.portal.description") }
 						</p>
 					</div>
 
-					<!-- Medium Card 1 - Document Management -->
-					<div class="md:col-span-3 card card-glass card-hover p-8 fade-up stagger-3 flex flex-col items-center text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
-							<span class="text-2xl">📄</span>
-						</div>
-						<h3 class="text-h3 mb-3">Document Management</h3>
-						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
-							Store, organize, and share documents with version control, e-signatures, and advanced search capabilities.
-						</p>
-					</div>
-
-					<!-- Medium Card 2 - Time Tracking -->
-					<div class="md:col-span-3 card card-glass card-hover p-8 fade-up stagger-4 flex flex-col items-center text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
+					<!-- small Card 3 - Time Tracking -->
+					<div class="md:col-span-2 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-3 flex flex-col items-center text-center group">
+						<div class="icon-container mb-4">
 							<span class="text-2xl">⏱️</span>
 						</div>
-						<h3 class="text-h3 mb-3">Time Tracking & Billing</h3>
+						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.time.title") }</h3>
 						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
-							Track billable hours effortlessly with integrated timers, automated invoicing, and detailed reporting.
+							{ i18n.T(ctx, "landing.features.time.description") }
 						</p>
 					</div>
+
+					<!-- small Card 4 - Document Management -->
+					<div class="md:col-span-4 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-4 flex flex-col items-center text-center group">
+						<div class="icon-container mb-4">
+							<span class="text-2xl">📄</span>
+						</div>
+						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.documents.title") }</h3>
+						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
+							{ i18n.T(ctx, "landing.features.documents.description") }
+						</p>
+					</div>
+
+					
+				</div>
+
+				<!-- Features CTA -->
+				<div class="text-center mt-12 reveal">
+					<a href="#" class="btn btn-secondary btn-md">
+						{ i18n.T(ctx, "landing.features.cta") } →
+					</a>
 				</div>
 			</div>
 		</section>
 
 		<!-- Benefits Section -->
-		<section class="section relative border-t border-white/[0.06]" id="benefits">
+		<section class="section relative" id="benefits">
 			<div class="container mx-auto px-6">
-				<div class="text-center mb-20">
-					<span class="text-label text-accent mb-4 block">Benefits</span>
-					<h2 class="text-h1 text-gradient mb-6">Why Choose Law Flow</h2>
+				<div class="text-center mb-20 reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.benefits.label") }</span>
+					<h2 class="text-h1 text-gradient mb-6">{ i18n.T(ctx, "landing.benefits.title") }</h2>
 				</div>
 
 				<div class="grid md:grid-cols-2 gap-0 w-full mx-auto border border-white/[0.06] rounded-2xl overflow-hidden">
 					<!-- Benefit 1 -->
-					<div class="p-12 border-b border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
+					<div class="p-12 border-b border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center reveal">
+						<div class="icon-container mx-auto mb-6">
 							<span class="text-2xl">🚀</span>
 						</div>
-						<h3 class="text-h3 mb-4">Save Time</h3>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.time.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
-							Automate routine tasks and reduce administrative overhead by up to 60%. Focus on what matters most—serving clients and winning cases.
+							{ i18n.T(ctx, "landing.benefits.time.description") }
 						</p>
+						<div class="mt-4">
+							<span class="badge badge-success">-60% { i18n.T(ctx, "landing.benefits.time.metric") }</span>
+						</div>
 					</div>
 
 					<!-- Benefit 2 -->
-					<div class="p-12 border-b border-white/[0.06] card-hover transition-all duration-300 group text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
+					<div class="p-12 border-b border-white/[0.06] card-hover transition-all duration-300 group text-center reveal reveal-stagger-1">
+						<div class="icon-container mx-auto mb-6">
 							<span class="text-2xl">💰</span>
 						</div>
-						<h3 class="text-h3 mb-4">Increase Revenue</h3>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.revenue.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
-							Capture every billable hour with accurate time tracking. Firms using Law Flow report an average 25% increase in billable hours.
+							{ i18n.T(ctx, "landing.benefits.revenue.description") }
 						</p>
+						<div class="mt-4">
+							<span class="badge badge-success">+25% { i18n.T(ctx, "landing.benefits.revenue.metric") }</span>
+						</div>
 					</div>
 
 					<!-- Benefit 3 -->
-					<div class="p-12 border-b md:border-b-0 border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
+					<div class="p-12 border-b md:border-b-0 border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center reveal reveal-stagger-2">
+						<div class="icon-container mx-auto mb-6">
 							<span class="text-2xl">🤝</span>
 						</div>
-						<h3 class="text-h3 mb-4">Improve Collaboration</h3>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.collaboration.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
-							Keep your team aligned with real-time updates, shared calendars, task management, and integrated communication tools.
+							{ i18n.T(ctx, "landing.benefits.collaboration.description") }
 						</p>
+						<div class="mt-4">
+							<span class="badge badge-success">3x { i18n.T(ctx, "landing.benefits.collaboration.metric") }</span>
+						</div>
 					</div>
 
 					<!-- Benefit 4 -->
-					<div class="p-12 card-hover transition-all duration-300 group text-center w-full">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
+					<div class="p-12 card-hover transition-all duration-300 group text-center reveal reveal-stagger-3">
+						<div class="icon-container mx-auto mb-6">
 							<span class="text-2xl">🔒</span>
 						</div>
-						<h3 class="text-h3 mb-4">Enterprise Security</h3>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.security.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
-							Bank-level encryption, SOC 2 Type II compliance, and industry-leading security standards keep your sensitive data protected.
+							{ i18n.T(ctx, "landing.benefits.security.description") }
 						</p>
+						<div class="mt-4">
+							<span class="badge badge-success">SOC 2 Type II</span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Social Proof Section -->
+		<!-- How It Works Section -->
+		<section class="section border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="text-center mb-20 reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.how_it_works.label") }</span>
+					<h2 class="text-h1 text-gradient mb-6">{ i18n.T(ctx, "landing.how_it_works.title") }</h2>
+				</div>
+
+				<div class="grid md:grid-cols-3 gap-8 w-full mx-auto">
+					<!-- Step 1 -->
+					<div class="text-center reveal reveal-stagger-1">
+						<div class="step-number mx-auto mb-6">1</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.how_it_works.step1.title") }</h3>
+						<p class="text-body text-muted">
+							{ i18n.T(ctx, "landing.how_it_works.step1.description") }
+						</p>
+					</div>
+
+					<!-- Step 2 -->
+					<div class="text-center reveal reveal-stagger-2">
+						<div class="step-number mx-auto mb-6">2</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.how_it_works.step2.title") }</h3>
+						<p class="text-body text-muted">
+							{ i18n.T(ctx, "landing.how_it_works.step2.description") }
+						</p>
+					</div>
+
+					<!-- Step 3 -->
+					<div class="text-center reveal reveal-stagger-3">
+						<div class="step-number mx-auto mb-6">3</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.how_it_works.step3.title") }</h3>
+						<p class="text-body text-muted">
+							{ i18n.T(ctx, "landing.how_it_works.step3.description") }
+						</p>
+					</div>
+				</div>
+
+				<!-- Connecting lines (hidden on mobile) -->
+				<div class="hidden md:flex justify-center items-center -mt-32 mb-8">
+					<div class="step-line"></div>
+					<div class="w-8"></div>
+					<div class="step-line"></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Testimonials Section -->
 		<section class="section">
 			<div class="container mx-auto px-6">
-				<div class="text-center mb-16">
-					<h2 class="text-h2 text-gradient mb-6">Trusted by Leading Firms</h2>
+				<div class="text-center mb-16 reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.testimonials.label") }</span>
+					<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "landing.testimonials.title") }</h2>
 				</div>
 
 				<div class="grid md:grid-cols-3 gap-6 w-full mx-auto items-stretch">
-					<div class="card card-glass p-8 fade-up h-full text-center w-full">
+					<div class="card card-glass card-hover p-8 reveal h-full text-center">
 						<div class="mb-6">
 							<div class="flex gap-1 mb-4 justify-center">
 								<span class="text-accent">★</span>
@@ -221,21 +414,21 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 								<span class="text-accent">★</span>
 							</div>
 							<p class="text-body text-muted leading-relaxed mb-6">
-								"Law Flow transformed our practice. We've cut administrative time by 60% and our clients love the portal."
+								"{ i18n.T(ctx, "landing.testimonials.testimonial1.quote") }"
 							</p>
 						</div>
 						<div class="flex items-center gap-4 justify-center">
-							<div class="w-12 h-12 rounded-full bg-accent/20"></div>
+							<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+								<span class="text-xl">👩‍💼</span>
+							</div>
 							<div>
-								<div class="text-body font-semibold">Sarah Chen</div>
-								<div class="text-body text-subtle">Partner, Chen & Associates</div>
+								<div class="text-body font-semibold">{ i18n.T(ctx, "landing.testimonials.testimonial1.name") }</div>
+								<div class="text-body text-subtle">{ i18n.T(ctx, "landing.testimonials.testimonial1.title") }</div>
 							</div>
 						</div>
 					</div>
 
-
-
-					<div class="card card-glass p-8 fade-up stagger-1 h-full text-center w-full">
+					<div class="card card-glass card-hover p-8 reveal reveal-stagger-1 h-full text-center">
 						<div class="mb-6">
 							<div class="flex gap-1 mb-4 justify-center">
 								<span class="text-accent">★</span>
@@ -245,21 +438,21 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 								<span class="text-accent">★</span>
 							</div>
 							<p class="text-body text-muted leading-relaxed mb-6">
-								"The workflow automation is a game-changer. We handle 3x more cases with the same team size."
+								"{ i18n.T(ctx, "landing.testimonials.testimonial2.quote") }"
 							</p>
 						</div>
 						<div class="flex items-center gap-4 justify-center">
-							<div class="w-12 h-12 rounded-full bg-accent/20"></div>
+							<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+								<span class="text-xl">👨‍💼</span>
+							</div>
 							<div>
-								<div class="text-body font-semibold">Michael Rodriguez</div>
-								<div class="text-body text-subtle">Managing Attorney, Rodriguez Law</div>
+								<div class="text-body font-semibold">{ i18n.T(ctx, "landing.testimonials.testimonial2.name") }</div>
+								<div class="text-body text-subtle">{ i18n.T(ctx, "landing.testimonials.testimonial2.title") }</div>
 							</div>
 						</div>
 					</div>
 
-
-
-					<div class="card card-glass p-8 fade-up stagger-2 h-full text-center w-full">
+					<div class="card card-glass card-hover p-8 reveal reveal-stagger-2 h-full text-center">
 						<div class="mb-6">
 							<div class="flex gap-1 mb-4 justify-center">
 								<span class="text-accent">★</span>
@@ -269,14 +462,16 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 								<span class="text-accent">★</span>
 							</div>
 							<p class="text-body text-muted leading-relaxed mb-6">
-								"Best investment we've made. Time tracking alone increased our billable hours by 25%."
+								"{ i18n.T(ctx, "landing.testimonials.testimonial3.quote") }"
 							</p>
 						</div>
 						<div class="flex items-center gap-4 justify-center">
-							<div class="w-12 h-12 rounded-full bg-accent/20"></div>
+							<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+								<span class="text-xl">👩‍⚖️</span>
+							</div>
 							<div>
-								<div class="text-body font-semibold">Emily Thompson</div>
-								<div class="text-body text-subtle">Founder, Thompson Legal</div>
+								<div class="text-body font-semibold">{ i18n.T(ctx, "landing.testimonials.testimonial3.name") }</div>
+								<div class="text-body text-subtle">{ i18n.T(ctx, "landing.testimonials.testimonial3.title") }</div>
 							</div>
 						</div>
 					</div>
@@ -287,126 +482,179 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 		<!-- Pricing Section -->
 		<section class="section border-t border-white/[0.06]" id="pricing">
 			<div class="container mx-auto px-6">
-				<div class="text-center mb-20">
-					<span class="text-label text-accent mb-4 block">Pricing</span>
-					<h2 class="text-h1 text-gradient mb-6">Simple, Transparent Pricing</h2>
-					<p class="text-body-lg text-muted">Choose the plan that fits your practice</p>
+				<div class="text-center mb-20 reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.pricing.label") }</span>
+					<h2 class="text-h1 text-gradient mb-6">{ i18n.T(ctx, "landing.pricing.title") }</h2>
+					<p class="text-body-lg text-muted">{ i18n.T(ctx, "landing.pricing.subtitle") }</p>
 				</div>
 
-				<div class="grid lg:grid-cols-3 gap-6 w-full mx-auto items-stretch">
+				<div class="grid lg:grid-cols-3 gap-6 w-full mx-auto items-stretch mt-4">
 					<!-- Starter Plan -->
-					<div class="card card-hover p-8 fade-up h-full flex flex-col text-center w-full">
+					<div class="card card-hover p-8 reveal h-full flex flex-col text-center">
 						<div class="mb-8">
-							<div class="text-label text-muted mb-2">Starter</div>
+							<div class="text-label text-muted mb-2">{ i18n.T(ctx, "landing.pricing.starter.name") }</div>
 							<div class="flex items-baseline gap-2 mb-4 justify-center">
 								<span class="text-5xl font-semibold text-gradient">$99</span>
-								<span class="text-body text-muted">/month</span>
+								<span class="text-body text-muted">/{ i18n.T(ctx, "landing.pricing.per_month") }</span>
 							</div>
-							<p class="text-body text-muted">Perfect for solo practitioners</p>
+							<p class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.description") }</p>
 						</div>
 						<ul class="space-y-4 mb-8">
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Up to 50 active cases</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature1") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">2 team members</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature2") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Basic automation workflows</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature3") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Client portal access</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature4") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Email support</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature5") }</span>
 							</li>
 						</ul>
-						<a href="#" class="btn btn-secondary btn-md w-full mt-auto">Get Started</a>
+						<a href="/register" class="btn btn-secondary btn-md w-full mt-auto">{ i18n.T(ctx, "landing.pricing.get_started") }</a>
 					</div>
 
 					<!-- Professional Plan (Featured) -->
-					<div class="card card-gradient card-hover p-8 relative fade-up stagger-1 border-2 border-accent/30 h-full flex flex-col text-center w-full">
-						<div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent rounded-full">
+					<div class="card card-gradient card-hover p-8 relative reveal reveal-stagger-1 border-2 border-accent/30 h-full flex flex-col text-center" style="overflow: visible;">
+						<div class="absolute -top-3 left-1/2 -translate-x-1/2">
+							<span class="badge badge-new">{ i18n.T(ctx, "landing.pricing.popular") }</span>
 						</div>
 						<div class="mb-8 mt-4">
-							<div class="text-label text-accent mb-2">Professional</div>
+							<div class="text-label text-accent mb-2">{ i18n.T(ctx, "landing.pricing.professional.name") }</div>
 							<div class="flex items-baseline gap-2 mb-4 justify-center">
 								<span class="text-5xl font-semibold text-gradient">$299</span>
-								<span class="text-body text-muted">/month</span>
+								<span class="text-body text-muted">/{ i18n.T(ctx, "landing.pricing.per_month") }</span>
 							</div>
-							<p class="text-body text-muted">For growing law firms</p>
+							<p class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.description") }</p>
 						</div>
 						<ul class="space-y-4 mb-8">
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Unlimited cases</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature1") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">10 team members</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature2") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Advanced workflow automation</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature3") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Custom integrations</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature4") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Priority support</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature5") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Advanced analytics</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature6") }</span>
 							</li>
 						</ul>
-						<a href="#" class="btn btn-primary btn-md w-full mt-auto">Get Started</a>
+						<a href="/register" class="btn btn-cta btn-md w-full mt-auto">{ i18n.T(ctx, "landing.pricing.get_started") }</a>
 					</div>
 
 					<!-- Enterprise Plan -->
-					<div class="card card-hover p-8 fade-up stagger-2 h-full flex flex-col text-center w-full">
+					<div class="card card-hover p-8 reveal reveal-stagger-2 h-full flex flex-col text-center">
 						<div class="mb-8">
-							<div class="text-label text-muted mb-2">Enterprise</div>
+							<div class="text-label text-muted mb-2">{ i18n.T(ctx, "landing.pricing.enterprise.name") }</div>
 							<div class="flex items-baseline gap-2 mb-4 justify-center">
 								<span class="text-5xl font-semibold text-gradient">$999</span>
-								<span class="text-body text-muted">/month</span>
+								<span class="text-body text-muted">/{ i18n.T(ctx, "landing.pricing.per_month") }</span>
 							</div>
-							<p class="text-body text-muted">For large organizations</p>
+							<p class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.description") }</p>
 						</div>
 						<ul class="space-y-4 mb-8">
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Everything in Professional</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature1") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Unlimited team members</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature2") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">White-label options</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature3") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Dedicated account manager</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature4") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">24/7 phone support</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature5") }</span>
 							</li>
 							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">Custom development</span>
+								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature6") }</span>
 							</li>
 						</ul>
-						<a href="#" class="btn btn-secondary btn-md w-full mt-auto">Contact Sales</a>
+						<a href="/contact" class="btn btn-secondary btn-md w-full mt-auto">{ i18n.T(ctx, "landing.pricing.contact_sales") }</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Trust Badges Section -->
+		<section class="section-sm border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="text-center mb-12 reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.trust.label") }</span>
+					<h2 class="text-h2 text-gradient mb-4">{ i18n.T(ctx, "landing.trust.title") }</h2>
+				</div>
+
+				<div class="flex flex-wrap justify-center gap-6 reveal">
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">🔒</span>
+						</div>
+						<div>
+							<div class="text-body font-semibold">SOC 2 Type II</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.soc2") }</div>
+						</div>
+					</div>
+
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">🇪🇺</span>
+						</div>
+						<div>
+							<div class="text-body font-semibold">GDPR</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.gdpr") }</div>
+						</div>
+					</div>
+
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">🛡️</span>
+						</div>
+						<div>
+							<div class="text-body font-semibold">256-bit SSL</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.encryption") }</div>
+						</div>
+					</div>
+
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">⚖️</span>
+						</div>
+						<div>
+							<div class="text-body font-semibold">ABA Approved</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.aba") }</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -416,67 +664,68 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 		<section class="section">
 			<div class="container mx-auto px-6">
 				<div class="w-full mx-auto">
-					<div class="text-center mb-16">
-						<h2 class="text-h2 text-gradient mb-6">Frequently Asked Questions</h2>
+					<div class="text-center mb-16 reveal">
+						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.faq.label") }</span>
+						<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "landing.faq.title") }</h2>
 					</div>
 
-					<div class="space-y-0 border border-white/[0.06] rounded-2xl overflow-hidden">
+					<div class="space-y-0 border border-white/[0.06] rounded-2xl overflow-hidden reveal">
 						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
-							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
-								<span class="text-h3">How secure is my data?</span>
-								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
+							<summary class="flex justify-between items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+								<span class="text-h3 text-left">{ i18n.T(ctx, "landing.faq.q1.question") }</span>
+								<span class="text-accent text-2xl group-open:rotate-45 transition-transform flex-shrink-0">+</span>
 							</summary>
-							<div class="px-6 pb-6 text-center">
+							<div class="px-6 pb-6">
 								<p class="text-body text-muted leading-relaxed">
-									We use bank-level 256-bit encryption for all data in transit and at rest. Our infrastructure is SOC 2 Type II certified and we undergo regular third-party security audits. Your data is backed up daily and stored in geographically distributed data centers.
+									{ i18n.T(ctx, "landing.faq.q1.answer") }
 								</p>
 							</div>
 						</details>
 
 						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
-							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
-								<span class="text-h3">Can I migrate from my current system?</span>
-								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
+							<summary class="flex justify-between items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+								<span class="text-h3 text-left">{ i18n.T(ctx, "landing.faq.q2.question") }</span>
+								<span class="text-accent text-2xl group-open:rotate-45 transition-transform flex-shrink-0">+</span>
 							</summary>
-							<div class="px-6 pb-6 text-center">
+							<div class="px-6 pb-6">
 								<p class="text-body text-muted leading-relaxed">
-									Yes! We offer free data migration assistance for all new customers. Our team will work with you to import your existing cases, contacts, and documents from most major practice management systems.
+									{ i18n.T(ctx, "landing.faq.q2.answer") }
 								</p>
 							</div>
 						</details>
 
 						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
-							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
-								<span class="text-h3">Is there a free trial?</span>
-								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
+							<summary class="flex justify-between items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+								<span class="text-h3 text-left">{ i18n.T(ctx, "landing.faq.q3.question") }</span>
+								<span class="text-accent text-2xl group-open:rotate-45 transition-transform flex-shrink-0">+</span>
 							</summary>
-							<div class="px-6 pb-6 text-center">
+							<div class="px-6 pb-6">
 								<p class="text-body text-muted leading-relaxed">
-									Absolutely! We offer a 14-day free trial with full access to all features. No credit card required. You can upgrade, downgrade, or cancel at any time.
+									{ i18n.T(ctx, "landing.faq.q3.answer") }
 								</p>
 							</div>
 						</details>
 
-						<details class="group border-b border-white/[0.06] last:border-b-0">
-							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
-								<span class="text-h3">What kind of support do you offer?</span>
-								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
+						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
+							<summary class="flex justify-between items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+								<span class="text-h3 text-left">{ i18n.T(ctx, "landing.faq.q4.question") }</span>
+								<span class="text-accent text-2xl group-open:rotate-45 transition-transform flex-shrink-0">+</span>
 							</summary>
-							<div class="px-6 pb-6 text-center">
+							<div class="px-6 pb-6">
 								<p class="text-body text-muted leading-relaxed">
-									All plans include email support with response times under 24 hours. Professional and Enterprise plans get priority support with faster response times. Enterprise customers also receive a dedicated account manager and 24/7 phone support.
+									{ i18n.T(ctx, "landing.faq.q4.answer") }
 								</p>
 							</div>
 						</details>
 
 						<details class="group w-full">
-							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
-								<span class="text-h3">Can I customize workflows?</span>
-								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
+							<summary class="flex justify-between items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+								<span class="text-h3 text-left">{ i18n.T(ctx, "landing.faq.q5.question") }</span>
+								<span class="text-accent text-2xl group-open:rotate-45 transition-transform flex-shrink-0">+</span>
 							</summary>
-							<div class="px-6 pb-6 text-center">
+							<div class="px-6 pb-6">
 								<p class="text-body text-muted leading-relaxed">
-									Yes! Our workflow builder allows you to create custom automation tailored to your practice. Professional and Enterprise plans include advanced workflow features and custom integrations with your existing tools.
+									{ i18n.T(ctx, "landing.faq.q5.answer") }
 								</p>
 							</div>
 						</details>
@@ -485,27 +734,51 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 			</div>
 		</section>
 
-		<!-- CTA Section -->
+		<!-- Final CTA Section -->
 		<section class="section-lg relative">
 			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
 			<div class="container mx-auto px-6 relative">
-				<div class="w-full mx-auto text-center">
+				<div class="w-full mx-auto text-center reveal">
 					<div class="card card-gradient p-12 md:p-16">
 						<h2 class="text-h1 text-gradient mb-6">
-							Ready to Transform Your Practice?
+							{ i18n.T(ctx, "landing.final_cta.title") }
 						</h2>
-						<p class="text-body-lg text-muted mb-12 max-w-2xl mx-auto leading-relaxed">
-							Join hundreds of law firms already using Law Flow to streamline operations, increase revenue, and deliver exceptional client experiences.
+						<p class="text-body-lg text-muted mb-8 mx-auto leading-relaxed">
+							{ i18n.T(ctx, "landing.final_cta.subtitle") }
 						</p>
-						<div class="flex gap-4 justify-center flex-wrap">
-							<a href="#" class="btn btn-primary btn-lg">Start Free Trial</a>
-							<a href="#" class="btn btn-secondary btn-lg">Schedule Demo</a>
+
+						<!-- Inline email form -->
+						<form class="flex flex-col sm:flex-row gap-4 mx-auto mb-6">
+							<input
+								type="email"
+								placeholder={ i18n.T(ctx, "landing.final_cta.email_placeholder") }
+								class="input input-lg flex-1"
+							/>
+							<button type="submit" class="btn btn-cta btn-lg whitespace-nowrap">
+								{ i18n.T(ctx, "landing.final_cta.button") }
+							</button>
+						</form>
+
+						<div class="flex items-center justify-center gap-6 text-body text-subtle">
+							<span class="flex items-center gap-2">
+								<span class="text-accent">✓</span>
+								{ i18n.T(ctx, "landing.final_cta.no_credit_card") }
+							</span>
+							<span class="flex items-center gap-2">
+								<span class="text-accent">✓</span>
+								{ i18n.T(ctx, "landing.final_cta.cancel_anytime") }
+							</span>
 						</div>
-						<p class="text-body text-subtle mt-6">No credit card required · Cancel anytime</p>
 					</div>
 				</div>
 			</div>
 		</section>
 
+		<!-- Sticky Mobile CTA -->
+		<div class="sticky-cta-mobile md:hidden">
+			<a href="/register" class="btn btn-cta btn-md w-full justify-center">
+				{ i18n.T(ctx, "landing.mobile_cta") }
+			</a>
+		</div>
 	}
 }

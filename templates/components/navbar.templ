@@ -12,11 +12,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 			<div class="flex items-center justify-between">
 				<!-- Left Section: Logo & Nav -->
 				<div class="flex items-center gap-12">
-					<a href="/dashboard" class="group">
-						<h1 class="text-2xl font-bold font-space-grotesk tracking-tighter">
-							<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
-						</h1>
-					</a>
+					<a href="/dashboard" class="group flex items-center gap-3">
+					<img src="/static/images/favicon.png" alt="LawFlow" class="w-9 h-9"/>
+					<h1 class="text-2xl font-bold font-space-grotesk tracking-tighter">
+						<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
+					</h1>
+				</a>
 					
 					<!-- Desktop Navigation -->
 					<div class="hidden md:flex items-center gap-1">

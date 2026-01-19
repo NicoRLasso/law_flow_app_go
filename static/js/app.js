@@ -2,13 +2,14 @@
    KINETIC TYPOGRAPHY - SCROLL ANIMATIONS
    ============================================ */
 
+// Check for reduced motion preference globally
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // Hero Parallax Effect
 function initHeroParallax() {
     const hero = document.querySelector('.hero-parallax');
     if (!hero) return;
 
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
     window.addEventListener('scroll', () => {
@@ -46,22 +47,137 @@ function initFadeInObserver() {
     fadeElements.forEach(element => observer.observe(element));
 }
 
-// Accordion functionality
+/* ============================================
+   SCROLL-TRIGGERED REVEAL ANIMATIONS
+   ============================================ */
+
+function initScrollReveal() {
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+    if (revealElements.length === 0) return;
+
+    // Skip animations if user prefers reduced motion
+    if (prefersReducedMotion) {
+        revealElements.forEach(el => el.classList.add('visible'));
+        return;
+    }
+
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Optionally unobserve after animation (one-time reveal)
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    revealElements.forEach(element => observer.observe(element));
+}
+
+/* ============================================
+   STICKY MOBILE CTA
+   ============================================ */
+
+function initStickyCTA() {
+    const stickyCTA = document.querySelector('.sticky-cta-mobile');
+    if (!stickyCTA) return;
+
+    let lastScrollY = window.scrollY;
+    const showThreshold = 600; // Show after scrolling 600px
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > showThreshold) {
+            stickyCTA.classList.add('visible');
+        } else {
+            stickyCTA.classList.remove('visible');
+        }
+
+        lastScrollY = currentScrollY;
+    }, { passive: true });
+}
+
+/* ============================================
+   COUNTER ANIMATION (Alpine.js helper)
+   ============================================ */
+
+// This function can be called from Alpine.js x-init
+window.animateCounter = function(element, target, duration = 2000) {
+    if (prefersReducedMotion) {
+        element.textContent = target.toLocaleString();
+        return;
+    }
+
+    const start = 0;
+    const startTime = performance.now();
+
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function (ease-out)
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(start + (target - start) * easeOut);
+
+        element.textContent = current.toLocaleString();
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            element.textContent = target.toLocaleString();
+        }
+    }
+
+    requestAnimationFrame(update);
+};
+
+/* ============================================
+   SMOOTH SCROLL FOR ANCHOR LINKS
+   ============================================ */
+
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const target = document.querySelector(targetId);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+}
+
+/* ============================================
+   ACCORDION FUNCTIONALITY
+   ============================================ */
+
 function initAccordions() {
     const accordionTriggers = document.querySelectorAll('.accordion-trigger');
-    
+
     accordionTriggers.forEach(trigger => {
         trigger.addEventListener('click', () => {
             const content = trigger.nextElementSibling;
             const isOpen = content.classList.contains('open');
-            
+
             // Close all other accordions (optional - remove for multi-open)
             document.querySelectorAll('.accordion-content').forEach(item => {
                 if (item !== content) {
                     item.classList.remove('open');
                 }
             });
-            
+
             // Toggle current accordion
             if (isOpen) {
                 content.classList.remove('open');
@@ -74,9 +190,15 @@ function initAccordions() {
     });
 }
 
-// Initialize all animations on DOM ready
+/* ============================================
+   INITIALIZE ALL SCRIPTS
+   ============================================ */
+
 document.addEventListener('DOMContentLoaded', () => {
     initHeroParallax();
     initFadeInObserver();
+    initScrollReveal();
+    initStickyCTA();
+    initSmoothScroll();
     initAccordions();
 });

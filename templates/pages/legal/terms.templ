@@ -8,46 +8,78 @@ import (
 
 templ Terms(ctx context.Context, title string, csrfToken string) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken) {
-		<div class="relative overflow-hidden w-full">
-			<section class="section-lg relative">
-				<div class="container mx-auto px-6">
-					<div class="max-w-3xl mx-auto">
-						<h1 class="text-h1 text-gradient mb-8">{ i18n.T(ctx, "pages.terms.title") }</h1>
-						<p class="text-body text-muted mb-12">{ i18n.T(ctx, "pages.terms.updated") }</p>
+		<!-- Hero Section -->
+		<section class="section-lg relative overflow-hidden">
+			<!-- Animated background elements -->
+			<div class="absolute top-20 right-20 w-48 h-48 rounded-full bg-accent/5 blur-3xl animate-float-slow"></div>
 
-						<div class="prose prose-invert prose-lg max-w-none text-muted">
-							<p>
+			<div class="container mx-auto px-6 relative z-10">
+				<div class="mx-auto reveal">
+					<div class="text-center mb-12">
+						<h1 class="text-h1 text-gradient mb-4">{ i18n.T(ctx, "pages.terms.title") }</h1>
+						<p class="text-body text-muted">{ i18n.T(ctx, "pages.terms.updated") }</p>
+					</div>
+
+					<div class="card card-glass p-8 md:p-12">
+						<div class="prose max-w-none">
+							<p class="text-body-lg text-muted leading-relaxed mb-8">
 								{ i18n.T(ctx, "pages.terms.intro") }
 							</p>
 
-							<h3 class="text-foreground mt-8 mb-4">1. Acceptance of Terms</h3>
-							<p>
-								By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.
-							</p>
+							<div class="space-y-8">
+								<div class="reveal">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section1_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section1_content") }
+									</p>
+								</div>
 
-							<h3 class="text-foreground mt-8 mb-4">2. Accounts</h3>
-							<p>
-								When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.
-							</p>
-							
-							<h3 class="text-foreground mt-8 mb-4">3. Intellectual Property</h3>
-							<p>
-								The Service and its original content, features and functionality are and will remain the exclusive property of Law Flow Inc and its licensors.
-							</p>
+								<div class="reveal reveal-stagger-1">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section2_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section2_content") }
+									</p>
+								</div>
 
-							<h3 class="text-foreground mt-8 mb-4">4. Termination</h3>
-							<p>
-								We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
-							</p>
+								<div class="reveal reveal-stagger-2">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section3_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section3_content") }
+									</p>
+								</div>
 
-                            <h3 class="text-foreground mt-8 mb-4">5. Governing Law</h3>
-							<p>
-								These Terms shall be governed and construed in accordance with the laws of Delaware, United States, without regard to its conflict of law provisions.
-							</p>
+								<div class="reveal reveal-stagger-3">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section4_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section4_content") }
+									</p>
+								</div>
+
+								<div class="reveal reveal-stagger-4">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section5_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section5_content") }
+									</p>
+								</div>
+
+								<div class="reveal reveal-stagger-5">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section6_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section6_content") }
+									</p>
+								</div>
+
+								<div class="reveal reveal-stagger-6">
+									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.terms.section7_title") }</h3>
+									<p class="text-body text-muted leading-relaxed">
+										{ i18n.T(ctx, "pages.terms.section7_content") }
+									</p>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+			</div>
+		</section>
 	}
 }

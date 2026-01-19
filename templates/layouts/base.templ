@@ -31,6 +31,9 @@ templ Base(ctx context.Context, title string, csrfToken string) {
 			<!-- HTMX -->
 			<script src="https://unpkg.com/htmx.org@2.0.0"></script>
 
+			<!-- Alpine.js Plugins (must load before Alpine) -->
+			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer></script>
+
 			<!-- Alpine.js -->
 			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 

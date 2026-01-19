@@ -8,92 +8,115 @@ import (
 
 templ About(ctx context.Context, title string, csrfToken string) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken) {
-		<div class="relative overflow-hidden w-full">
-			<!-- Hero Section -->
-			<section class="section-lg relative">
-				<div class="container mx-auto px-6">
-					<div class="max-w-4xl mx-auto text-center mb-16">
+		<!-- Hero Section -->
+		<section class="section-lg relative overflow-hidden">
+			<!-- Animated background elements -->
+			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
+			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
+
+			<div class="container mx-auto px-6 relative z-10">
+				<div class="mx-auto text-center reveal">
 						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.about.mission_label") }</span>
 						<h1 class="text-display text-gradient mb-8">
 							{ i18n.T(ctx, "pages.about.mission_title") }
 							<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.about.mission_highlight") }</span>
 						</h1>
-						<p class="text-body-lg text-muted max-w-2xl mx-auto leading-relaxed">
-							{ i18n.T(ctx, "pages.about.mission_desc") }
+						<p class="text-body-lg text-muted mx-auto leading-relaxed">
+						{ i18n.T(ctx, "pages.about.mission_desc") }
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Values Section -->
+		<section class="section border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="grid md:grid-cols-3 gap-8 mx-auto">
+					<div class="card card-glass card-hover p-8 reveal">
+						<div class="icon-container mb-6">
+							<span class="text-2xl">⚡</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.innovation_title") }</h3>
+						<p class="text-body text-muted">
+							{ i18n.T(ctx, "pages.about.values.innovation_desc") }
+						</p>
+					</div>
+					<div class="card card-glass card-hover p-8 reveal reveal-stagger-1">
+						<div class="icon-container mb-6">
+							<span class="text-2xl">🛡️</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.trust_title") }</h3>
+						<p class="text-body text-muted">
+							{ i18n.T(ctx, "pages.about.values.trust_desc") }
+						</p>
+					</div>
+					<div class="card card-glass card-hover p-8 reveal reveal-stagger-2">
+						<div class="icon-container mb-6">
+							<span class="text-2xl">🤝</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.partnership_title") }</h3>
+						<p class="text-body text-muted">
+							{ i18n.T(ctx, "pages.about.values.partnership_desc") }
 						</p>
 					</div>
 				</div>
-			</section>
+			</div>
+		</section>
 
-			<!-- Values Section -->
-			<section class="section border-t border-white/[0.06]">
-				<div class="container mx-auto px-6">
-					<div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-						<div class="card card-glass p-8 w-full">
-							<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6">
-								<span class="text-2xl">⚡</span>
-							</div>
-							<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.innovation_title") }</h3>
-							<p class="text-body text-muted">
-								{ i18n.T(ctx, "pages.about.values.innovation_desc") }
-							</p>
-						</div>
-						<div class="card card-glass p-8 w-full">
-							<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6">
-								<span class="text-2xl">🛡️</span>
-							</div>
-							<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.trust_title") }</h3>
-							<p class="text-body text-muted">
-								{ i18n.T(ctx, "pages.about.values.trust_desc") }
-							</p>
-						</div>
-						<div class="card card-glass p-8 w-full">
-							<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6">
-								<span class="text-2xl">🤝</span>
-							</div>
-							<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.partnership_title") }</h3>
-							<p class="text-body text-muted">
-								{ i18n.T(ctx, "pages.about.values.partnership_desc") }
-							</p>
-						</div>
+		// <!-- Team Section - COMMENTED OUT -->
+		// Uncomment the block below when ready to show the team
+		if false {
+		<section class="section border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="text-center mb-16 reveal">
+					<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "pages.about.team_title") }</h2>
+					<p class="text-body text-muted  mx-auto">
+						{ i18n.T(ctx, "pages.about.team_desc") }
+					</p>
+				</div>
+				<div class="grid md:grid-cols-4 gap-6 mx-auto">
+					<div class="card card-hover p-6 text-center reveal">
+						<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
+						<h4 class="text-body font-semibold">Alex Morgan</h4>
+						<p class="text-body-sm text-subtle">CEO & Founder</p>
+					</div>
+					<div class="card card-hover p-6 text-center reveal reveal-stagger-1">
+						<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
+						<h4 class="text-body font-semibold">Sarah Chen</h4>
+						<p class="text-body-sm text-subtle">CTO</p>
+					</div>
+					<div class="card card-hover p-6 text-center reveal reveal-stagger-2">
+						<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
+						<h4 class="text-body font-semibold">David Ross</h4>
+						<p class="text-body-sm text-subtle">Head of Product</p>
+					</div>
+					<div class="card card-hover p-6 text-center reveal reveal-stagger-3">
+						<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
+						<h4 class="text-body font-semibold">Elena Rodriguez</h4>
+						<p class="text-body-sm text-subtle">Head of Legal</p>
 					</div>
 				</div>
-			</section>
+			</div>
+		</section>
+		}
 
-			<!-- Team Section (Static for now) -->
-			<section class="section border-t border-white/[0.06]">
-				<div class="container mx-auto px-6">
-					<div class="text-center mb-16">
-						<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "pages.about.team_title") }</h2>
-						<p class="text-body text-muted max-w-2xl mx-auto">
-							{ i18n.T(ctx, "pages.about.team_desc") }
+		<!-- CTA Section -->
+		<section class="section relative">
+			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
+			<div class="container mx-auto px-6 relative">
+				<div class="mx-auto text-center reveal">
+					<div class="card card-gradient p-12">
+						<h2 class="text-h2 text-gradient mb-4">{ i18n.T(ctx, "pages.about.cta_title") }</h2>
+						<p class="text-body text-muted mb-8">
+							{ i18n.T(ctx, "pages.about.cta_desc") }
 						</p>
-					</div>
-					<div class="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-						<!-- Placeholder Team Members -->
-						<div class="card card-hover p-6 text-center w-full">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">Alex Morgan</h4>
-							<p class="text-body-sm text-subtle">CEO & Founder</p>
-						</div>
-						<div class="card card-hover p-6 text-center w-full">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">Sarah Chen</h4>
-							<p class="text-body-sm text-subtle">CTO</p>
-						</div>
-						<div class="card card-hover p-6 text-center w-full">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">David Ross</h4>
-							<p class="text-body-sm text-subtle">Head of Product</p>
-						</div>
-						<div class="card card-hover p-6 text-center w-full">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">Elena Rodriguez</h4>
-							<p class="text-body-sm text-subtle">Head of Legal</p>
-						</div>
+						<a href="/register" class="btn btn-cta btn-lg">
+							{ i18n.T(ctx, "landing.hero.cta_primary") }
+							<span class="ml-2">→</span>
+						</a>
 					</div>
 				</div>
-			</section>
-		</div>
+			</div>
+		</section>
 	}
 }

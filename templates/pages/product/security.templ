@@ -8,64 +8,131 @@ import (
 
 templ Security(ctx context.Context, title string, csrfToken string) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken) {
-		<div class="relative overflow-hidden w-full">
-			<section class="section-lg relative">
-				<div class="container mx-auto px-6">
-					<div class="max-w-4xl mx-auto text-center mb-16">
-						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.security.label") }</span>
-						<h1 class="text-display text-gradient mb-8">
-							{ i18n.T(ctx, "pages.security.hero_title") }
-							<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
-						</h1>
-						<p class="text-body-lg text-muted max-w-2xl mx-auto leading-relaxed">
-							{ i18n.T(ctx, "pages.security.hero_desc") }
+		<!-- Hero Section -->
+		<section class="section-lg relative overflow-hidden">
+			<!-- Animated background elements -->
+			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
+			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
+
+			<div class="container mx-auto px-6 relative z-10">
+				<div class=" mx-auto text-center reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.security.label") }</span>
+					<h1 class="text-display text-gradient mb-8">
+						{ i18n.T(ctx, "pages.security.hero_title") }
+						<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
+					</h1>
+					<p class="text-body-lg text-muted mx-auto leading-relaxed">
+						{ i18n.T(ctx, "pages.security.hero_desc") }
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Security Features Grid -->
+		<section class="section border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="grid md:grid-cols-4 gap-8 mx-auto">
+					<!-- Encryption -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal text-center group">
+						<div class="icon-container-lg mx-auto mb-6">
+							<span class="text-3xl">🔒</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.encryption_title") }</h3>
+						<p class="text-body text-muted leading-relaxed">
+							{ i18n.T(ctx, "pages.security.encryption_desc") }
+						</p>
+					</div>
+
+					<!-- Infrastructure -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-1 text-center group">
+						<div class="icon-container-lg mx-auto mb-6">
+							<span class="text-3xl">☁️</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.infrastructure_title") }</h3>
+						<p class="text-body text-muted leading-relaxed">
+							{ i18n.T(ctx, "pages.security.infrastructure_desc") }
+						</p>
+					</div>
+
+					<!-- Compliance -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-2 text-center group">
+						<div class="icon-container-lg mx-auto mb-6">
+							<span class="text-3xl">🛡️</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.compliance_title") }</h3>
+						<p class="text-body text-muted leading-relaxed">
+							{ i18n.T(ctx, "pages.security.compliance_desc") }
+						</p>
+					</div>
+
+					<!-- Access Control -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-3 text-center group">
+						<div class="icon-container-lg mx-auto mb-6">
+							<span class="text-3xl">👁️</span>
+						</div>
+						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.access_title") }</h3>
+						<p class="text-body text-muted leading-relaxed">
+							{ i18n.T(ctx, "pages.security.access_desc") }
 						</p>
 					</div>
 				</div>
-			</section>
+			</div>
+		</section>
 
-			<section class="section border-t border-white/[0.06]">
-				<div class="container mx-auto px-6">
-					<div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-						<div class="space-y-8">
-							<div class="card card-glass p-8 w-full">
-								<h3 class="text-h3 mb-4 flex items-center gap-3">
-									<span class="text-2xl">🔒</span> { i18n.T(ctx, "pages.security.encryption_title") }
-								</h3>
-								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.security.encryption_desc") }
-								</p>
-							</div>
-							<div class="card card-glass p-8 w-full">
-								<h3 class="text-h3 mb-4 flex items-center gap-3">
-									<span class="text-2xl">☁️</span> { i18n.T(ctx, "pages.security.infrastructure_title") }
-								</h3>
-								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.security.infrastructure_desc") }
-								</p>
-							</div>
+		<!-- Trust Badges Section -->
+		<section class="section-sm border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="flex flex-wrap justify-center gap-6 reveal">
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">🔒</span>
 						</div>
-						<div class="space-y-8">
-							<div class="card card-glass p-8 w-full">
-								<h3 class="text-h3 mb-4 flex items-center gap-3">
-									<span class="text-2xl">🛡️</span> { i18n.T(ctx, "pages.security.compliance_title") }
-								</h3>
-								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.security.compliance_desc") }
-								</p>
-							</div>
-							<div class="card card-glass p-8 w-full">
-								<h3 class="text-h3 mb-4 flex items-center gap-3">
-									<span class="text-2xl">👁️</span> { i18n.T(ctx, "pages.security.access_title") }
-								</h3>
-								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.security.access_desc") }
-								</p>
-							</div>
+						<div>
+							<div class="text-body font-semibold">SOC 2 Type II</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.soc2") }</div>
+						</div>
+					</div>
+
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">🇪🇺</span>
+						</div>
+						<div>
+							<div class="text-body font-semibold">GDPR</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.gdpr") }</div>
+						</div>
+					</div>
+
+					<div class="trust-badge-card">
+						<div class="icon-container">
+							<span class="text-xl">🛡️</span>
+						</div>
+						<div>
+							<div class="text-body font-semibold">256-bit SSL</div>
+							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.encryption") }</div>
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+			</div>
+		</section>
+
+		<!-- CTA Section -->
+		<section class="section relative">
+			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
+			<div class="container mx-auto px-6 relative">
+				<div class="mx-auto text-center reveal">
+					<div class="card card-gradient p-12">
+						<h2 class="text-h2 text-gradient mb-4">{ i18n.T(ctx, "pages.security.cta_title") }</h2>
+						<p class="text-body text-muted mb-8">
+							{ i18n.T(ctx, "pages.security.cta_desc") }
+						</p>
+						<a href="/register" class="btn btn-cta btn-lg">
+							{ i18n.T(ctx, "landing.hero.cta_primary") }
+							<span class="ml-2">→</span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
 	}
 }

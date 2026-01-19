@@ -8,51 +8,122 @@ import (
 
 templ Compliance(ctx context.Context, title string, csrfToken string) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken) {
-		<div class="relative overflow-hidden w-full">
-			<section class="section-lg relative">
-				<div class="container mx-auto px-6">
-					<div class="max-w-4xl mx-auto text-center mb-16">
-						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.compliance.label") }</span>
-						<h1 class="text-display text-gradient mb-8">
-							{ i18n.T(ctx, "pages.compliance.hero_title") }
-							<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.compliance.hero_highlight") }</span>
-						</h1>
-						<p class="text-body-lg text-muted max-w-2xl mx-auto leading-relaxed">
-							{ i18n.T(ctx, "pages.compliance.hero_desc") }
-						</p>
-					</div>
-				</div>
-			</section>
+		<!-- Hero Section -->
+		<section class="section-lg relative overflow-hidden">
+			<!-- Animated background elements -->
+			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
+			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
 
-			<section class="section border-t border-white/[0.06]">
-				<div class="container mx-auto px-6">
-					<div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-						<div class="card card-hover p-8 flex gap-6 items-start w-full">
-							<div class="w-16 h-16 rounded-xl bg-white/[0.05] flex items-center justify-center shrink-0">
-								<span class="text-2xl font-bold text-foreground">SOC2</span>
+			<div class="container mx-auto px-6 relative z-10">
+				<div class="mx-auto text-center reveal">
+					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.compliance.label") }</span>
+					<h1 class="text-display text-gradient mb-8">
+						{ i18n.T(ctx, "pages.compliance.hero_title") }
+						<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.compliance.hero_highlight") }</span>
+					</h1>
+					<p class="text-body-lg text-muted mx-auto leading-relaxed">
+						{ i18n.T(ctx, "pages.compliance.hero_desc") }
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Compliance Cards -->
+		<section class="section border-t border-white/[0.06]">
+			<div class="container mx-auto px-6">
+				<div class="grid md:grid-cols-2 gap-8 mx-auto">
+					<!-- SOC 2 -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal group">
+						<div class="flex gap-6 items-start">
+							<div class="icon-container-lg shrink-0">
+								<span class="text-xl font-bold text-foreground">SOC2</span>
 							</div>
 							<div>
-								<h3 class="text-h3 mb-2">{ i18n.T(ctx, "pages.compliance.soc2_title") }</h3>
-								<p class="text-body text-muted">
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.soc2_title") }</h3>
+								<p class="text-body text-muted leading-relaxed">
 									{ i18n.T(ctx, "pages.compliance.soc2_desc") }
 								</p>
+								<div class="mt-4">
+									<span class="badge badge-success">Certified</span>
+								</div>
 							</div>
 						</div>
+					</div>
 
-						<div class="card card-hover p-8 flex gap-6 items-start w-full">
-							<div class="w-16 h-16 rounded-xl bg-white/[0.05] flex items-center justify-center shrink-0">
-								<span class="text-2xl font-bold text-foreground">GDPR</span>
+					<!-- GDPR -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-1 group">
+						<div class="flex gap-6 items-start">
+							<div class="icon-container-lg shrink-0">
+								<span class="text-xl font-bold text-foreground">GDPR</span>
 							</div>
 							<div>
-								<h3 class="text-h3 mb-2">{ i18n.T(ctx, "pages.compliance.gdpr_title") }</h3>
-								<p class="text-body text-muted">
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.gdpr_title") }</h3>
+								<p class="text-body text-muted leading-relaxed">
 									{ i18n.T(ctx, "pages.compliance.gdpr_desc") }
 								</p>
+								<div class="mt-4">
+									<span class="badge badge-success">Compliant</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- HIPAA Ready -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-2 group">
+						<div class="flex gap-6 items-start">
+							<div class="icon-container-lg shrink-0">
+								<span class="text-2xl">🏥</span>
+							</div>
+							<div>
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.hipaa_title") }</h3>
+								<p class="text-body text-muted leading-relaxed">
+									{ i18n.T(ctx, "pages.compliance.hipaa_desc") }
+								</p>
+								<div class="mt-4">
+									<span class="badge badge-accent">Ready</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- ISO 27001 -->
+					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-3 group">
+						<div class="flex gap-6 items-start">
+							<div class="icon-container-lg shrink-0">
+								<span class="text-2xl">🌐</span>
+							</div>
+							<div>
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.iso_title") }</h3>
+								<p class="text-body text-muted leading-relaxed">
+									{ i18n.T(ctx, "pages.compliance.iso_desc") }
+								</p>
+								<div class="mt-4">
+									<span class="badge badge-success">Certified</span>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+			</div>
+		</section>
+
+		<!-- CTA Section -->
+		<section class="section relative">
+			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
+			<div class="container mx-auto px-6 relative">
+				<div class=" mx-auto text-center reveal">
+					<div class="card card-gradient p-12">
+						<h2 class="text-h2 text-gradient mb-4">{ i18n.T(ctx, "pages.compliance.cta_title") }</h2>
+						<p class="text-body text-muted mb-8">
+							{ i18n.T(ctx, "pages.compliance.cta_desc") }
+						</p>
+						<a href="/contact" class="btn btn-cta btn-lg">
+							{ i18n.T(ctx, "footer.contact") }
+							<span class="ml-2">→</span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
 	}
 }
