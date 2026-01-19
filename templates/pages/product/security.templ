@@ -1,0 +1,71 @@
+package product
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Security(ctx context.Context, title string, csrfToken string) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+		<div class="relative overflow-hidden w-full">
+			<section class="section-lg relative">
+				<div class="container mx-auto px-6">
+					<div class="max-w-4xl mx-auto text-center mb-16">
+						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.security.label") }</span>
+						<h1 class="text-display text-gradient mb-8">
+							{ i18n.T(ctx, "pages.security.hero_title") }
+							<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
+						</h1>
+						<p class="text-body-lg text-muted max-w-2xl mx-auto leading-relaxed">
+							{ i18n.T(ctx, "pages.security.hero_desc") }
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="section border-t border-white/[0.06]">
+				<div class="container mx-auto px-6">
+					<div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+						<div class="space-y-8">
+							<div class="card card-glass p-8 w-full">
+								<h3 class="text-h3 mb-4 flex items-center gap-3">
+									<span class="text-2xl">🔒</span> { i18n.T(ctx, "pages.security.encryption_title") }
+								</h3>
+								<p class="text-body text-muted leading-relaxed">
+									{ i18n.T(ctx, "pages.security.encryption_desc") }
+								</p>
+							</div>
+							<div class="card card-glass p-8 w-full">
+								<h3 class="text-h3 mb-4 flex items-center gap-3">
+									<span class="text-2xl">☁️</span> { i18n.T(ctx, "pages.security.infrastructure_title") }
+								</h3>
+								<p class="text-body text-muted leading-relaxed">
+									{ i18n.T(ctx, "pages.security.infrastructure_desc") }
+								</p>
+							</div>
+						</div>
+						<div class="space-y-8">
+							<div class="card card-glass p-8 w-full">
+								<h3 class="text-h3 mb-4 flex items-center gap-3">
+									<span class="text-2xl">🛡️</span> { i18n.T(ctx, "pages.security.compliance_title") }
+								</h3>
+								<p class="text-body text-muted leading-relaxed">
+									{ i18n.T(ctx, "pages.security.compliance_desc") }
+								</p>
+							</div>
+							<div class="card card-glass p-8 w-full">
+								<h3 class="text-h3 mb-4 flex items-center gap-3">
+									<span class="text-2xl">👁️</span> { i18n.T(ctx, "pages.security.access_title") }
+								</h3>
+								<p class="text-body text-muted leading-relaxed">
+									{ i18n.T(ctx, "pages.security.access_desc") }
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+}

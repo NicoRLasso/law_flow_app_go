@@ -1,0 +1,48 @@
+package legal
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Privacy(ctx context.Context, title string, csrfToken string) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+		<div class="relative overflow-hidden w-full">
+			<section class="section-lg relative">
+				<div class="container mx-auto px-6">
+					<div class="max-w-3xl mx-auto">
+						<h1 class="text-h1 text-gradient mb-8">{ i18n.T(ctx, "pages.privacy.title") }</h1>
+						<p class="text-body text-muted mb-12">{ i18n.T(ctx, "pages.privacy.updated") }</p>
+
+						<div class="prose prose-invert prose-lg max-w-none text-muted">
+							<p>
+								{ i18n.T(ctx, "pages.privacy.intro") }
+							</p>
+
+							<h3 class="text-foreground mt-8 mb-4">1. Information We Collect</h3>
+							<p>
+								We collect information that you provide directly to us when you register for an account, create or modify your profile, set preferences, sign up for our newsletter, or contact customer support. This information may include your name, email address, phone number, payment information, and any other information you choose to provide.
+							</p>
+
+							<h3 class="text-foreground mt-8 mb-4">2. How We Use Your Information</h3>
+							<p>
+								We use the information we collect to operate, maintain, and provide to you the features and functionality of the Service, to communicate with you, to monitor and analyze trends and usage, and to improve our Service and develop new products, services, features, and functionality.
+							</p>
+							
+							<h3 class="text-foreground mt-8 mb-4">3. Data Security</h3>
+							<p>
+								We implement appropriate technical and organizational measures to protect the security of your personal information. However, please be aware that no method of transmission over the internet or method of electronic storage is 100% secure.
+							</p>
+
+							<h3 class="text-foreground mt-8 mb-4">4. Contact Us</h3>
+							<p>
+								If you have any questions about this Privacy Policy, please contact us at <a href="mailto:privacy@lawflow.com" class="text-accent hover:underline">privacy@lawflow.com</a>.
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+}

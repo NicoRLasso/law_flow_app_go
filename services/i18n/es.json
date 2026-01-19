@@ -42,7 +42,104 @@
     "profile_settings": "Configuración de Perfil",
     "features": "Características",
     "benefits": "Beneficios",
-    "pricing": "Precios"
+    "pricing": "Precios",
+    "login": "Iniciar Sesión"
+  },
+  "footer": {
+    "product": "Producto",
+    "features": "Características",
+    "pricing": "Precios",
+    "security": "Seguridad",
+    "integrations": "Integraciones",
+    "roadmap": "Roadmap",
+    "company": "Compañía",
+    "about": "Nosotros",
+    "blog": "Blog",
+    "careers": "Carreras",
+    "contact": "Contacto",
+    "partners": "Socios",
+    "legal": "Legal",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "cookies": "Política de Cookies",
+    "compliance": "Cumplimiento",
+    "status": "Estado",
+    "changelog": "Changelog",
+    "docs": "Documentación",
+    "rights": "© 2026 Law Flow. Todos los derechos reservados.",
+    "slogan": "Gestión moderna para firmas de abogados modernas. Optimiza tu flujo de trabajo y enfócate en lo que importa."
+  },
+  "pages": {
+    "about": {
+      "title": "Sobre Nosotros",
+      "mission_label": "Nuestra Misión",
+      "mission_title": "Empoderando Firmas para",
+      "mission_highlight": "Trabajar Inteligente",
+      "mission_desc": "Estamos construyendo el sistema operativo para la práctica legal moderna. Nuestra misión es eliminar el trabajo administrativo para que los abogados puedan enfocarse en lo que hacen mejor: ejercer el derecho.",
+      "values": {
+        "innovation_title": "Innovación",
+        "innovation_desc": "Constantemente empujamos los límites de la tecnología legal, usando IA y automatización para resolver problemas reales.",
+        "trust_title": "Confianza",
+        "trust_desc": "La seguridad y confiabilidad son el núcleo de todo lo que construimos. Sus datos son nuestra prioridad.",
+        "partnership_title": "Asociación",
+        "partnership_desc": "Tenemos éxito cuando nuestros clientes tienen éxito. No somos solo un proveedor; somos un socio en su crecimiento."
+      },
+      "team_title": "Conozca al Equipo",
+      "team_desc": "Un equipo diverso de ingenieros, diseñadores y expertos legales."
+    },
+    "contact": {
+      "title": "Contáctenos",
+      "label": "Póngase en Contacto",
+      "desc": "¿Tiene preguntas? Nos encantaría saber de usted. Envíenos un mensaje y responderemos lo antes posible.",
+      "form": {
+        "name": "Nombre",
+        "email": "Email",
+        "message": "Mensaje",
+        "send": "Enviar Mensaje",
+        "or_email": "O envíenos un email directamente a"
+      }
+    },
+    "security": {
+      "title": "Seguridad",
+      "label": "Seguridad Primero",
+      "hero_title": "Seguridad Bancaria para",
+      "hero_highlight": "Datos Legales",
+      "hero_desc": "Protegemos la información sensible de sus clientes con encriptación líder en la industria, controles de acceso estrictos y auditorías de seguridad regulares.",
+      "encryption_title": "Encriptación",
+      "encryption_desc": "Los datos se encriptan en tránsito usando TLS 1.3 y en reposo usando AES-256. Sus documentos y comunicaciones están seguros desde el momento en que salen de su dispositivo.",
+      "infrastructure_title": "Infraestructura",
+      "infrastructure_desc": "Alojado en infraestructura de nube segura y compatible con SOC 2, con copias de seguridad automatizadas y redundancia geográfica para garantizar alta disponibilidad.",
+      "compliance_title": "Cumplimiento",
+      "compliance_desc": "Estamos comprometidos a mantener el cumplimiento con estándares globales incluyendo GDPR, CCPA y regulaciones de la industria legal para el manejo de datos.",
+      "access_title": "Control de Acceso",
+      "access_desc": "Control de acceso basado en roles (RBAC), autenticación multifactor (MFA) y registros de auditoría detallados le dan control total y visibilidad sobre sus datos."
+    },
+    "privacy": {
+      "title": "Política de Privacidad",
+      "updated": "Última actualización: Enero 2026",
+      "intro": "En Law Flow, tomamos su privacidad en serio. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestro sitio web o utiliza nuestra aplicación."
+    },
+    "terms": {
+      "title": "Términos de Servicio",
+      "updated": "Última actualización: Enero 2026",
+      "intro": "Por favor lea estos Términos de Servicio cuidadosamente antes de usar la aplicación Law Flow."
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "updated": "Última actualización: Enero 2026",
+      "intro": "Esta Política de Cookies explica qué son las cookies y cómo las usamos."
+    },
+    "compliance": {
+      "title": "Cumplimiento",
+      "label": "Cumplimiento",
+      "hero_title": "Cumpliendo Estándares",
+      "hero_highlight": "Globales",
+      "hero_desc": "Estamos dedicados a cumplir con los estándares de seguridad y privacidad más estrictos en la industria legal.",
+      "soc2_title": "SOC 2 Tipo II",
+      "soc2_desc": "Completamos con éxito la auditoría SOC 2 Tipo II de AICPA.",
+      "gdpr_title": "Cumplimiento GDPR",
+      "gdpr_desc": "Cumplimos totalmente con el Reglamento General de Protección de Datos (GDPR)."
+    }
   },
   "common": {
     "submit": "Enviar",
@@ -179,13 +276,13 @@
   },
   "landing": {
     "hero": {
-      "label": "Gestión de Práctica Legal",
-      "title_prefix": "Transforma Tu",
-      "title_suffix": "Flujo de Trabajo Legal",
-      "description": "Optimiza la gestión de casos, automatiza flujos de trabajo y ofrece experiencias excepcionales a los clientes con la plataforma moderna construida para firmas de abogados.",
-      "cta_primary": "Prueba Gratis",
-      "cta_secondary": "Explorar Funciones",
-      "trial_note": "Sin tarjeta de crédito · Prueba gratuita de 14 días"
+      "label": "La Ventaja Desleal",
+      "title_prefix": "Elimina el",
+      "title_suffix": "Caos Administrativo",
+      "description": "Tu firma está sangrando horas facturables. Law Flow detiene la hemorragia con automatización de grado militar e IA que realmente funciona. Deja de actuar como secretario. Empieza a ejercer como socio.",
+      "cta_primary": "Reclama tu Ventaja",
+      "cta_secondary": "Atestigua el Poder",
+      "trial_note": "Despliegue en 2 minutos · Sin tarjeta de crédito"
     },
     "stats": {
       "cases_label": "Casos Gestionados",
@@ -194,20 +291,20 @@
       "support_label": "Soporte"
     },
     "features": {
-      "label": "Características",
-      "title": "Todo lo que Necesitas",
-      "subtitle": "Herramientas poderosas diseñadas específicamente para prácticas legales modernas",
-      "case_mgmt_title": "Gestión Inteligente de Casos",
-      "case_mgmt_desc": "Centraliza toda la información de casos con organización impulsada por IA, búsqueda inteligente y flujos de trabajo automatizados. Rastrea plazos, gestiona documentos y colabora sin problemas con tu equipo.",
-      "learn_more": "Aprende más",
-      "automation_title": "Automatización de Flujos",
-      "automation_desc": "Automatiza tareas repetitivas y crea flujos de trabajo personalizados.",
-      "portal_title": "Portal de Clientes",
-      "portal_desc": "Acceso seguro para clientes a actualizaciones de casos y documentos.",
-      "docs_title": "Gestión Documental",
-      "docs_desc": "Almacena, organiza y comparte documentos con control de versiones, firmas electrónicas y capacidades de búsqueda avanzada.",
-      "time_title": "Seguimiento de Tiempo y Facturación",
-      "time_desc": "Rastrea horas facturables sin esfuerzo con temporizadores integrados, facturación automatizada e informes detallados."
+      "label": "Arsenal",
+      "title": "Armas para el Abogado Moderno",
+      "subtitle": "La vieja escuela está muriendo. Equipa tu firma con herramientas que aniquilan la ineficiencia.",
+      "case_mgmt_title": "Centro de Mando",
+      "case_mgmt_desc": "Conciencia situacional total. Organización impulsada por IA que predice tu próximo movimiento, rastrea cada plazo y asegura que ningún detalle se escape.",
+      "learn_more": "Desplegar Función",
+      "automation_title": "Automatización Implacable",
+      "automation_desc": "Erradica las tareas repetitivas. Deja que la máquina haga el trabajo sucio mientras tú manejas la estrategia.",
+      "portal_title": "Nexo de Cliente Fortificado",
+      "portal_desc": "Canales encriptados de nivel bancario que mantienen a tus clientes informados y tu práctica segura.",
+      "docs_title": "Archivo de Inteligencia",
+      "docs_desc": "Recuperación instantánea de cualquier documento, donde sea, cuando sea. Indexación inteligente que parece leer tu mente.",
+      "time_title": "Captura de Ingresos",
+      "time_desc": "Nunca pierdas un minuto facturable de nuevo. Rastreo pasivo que paga el software en tu primera hora."
     }
   },
   "cases": {

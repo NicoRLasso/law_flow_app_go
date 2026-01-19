@@ -1,0 +1,43 @@
+package legal
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Cookies(ctx context.Context, title string, csrfToken string) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+		<div class="relative overflow-hidden w-full">
+			<section class="section-lg relative">
+				<div class="container mx-auto px-6">
+					<div class="max-w-3xl mx-auto">
+						<h1 class="text-h1 text-gradient mb-8">{ i18n.T(ctx, "pages.cookies.title") }</h1>
+						<p class="text-body text-muted mb-12">{ i18n.T(ctx, "pages.cookies.updated") }</p>
+
+						<div class="prose prose-invert prose-lg max-w-none text-muted">
+							<p>
+								{ i18n.T(ctx, "pages.cookies.intro") }
+							</p>
+
+							<h3 class="text-foreground mt-8 mb-4">What are cookies?</h3>
+							<p>
+								Cookies are small text files that are sent to your web browser by a website you visit. A cookie file is stored in your web browser and allows the Service or a third-party to recognize you and make your next visit easier and the Service more useful to you.
+							</p>
+
+							<h3 class="text-foreground mt-8 mb-4">How Law Flow uses cookies</h3>
+							<p>
+								When you use and access the Service, we may place a number of cookies files in your web browser. We use cookies for the following purposes: to enable certain functions of the Service, to provide analytics, to store your preferences, to enable advertisements delivery, including behavioral advertising.
+							</p>
+							
+							<h3 class="text-foreground mt-8 mb-4">Essential Cookies</h3>
+							<p>
+								We use essential cookies to authenticate users and prevent fraudulent use of user accounts.
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+}

@@ -1,0 +1,58 @@
+package legal
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Compliance(ctx context.Context, title string, csrfToken string) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+		<div class="relative overflow-hidden w-full">
+			<section class="section-lg relative">
+				<div class="container mx-auto px-6">
+					<div class="max-w-4xl mx-auto text-center mb-16">
+						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.compliance.label") }</span>
+						<h1 class="text-display text-gradient mb-8">
+							{ i18n.T(ctx, "pages.compliance.hero_title") }
+							<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.compliance.hero_highlight") }</span>
+						</h1>
+						<p class="text-body-lg text-muted max-w-2xl mx-auto leading-relaxed">
+							{ i18n.T(ctx, "pages.compliance.hero_desc") }
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="section border-t border-white/[0.06]">
+				<div class="container mx-auto px-6">
+					<div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+						<div class="card card-hover p-8 flex gap-6 items-start w-full">
+							<div class="w-16 h-16 rounded-xl bg-white/[0.05] flex items-center justify-center shrink-0">
+								<span class="text-2xl font-bold text-foreground">SOC2</span>
+							</div>
+							<div>
+								<h3 class="text-h3 mb-2">{ i18n.T(ctx, "pages.compliance.soc2_title") }</h3>
+								<p class="text-body text-muted">
+									{ i18n.T(ctx, "pages.compliance.soc2_desc") }
+								</p>
+							</div>
+						</div>
+
+						<div class="card card-hover p-8 flex gap-6 items-start w-full">
+							<div class="w-16 h-16 rounded-xl bg-white/[0.05] flex items-center justify-center shrink-0">
+								<span class="text-2xl font-bold text-foreground">GDPR</span>
+							</div>
+							<div>
+								<h3 class="text-h3 mb-2">{ i18n.T(ctx, "pages.compliance.gdpr_title") }</h3>
+								<p class="text-body text-muted">
+									{ i18n.T(ctx, "pages.compliance.gdpr_desc") }
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+}

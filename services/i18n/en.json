@@ -42,7 +42,104 @@
     "profile_settings": "Profile Settings",
     "features": "Features",
     "benefits": "Benefits",
-    "pricing": "Pricing"
+    "pricing": "Pricing",
+    "login": "Login"
+  },
+  "footer": {
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "security": "Security",
+    "integrations": "Integrations",
+    "roadmap": "Roadmap",
+    "company": "Company",
+    "about": "About",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact",
+    "partners": "Partners",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "compliance": "Compliance",
+    "status": "Status",
+    "changelog": "Changelog",
+    "docs": "Documentation",
+    "rights": "© 2026 Law Flow. All rights reserved.",
+    "slogan": "Modern practice management for modern law firms. Streamline your workflow and focus on what matters."
+  },
+  "pages": {
+    "about": {
+      "title": "About Us",
+      "mission_label": "Our Mission",
+      "mission_title": "Empowering Law Firms to",
+      "mission_highlight": "Work Smarter",
+      "mission_desc": "We're building the operating system for the modern law practice. Our mission is to eliminate administrative busywork so lawyers can focus on what they do best: practicing law.",
+      "values": {
+        "innovation_title": "Innovation",
+        "innovation_desc": "We constantly push the boundaries of legal tech, using AI and automation to solve real-world problems.",
+        "trust_title": "Trust",
+        "trust_desc": "Security and reliability are at the core of everything we build. Your data is our top priority.",
+        "partnership_title": "Partnership",
+        "partnership_desc": "We succeed when our customers succeed. We're not just a vendor; we're a partner in your growth."
+      },
+      "team_title": "Meet the Team",
+      "team_desc": "A diverse team of engineers, designers, and legal experts."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "label": "Get in Touch",
+      "desc": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+      "form": {
+        "name": "Name",
+        "email": "Email",
+        "message": "Message",
+        "send": "Send Message",
+        "or_email": "Or email us directly at"
+      }
+    },
+    "security": {
+      "title": "Security",
+      "label": "Security First",
+      "hero_title": "Bank-Grade Security for",
+      "hero_highlight": "Legal Data",
+      "hero_desc": "We protect your sensitive client information with industry-leading encryption, strict access controls, and regular security audits.",
+      "encryption_title": "Encryption",
+      "encryption_desc": "Data is encrypted in transit using tls 1.3 and at rest using AES-256. Your documents and communications are secure from the moment they leave your device.",
+      "infrastructure_title": "Infrastructure",
+      "infrastructure_desc": "Hosted on secure, SOC 2 compliant cloud infrastructure with automated backups and geographic redundancy to ensure high availability.",
+      "compliance_title": "Compliance",
+      "compliance_desc": "We are committed to maintaining compliance with global standards including GDPR, CCPA, and legal industry regulations for data handling.",
+      "access_title": "Access Control",
+      "access_desc": "Role-based access control (RBAC), multi-factor authentication (MFA), and detailed audit logs give you complete control and visibility over your data."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "updated": "Last updated: January 2026",
+      "intro": "At Law Flow, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our application."
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "updated": "Last updated: January 2026",
+      "intro": "Please read these Terms of Service carefully before using the Law Flow application."
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "updated": "Last updated: January 2026",
+      "intro": "This Cookie Policy explains what cookies are and how we use them."
+    },
+    "compliance": {
+      "title": "Compliance",
+      "label": "Compliance",
+      "hero_title": "Meeting Global",
+      "hero_highlight": "Standards",
+      "hero_desc": "We are dedicated to adhering to the stricter security and privacy standards in the legal industry.",
+      "soc2_title": "SOC 2 Type II",
+      "soc2_desc": "We successfully completed the AICPA Service Organization Control (SOC) 2 Type II audit.",
+      "gdpr_title": "GDPR Compliant",
+      "gdpr_desc": "We are fully compliant with the General Data Protection Regulation (GDPR)."
+    }
   },
   "common": {
     "submit": "Submit",
@@ -179,13 +276,13 @@
   },
   "landing": {
     "hero": {
-      "label": "Legal Practice Management",
-      "title_prefix": "Transform Your",
-      "title_suffix": "Legal Workflow",
-      "description": "Streamline case management, automate workflows, and deliver exceptional client experiences with the modern practice management platform built for law firms.",
-      "cta_primary": "Start Free Trial",
-      "cta_secondary": "Explore Features",
-      "trial_note": "No credit card required · 14-day free trial"
+      "label": "The Unfair Advantage",
+      "title_prefix": "Eliminate the",
+      "title_suffix": "Admin Chaos",
+      "description": "Your firm is bleeding billable hours. Law Flow plugs the leaks with military-grade automation and AI that actually works. Stop acting like a secretary. Start practicing like a partner.",
+      "cta_primary": "Claim Your Edge",
+      "cta_secondary": "Witness the Power",
+      "trial_note": "Deployment takes 2 minutes · No credit card required"
     },
     "stats": {
       "cases_label": "Cases Managed",
@@ -194,20 +291,20 @@
       "support_label": "Support"
     },
     "features": {
-      "label": "Features",
-      "title": "Everything You Need",
-      "subtitle": "Powerful tools designed specifically for modern law practices",
-      "case_mgmt_title": "Intelligent Case Management",
-      "case_mgmt_desc": "Centralize all case information with AI-powered organization, smart search, and automated workflows. Track deadlines, manage documents, and collaborate seamlessly with your team.",
-      "learn_more": "Learn more",
-      "automation_title": "Workflow Automation",
-      "automation_desc": "Automate repetitive tasks and create custom workflows.",
-      "portal_title": "Client Portal",
-      "portal_desc": "Secure client access to case updates and documents.",
-      "docs_title": "Document Management",
-      "docs_desc": "Store, organize, and share documents with version control, e-signatures, and advanced search capabilities.",
-      "time_title": "Time Tracking & Billing",
-      "time_desc": "Track billable hours effortlessly with integrated timers, automated invoicing, and detailed reporting."
+      "label": "Arsenal",
+      "title": "Weapons for Modern Counsel",
+      "subtitle": "The old way is dying. Equip your firm with the tools that kill inefficiency.",
+      "case_mgmt_title": "Command Center",
+      "case_mgmt_desc": "Total situational awareness. AI-driven organization that predicts your next move, tracks every deadline, and ensures no detail ever slips through the cracks.",
+      "learn_more": "Deploy Feature",
+      "automation_title": "Ruthless Automation",
+      "automation_desc": "Eradicate repetitive tasks. Let the machine handle the grunt work while you handle the strategy.",
+      "portal_title": "Fortified Client Nexus",
+      "portal_desc": "Bank-grade encrypted channels that keep your clients informed and your practice secure.",
+      "docs_title": "Intelligence Archive",
+      "docs_desc": "Instant retrieval of any document, anywhere, anytime. Smart indexing that feels like reading your mind.",
+      "time_title": "Revenue Capture",
+      "time_desc": "Never lose a billable minute again. Passive tracking that pays for the software in your first hour."
     }
   },
   "cases": {

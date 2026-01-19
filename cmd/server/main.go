@@ -205,6 +205,15 @@ func main() {
 	e.GET("/reset-password", handlers.ResetPasswordHandler)
 	e.POST("/reset-password", handlers.ResetPasswordPostHandler)
 
+	// Website Static Pages (Footer)
+	e.GET("/about", handlers.WebsiteAboutHandler)
+	e.GET("/contact", handlers.WebsiteContactHandler)
+	e.GET("/security", handlers.WebsiteSecurityHandler)
+	e.GET("/privacy", handlers.WebsitePrivacyHandler)
+	e.GET("/terms", handlers.WebsiteTermsHandler)
+	e.GET("/cookies", handlers.WebsiteCookiesHandler)
+	e.GET("/compliance", handlers.WebsiteComplianceHandler)
+
 	// Public case request routes (no authentication)
 	e.GET("/firm/:slug/request", handlers.PublicCaseRequestHandler)
 	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler)

@@ -1,0 +1,53 @@
+package company
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Contact(ctx context.Context, title string, csrfToken string) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+		<div class="relative overflow-hidden w-full">
+			<section class="section-lg relative">
+				<div class="container mx-auto px-6">
+					<div class="max-w-2xl mx-auto text-center mb-16">
+						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.contact.label") }</span>
+						<h1 class="text-display text-gradient mb-8">{ i18n.T(ctx, "pages.contact.title") }</h1>
+						<p class="text-body-lg text-muted leading-relaxed">
+							{ i18n.T(ctx, "pages.contact.desc") }
+						</p>
+					</div>
+
+					<div class="card card-gradient max-w-xl mx-auto p-8 md:p-12">
+						<form class="space-y-6">
+							<input type="hidden" name="csrf_token" value={ csrfToken } />
+							
+							<div>
+								<label class="block text-body-sm font-medium text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.name") }</label>
+								<input type="text" class="input w-full" placeholder={ i18n.T(ctx, "pages.contact.form.name") } />
+							</div>
+							
+							<div>
+								<label class="block text-body-sm font-medium text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.email") }</label>
+								<input type="email" class="input w-full" placeholder="you@company.com" />
+							</div>
+							
+							<div>
+								<label class="block text-body-sm font-medium text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.message") }</label>
+								<textarea class="textarea w-full h-32" placeholder={ i18n.T(ctx, "pages.contact.form.message") }></textarea>
+							</div>
+
+							<button type="button" class="btn btn-primary w-full justify-center">{ i18n.T(ctx, "pages.contact.form.send") }</button>
+						</form>
+
+						<div class="mt-8 pt-8 border-t border-white/[0.1] text-center">
+							<p class="text-body text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.or_email") }</p>
+							<a href="mailto:support@lawflow.com" class="text-accent hover:text-accent-bright transition-colors">support@lawflow.com</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	}
+}

@@ -4,39 +4,14 @@ import (
 	"context"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/layouts"
-	"law_flow_app_go/templates/components"
 )
 
 templ Landing(ctx context.Context, title string, csrfToken string) {
-	@layouts.Base(ctx, title, csrfToken) {
-		<!-- Navigation -->
-		<nav class="border-b border-white/[0.06] backdrop-blur-xl bg-background/80 sticky top-0 z-50">
-			<div class="container mx-auto px-6">
-				<div class="flex justify-between items-center h-20">
-					<a href="/" class="text-h3 tracking-tight">
-						<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
-					</a>
-					<div class="hidden md:flex gap-8 items-center">
-						<a href="#features" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.features") }</a>
-						<a href="#benefits" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.benefits") }</a>
-						<a href="#pricing" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.pricing") }</a>
-						<a href="/login" class="btn btn-ghost btn-sm">{ i18n.T(ctx, "nav.login") }</a>
-						<a href="#" class="btn btn-primary btn-sm">{ i18n.T(ctx, "auth.register") }</a>
-						@components.LanguageSwitcher(ctx)
-					</div>
-					<!-- Mobile menu button -->
-					<div class="flex items-center gap-4 md:hidden">
-						@components.LanguageSwitcher(ctx)
-						<button class="btn btn-ghost btn-sm">Menu</button>
-					</div>
-				</div>
-			</div>
-		</nav>
-
+	@layouts.WebsiteLayout(ctx, title, csrfToken) {
 		<!-- Hero Section -->
 		<section class="section-lg relative overflow-hidden">
 			<div class="container mx-auto px-6">
-				<div class="max-w-4xl mx-auto text-center">
+				<div class="w-full mx-auto text-center">
 					<div class="mb-6 fade-up">
 						<span class="text-label text-accent">{ i18n.T(ctx, "landing.hero.label") }</span>
 					</div>
@@ -53,11 +28,25 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 					<p class="text-body text-subtle mt-6 fade-up stagger-4">{ i18n.T(ctx, "landing.hero.trial_note") }</p>
 				</div>
+				
+				<!-- 3D Hero Image -->
+				<div class="mt-20 fade-up stagger-5 perspective-container hero-tilt-wrapper px-4">
+					<div class="relative w-full mx-auto">
+						<!-- Glow behind -->
+						<div class="absolute -inset-1 bg-gradient-to-r from-accent to-accent-bright rounded-xl blur-2xl opacity-20 animate-pulse"></div>
+						
+						<img 
+							src="/static/images/hero_dashboard_mockup.png" 
+							alt="Law Flow Dashboard Interface" 
+							class="relative w-full rounded-xl border border-white/10 shadow-2xl hero-tilt"
+						/>
+					</div>
+				</div>
 			</div>
 
 			<!-- Stats Grid -->
 			<div class="container mx-auto px-6 mt-24">
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-8 w-full mx-auto">
 					<div class="text-center fade-up stagger-1">
 						<div class="text-5xl font-semibold text-gradient mb-2">10K+</div>
 						<div class="text-body text-muted">Cases Managed</div>
@@ -90,16 +79,16 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 				</div>
 
 				<!-- Asymmetric Bento Grid -->
-				<div class="grid grid-cols-1 md:grid-cols-6 gap-6 max-w-6xl mx-auto">
+				<div class="grid grid-cols-1 md:grid-cols-6 gap-6 w-full mx-auto">
 					<!-- Large Feature Card - Case Management (spans 4 cols, 2 rows) -->
-					<div class="md:col-span-4 md:row-span-2 card card-gradient card-hover p-12 fade-up">
-						<div class="flex flex-col h-full">
-							<div class="mb-6">
+					<div class="md:col-span-4 md:row-span-2 card card-gradient card-hover p-12 fade-up flex flex-col items-center text-center w-full">
+						<div class="flex flex-col h-full items-center w-full">
+							<div class="mb-6 w-full flex flex-col items-center">
 								<div class="w-16 h-16 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6">
 									<span class="text-3xl">📁</span>
 								</div>
 								<h3 class="text-h2 mb-4">Intelligent Case Management</h3>
-								<p class="text-body text-muted leading-relaxed">
+								<p class="text-body text-muted leading-relaxed max-w-2xl mx-auto">
 									Centralize all case information with AI-powered organization, smart search, and automated workflows. Track deadlines, manage documents, and collaborate seamlessly with your team.
 								</p>
 							</div>
@@ -112,7 +101,7 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 
 					<!-- Small Card 1 - Workflow Automation -->
-					<div class="md:col-span-2 card card-hover p-8 fade-up stagger-1">
+					<div class="md:col-span-2 card card-hover p-8 fade-up stagger-1 flex flex-col items-center text-center w-full">
 						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
 							<span class="text-2xl">⚡</span>
 						</div>
@@ -123,7 +112,7 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 
 					<!-- Small Card 2 - Client Portal -->
-					<div class="md:col-span-2 card card-hover p-8 fade-up stagger-2">
+					<div class="md:col-span-2 card card-hover p-8 fade-up stagger-2 flex flex-col items-center text-center w-full">
 						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
 							<span class="text-2xl">👥</span>
 						</div>
@@ -134,23 +123,23 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 
 					<!-- Medium Card 1 - Document Management -->
-					<div class="md:col-span-3 card card-glass card-hover p-8 fade-up stagger-3">
+					<div class="md:col-span-3 card card-glass card-hover p-8 fade-up stagger-3 flex flex-col items-center text-center w-full">
 						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
 							<span class="text-2xl">📄</span>
 						</div>
 						<h3 class="text-h3 mb-3">Document Management</h3>
-						<p class="text-body text-muted mb-4">
+						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
 							Store, organize, and share documents with version control, e-signatures, and advanced search capabilities.
 						</p>
 					</div>
 
 					<!-- Medium Card 2 - Time Tracking -->
-					<div class="md:col-span-3 card card-glass card-hover p-8 fade-up stagger-4">
+					<div class="md:col-span-3 card card-glass card-hover p-8 fade-up stagger-4 flex flex-col items-center text-center w-full">
 						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-4">
 							<span class="text-2xl">⏱️</span>
 						</div>
 						<h3 class="text-h3 mb-3">Time Tracking & Billing</h3>
-						<p class="text-body text-muted mb-4">
+						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
 							Track billable hours effortlessly with integrated timers, automated invoicing, and detailed reporting.
 						</p>
 					</div>
@@ -166,10 +155,10 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					<h2 class="text-h1 text-gradient mb-6">Why Choose Law Flow</h2>
 				</div>
 
-				<div class="grid md:grid-cols-2 gap-0 max-w-5xl mx-auto border border-white/[0.06] rounded-2xl overflow-hidden">
+				<div class="grid md:grid-cols-2 gap-0 w-full mx-auto border border-white/[0.06] rounded-2xl overflow-hidden">
 					<!-- Benefit 1 -->
-					<div class="p-12 border-b border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+					<div class="p-12 border-b border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center w-full">
+						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
 							<span class="text-2xl">🚀</span>
 						</div>
 						<h3 class="text-h3 mb-4">Save Time</h3>
@@ -179,8 +168,8 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 
 					<!-- Benefit 2 -->
-					<div class="p-12 border-b border-white/[0.06] card-hover transition-all duration-300 group">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+					<div class="p-12 border-b border-white/[0.06] card-hover transition-all duration-300 group text-center w-full">
+						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
 							<span class="text-2xl">💰</span>
 						</div>
 						<h3 class="text-h3 mb-4">Increase Revenue</h3>
@@ -190,8 +179,8 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 
 					<!-- Benefit 3 -->
-					<div class="p-12 border-b md:border-b-0 border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+					<div class="p-12 border-b md:border-b-0 border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center w-full">
+						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
 							<span class="text-2xl">🤝</span>
 						</div>
 						<h3 class="text-h3 mb-4">Improve Collaboration</h3>
@@ -201,8 +190,8 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					</div>
 
 					<!-- Benefit 4 -->
-					<div class="p-12 card-hover transition-all duration-300 group">
-						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+					<div class="p-12 card-hover transition-all duration-300 group text-center w-full">
+						<div class="w-12 h-12 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 mx-auto">
 							<span class="text-2xl">🔒</span>
 						</div>
 						<h3 class="text-h3 mb-4">Enterprise Security</h3>
@@ -221,10 +210,10 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					<h2 class="text-h2 text-gradient mb-6">Trusted by Leading Firms</h2>
 				</div>
 
-				<div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-					<div class="card card-glass p-8 fade-up">
+				<div class="grid md:grid-cols-3 gap-6 w-full mx-auto items-stretch">
+					<div class="card card-glass p-8 fade-up h-full text-center w-full">
 						<div class="mb-6">
-							<div class="flex gap-1 mb-4">
+							<div class="flex gap-1 mb-4 justify-center">
 								<span class="text-accent">★</span>
 								<span class="text-accent">★</span>
 								<span class="text-accent">★</span>
@@ -235,7 +224,7 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 								"Law Flow transformed our practice. We've cut administrative time by 60% and our clients love the portal."
 							</p>
 						</div>
-						<div class="flex items-center gap-4">
+						<div class="flex items-center gap-4 justify-center">
 							<div class="w-12 h-12 rounded-full bg-accent/20"></div>
 							<div>
 								<div class="text-body font-semibold">Sarah Chen</div>
@@ -244,9 +233,11 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 						</div>
 					</div>
 
-					<div class="card card-glass p-8 fade-up stagger-1">
+
+
+					<div class="card card-glass p-8 fade-up stagger-1 h-full text-center w-full">
 						<div class="mb-6">
-							<div class="flex gap-1 mb-4">
+							<div class="flex gap-1 mb-4 justify-center">
 								<span class="text-accent">★</span>
 								<span class="text-accent">★</span>
 								<span class="text-accent">★</span>
@@ -257,7 +248,7 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 								"The workflow automation is a game-changer. We handle 3x more cases with the same team size."
 							</p>
 						</div>
-						<div class="flex items-center gap-4">
+						<div class="flex items-center gap-4 justify-center">
 							<div class="w-12 h-12 rounded-full bg-accent/20"></div>
 							<div>
 								<div class="text-body font-semibold">Michael Rodriguez</div>
@@ -266,9 +257,11 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 						</div>
 					</div>
 
-					<div class="card card-glass p-8 fade-up stagger-2">
+
+
+					<div class="card card-glass p-8 fade-up stagger-2 h-full text-center w-full">
 						<div class="mb-6">
-							<div class="flex gap-1 mb-4">
+							<div class="flex gap-1 mb-4 justify-center">
 								<span class="text-accent">★</span>
 								<span class="text-accent">★</span>
 								<span class="text-accent">★</span>
@@ -279,7 +272,7 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 								"Best investment we've made. Time tracking alone increased our billable hours by 25%."
 							</p>
 						</div>
-						<div class="flex items-center gap-4">
+						<div class="flex items-center gap-4 justify-center">
 							<div class="w-12 h-12 rounded-full bg-accent/20"></div>
 							<div>
 								<div class="text-body font-semibold">Emily Thompson</div>
@@ -300,120 +293,120 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 					<p class="text-body-lg text-muted">Choose the plan that fits your practice</p>
 				</div>
 
-				<div class="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+				<div class="grid lg:grid-cols-3 gap-6 w-full mx-auto items-stretch">
 					<!-- Starter Plan -->
-					<div class="card card-hover p-8 fade-up">
+					<div class="card card-hover p-8 fade-up h-full flex flex-col text-center w-full">
 						<div class="mb-8">
 							<div class="text-label text-muted mb-2">Starter</div>
-							<div class="flex items-baseline gap-2 mb-4">
+							<div class="flex items-baseline gap-2 mb-4 justify-center">
 								<span class="text-5xl font-semibold text-gradient">$99</span>
 								<span class="text-body text-muted">/month</span>
 							</div>
 							<p class="text-body text-muted">Perfect for solo practitioners</p>
 						</div>
 						<ul class="space-y-4 mb-8">
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Up to 50 active cases</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">2 team members</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Basic automation workflows</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Client portal access</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Email support</span>
 							</li>
 						</ul>
-						<a href="#" class="btn btn-secondary btn-md w-full">Get Started</a>
+						<a href="#" class="btn btn-secondary btn-md w-full mt-auto">Get Started</a>
 					</div>
 
 					<!-- Professional Plan (Featured) -->
-					<div class="card card-gradient card-hover p-8 relative fade-up stagger-1 border-2 border-accent/30">
+					<div class="card card-gradient card-hover p-8 relative fade-up stagger-1 border-2 border-accent/30 h-full flex flex-col text-center w-full">
 						<div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent rounded-full">
 						</div>
 						<div class="mb-8 mt-4">
 							<div class="text-label text-accent mb-2">Professional</div>
-							<div class="flex items-baseline gap-2 mb-4">
+							<div class="flex items-baseline gap-2 mb-4 justify-center">
 								<span class="text-5xl font-semibold text-gradient">$299</span>
 								<span class="text-body text-muted">/month</span>
 							</div>
 							<p class="text-body text-muted">For growing law firms</p>
 						</div>
 						<ul class="space-y-4 mb-8">
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Unlimited cases</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">10 team members</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Advanced workflow automation</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Custom integrations</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Priority support</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Advanced analytics</span>
 							</li>
 						</ul>
-						<a href="#" class="btn btn-primary btn-md w-full">Get Started</a>
+						<a href="#" class="btn btn-primary btn-md w-full mt-auto">Get Started</a>
 					</div>
 
 					<!-- Enterprise Plan -->
-					<div class="card card-hover p-8 fade-up stagger-2">
+					<div class="card card-hover p-8 fade-up stagger-2 h-full flex flex-col text-center w-full">
 						<div class="mb-8">
 							<div class="text-label text-muted mb-2">Enterprise</div>
-							<div class="flex items-baseline gap-2 mb-4">
+							<div class="flex items-baseline gap-2 mb-4 justify-center">
 								<span class="text-5xl font-semibold text-gradient">$999</span>
 								<span class="text-body text-muted">/month</span>
 							</div>
 							<p class="text-body text-muted">For large organizations</p>
 						</div>
 						<ul class="space-y-4 mb-8">
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Everything in Professional</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Unlimited team members</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">White-label options</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Dedicated account manager</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">24/7 phone support</span>
 							</li>
-							<li class="flex items-start gap-3">
+							<li class="flex items-start justify-center gap-3">
 								<span class="text-accent mt-1">✓</span>
 								<span class="text-body text-muted">Custom development</span>
 							</li>
 						</ul>
-						<a href="#" class="btn btn-secondary btn-md w-full">Contact Sales</a>
+						<a href="#" class="btn btn-secondary btn-md w-full mt-auto">Contact Sales</a>
 					</div>
 				</div>
 			</div>
@@ -422,42 +415,42 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 		<!-- FAQ Section -->
 		<section class="section">
 			<div class="container mx-auto px-6">
-				<div class="max-w-3xl mx-auto">
+				<div class="w-full mx-auto">
 					<div class="text-center mb-16">
 						<h2 class="text-h2 text-gradient mb-6">Frequently Asked Questions</h2>
 					</div>
 
 					<div class="space-y-0 border border-white/[0.06] rounded-2xl overflow-hidden">
-						<details class="group border-b border-white/[0.06] last:border-b-0">
-							<summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
+							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
 								<span class="text-h3">How secure is my data?</span>
 								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
 							</summary>
-							<div class="px-6 pb-6">
+							<div class="px-6 pb-6 text-center">
 								<p class="text-body text-muted leading-relaxed">
 									We use bank-level 256-bit encryption for all data in transit and at rest. Our infrastructure is SOC 2 Type II certified and we undergo regular third-party security audits. Your data is backed up daily and stored in geographically distributed data centers.
 								</p>
 							</div>
 						</details>
 
-						<details class="group border-b border-white/[0.06] last:border-b-0">
-							<summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
+							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
 								<span class="text-h3">Can I migrate from my current system?</span>
 								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
 							</summary>
-							<div class="px-6 pb-6">
+							<div class="px-6 pb-6 text-center">
 								<p class="text-body text-muted leading-relaxed">
 									Yes! We offer free data migration assistance for all new customers. Our team will work with you to import your existing cases, contacts, and documents from most major practice management systems.
 								</p>
 							</div>
 						</details>
 
-						<details class="group border-b border-white/[0.06] last:border-b-0">
-							<summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+						<details class="group border-b border-white/[0.06] last:border-b-0 w-full">
+							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
 								<span class="text-h3">Is there a free trial?</span>
 								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
 							</summary>
-							<div class="px-6 pb-6">
+							<div class="px-6 pb-6 text-center">
 								<p class="text-body text-muted leading-relaxed">
 									Absolutely! We offer a 14-day free trial with full access to all features. No credit card required. You can upgrade, downgrade, or cancel at any time.
 								</p>
@@ -465,23 +458,23 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 						</details>
 
 						<details class="group border-b border-white/[0.06] last:border-b-0">
-							<summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
 								<span class="text-h3">What kind of support do you offer?</span>
 								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
 							</summary>
-							<div class="px-6 pb-6">
+							<div class="px-6 pb-6 text-center">
 								<p class="text-body text-muted leading-relaxed">
 									All plans include email support with response times under 24 hours. Professional and Enterprise plans get priority support with faster response times. Enterprise customers also receive a dedicated account manager and 24/7 phone support.
 								</p>
 							</div>
 						</details>
 
-						<details class="group">
-							<summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
+						<details class="group w-full">
+							<summary class="flex justify-center items-center gap-4 p-6 cursor-pointer hover:bg-white/[0.02] transition-colors">
 								<span class="text-h3">Can I customize workflows?</span>
 								<span class="text-accent text-2xl group-open:rotate-45 transition-transform">+</span>
 							</summary>
-							<div class="px-6 pb-6">
+							<div class="px-6 pb-6 text-center">
 								<p class="text-body text-muted leading-relaxed">
 									Yes! Our workflow builder allows you to create custom automation tailored to your practice. Professional and Enterprise plans include advanced workflow features and custom integrations with your existing tools.
 								</p>
@@ -496,7 +489,7 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 		<section class="section-lg relative">
 			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
 			<div class="container mx-auto px-6 relative">
-				<div class="max-w-4xl mx-auto text-center">
+				<div class="w-full mx-auto text-center">
 					<div class="card card-gradient p-12 md:p-16">
 						<h2 class="text-h1 text-gradient mb-6">
 							Ready to Transform Your Practice?
@@ -514,72 +507,5 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 			</div>
 		</section>
 
-		<!-- Footer -->
-		<footer class="border-t border-white/[0.06] bg-background-deep">
-			<div class="container mx-auto px-6 py-16">
-				<div class="grid md:grid-cols-5 gap-12 mb-16">
-					<div class="md:col-span-2">
-						<h3 class="text-h3 text-gradient mb-4">Law Flow</h3>
-						<p class="text-body text-muted leading-relaxed mb-6">
-							Modern practice management for modern law firms. Streamline your workflow and focus on what matters.
-						</p>
-						<div class="flex gap-4">
-							<a href="#" class="w-10 h-10 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] flex items-center justify-center transition-colors">
-								<span class="text-muted">𝕏</span>
-							</a>
-							<a href="#" class="w-10 h-10 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] flex items-center justify-center transition-colors">
-								<span class="text-muted">in</span>
-							</a>
-							<a href="#" class="w-10 h-10 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] flex items-center justify-center transition-colors">
-								<span class="text-muted">f</span>
-							</a>
-						</div>
-					</div>
-
-					<div>
-						<h4 class="text-label text-foreground mb-4">Product</h4>
-						<ul class="space-y-3">
-							<li><a href="#features" class="text-body text-muted hover:text-foreground transition-colors">Features</a></li>
-							<li><a href="#pricing" class="text-body text-muted hover:text-foreground transition-colors">Pricing</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Security</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Integrations</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Roadmap</a></li>
-						</ul>
-					</div>
-
-					<div>
-						<h4 class="text-label text-foreground mb-4">Company</h4>
-						<ul class="space-y-3">
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">About</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Blog</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Careers</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Contact</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Partners</a></li>
-						</ul>
-					</div>
-
-					<div>
-						<h4 class="text-label text-foreground mb-4">Legal</h4>
-						<ul class="space-y-3">
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Privacy Policy</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Terms of Service</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Cookie Policy</a></li>
-							<li><a href="#" class="text-body text-muted hover:text-foreground transition-colors">Compliance</a></li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-					<p class="text-body text-subtle">
-						© 2026 Law Flow. All rights reserved.
-					</p>
-					<div class="flex gap-6">
-						<a href="#" class="text-body text-muted hover:text-foreground transition-colors">Status</a>
-						<a href="#" class="text-body text-muted hover:text-foreground transition-colors">Changelog</a>
-						<a href="#" class="text-body text-muted hover:text-foreground transition-colors">Documentation</a>
-					</div>
-				</div>
-			</div>
-		</footer>
 	}
 }
