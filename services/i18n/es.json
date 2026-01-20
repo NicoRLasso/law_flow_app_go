@@ -633,7 +633,8 @@
       "search_label": "Buscar:",
       "search_placeholder": "Número de caso, título...",
       "all_status": "Todos los Estados",
-      "all_lawyers": "Todos los Abogados"
+      "all_lawyers": "Todos los Abogados",
+      "search_button": "Buscar"
     },
     "status": {
       "open": "Abierto",
@@ -953,6 +954,7 @@
         "edit_btn": "Editar",
         "delete_btn": "Eliminar",
         "delete_confirm": "¿Está seguro de que desea eliminar esta contraparte?",
+        "delete_title": "Eliminar Contraparte",
         "modal": {
           "add_title": "Agregar Contraparte",
           "edit_title": "Editar Contraparte",

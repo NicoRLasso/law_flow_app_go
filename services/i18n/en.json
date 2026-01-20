@@ -635,7 +635,8 @@
       "search_label": "Search:",
       "search_placeholder": "Case number, title...",
       "all_status": "All Status",
-      "all_lawyers": "All Lawyers"
+      "all_lawyers": "All Lawyers",
+      "search_button": "Search"
     },
     "status": {
       "open": "Open",
@@ -954,6 +955,7 @@
         "edit_btn": "Edit",
         "delete_btn": "Delete",
         "delete_confirm": "Are you sure you want to delete this opposing party?",
+        "delete_title": "Delete Opposing Party",
         "modal": {
           "add_title": "Add Opposing Party",
           "edit_title": "Edit Opposing Party",

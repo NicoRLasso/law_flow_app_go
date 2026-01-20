@@ -834,10 +834,7 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 						</button>
 						<button
 							type="button"
-							hx-delete={ "/api/cases/" + caseRecord.ID + "/party" }
-							hx-confirm={ i18n.T(ctx, "case.detail.parties.delete_confirm") }
-							hx-target="body"
-							hx-swap="beforeend"
+							{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "case.detail.parties.delete_title") + "', message: '" + i18n.T(ctx, "case.detail.parties.delete_confirm") + "', confirmUrl: '/api/cases/" + caseRecord.ID + "/party', target: 'body', swap: 'beforeend' }, this)" }... }
 							class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
 						>
 							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
