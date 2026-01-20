@@ -218,7 +218,11 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							// Clear PDF src to stop loading
 							embedElement.src = '';
 						}
-					</script>
+					function closeTemplateSelectorModal() {
+					const container = document.getElementById('template-modal-container');
+					container.innerHTML = '';
+				}
+				</script>
 				</div>
 			</main>
 
@@ -234,6 +238,8 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
             <!-- Log Entry Modal Container -->
             <div id="log-entry-modal-container"></div>
 
+			<!-- Template Selector Modal Container -->
+			<div id="template-modal-container"></div>
 			@components.ConfirmationModal(ctx)
 		</div>
 	}
@@ -434,18 +440,34 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case) {
 	<div class="space-y-6">
 		<!-- Header with Upload Button -->
-		<div class="flex items-center justify-between">
+		<div class="flex items-center justify-between flex-wrap gap-3">
 			<h2 class="text-xl font-semibold">{ i18n.T(ctx, "case.detail.tab.documents") }</h2>
-			<button
-				type="button"
-				onclick="openUploadModal()"
-				class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 flex items-center gap-2"
-			>
-				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-				</svg>
-				{ i18n.T(ctx, "case.detail.upload_btn") }
-			</button>
+			<div class="flex items-center gap-2">
+				<!-- Create with Template Button -->
+				<button
+					type="button"
+					hx-get={ "/api/cases/" + caseRecord.ID + "/templates/modal" }
+					hx-target="#template-modal-container"
+					hx-swap="innerHTML"
+					class="px-4 py-2 bg-white/10 text-foreground rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 flex items-center gap-2 border border-white/10"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+					</svg>
+					{ i18n.T(ctx, "case.document.create_from_template") }
+				</button>
+				<!-- Upload Button -->
+				<button
+					type="button"
+					onclick="openUploadModal()"
+					class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 flex items-center gap-2"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+					</svg>
+					{ i18n.T(ctx, "case.detail.upload_btn") }
+				</button>
+			</div>
 		</div>
 
 		<!-- Document Filters -->

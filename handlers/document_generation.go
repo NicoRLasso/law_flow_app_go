@@ -54,6 +54,29 @@ func GetGenerateDocumentTabHandler(c echo.Context) error {
 	return partials.GenerateDocumentTab(ctx, caseRecord, templates, generatedDocs).Render(c.Request().Context(), c.Response().Writer)
 }
 
+// GetTemplateSelectorModalHandler returns the template selector modal for the documents tab
+func GetTemplateSelectorModalHandler(c echo.Context) error {
+	caseID := c.Param("id")
+	ctx := context.Background()
+
+	// Verify case belongs to firm
+	var caseRecord models.Case
+	if err := middleware.GetFirmScopedQuery(c, db.DB).
+		First(&caseRecord, "id = ?", caseID).Error; err != nil {
+		return c.String(http.StatusNotFound, "Case not found")
+	}
+
+	// Get available templates
+	var templates []models.DocumentTemplate
+	middleware.GetFirmScopedQuery(c, db.DB).
+		Where("is_active = ?", true).
+		Preload("Category").
+		Order("name ASC").
+		Find(&templates)
+
+	return partials.TemplateSelectorModal(ctx, caseID, templates).Render(c.Request().Context(), c.Response().Writer)
+}
+
 // PreviewTemplateHandler renders a template preview with case data
 func PreviewTemplateHandler(c echo.Context) error {
 	caseID := c.Param("id")

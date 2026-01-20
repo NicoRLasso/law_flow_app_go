@@ -989,6 +989,14 @@
         "toggle_public": "Hacer visible al cliente",
         "toggle_private": "Ocultar del cliente",
         "public_desc": "El cliente puede ver este documento"
+      },
+      "create_from_template": "Crear con Plantilla",
+      "template_modal": {
+        "title": "Generar Documento desde Plantilla",
+        "subtitle": "Selecciona una plantilla para generar un documento con datos del caso",
+        "name_placeholder": "Ingresa el nombre del documento...",
+        "success": "Documento generado exitosamente",
+        "info_note": "La información que no esté disponible en el caso aparecerá en blanco en el documento generado."
       }
     },
     "edit": {

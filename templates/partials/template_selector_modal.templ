@@ -1,0 +1,144 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+// TemplateSelectorModal renders a modal for selecting and generating documents from templates
+templ TemplateSelectorModal(ctx context.Context, caseID string, templates []models.DocumentTemplate) {
+	<div 
+		id="template-selector-modal" 
+		class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" 
+		style="z-index: 9999;"
+		x-data={ "{ selectedTemplate: '', showPreview: false, previewLoading: false, caseId: '" + caseID + "' }" }
+		@click.self="closeTemplateSelectorModal()"
+	>
+		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-4xl max-h-[90vh] flex flex-col" @click.stop>
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between p-6 border-b border-white/10">
+				<div>
+					<h3 class="text-2xl font-bold">{ i18n.T(ctx, "case.document.template_modal.title") }</h3>
+					<p class="text-sm text-muted-foreground mt-1">{ i18n.T(ctx, "case.document.template_modal.subtitle") }</p>
+				</div>
+				<button
+					type="button"
+					onclick="closeTemplateSelectorModal()"
+					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Modal Content -->
+			<div class="flex-1 overflow-y-auto p-6 space-y-6">
+				if len(templates) == 0 {
+					<div class="text-center py-12">
+						<svg class="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+						</svg>
+						<p class="text-lg text-muted-foreground">{ i18n.T(ctx, "templates.no_templates") }</p>
+						<p class="text-sm text-muted-foreground mt-2">{ i18n.T(ctx, "templates.create_first") }</p>
+					</div>
+				} else {
+					<!-- Info Note -->
+					<div class="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+						<svg class="w-5 h-5 text-blue-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						<p class="text-sm text-blue-200">{ i18n.T(ctx, "case.document.template_modal.info_note") }</p>
+					</div>
+
+					<!-- Template Selection -->
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.select_template") }</label>
+							<select
+								x-model="selectedTemplate"
+								@change="showPreview = false"
+								class="input-field w-full"
+							>
+								<option value="">{ i18n.T(ctx, "templates.select_template") }...</option>
+								for _, t := range templates {
+									<option value={ t.ID }>{ t.Name }</option>
+								}
+							</select>
+						</div>
+						<div class="flex items-end">
+							<button
+								type="button"
+								x-show="selectedTemplate"
+								x-cloak
+								@click="previewLoading = true; showPreview = true; htmx.ajax('GET', '/api/cases/' + caseId + '/generate/preview?template_id=' + selectedTemplate, {target: '#modal-template-preview-content', swap: 'innerHTML'}).then(() => { previewLoading = false; })"
+								class="btn-secondary flex-1 flex items-center justify-center gap-2"
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+								</svg>
+								{ i18n.T(ctx, "templates.preview") }
+							</button>
+						</div>
+					</div>
+
+					<!-- Preview Panel -->
+					<div x-show="showPreview" x-cloak x-collapse>
+						<div class="border border-white/10 rounded-xl overflow-hidden">
+							<div class="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10">
+								<span class="text-sm font-medium">{ i18n.T(ctx, "templates.preview") }</span>
+								<button type="button" @click="showPreview = false" class="p-1 hover:bg-white/10 rounded transition-colors">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+									</svg>
+								</button>
+							</div>
+							<div id="modal-template-preview-content" class="p-4 bg-white text-black min-h-[200px] max-h-[300px] overflow-y-auto prose max-w-none">
+								<template x-if="previewLoading">
+									<div class="flex items-center justify-center py-8">
+										<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+									</div>
+								</template>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+
+			<!-- Modal Footer -->
+			if len(templates) > 0 {
+				<div class="p-6 border-t border-white/10 bg-white/5">
+					<form
+						hx-post={ "/api/cases/" + caseID + "/generate" }
+						hx-target="#case-documents-list"
+						hx-swap="innerHTML"
+						@htmx:after-request="closeTemplateSelectorModal(); htmx.trigger('#case-documents-list', 'loadDocuments')"
+						class="flex flex-col sm:flex-row gap-3"
+					>
+						<input type="hidden" name="template_id" x-bind:value="selectedTemplate" />
+						<div class="flex-1">
+							<input
+								type="text"
+								name="name"
+								placeholder={ i18n.T(ctx, "case.document.template_modal.name_placeholder") }
+								class="input-field w-full"
+							/>
+						</div>
+						<button
+							type="submit"
+							x-bind:disabled="!selectedTemplate"
+							class="btn-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+							</svg>
+							{ i18n.T(ctx, "templates.generate") }
+						</button>
+					</form>
+				</div>
+			}
+		</div>
+	</div>
+}

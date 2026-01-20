@@ -392,6 +392,7 @@ func main() {
 			caseRoutes.POST("/:id/generate", handlers.GenerateDocumentHandler)
 			caseRoutes.GET("/:id/generated", handlers.GetGeneratedDocumentsHandler)
 			caseRoutes.GET("/:id/generated/:docId/download", handlers.DownloadGeneratedDocumentHandler)
+			caseRoutes.GET("/:id/templates/modal", handlers.GetTemplateSelectorModalHandler)
 			// Historical case routes
 			caseRoutes.GET("/history/new", handlers.GetHistoricalCaseFormHandler)
 			caseRoutes.POST("/history", handlers.CreateHistoricalCaseHandler)

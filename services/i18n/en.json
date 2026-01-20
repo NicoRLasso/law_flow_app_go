@@ -990,6 +990,14 @@
         "toggle_public": "Make visible to client",
         "toggle_private": "Hide from client",
         "public_desc": "Client can view this document"
+      },
+      "create_from_template": "Create with Template",
+      "template_modal": {
+        "title": "Generate Document from Template",
+        "subtitle": "Select a template to generate a document with case data",
+        "name_placeholder": "Enter document name...",
+        "success": "Document generated successfully",
+        "info_note": "Information that is not available in the case will appear blank in the generated document."
       }
     },
     "edit": {

@@ -9,18 +9,14 @@ import (
 var variableRegex = regexp.MustCompile(`\{\{([a-zA-Z0-9_.]+)\}\}`)
 
 // RenderTemplate replaces {{variable}} placeholders with actual values from TemplateData
+// If a variable has no value, it is replaced with an empty string (blank)
 func RenderTemplate(content string, data TemplateData) string {
 	return variableRegex.ReplaceAllStringFunc(content, func(match string) string {
 		// Extract variable key from {{key}}
 		key := strings.TrimPrefix(strings.TrimSuffix(match, "}}"), "{{")
 
-		// Look up the value
-		value := getValueByKey(key, data)
-		if value == "" {
-			// Return the original placeholder if no value found
-			return match
-		}
-		return value
+		// Look up the value - returns empty string if not found (shows as blank)
+		return getValueByKey(key, data)
 	})
 }
 
