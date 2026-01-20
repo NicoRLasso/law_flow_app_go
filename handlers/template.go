@@ -181,41 +181,49 @@ func UpdateTemplateHandler(c echo.Context) error {
 
 	// For content updates (from editor), preserve existing is_active value
 	// Only update is_active when explicitly set in metadata form
-	isActive := template.IsActive // Default to current value
-	if c.FormValue("is_metadata_update") == "true" {
-		isActive = c.FormValue("is_active") == "true" || c.FormValue("is_active") == "on"
-	}
+	isMetadataUpdate := c.FormValue("is_metadata_update") == "true"
 
 	if name == "" {
 		return c.String(http.StatusBadRequest, "Name is required")
 	}
 
-	// Increment version if content changed
-	if template.Content != content {
-		template.Version++
-	}
-
 	template.Name = name
-	template.Content = content
-	template.IsActive = isActive
 
-	if description != "" {
-		template.Description = &description
+	if isMetadataUpdate {
+		// Metadata update: Update IsActive, Description, Category, Orientation, PageSize
+		// Preserve Content/Version
+
+		isActive := c.FormValue("is_active") == "true" || c.FormValue("is_active") == "on"
+		template.IsActive = isActive
+
+		if description != "" {
+			template.Description = &description
+		} else {
+			template.Description = nil
+		}
+
+		if categoryID != "" {
+			template.CategoryID = &categoryID
+		} else {
+			template.CategoryID = nil
+		}
+
+		if pageOrientation != "" && models.IsValidOrientation(pageOrientation) {
+			template.PageOrientation = pageOrientation
+		}
+		if pageSize != "" && models.IsValidPageSize(pageSize) {
+			template.PageSize = pageSize
+		}
+
 	} else {
-		template.Description = nil
-	}
+		// Content update (from Editor): Update Content and Version
+		// Preserve Metadata (IsActive, Description, Category, etc.)
 
-	if categoryID != "" {
-		template.CategoryID = &categoryID
-	} else {
-		template.CategoryID = nil
-	}
-
-	if pageOrientation != "" && models.IsValidOrientation(pageOrientation) {
-		template.PageOrientation = pageOrientation
-	}
-	if pageSize != "" && models.IsValidPageSize(pageSize) {
-		template.PageSize = pageSize
+		// Increment version if content changed
+		if template.Content != content {
+			template.Version++
+		}
+		template.Content = content
 	}
 
 	if err := db.DB.Save(&template).Error; err != nil {
@@ -223,7 +231,7 @@ func UpdateTemplateHandler(c echo.Context) error {
 	}
 
 	// Check if this was a metadata update (Stage 1)
-	if c.FormValue("is_metadata_update") == "true" {
+	if isMetadataUpdate {
 		// Redirect to editor workspace
 		c.Response().Header().Set("HX-Redirect", "/templates/"+template.ID+"/edit")
 		return c.NoContent(http.StatusOK)
