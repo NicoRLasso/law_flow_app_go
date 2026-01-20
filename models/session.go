@@ -9,7 +9,7 @@ type Session struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	UserID    string    `gorm:"type:uuid;not null;index" json:"user_id"`
-	FirmID    string    `gorm:"type:uuid;index" json:"firm_id"` // Can be empty if user hasn't set up firm yet
+	FirmID    *string   `gorm:"type:uuid;index" json:"firm_id"` // Nullable for users without a firm (e.g., superadmin)
 	Token     string    `gorm:"uniqueIndex;not null;type:varchar(128)" json:"-"`
 	ExpiresAt time.Time `gorm:"not null;index" json:"expires_at"`
 	IPAddress string    `gorm:"type:varchar(45)" json:"ip_address"`
@@ -17,7 +17,7 @@ type Session struct {
 
 	// Relationships
 	User User `gorm:"foreignKey:UserID" json:"-"`
-	Firm Firm `gorm:"foreignKey:FirmID" json:"-"`
+	Firm *Firm `gorm:"foreignKey:FirmID" json:"-"`
 }
 
 // TableName specifies the table name for Session model

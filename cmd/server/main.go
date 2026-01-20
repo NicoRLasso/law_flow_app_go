@@ -33,7 +33,12 @@ func main() {
 	}
 
 	// Initialize database with environment for logging config
-	if err := db.Initialize(cfg.DBPath, cfg.Environment); err != nil {
+	if err := db.InitializeWithConfig(db.DatabaseConfig{
+		DBPath:           cfg.DBPath,
+		Environment:      cfg.Environment,
+		TursoDatabaseURL: cfg.TursoDatabaseURL,
+		TursoAuthToken:   cfg.TursoAuthToken,
+	}); err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
@@ -47,6 +52,9 @@ func main() {
 	if err := services.SeedSuperadminFromEnv(db.DB); err != nil {
 		log.Printf("[WARNING] Failed to seed superadmin user: %v", err)
 	}
+
+	// Initialize storage (R2 or local filesystem)
+	services.InitializeStorage(cfg)
 
 	// Check sensitive configuration
 	checkSensitiveConfig(cfg)

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -333,23 +334,6 @@ func DownloadCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "No file attached to this document")
 	}
 
-	// Verify file path is within upload directory (security check)
-	uploadDir := "uploads"
-	absUploadDir, err := filepath.Abs(uploadDir)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
-	}
-	absFilePath, err := filepath.Abs(document.FilePath)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
-	}
-	if !strings.HasPrefix(absFilePath, absUploadDir) {
-		return echo.NewHTTPError(http.StatusForbidden, "Invalid file path")
-	}
-
-	// Set the Content-Disposition header to suggest the original filename
-	c.Response().Header().Set("Content-Disposition", "attachment; filename=\""+document.FileOriginalName+"\"")
-
 	// Audit logging (Download)
 	auditCtx := middleware.GetAuditContext(c)
 	services.LogAuditEvent(
@@ -364,8 +348,36 @@ func DownloadCaseDocumentHandler(c echo.Context) error {
 		nil,
 	)
 
-	// Serve file
-	return c.File(document.FilePath)
+	// Check if using R2 storage (file path is a storage key, not a local path)
+	if _, ok := services.Storage.(*services.R2Storage); ok {
+		// Generate signed URL for R2 download (valid for 15 minutes)
+		signedURL, err := services.Storage.GetSignedURL(context.Background(), document.FilePath, 15*time.Minute)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to generate download URL")
+		}
+		return c.Redirect(http.StatusTemporaryRedirect, signedURL)
+	}
+
+	// Local storage: verify file path is within upload directory (security check)
+	uploadDir := "uploads"
+	absUploadDir, err := filepath.Abs(uploadDir)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
+	}
+	localPath := filepath.Join(uploadDir, document.FilePath)
+	absFilePath, err := filepath.Abs(localPath)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
+	}
+	if !strings.HasPrefix(absFilePath, absUploadDir) {
+		return echo.NewHTTPError(http.StatusForbidden, "Invalid file path")
+	}
+
+	// Set the Content-Disposition header to suggest the original filename
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=\""+document.FileOriginalName+"\"")
+
+	// Serve file from local storage
+	return c.File(localPath)
 }
 
 // ViewCaseDocumentHandler serves a PDF document for inline viewing
@@ -402,24 +414,6 @@ func ViewCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Only PDF files can be viewed inline")
 	}
 
-	// Verify file path is within upload directory (security check)
-	uploadDir := "uploads"
-	absUploadDir, err := filepath.Abs(uploadDir)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
-	}
-	absFilePath, err := filepath.Abs(document.FilePath)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
-	}
-	if !strings.HasPrefix(absFilePath, absUploadDir) {
-		return echo.NewHTTPError(http.StatusForbidden, "Invalid file path")
-	}
-
-	// Set headers for inline display
-	c.Response().Header().Set("Content-Type", "application/pdf")
-	c.Response().Header().Set("Content-Disposition", "inline; filename=\""+document.FileOriginalName+"\"")
-
 	// Audit logging (View)
 	auditCtx := middleware.GetAuditContext(c)
 	services.LogAuditEvent(
@@ -434,8 +428,19 @@ func ViewCaseDocumentHandler(c echo.Context) error {
 		nil,
 	)
 
-	// Serve file
-	return c.File(document.FilePath)
+	// Get file from storage (works for both R2 and local)
+	reader, contentType, err := services.Storage.Get(context.Background(), document.FilePath)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve file")
+	}
+	defer reader.Close()
+
+	// Set headers for inline PDF display
+	c.Response().Header().Set("Content-Type", contentType)
+	c.Response().Header().Set("Content-Disposition", "inline; filename=\""+document.FileOriginalName+"\"")
+
+	// Stream the file to the response
+	return c.Stream(http.StatusOK, contentType, reader)
 }
 
 // UploadCaseDocumentHandler handles document uploads for a case
@@ -487,9 +492,9 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	// Save file
-	uploadDir := "uploads"
-	uploadResult, err := services.SaveCaseDocument(file, uploadDir, currentFirm.ID, caseID)
+	// Generate storage key and upload file
+	storageKey := services.GenerateCaseDocumentKey(currentFirm.ID, caseID, file.Filename)
+	uploadResult, err := services.Storage.Upload(context.Background(), file, storageKey)
 	if err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to upload file</div>`)
@@ -505,8 +510,8 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 		FirmID:           currentFirm.ID,
 		CaseID:           &caseID,
 		FileName:         uploadResult.FileName,
-		FileOriginalName: uploadResult.FileOriginalName,
-		FilePath:         uploadResult.FilePath,
+		FileOriginalName: file.Filename,
+		FilePath:         uploadResult.Key, // Storage key for R2 or local path
 		FileSize:         uploadResult.FileSize,
 		MimeType:         uploadResult.MimeType,
 		DocumentType:     documentType,
@@ -521,7 +526,7 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 	// Save to database
 	if err := db.DB.Create(&document).Error; err != nil {
 		// Clean up uploaded file on database error
-		services.DeleteUploadedFile(uploadResult.FilePath)
+		services.Storage.Delete(context.Background(), uploadResult.Key)
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to save document</div>`)
 		}

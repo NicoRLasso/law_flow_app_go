@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -119,6 +120,7 @@ func PreviewTemplateHandler(c echo.Context) error {
 
 // GenerateDocumentHandler generates a PDF document from a template
 func GenerateDocumentHandler(c echo.Context) error {
+	ctx := context.Background()
 	caseID := c.Param("id")
 	templateID := c.FormValue("template_id")
 	documentName := c.FormValue("name")
@@ -177,18 +179,17 @@ func GenerateDocumentHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Error generating PDF: "+err.Error())
 	}
 
-	// Save PDF to filesystem
-	uploadDir := filepath.Join("uploads", "firms", firmID, "cases", caseID, "generated")
-	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		return c.String(http.StatusInternalServerError, "Error creating directory")
-	}
-
+	// Generate storage key and upload PDF
 	fileName := fmt.Sprintf("%s_%d.pdf", uuid.New().String(), time.Now().Unix())
-	filePath := filepath.Join(uploadDir, fileName)
+	storageKey := services.GenerateGeneratedDocumentKey(firmID, caseID, fileName)
 
-	if err := os.WriteFile(filePath, pdfBytes, 0644); err != nil {
-		return c.String(http.StatusInternalServerError, "Error saving PDF")
+	// Upload PDF bytes to storage
+	reader := bytes.NewReader(pdfBytes)
+	uploadResult, err := services.Storage.UploadReader(ctx, reader, storageKey, "application/pdf", int64(len(pdfBytes)))
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Error saving PDF: "+err.Error())
 	}
+	filePath := uploadResult.Key
 
 	// Create GeneratedDocument record
 	generatedDoc := models.GeneratedDocument{
@@ -265,10 +266,33 @@ func DownloadGeneratedDocumentHandler(c echo.Context) error {
 		return c.String(http.StatusNotFound, "Document not found")
 	}
 
-	// Check file exists
-	if _, err := os.Stat(doc.FilePath); os.IsNotExist(err) {
+	// Check if file path exists
+	if doc.FilePath == "" {
 		return c.String(http.StatusNotFound, "File not found")
 	}
 
-	return c.Attachment(doc.FilePath, doc.Name+".pdf")
+	// Check if using R2 storage
+	if _, ok := services.Storage.(*services.R2Storage); ok {
+		// Generate signed URL for R2 download (valid for 15 minutes)
+		signedURL, err := services.Storage.GetSignedURL(context.Background(), doc.FilePath, 15*time.Minute)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Failed to generate download URL")
+		}
+		return c.Redirect(http.StatusTemporaryRedirect, signedURL)
+	}
+
+	// Local storage: verify and serve file
+	uploadDir := "uploads"
+	localPath := filepath.Join(uploadDir, doc.FilePath)
+
+	// Check file exists locally
+	if _, err := os.Stat(localPath); os.IsNotExist(err) {
+		// Try with the original path for backward compatibility
+		if _, err := os.Stat(doc.FilePath); os.IsNotExist(err) {
+			return c.String(http.StatusNotFound, "File not found")
+		}
+		localPath = doc.FilePath
+	}
+
+	return c.Attachment(localPath, doc.Name+".pdf")
 }

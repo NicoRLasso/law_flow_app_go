@@ -64,8 +64,8 @@ func RequireAuth() echo.MiddlewareFunc {
 			c.Set(ContextKeySession, session)
 
 			// Set firm in context - prefer session.Firm, fallback to User.Firm
-			if session.Firm.ID != "" {
-				c.Set(ContextKeyFirm, &session.Firm)
+			if session.Firm != nil && session.Firm.ID != "" {
+				c.Set(ContextKeyFirm, session.Firm)
 			} else if session.User.Firm != nil {
 				c.Set(ContextKeyFirm, session.User.Firm)
 			}

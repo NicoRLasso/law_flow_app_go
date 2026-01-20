@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
@@ -137,12 +138,9 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
-		// Get upload directory from config
-		uploadDir := "uploads" // Default, should come from config in production
-
-		// Save file
-		// Use "case_requests" as a placeholder ID to store these in a dedicated folder
-		uploadResult, err := services.SaveCaseDocument(file, uploadDir, firm.ID, "case_requests")
+		// Generate storage key and upload file
+		storageKey := services.GenerateCaseRequestFileKey(firm.ID, "requests", file.Filename)
+		uploadResult, err := services.Storage.Upload(context.Background(), file, storageKey)
 		if err != nil {
 			if c.Request().Header.Get("HX-Request") == "true" {
 				return c.HTML(http.StatusInternalServerError, `<div class="error-message">Failed to upload file</div>`)
@@ -152,8 +150,8 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 
 		// Store file metadata
 		caseRequest.FileName = uploadResult.FileName
-		caseRequest.FileOriginalName = uploadResult.FileOriginalName
-		caseRequest.FilePath = uploadResult.FilePath
+		caseRequest.FileOriginalName = file.Filename
+		caseRequest.FilePath = uploadResult.Key
 		caseRequest.FileSize = uploadResult.FileSize
 	}
 
@@ -161,7 +159,7 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 	if err := db.DB.Create(&caseRequest).Error; err != nil {
 		// Cleanup uploaded file on error
 		if caseRequest.FilePath != "" {
-			services.DeleteUploadedFile(caseRequest.FilePath)
+			services.Storage.Delete(context.Background(), caseRequest.FilePath)
 		}
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="error-message">Failed to submit request</div>`)
@@ -290,13 +288,24 @@ func DownloadCaseRequestFileHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "No file attached to this request")
 	}
 
-	// Verify file path is within upload directory (security check)
-	uploadDir := "uploads" // Should come from config
+	// Check if using R2 storage
+	if _, ok := services.Storage.(*services.R2Storage); ok {
+		// Generate signed URL for R2 download (valid for 15 minutes)
+		signedURL, err := services.Storage.GetSignedURL(context.Background(), request.FilePath, 15*time.Minute)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to generate download URL")
+		}
+		return c.Redirect(http.StatusTemporaryRedirect, signedURL)
+	}
+
+	// Local storage: verify file path is within upload directory (security check)
+	uploadDir := "uploads"
 	absUploadDir, err := filepath.Abs(uploadDir)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
 	}
-	absFilePath, err := filepath.Abs(request.FilePath)
+	localPath := filepath.Join(uploadDir, request.FilePath)
+	absFilePath, err := filepath.Abs(localPath)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to verify file path")
 	}
@@ -304,8 +313,8 @@ func DownloadCaseRequestFileHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "Invalid file path")
 	}
 
-	// Serve file
-	return c.File(request.FilePath)
+	// Serve file from local storage
+	return c.File(localPath)
 }
 
 // UpdateCaseRequestStatusHandler updates the status of a case request

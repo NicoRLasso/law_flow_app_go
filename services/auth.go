@@ -62,11 +62,15 @@ func CreateSession(db *gorm.DB, userID, firmID string, ipAddress, userAgent stri
 	session := &models.Session{
 		ID:        uuid.New().String(),
 		UserID:    userID,
-		FirmID:    firmID,
 		Token:     token,
 		ExpiresAt: time.Now().Add(DefaultSessionDuration),
 		IPAddress: ipAddress,
 		UserAgent: userAgent,
+	}
+
+	// Only set FirmID if not empty (allows NULL for superadmin)
+	if firmID != "" {
+		session.FirmID = &firmID
 	}
 
 	if err := db.Create(session).Error; err != nil {

@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -13,8 +13,6 @@ import (
 	"law_flow_app_go/templates/partials"
 	"mime/multipart"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -316,52 +314,29 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 
 // saveHistoricalCaseDocument saves an uploaded document to the case
 func saveHistoricalCaseDocument(c echo.Context, fileHeader *multipart.FileHeader, caseID, firmID, uploadedByID string) error {
-	// Open the uploaded file
-	src, err := fileHeader.Open()
+	// Generate storage key and upload file
+	storageKey := services.GenerateCaseDocumentKey(firmID, caseID, fileHeader.Filename)
+	uploadResult, err := services.Storage.Upload(context.Background(), fileHeader, storageKey)
 	if err != nil {
-		return fmt.Errorf("failed to open file: %w", err)
-	}
-	defer src.Close()
-
-	// Generate unique filename
-	ext := filepath.Ext(fileHeader.Filename)
-	uniqueFilename := fmt.Sprintf("%d_%s%s", time.Now().UnixNano(), strings.ReplaceAll(fileHeader.Filename, ext, ""), ext)
-
-	// Create destination path
-	destDir := filepath.Join("uploads", "firms", firmID, "cases", caseID)
-	if err := os.MkdirAll(destDir, 0755); err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
-	}
-
-	destPath := filepath.Join(destDir, uniqueFilename)
-
-	// Create destination file
-	dst, err := os.Create(destPath)
-	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
-	}
-	defer dst.Close()
-
-	// Copy file contents
-	if _, err := io.Copy(dst, src); err != nil {
-		return fmt.Errorf("failed to copy file: %w", err)
+		return fmt.Errorf("failed to upload file: %w", err)
 	}
 
 	// Create document record
 	doc := models.CaseDocument{
 		FirmID:           firmID,
 		CaseID:           &caseID,
-		FileName:         uniqueFilename,
+		FileName:         uploadResult.FileName,
 		FileOriginalName: fileHeader.Filename,
-		FilePath:         destPath,
+		FilePath:         uploadResult.Key,
 		FileSize:         fileHeader.Size,
+		MimeType:         uploadResult.MimeType,
 		DocumentType:     "other", // Default type for historical documents
 		UploadedByID:     &uploadedByID,
 	}
 
 	if err := db.DB.Create(&doc).Error; err != nil {
 		// Clean up file if database insert fails
-		os.Remove(destPath)
+		services.Storage.Delete(context.Background(), uploadResult.Key)
 		return fmt.Errorf("failed to save document record: %w", err)
 	}
 
