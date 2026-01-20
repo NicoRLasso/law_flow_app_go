@@ -313,23 +313,6 @@ func main() {
 			adminRoutes.GET("/api/audit-logs", handlers.GetAuditLogsHandler)
 			adminRoutes.GET("/api/audit-logs/:type/:id", handlers.GetResourceHistoryHandler)
 
-			// Document Templates (admin only)
-			adminRoutes.GET("/templates", handlers.TemplatesPageHandler)
-			adminRoutes.GET("/templates/new", handlers.TemplateEditorPageHandler)
-			adminRoutes.GET("/templates/:id/edit", handlers.TemplateEditorPageHandler)
-			adminRoutes.GET("/api/admin/templates", handlers.GetTemplatesHandler)
-			adminRoutes.POST("/api/admin/templates", handlers.CreateTemplateHandler)
-			adminRoutes.PUT("/api/admin/templates/:id", handlers.UpdateTemplateHandler)
-			adminRoutes.DELETE("/api/admin/templates/:id", handlers.DeleteTemplateHandler)
-			adminRoutes.GET("/api/admin/templates/:id/metadata", handlers.GetTemplateMetadataHandler)
-			adminRoutes.GET("/api/admin/templates/:id/metadata/modal", handlers.GetTemplateMetadataModalHandler)
-			adminRoutes.GET("/api/admin/templates/variables", handlers.GetTemplateVariablesHandler)
-			// Template Categories
-			adminRoutes.GET("/api/admin/templates/categories", handlers.GetCategoriesHandler)
-			adminRoutes.POST("/api/admin/templates/categories", handlers.CreateCategoryHandler)
-			adminRoutes.PUT("/api/admin/templates/categories/:id", handlers.UpdateCategoryHandler)
-			adminRoutes.DELETE("/api/admin/templates/categories/:id", handlers.DeleteCategoryHandler)
-
 			// Classification Subtypes (admin only) - Management
 			adminRoutes.GET("/api/subtypes", handlers.GetSubtypesTabHandler)
 			adminRoutes.GET("/api/subtypes/list", handlers.GetSubtypesForBranchHandler)
@@ -341,6 +324,34 @@ func main() {
 			adminRoutes.PUT("/api/subtypes/:id", handlers.UpdateSubtypeHandler)
 			adminRoutes.PATCH("/api/subtypes/:id/toggle-active", handlers.ToggleSubtypeActiveHandler)
 			adminRoutes.DELETE("/api/subtypes/:id", handlers.DeleteSubtypeHandler)
+		}
+
+		// Document Template Management (Admin + Lawyer)
+		templateRoutes := protected.Group("/templates")
+		templateRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			// Page routes
+			templateRoutes.GET("", handlers.TemplatesPageHandler)
+			templateRoutes.GET("/new", handlers.TemplateEditorPageHandler)
+			templateRoutes.GET("/:id/edit", handlers.TemplateEditorPageHandler)
+		}
+
+		templateApiRoutes := protected.Group("/api/templates")
+		templateApiRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			templateApiRoutes.GET("", handlers.GetTemplatesHandler)
+			templateApiRoutes.POST("", handlers.CreateTemplateHandler)
+			templateApiRoutes.PUT("/:id", handlers.UpdateTemplateHandler)
+			templateApiRoutes.DELETE("/:id", handlers.DeleteTemplateHandler)
+			templateApiRoutes.GET("/:id/metadata", handlers.GetTemplateMetadataHandler)
+			templateApiRoutes.GET("/:id/metadata/modal", handlers.GetTemplateMetadataModalHandler)
+			templateApiRoutes.GET("/variables", handlers.GetTemplateVariablesHandler)
+
+			// Template Categories
+			templateApiRoutes.GET("/categories", handlers.GetCategoriesHandler)
+			templateApiRoutes.POST("/categories", handlers.CreateCategoryHandler)
+			templateApiRoutes.PUT("/categories/:id", handlers.UpdateCategoryHandler)
+			templateApiRoutes.DELETE("/categories/:id", handlers.DeleteCategoryHandler)
 		}
 
 		// Classification Options (accessible to all authenticated users with firm)
@@ -461,6 +472,7 @@ func main() {
 			appointmentRoutes.GET("", handlers.GetAppointmentsHandler)
 			appointmentRoutes.GET("/slots", handlers.GetAvailableSlotsHandler)
 			appointmentRoutes.GET("/clients", handlers.GetClientsForAppointmentHandler)
+			appointmentRoutes.GET("/cases", handlers.GetCasesForAppointmentHandler) // New route
 			appointmentRoutes.GET("/lawyers", handlers.GetLawyersForAppointmentHandler)
 			appointmentRoutes.GET("/types", handlers.GetActiveAppointmentTypesHandler)
 			appointmentRoutes.POST("", handlers.CreateAppointmentHandler)

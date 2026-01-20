@@ -40,8 +40,8 @@ templ HistoricalCases(ctx context.Context, title string, csrfToken string, user 
 						}
 					</div>
 
-					<!-- Case Filters -->
-					@partials.CaseFilters(ctx, user)
+					<!-- Case Filters (without status filter for historical cases) -->
+					@partials.CaseFiltersHistorical(ctx, user)
 					
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">

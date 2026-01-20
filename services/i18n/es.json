@@ -664,7 +664,22 @@
       "migration_notes": "Notas de Migración",
       "migration_notes_placeholder": "Notas sobre esta migración de caso en papel...",
       "create": "Crear Caso Histórico",
-      "badge": "Papel"
+      "badge": "Papel",
+      "step1_title": "Cliente",
+      "step2_title": "Datos del Caso",
+      "client_mode_existing": "Seleccionar cliente existente",
+      "client_mode_new": "Crear nuevo cliente",
+      "client_name": "Nombre del Cliente",
+      "client_email": "Correo Electrónico",
+      "client_phone": "Teléfono",
+      "client_doc_type": "Tipo de Documento",
+      "client_doc_number": "Número de Documento",
+      "select_client": "Seleccionar un cliente",
+      "upload_documents": "Subir Documentos",
+      "upload_hint": "Subir documentos del caso (PDF, imágenes, etc.)",
+      "next": "Siguiente",
+      "previous": "Anterior",
+      "no_clients": "No hay clientes disponibles"
     },
     "title_label": "Título del Caso",
     "title_placeholder": "Título breve del caso...",
@@ -931,6 +946,7 @@
     }
   },
   "case": {
+    "title": "Caso",
     "detail": {
       "title": "Detalles del Caso",
       "case_number": "Número de Caso",
@@ -1143,6 +1159,25 @@
       "thursday": "Jueves",
       "friday": "Viernes",
       "saturday": "Sábado"
+    },
+    "errors": {
+      "invalid_day": "Día de la semana inválido",
+      "times_required": "La hora de inicio y fin son requeridas",
+      "end_after_start": "La hora de fin debe ser después de la hora de inicio",
+      "check_failed": "Error al verificar disponibilidad",
+      "slot_overlaps": "El horario se superpone con uno existente",
+      "create_failed": "Error al crear el horario",
+      "update_failed": "Error al actualizar el horario",
+      "delete_failed": "Error al eliminar el horario",
+      "dates_required": "Las fechas de inicio y fin son requeridas",
+      "end_date_after_start": "La fecha de fin debe ser después de la fecha de inicio",
+      "blocked_save_failed": "Error al guardar el bloqueo",
+      "blocked_delete_failed": "Error al eliminar la fecha bloqueada"
+    },
+    "success": {
+      "slot_added": "Horario agregado exitosamente",
+      "slot_updated": "Horario actualizado",
+      "blocked_added": "Bloqueado exitosamente"
     }
   },
   "appointments": {
@@ -1176,6 +1211,7 @@
       "notes_placeholder": "Notas opcionales sobre la cita...",
       "select_client": "Seleccionar cliente...",
       "select_lawyer": "Seleccionar abogado...",
+      "select_case": "Seleccionar un caso...",
       "select_date_first": "Selecciona una fecha para ver horarios"
     },
     "create": {

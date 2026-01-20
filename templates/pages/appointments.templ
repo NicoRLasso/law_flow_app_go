@@ -97,17 +97,17 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 					>
 						<input type="hidden" name="_csrf" value={ csrfToken }/>
 						
-						<!-- Client Selection -->
+						<!-- Case Selection -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.client") }</label>
+							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "case.title") }</label>
 							<select 
-								id="client-select"
-								name="client_id" 
-								x-model="selectedClient"
+								id="case-select"
+								name="case_id" 
+								x-model="selectedCase"
 								required
 								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
 							>
-								<option value="">{ i18n.T(ctx, "appointments.form.select_client") }</option>
+								<option value="">{ i18n.T(ctx, "appointments.form.select_case") }</option>
 							</select>
 						</div>
 
@@ -195,36 +195,38 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 			function appointmentPage() {
 				return {
 					showCreateModal: false,
-					selectedClient: '',
+					selectedCase: '',
 					selectedLawyer: '',
 					selectedDate: '',
 					selectedStartTime: '',
 					selectedEndTime: '',
 					slots: [],
-					clientsLoaded: false,
+					casesLoaded: false,
 					lawyersLoaded: false,
 					
 					init() {
 						this.$watch('showCreateModal', (value) => {
 							if (value) {
-								this.loadClients();
+							if (value) {
+								this.loadCases();
 								this.loadLawyers();
+							}
 							}
 						});
 					},
 					
-					loadClients() {
-						if (this.clientsLoaded) return;
-						const select = document.getElementById('client-select');
+					loadCases() {
+						if (this.casesLoaded) return;
+						const select = document.getElementById('case-select');
 						if (!select) return;
 						
-						fetch('/api/appointments/clients')
+						fetch('/api/appointments/cases')
 							.then(res => res.text())
 							.then(html => {
 								select.innerHTML = html;
-								this.clientsLoaded = true;
+								this.casesLoaded = true;
 							})
-							.catch(err => console.error('Error loading clients:', err));
+							.catch(err => console.error('Error loading cases:', err));
 					},
 					
 					loadLawyers() {

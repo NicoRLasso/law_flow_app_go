@@ -1,17 +1,25 @@
 package handlers
 
 import (
+	"crypto/rand"
+	"encoding/base64"
+	"fmt"
+	"io"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // HistoricalCasesPageHandler renders the historical cases page
@@ -27,6 +35,7 @@ func HistoricalCasesPageHandler(c echo.Context) error {
 // GetHistoricalCaseFormHandler renders the historical case creation modal
 func GetHistoricalCaseFormHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
 
 	// Fetch available clients (users with role 'client' in the same firm)
 	var clients []models.User
@@ -61,8 +70,11 @@ func GetHistoricalCaseFormHandler(c echo.Context) error {
 		domains = []models.CaseDomain{}
 	}
 
+	// Fetch document types for new client creation
+	documentTypes, _ := services.GetChoiceOptions(db.DB, firm.ID, "document_type")
+
 	// Render the modal
-	component := partials.CaseHistoryModal(c.Request().Context(), clients, lawyers, domains, currentUser)
+	component := partials.CaseHistoryModal(c.Request().Context(), clients, lawyers, domains, documentTypes, currentUser)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -73,16 +85,24 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 	firmID := firm.ID
 
 	// Get form values
+	clientMode := c.FormValue("client_mode") // "existing" or "new"
 	originalFilingDateStr := c.FormValue("original_filing_date")
 	historicalCaseNumber := strings.TrimSpace(c.FormValue("historical_case_number"))
 	title := strings.TrimSpace(c.FormValue("title"))
 	description := strings.TrimSpace(c.FormValue("description"))
-	clientID := c.FormValue("client_id")
 	assignedToID := c.FormValue("assigned_to_id")
 	domainID := c.FormValue("domain_id")
 	branchID := c.FormValue("branch_id")
 	subtypeIDs := c.Request().Form["subtype_ids[]"]
 	migrationNotes := strings.TrimSpace(c.FormValue("migration_notes"))
+
+	// Client fields (for new client)
+	clientID := c.FormValue("client_id")
+	newClientName := strings.TrimSpace(c.FormValue("new_client_name"))
+	newClientEmail := strings.TrimSpace(c.FormValue("new_client_email"))
+	newClientPhone := strings.TrimSpace(c.FormValue("new_client_phone"))
+	newClientDocTypeID := c.FormValue("new_client_doc_type_id")
+	newClientDocNumber := strings.TrimSpace(c.FormValue("new_client_doc_number"))
 
 	// Validate required fields
 	if originalFilingDateStr == "" {
@@ -93,28 +113,25 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Description is required</div>`)
 	}
 
-	if clientID == "" {
-		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Client is required</div>`)
-	}
-
 	if assignedToID == "" {
 		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Assigned lawyer is required</div>`)
+	}
+
+	// Validate client based on mode
+	if clientMode == "new" {
+		if newClientName == "" || newClientEmail == "" {
+			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Client name and email are required</div>`)
+		}
+	} else {
+		if clientID == "" {
+			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Client is required</div>`)
+		}
 	}
 
 	// Parse original filing date
 	originalFilingDate, err := services.ParseDate(originalFilingDateStr)
 	if err != nil {
 		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid date format (expected YYYY-MM-DD)</div>`)
-	}
-
-	// Validate client exists and belongs to firm
-	var client models.User
-	clientQuery := middleware.GetFirmScopedQuery(c, db.DB)
-	if err := clientQuery.
-		Where("role = ?", "client").
-		Where("is_active = ?", true).
-		First(&client, "id = ?", clientID).Error; err != nil {
-		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid client selected</div>`)
 	}
 
 	// Validate lawyer exists and belongs to firm
@@ -127,22 +144,95 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 		return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid lawyer selected</div>`)
 	}
 
+	// Start transaction
+	tx := db.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// Handle client creation or validation
+	var finalClientID string
+	if clientMode == "new" {
+		// Check if client with same email already exists
+		var existingClient models.User
+		if err := tx.Where("firm_id = ? AND email = ? AND role = ?", firmID, newClientEmail, "client").First(&existingClient).Error; err == nil {
+			tx.Rollback()
+			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">A client with this email already exists</div>`)
+		}
+
+		// Generate random password for new client
+		randomBytes := make([]byte, 32)
+		if _, err := rand.Read(randomBytes); err != nil {
+			tx.Rollback()
+			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to generate password</div>`)
+		}
+		randomPassword := base64.URLEncoding.EncodeToString(randomBytes)
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomPassword), bcrypt.DefaultCost)
+		if err != nil {
+			tx.Rollback()
+			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to hash password</div>`)
+		}
+
+		// Create new client
+		newClient := models.User{
+			Name:     newClientName,
+			Email:    newClientEmail,
+			Password: string(hashedPassword),
+			FirmID:   &firmID,
+			Role:     "client",
+			IsActive: true,
+		}
+
+		if newClientPhone != "" {
+			newClient.PhoneNumber = &newClientPhone
+		}
+		if newClientDocTypeID != "" {
+			newClient.DocumentTypeID = &newClientDocTypeID
+		}
+		if newClientDocNumber != "" {
+			newClient.DocumentNumber = &newClientDocNumber
+		}
+
+		if err := tx.Create(&newClient).Error; err != nil {
+			tx.Rollback()
+			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to create client</div>`)
+		}
+
+		finalClientID = newClient.ID
+	} else {
+		// Validate existing client
+		var client models.User
+		clientQuery := middleware.GetFirmScopedQuery(c, tx)
+		if err := clientQuery.
+			Where("role = ?", "client").
+			Where("is_active = ?", true).
+			First(&client, "id = ?", clientID).Error; err != nil {
+			tx.Rollback()
+			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid client selected</div>`)
+		}
+		finalClientID = clientID
+	}
+
 	// Generate case number
-	caseNumber, err := services.EnsureUniqueCaseNumber(db.DB, firmID)
+	caseNumber, err := services.EnsureUniqueCaseNumber(tx, firmID)
 	if err != nil {
+		tx.Rollback()
 		return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to generate case number</div>`)
 	}
 
-	// Create the historical case
+	// Create the historical case (ALWAYS with CLOSED status)
 	now := time.Now()
 	newCase := models.Case{
 		FirmID:       firmID,
-		ClientID:     clientID,
+		ClientID:     finalClientID,
 		CaseNumber:   caseNumber,
 		CaseType:     "HISTORICAL",
 		Description:  description,
-		Status:       models.CaseStatusOpen,
-		OpenedAt:     originalFilingDate, // Use the original filing date as opened date
+		Status:       models.CaseStatusClosed, // Historical cases are always closed
+		OpenedAt:     originalFilingDate,      // Use the original filing date as opened date
+		ClosedAt:     &now,                    // Set closed date to now
 		AssignedToID: &assignedToID,
 
 		// Historical case specific fields
@@ -175,14 +265,6 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 		newCase.BranchID = &branchID
 	}
 
-	// Start transaction
-	tx := db.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
 	// Create the case
 	if err := tx.Create(&newCase).Error; err != nil {
 		tx.Rollback()
@@ -205,6 +287,18 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 		return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to save case</div>`)
 	}
 
+	// Handle document uploads (outside transaction - non-critical)
+	form, err := c.MultipartForm()
+	if err == nil && form != nil && form.File != nil {
+		files := form.File["documents[]"]
+		for _, fileHeader := range files {
+			if err := saveHistoricalCaseDocument(c, fileHeader, newCase.ID, firmID, currentUser.ID); err != nil {
+				c.Logger().Errorf("Failed to save document %s: %v", fileHeader.Filename, err)
+				// Continue with other documents, don't fail the whole request
+			}
+		}
+	}
+
 	// Return success with redirect
 	c.Response().Header().Set("HX-Trigger", "reload-cases")
 	return c.HTML(http.StatusOK, `
@@ -218,6 +312,60 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 			}, 1000);
 		</script>
 	`)
+}
+
+// saveHistoricalCaseDocument saves an uploaded document to the case
+func saveHistoricalCaseDocument(c echo.Context, fileHeader *multipart.FileHeader, caseID, firmID, uploadedByID string) error {
+	// Open the uploaded file
+	src, err := fileHeader.Open()
+	if err != nil {
+		return fmt.Errorf("failed to open file: %w", err)
+	}
+	defer src.Close()
+
+	// Generate unique filename
+	ext := filepath.Ext(fileHeader.Filename)
+	uniqueFilename := fmt.Sprintf("%d_%s%s", time.Now().UnixNano(), strings.ReplaceAll(fileHeader.Filename, ext, ""), ext)
+
+	// Create destination path
+	destDir := filepath.Join("uploads", "firms", firmID, "cases", caseID)
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
+	destPath := filepath.Join(destDir, uniqueFilename)
+
+	// Create destination file
+	dst, err := os.Create(destPath)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer dst.Close()
+
+	// Copy file contents
+	if _, err := io.Copy(dst, src); err != nil {
+		return fmt.Errorf("failed to copy file: %w", err)
+	}
+
+	// Create document record
+	doc := models.CaseDocument{
+		FirmID:           firmID,
+		CaseID:           &caseID,
+		FileName:         uniqueFilename,
+		FileOriginalName: fileHeader.Filename,
+		FilePath:         destPath,
+		FileSize:         fileHeader.Size,
+		DocumentType:     "other", // Default type for historical documents
+		UploadedByID:     &uploadedByID,
+	}
+
+	if err := db.DB.Create(&doc).Error; err != nil {
+		// Clean up file if database insert fails
+		os.Remove(destPath)
+		return fmt.Errorf("failed to save document record: %w", err)
+	}
+
+	return nil
 }
 
 // GetHistoricalCaseBranchesHandler returns branches for a domain (JSON for Alpine.js)

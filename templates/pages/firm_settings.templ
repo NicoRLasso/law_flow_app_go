@@ -468,7 +468,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 									<!-- Categories List -->
 									<div 
 										id="categories-list"
-										hx-get="/api/admin/templates/categories"
+										hx-get="/api/templates/categories"
 										hx-trigger="load, categoryUpdated from:body"
 										hx-target="#categories-list-content"
 									>
@@ -529,7 +529,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 					>
 						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "settings.templates.category_modal_title") }</h3>
 						<form
-							hx-post="/api/admin/templates/categories"
+							hx-post="/api/templates/categories"
 							hx-target="#categories-list-content"
 							hx-swap="innerHTML"
 							@htmx:after-request="if(event.detail.successful) { showCategoryModal = false; }"

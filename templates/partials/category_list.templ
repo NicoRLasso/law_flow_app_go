@@ -36,7 +36,7 @@ templ CategoryList(ctx context.Context, categories []models.TemplateCategory) {
 						}
 						<button
 							type="button"
-							hx-delete={ "/api/admin/templates/categories/" + category.ID }
+							hx-delete={ "/api/templates/categories/" + category.ID }
 							hx-target="#categories-list-content"
 							hx-swap="innerHTML"
 							hx-confirm={ i18n.T(ctx, "settings.templates.delete_category_confirm") }

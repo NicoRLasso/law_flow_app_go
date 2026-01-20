@@ -43,7 +43,7 @@ templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate) {
 						</a>
 						<button
 							type="button"
-							@click={ "openConfirmationModal({title: '" + i18n.T(ctx, "templates.delete_confirm_title") + "', message: '" + i18n.T(ctx, "templates.delete_confirm_msg") + "', confirmUrl: '/api/admin/templates/" + template.ID + "', confirmMethod: 'DELETE', target: '#templates-table-container', swap: 'innerHTML'}, $el)" }
+							@click={ "openConfirmationModal({title: '" + i18n.T(ctx, "templates.delete_confirm_title") + "', message: '" + i18n.T(ctx, "templates.delete_confirm_msg") + "', confirmUrl: '/api/templates/" + template.ID + "', confirmMethod: 'DELETE', target: '#templates-table-container', swap: 'innerHTML'}, $el)" }
 							class="px-3 py-2 text-sm font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors"
 						>
 							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate) {
 									</a>
 									<button
 										type="button"
-										@click={ "openConfirmationModal({title: '" + i18n.T(ctx, "templates.delete_confirm_title") + "', message: '" + i18n.T(ctx, "templates.delete_confirm_msg") + "', confirmUrl: '/api/admin/templates/" + template.ID + "', confirmMethod: 'DELETE', target: '#templates-table-container', swap: 'innerHTML'}, $el)" }
+										@click={ "openConfirmationModal({title: '" + i18n.T(ctx, "templates.delete_confirm_title") + "', message: '" + i18n.T(ctx, "templates.delete_confirm_msg") + "', confirmUrl: '/api/templates/" + template.ID + "', confirmMethod: 'DELETE', target: '#templates-table-container', swap: 'innerHTML'}, $el)" }
 										class="p-2 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
 										title={ i18n.T(ctx, "common.delete") }
 									>

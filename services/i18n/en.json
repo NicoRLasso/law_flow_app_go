@@ -666,7 +666,22 @@
       "migration_notes": "Migration Notes",
       "migration_notes_placeholder": "Notes about this paper case migration...",
       "create": "Create Historical Case",
-      "badge": "Paper"
+      "badge": "Paper",
+      "step1_title": "Client",
+      "step2_title": "Case Details",
+      "client_mode_existing": "Select existing client",
+      "client_mode_new": "Create new client",
+      "client_name": "Client Name",
+      "client_email": "Email",
+      "client_phone": "Phone",
+      "client_doc_type": "Document Type",
+      "client_doc_number": "Document Number",
+      "select_client": "Select a client",
+      "upload_documents": "Upload Documents",
+      "upload_hint": "Upload case documents (PDF, images, etc.)",
+      "next": "Next",
+      "previous": "Previous",
+      "no_clients": "No clients available"
     },
     "title_label": "Case Title",
     "title_placeholder": "Brief case title...",
@@ -932,6 +947,7 @@
     }
   },
   "case": {
+    "title": "Case",
     "detail": {
       "title": "Case Details",
       "case_number": "Case Number",
@@ -1144,6 +1160,25 @@
       "thursday": "Thursday",
       "friday": "Friday",
       "saturday": "Saturday"
+    },
+    "errors": {
+      "invalid_day": "Invalid day of week",
+      "times_required": "Start and end time are required",
+      "end_after_start": "End time must be after start time",
+      "check_failed": "Failed to check availability",
+      "slot_overlaps": "Slot overlaps with existing availability",
+      "create_failed": "Failed to create slot",
+      "update_failed": "Failed to update slot",
+      "delete_failed": "Failed to delete slot",
+      "dates_required": "Start and end dates are required",
+      "end_date_after_start": "End date must be after start date",
+      "blocked_save_failed": "Failed to save block",
+      "blocked_delete_failed": "Failed to delete blocked date"
+    },
+    "success": {
+      "slot_added": "Slot added successfully",
+      "slot_updated": "Slot updated",
+      "blocked_added": "Blocked successfully"
     }
   },
   "appointments": {
@@ -1177,6 +1212,7 @@
       "notes_placeholder": "Optional notes about the appointment...",
       "select_client": "Select a client...",
       "select_lawyer": "Select a lawyer...",
+      "select_case": "Select a case...",
       "select_date_first": "Select a date to see available slots"
     },
     "create": {

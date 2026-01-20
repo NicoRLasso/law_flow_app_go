@@ -22,9 +22,9 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 		</div>
 
 		<form
-			hx-post={ "/api/admin/templates" }
+			hx-post={ "/api/templates" }
 			if !isNew {
-				hx-put={ "/api/admin/templates/" + template.ID }
+				hx-put={ "/api/templates/" + template.ID }
 			}
 			hx-target="body"
 			hx-push-url="true"

@@ -41,9 +41,9 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 			>
 				<form
 					if isNew {
-						hx-post="/api/admin/templates"
+						hx-post="/api/templates"
 					} else {
-						hx-put={ "/api/admin/templates/" + template.ID }
+						hx-put={ "/api/templates/" + template.ID }
 					}
 					hx-target="#templates-table-container"
 					hx-swap="innerHTML"

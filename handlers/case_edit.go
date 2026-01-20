@@ -80,7 +80,7 @@ func GetCaseEditFormHandler(c echo.Context) error {
 	}
 
 	// Render the edit modal
-	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers, currentUser, domains, branches, subtypes)
+	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers, currentUser, domains, branches, subtypes, caseRecord.IsHistorical)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -141,6 +141,11 @@ func UpdateCaseHandler(c echo.Context) error {
 			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Invalid status</div>`)
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid status")
+	}
+
+	// Historical cases must always remain CLOSED
+	if caseRecord.IsHistorical && status != models.CaseStatusClosed {
+		status = models.CaseStatusClosed
 	}
 
 	// Validate client if provided

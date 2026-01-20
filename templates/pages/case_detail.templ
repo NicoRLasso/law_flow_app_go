@@ -14,7 +14,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 	@layouts.Base(ctx, title, csrfToken) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
-			@components.Navbar(ctx, user, firm, "/cases")
+			@components.Navbar(ctx, user, firm, func() string { if caseRecord.IsHistorical { return "/historical-cases" } else { return "/cases" } }())
 			
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
@@ -23,7 +23,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 					<div class="flex items-center justify-between mb-6 md:mb-8">
 						<div class="flex items-center gap-4">
 							<a
-								href="/cases"
+								href={ templ.SafeURL(func() string { if caseRecord.IsHistorical { return "/historical-cases" } else { return "/cases" } }()) }
 								class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
 								title={ i18n.T(ctx, "common.back") }
 							>

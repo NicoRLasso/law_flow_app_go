@@ -16,7 +16,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 			contextMenuY: 0, 
 			variables: [],
 			async loadVariables() {
-				const response = await fetch('/api/admin/templates/variables');
+				const response = await fetch('/api/templates/variables');
 				this.variables = await response.json();
 			},
 			insertVariable(tag) {
@@ -47,7 +47,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 
 			<div class="flex items-center gap-3">
 				<button
-					hx-get={ "/api/admin/templates/" + template.ID + "/metadata/modal" }
+					hx-get={ "/api/templates/" + template.ID + "/metadata/modal" }
 					hx-target="body"
 					hx-swap="beforeend"
 					class="btn-secondary px-3 py-1.5 text-sm font-medium transition-colors"
@@ -139,7 +139,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 		</div>
 
 		<!-- Hidden Form for Save -->
-		<form id="save-template-form" hx-put={ "/api/admin/templates/" + template.ID } hx-target="body" class="hidden">
+		<form id="save-template-form" hx-put={ "/api/templates/" + template.ID } hx-target="body" class="hidden">
 			<input type="hidden" name="content" id="hidden-content-input" />
 			<input type="hidden" name="name" value={ template.Name } />
 		</form>

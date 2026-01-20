@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/pages"
 	"net/http"
 	"strconv"
@@ -13,6 +15,16 @@ import (
 
 	"github.com/labstack/echo/v4"
 )
+
+// Helper to render error message with data-error attribute so modal doesn't close
+func availabilityErrorHTML(msg string) string {
+	return fmt.Sprintf(`<div class="text-red-500 text-sm" data-error="true">%s</div>`, msg)
+}
+
+// Helper to render success message
+func availabilitySuccessHTML(msg string) string {
+	return fmt.Sprintf(`<div class="text-green-500 text-sm">%s</div>`, msg)
+}
 
 // AvailabilityPageHandler renders the availability settings page
 func AvailabilityPageHandler(c echo.Context) error {
@@ -75,11 +87,12 @@ func GetAvailabilityHandler(c echo.Context) error {
 // CreateAvailabilityHandler creates a new availability slot
 func CreateAvailabilityHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
+	ctx := c.Request().Context()
 
 	dayOfWeek, err := strconv.Atoi(c.FormValue("day_of_week"))
 	if err != nil || dayOfWeek < 0 || dayOfWeek > 6 {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Invalid day of week</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.invalid_day")))
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid day of week")
 	}
@@ -89,14 +102,14 @@ func CreateAvailabilityHandler(c echo.Context) error {
 
 	if startTime == "" || endTime == "" {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Start and end time are required</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.times_required")))
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "Start and end time are required")
 	}
 
 	if startTime >= endTime {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">End time must be after start time</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.end_after_start")))
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "End time must be after start time")
 	}
@@ -105,13 +118,13 @@ func CreateAvailabilityHandler(c echo.Context) error {
 	overlaps, err := services.CheckAvailabilityOverlap(currentUser.ID, dayOfWeek, startTime, endTime, "")
 	if err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to check availability</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.check_failed")))
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check availability")
 	}
 	if overlaps {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Slot overlaps with existing availability</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.slot_overlaps")))
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "Slot overlaps with existing availability")
 	}
@@ -126,7 +139,7 @@ func CreateAvailabilityHandler(c echo.Context) error {
 
 	if err := services.CreateAvailabilitySlot(slot); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to create slot</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.create_failed")))
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create slot")
 	}
@@ -141,7 +154,7 @@ func CreateAvailabilityHandler(c echo.Context) error {
 	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionCreate, "Availability", slot.ID, "Availability Slot", "Created availability slot", nil, slot)
 
 	if c.Request().Header.Get("HX-Request") == "true" {
-		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm">Slot added successfully!</div>`)
+		return c.HTML(http.StatusOK, availabilitySuccessHTML(i18n.T(ctx, "availability.success.slot_added")))
 	}
 
 	return c.JSON(http.StatusCreated, slot)
@@ -150,6 +163,7 @@ func CreateAvailabilityHandler(c echo.Context) error {
 // UpdateAvailabilityHandler updates an existing availability slot
 func UpdateAvailabilityHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
+	ctx := c.Request().Context()
 	slotID := c.Param("id")
 
 	slot, err := services.GetAvailabilityByID(slotID)
@@ -184,7 +198,7 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 
 	if slot.StartTime >= slot.EndTime {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">End time must be after start time</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.end_after_start")))
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "End time must be after start time")
 	}
@@ -193,20 +207,20 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 	overlaps, err := services.CheckAvailabilityOverlap(slot.LawyerID, slot.DayOfWeek, slot.StartTime, slot.EndTime, slot.ID)
 	if err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to check availability</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.check_failed")))
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check availability")
 	}
 	if overlaps {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Slot overlaps with existing availability</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.slot_overlaps")))
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, "Slot overlaps with existing availability")
 	}
 
 	if err := services.UpdateAvailabilitySlot(slot); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to update slot</div>`)
+			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.update_failed")))
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update slot")
 	}
@@ -217,7 +231,7 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Trigger", "availability-updated")
-		return c.HTML(http.StatusOK, `<div class="text-green-500 text-sm">Slot updated!</div>`)
+		return c.HTML(http.StatusOK, availabilitySuccessHTML(i18n.T(ctx, "availability.success.slot_updated")))
 	}
 
 	return c.JSON(http.StatusOK, slot)

@@ -40,7 +40,7 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 									type="text"
 									name="search"
 									placeholder={ i18n.T(ctx, "templates.search_placeholder") }
-									hx-get="/api/admin/templates"
+									hx-get="/api/templates"
 									hx-target="#templates-table-container"
 									hx-trigger="keyup changed delay:300ms"
 									hx-include="[name='category_id']"
@@ -51,7 +51,7 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 								<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "templates.category") }</label>
 								<select
 									name="category_id"
-									hx-get="/api/admin/templates"
+									hx-get="/api/templates"
 									hx-target="#templates-table-container"
 									hx-trigger="change"
 									hx-include="[name='search']"
@@ -70,7 +70,7 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 					<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
 						<div
 							id="templates-table-container"
-							hx-get="/api/admin/templates"
+							hx-get="/api/templates"
 							hx-trigger="load"
 							hx-swap="innerHTML"
 						>

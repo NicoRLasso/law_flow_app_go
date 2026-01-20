@@ -7,7 +7,7 @@ import (
 	"law_flow_app_go/templates/components"
 )
 
-templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User, domains []models.CaseDomain, branches []models.CaseBranch, subtypes []models.CaseSubtype) {
+templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User, domains []models.CaseDomain, branches []models.CaseBranch, subtypes []models.CaseSubtype, isHistorical bool) {
 	<!-- Edit Case Modal -->
 	<div id="edit-case-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999;" onclick="if(event.target === this) closeEditModal()">
 		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
@@ -38,15 +38,26 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
 							{ i18n.T(ctx, "case.edit.status") } <span class="text-red-400">*</span>
 						</label>
-						<select
-							name="status"
-							required
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-						>
-							<option value="OPEN" selected?={ caseRecord.Status == "OPEN" }>{ i18n.T(ctx, "case.status.open") }</option>
-							<option value="ON_HOLD" selected?={ caseRecord.Status == "ON_HOLD" }>{ i18n.T(ctx, "case.status.on_hold") }</option>
-							<option value="CLOSED" selected?={ caseRecord.Status == "CLOSED" }>{ i18n.T(ctx, "case.status.closed") }</option>
-						</select>
+						if isHistorical {
+							<!-- Historical cases: status is readonly (always CLOSED) -->
+							<div class="flex items-center gap-2">
+								<span class="px-3 py-1.5 bg-gray-500/20 text-gray-400 rounded-lg text-sm font-medium">
+									{ i18n.T(ctx, "case.status.closed") }
+								</span>
+								<span class="text-xs text-muted-foreground">({ i18n.T(ctx, "cases.history.badge") })</span>
+							</div>
+							<input type="hidden" name="status" value="CLOSED"/>
+						} else {
+							<select
+								name="status"
+								required
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							>
+								<option value="OPEN" selected?={ caseRecord.Status == "OPEN" }>{ i18n.T(ctx, "case.status.open") }</option>
+								<option value="ON_HOLD" selected?={ caseRecord.Status == "ON_HOLD" }>{ i18n.T(ctx, "case.status.on_hold") }</option>
+								<option value="CLOSED" selected?={ caseRecord.Status == "CLOSED" }>{ i18n.T(ctx, "case.status.closed") }</option>
+							</select>
+						}
 					</div>
 
 					<!-- Filing Number (Radicado) -->

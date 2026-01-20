@@ -151,8 +151,8 @@ func CreateAppointmentHandler(c echo.Context) error {
 	}
 
 	// Validate required fields
-	if req.LawyerID == "" || req.ClientID == "" || req.StartTime == "" || req.EndTime == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "lawyer_id, client_id, start_time, and end_time are required")
+	if req.LawyerID == "" || req.StartTime == "" || req.EndTime == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "lawyer_id, start_time, and end_time are required")
 	}
 
 	// Parse times
@@ -164,6 +164,17 @@ func CreateAppointmentHandler(c echo.Context) error {
 	endTime, err := time.Parse(time.RFC3339, req.EndTime)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid end_time format (use RFC3339)")
+	}
+
+	// Resolve ClientID from CaseID if provided
+	if req.CaseID != nil && *req.CaseID != "" {
+		var kase models.Case
+		if err := db.DB.First(&kase, "id = ?", *req.CaseID).Error; err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid case ID")
+		}
+		req.ClientID = kase.ClientID
+	} else if req.ClientID == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "client_id or case_id is required")
 	}
 
 	// Verify client exists and has role 'client'
@@ -453,6 +464,40 @@ func GetLawyersForAppointmentHandler(c echo.Context) error {
 	html := "<option value=''>Select a lawyer...</option>"
 	for _, lawyer := range lawyers {
 		html += fmt.Sprintf("<option value='%s'>%s</option>", lawyer.ID, lawyer.Name)
+	}
+	return c.HTML(http.StatusOK, html)
+}
+
+// GetCasesForAppointmentHandler returns cases that the user can book appointments for
+func GetCasesForAppointmentHandler(c echo.Context) error {
+	user := middleware.GetCurrentUser(c)
+	if user == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "User not found")
+	}
+
+	var cases []models.Case
+	query := db.DB.Where("firm_id = ? AND status = ?", *user.FirmID, models.CaseStatusOpen).Preload("Client")
+
+	// If not admin, valid only assigned cases or where collaborator
+	if user.Role != "admin" {
+		query = query.Where("assigned_to_id = ? OR id IN (SELECT case_id FROM case_collaborators WHERE user_id = ?)", user.ID, user.ID)
+	}
+
+	if err := query.Order("created_at desc").Find(&cases).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch cases")
+	}
+
+	// Return HTML options for select
+	html := "<option value=''>Select a case...</option>"
+	for _, kase := range cases {
+		label := kase.CaseNumber
+		if kase.Title != nil && *kase.Title != "" {
+			label += " - " + *kase.Title
+		}
+		if kase.Client.Name != "" {
+			label += " (" + kase.Client.Name + ")"
+		}
+		html += fmt.Sprintf("<option value='%s'>%s</option>", kase.ID, label)
 	}
 	return c.HTML(http.StatusOK, html)
 }
