@@ -431,6 +431,14 @@
       "users_desc": "Add & edit users",
       "upload_doc_title": "Upload Document",
       "upload_doc_desc": "Add new document"
+    },
+    "recent_cases": {
+      "label": "Recent Cases",
+      "no_cases": "No recent cases"
+    },
+    "upcoming_appointments": {
+      "label": "Upcoming Appointments",
+      "no_appointments": "No upcoming appointments"
     }
   },
   "landing": {

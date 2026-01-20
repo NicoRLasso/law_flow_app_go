@@ -429,6 +429,14 @@
       "users_desc": "Añadir y editar usuarios",
       "upload_doc_title": "Subir Documento",
       "upload_doc_desc": "Añadir nuevo documento"
+    },
+    "recent_cases": {
+      "label": "Casos Recientes",
+      "no_cases": "No hay casos recientes"
+    },
+    "upcoming_appointments": {
+      "label": "Próximas Citas",
+      "no_appointments": "No hay citas próximas"
     }
   },
   "landing": {

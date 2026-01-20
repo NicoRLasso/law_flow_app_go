@@ -143,9 +143,24 @@ func UpdateCaseHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid status")
 	}
 
-	// Historical cases must always remain CLOSED
+	// Handle Historical Case Logic
+	// 1. If case is Historical and we are trying to change status from CLOSED to something else (Reopening)
 	if caseRecord.IsHistorical && status != models.CaseStatusClosed {
-		status = models.CaseStatusClosed
+		// Only Admin and Lawyer can reopen historical cases
+		if currentUser.Role != "admin" && currentUser.Role != "lawyer" {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusForbidden, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Permission denied: Only Admins and Lawyers can reopen historical cases</div>`)
+			}
+			return echo.NewHTTPError(http.StatusForbidden, "Permission denied: Only Admins and Lawyers can reopen historical cases")
+		}
+		// If authorized, verify we aren't blocked by other logic, then unmark historical
+		caseRecord.IsHistorical = false
+	} else if !caseRecord.IsHistorical && status == models.CaseStatusClosed {
+		// 2. If case is NOT Historical but is being CLOSED, mark as Historical
+		caseRecord.IsHistorical = true
+	} else if caseRecord.IsHistorical && status == models.CaseStatusClosed {
+		// 3. Case is Historical and stays Closed - ensure it stays true (redundant but safe)
+		caseRecord.IsHistorical = true
 	}
 
 	// Validate client if provided

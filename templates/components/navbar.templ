@@ -100,7 +100,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						</div>
 
 						// Templates (third - admin only)
-						if user.Role == "admin" {
+						if user.Role == "admin" || user.Role == "lawyer" {
 							if currentPath == "/templates" {
 								<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.templates") }</a>
 							} else {
@@ -256,7 +256,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 									<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.firm_settings") }</span>
 								</a>
 
-								if user.Role == "admin" {
+								if user.Role == "admin" || user.Role == "lawyer" {
 									<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
 										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
 										<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
@@ -436,8 +436,8 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 					}
 				}
 
-				// Templates (Admin)
-				if user.Role == "admin" {
+				// Templates (Admin and lawyer)
+				if user.Role == "admin" || user.Role == "lawyer"{
 					<div class="px-3 pt-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Templates</div>
 					if currentPath == "/templates" {
 						<a href="/templates" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
