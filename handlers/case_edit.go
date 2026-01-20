@@ -64,8 +64,23 @@ func GetCaseEditFormHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch lawyers")
 	}
 
+	// Fetch classification data
+	var domains []models.CaseDomain
+	var branches []models.CaseBranch
+	var subtypes []models.CaseSubtype
+
+	if currentUser.FirmID != nil {
+		domains, _ = services.GetCaseDomains(db.DB, *currentUser.FirmID)
+		if caseRecord.DomainID != nil {
+			branches, _ = services.GetCaseBranches(db.DB, *currentUser.FirmID, *caseRecord.DomainID)
+		}
+		if caseRecord.BranchID != nil {
+			subtypes, _ = services.GetCaseSubtypes(db.DB, *currentUser.FirmID, *caseRecord.BranchID)
+		}
+	}
+
 	// Render the edit modal
-	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers, currentUser)
+	component := partials.CaseEditModal(c.Request().Context(), caseRecord, clients, lawyers, currentUser, domains, branches, subtypes)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -100,6 +115,10 @@ func UpdateCaseHandler(c echo.Context) error {
 	description := c.FormValue("description")
 	clientID := c.FormValue("client_id")
 	assignedToID := c.FormValue("assigned_to_id")
+	filingNumber := c.FormValue("filing_number")
+	domainID := c.FormValue("domain_id")
+	branchID := c.FormValue("branch_id")
+	subtypeIDs := c.Request().Form["subtype_ids[]"]
 
 	// Validate required fields
 	if status == "" {
@@ -161,6 +180,88 @@ func UpdateCaseHandler(c echo.Context) error {
 	// Update case fields
 	caseRecord.Status = status
 	caseRecord.Description = strings.TrimSpace(description)
+	if filingNumber != "" {
+		trimmedFilingNumber := strings.TrimSpace(filingNumber)
+		caseRecord.FilingNumber = &trimmedFilingNumber
+	} else {
+		caseRecord.FilingNumber = nil
+	}
+
+	// Handle classification changes
+	// Only update if classification fields are present in the form (domain_id shouldn't be empty if it's being set)
+	// If domain_id is provided or cleared
+	if c.Request().Form.Has("domain_id") {
+		var newDomainID *string
+		if domainID != "" {
+			newDomainID = &domainID
+		}
+
+		var newBranchID *string
+		if branchID != "" {
+			newBranchID = &branchID
+		}
+
+		// Check if classification changed
+		classificationChanged := false
+
+		// Domain changed?
+		if (caseRecord.DomainID == nil && newDomainID != nil) ||
+			(caseRecord.DomainID != nil && newDomainID == nil) ||
+			(caseRecord.DomainID != nil && newDomainID != nil && *caseRecord.DomainID != *newDomainID) {
+			classificationChanged = true
+		}
+
+		// Branch changed?
+		if !classificationChanged {
+			if (caseRecord.BranchID == nil && newBranchID != nil) ||
+				(caseRecord.BranchID != nil && newBranchID == nil) ||
+				(caseRecord.BranchID != nil && newBranchID != nil && *caseRecord.BranchID != *newBranchID) {
+				classificationChanged = true
+			}
+		}
+
+		// Subtypes changed?
+		if !classificationChanged {
+			// Compare subtypes
+			// This is a bit complex due to many-to-many, simplified check:
+			if len(caseRecord.Subtypes) != len(subtypeIDs) {
+				classificationChanged = true
+			} else {
+				// Create map of existing subtype IDs
+				existingMap := make(map[string]bool)
+				for _, s := range caseRecord.Subtypes {
+					existingMap[s.ID] = true
+				}
+				// Check if all new IDs exist
+				for _, id := range subtypeIDs {
+					if !existingMap[id] {
+						classificationChanged = true
+						break
+					}
+				}
+			}
+		}
+
+		if classificationChanged {
+			now := time.Now()
+			caseRecord.ClassifiedAt = &now
+			caseRecord.ClassifiedBy = &currentUser.ID
+
+			caseRecord.DomainID = newDomainID
+			caseRecord.BranchID = newBranchID
+
+			// Update subtypes
+			if err := db.DB.Model(&caseRecord).Association("Subtypes").Clear(); err != nil {
+				// Log error but continue
+			}
+
+			if len(subtypeIDs) > 0 {
+				var newSubtypes []models.CaseSubtype
+				db.DB.Where("id IN ?", subtypeIDs).Find(&newSubtypes)
+				caseRecord.Subtypes = newSubtypes
+			}
+		}
+	}
 
 	// Update client if provided
 	if clientID != "" {

@@ -217,3 +217,146 @@ func formatDateTimeLocal(t *time.Time) string {
     }
     return t.Format("2006-01-02T15:04")
 }
+
+func formatDateTimeDisplay(t *time.Time) string {
+    if t == nil {
+        return "-"
+    }
+    return t.Format("Jan 02, 2006 at 15:04")
+}
+
+// CaseLogViewModal renders a read-only view of a log entry
+templ CaseLogViewModal(log models.CaseLog) {
+	<div id="log-entry-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999;" onclick="if(event.target === this) closeLogModal()">
+		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "bitacora.view_title") }</h3>
+				<button
+					type="button"
+					onclick="closeLogModal()"
+					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Content -->
+			<div class="space-y-5">
+				<!-- Title -->
+				<div>
+					<label class="block text-sm font-medium text-muted-foreground mb-1">
+						{ i18n.T(ctx, "bitacora.title_label") }
+					</label>
+					<p class="text-foreground text-lg font-semibold">{ log.Title }</p>
+				</div>
+				<div>
+					<label class="block text-sm font-medium text-muted-foreground mb-1">
+						{ i18n.T(ctx, "bitacora.occurred_at") }
+					</label>
+					<p class="text-foreground">{ formatDateTimeDisplay(log.OccurredAt) }</p>
+				</div>
+				<!-- Type and Date Row -->
+				<div class="flex flex-col sm:flex-row gap-4">
+					<div class="w-full sm:w-1/3">
+						<label class="block text-sm font-medium text-muted-foreground mb-1">
+							{ i18n.T(ctx, "bitacora.entry_type") }
+						</label>
+						<span class={ "inline-block px-3 py-1 rounded-full text-sm font-semibold border", getLogTypeBadgeClassView(log.EntryType) }>
+							{ i18n.T(ctx, "bitacora.types." + log.EntryType) }
+						</span>
+					</div>
+					
+				</div>
+
+				<!-- Duration (if call or meeting) -->
+				if log.Duration != nil && (log.EntryType == "call" || log.EntryType == "meeting") {
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1">
+							{ i18n.T(ctx, "bitacora.duration") }
+						</label>
+						<p class="text-foreground">{ strconv.Itoa(*log.Duration) } { i18n.T(ctx, "bitacora.minutes") }</p>
+					</div>
+				}
+
+				<!-- Contact Info (if call or meeting) -->
+				if (log.ContactName != nil || log.ContactPhone != nil) && (log.EntryType == "call" || log.EntryType == "meeting") {
+					<div class="flex flex-col sm:flex-row gap-4">
+						if log.ContactName != nil {
+							<div class="flex-1">
+								<label class="block text-sm font-medium text-muted-foreground mb-1">
+									{ i18n.T(ctx, "bitacora.contact_name") }
+								</label>
+								<p class="text-foreground">{ *log.ContactName }</p>
+							</div>
+						}
+						if log.ContactPhone != nil {
+							<div class="flex-1">
+								<label class="block text-sm font-medium text-muted-foreground mb-1">
+									{ i18n.T(ctx, "bitacora.contact_phone") }
+								</label>
+								<p class="text-foreground">{ *log.ContactPhone }</p>
+							</div>
+						}
+					</div>
+				}
+
+				<!-- Document Reference (if document type) -->
+				if log.EntryType == "document" && log.Document != nil {
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1">
+							{ i18n.T(ctx, "bitacora.document_reference") }
+						</label>
+						<p class="text-foreground">{ log.Document.FileName }</p>
+					</div>
+				}
+
+				<!-- Content -->
+				if log.Content != "" {
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1">
+							{ i18n.T(ctx, "bitacora.content_label") }
+						</label>
+						<div class="bg-white/5 border border-white/10 rounded-lg p-4">
+							<p class="text-foreground whitespace-pre-wrap">{ log.Content }</p>
+						</div>
+					</div>
+				}
+
+				<!-- Close Button -->
+				<div class="flex justify-end pt-4">
+					<button
+						type="button"
+						onclick="closeLogModal()"
+						class="px-6 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-lg font-semibold transition-all duration-200"
+					>
+						{ i18n.T(ctx, "common.close") }
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    <script>
+        function closeLogModal() {
+             const modal = document.getElementById('log-entry-modal');
+             if (modal) {
+                 modal.remove();
+             }
+        }
+    </script>
+}
+
+func getLogTypeBadgeClassView(entryType string) string {
+    switch entryType {
+    case "call":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+    case "meeting":
+        return "bg-purple-500/20 text-purple-400 border-purple-500/30"
+    case "document":
+        return "bg-orange-500/20 text-orange-400 border-orange-500/30"
+    default:
+        return "bg-green-500/20 text-green-400 border-green-500/30"
+    }
+}

@@ -284,9 +284,12 @@
     "confirm": "Confirm",
     "submit": "Submit",
     "cancel": "Cancel",
+    "select_option": "Select an option",
+    "required_fields": "Please fill in all required fields",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
+    "view": "View",
     "back": "Back",
     "learn_more": "Learn more",
     "created_at": "Created At",
@@ -900,7 +903,10 @@
     },
     "classifications": {
       "title": "Case Classifications",
-      "desc": "View your firm's legal classification hierarchy and manage case subtypes.",
+      "desc": "Manage case type classifications for your firm",
+      "add_subtype": "Add Subtype",
+      "edit_subtype": "Edit Subtype",
+      "subtype_details": "Subtype Details",
       "domain": "Domain",
       "branch": "Branch",
       "subtype": "Subtype",
@@ -909,9 +915,6 @@
       "inactive": "Inactive",
       "no_data": "No classifications found. Classifications are seeded when the firm is created.",
       "no_branches": "No branches in this domain",
-      "no_subtypes": "No subtypes in this branch",
-      "add_subtype": "Add Subtype",
-      "edit_subtype": "Edit Subtype",
       "name": "Name",
       "name_placeholder": "Enter subtype name...",
       "code": "Code",
@@ -921,14 +924,17 @@
       "complexity": "Complexity",
       "duration": "Typical Duration (days)",
       "duration_hint": "Estimated days to complete this type of case",
-      "delete_confirm": "Are you sure you want to delete this subtype?",
-      "cannot_delete_system": "System subtypes cannot be deleted"
+      "select_domain_first": "Select a domain first",
+      "select_branch_hint": "Select a domain and branch to view subtypes",
+      "no_subtypes": "No subtypes found for this branch",
+      "days_short": "days"
     }
   },
   "case": {
     "detail": {
       "title": "Case Details",
       "case_number": "Case Number",
+      "radicado": "Filing Number",
       "edit_btn": "Edit Case",
       "edit_short": "Edit",
       "tab": {
@@ -1066,11 +1072,17 @@
     "edit": {
       "title": "Edit Case",
       "status": "Status",
+      "radicado": "Filing Number",
+      "radicado_placeholder": "Enter filing number...",
       "description": "Description",
-      "desc_placeholder": "Case description...",
+      "desc_placeholder": "Enter case description...",
       "client": "Client",
       "lawyer": "Assigned Lawyer",
       "unassigned": "Unassigned",
+      "classification_section": "Classification",
+      "select_domain": "Select Domain",
+      "select_branch": "Select Branch",
+      "select_branch_first": "Select a branch to view subtypes",
       "save": "Save Changes",
       "cancel": "Cancel"
     },
@@ -1220,6 +1232,7 @@
     "by": "By",
     "create": "Create Entry",
     "edit_title": "Edit Entry",
+    "view_title": "View Entry",
     "delete_confirm_title": "Delete Entry",
     "delete_confirm": "Are you sure you want to delete this entry?"
   },

@@ -36,10 +36,11 @@ type Case struct {
 	Client   User   `gorm:"foreignKey:ClientID" json:"client,omitempty"`
 
 	// Case identification
-	CaseNumber  string  `gorm:"not null;uniqueIndex" json:"case_number"`
-	Title       *string `json:"title,omitempty"` // Brief case title for identification
-	CaseType    string  `gorm:"not null" json:"case_type"`
-	Description string  `gorm:"type:text;not null" json:"description"`
+	CaseNumber   string  `gorm:"not null;uniqueIndex" json:"case_number"`
+	Title        *string `json:"title,omitempty"` // Brief case title for identification
+	CaseType     string  `gorm:"not null" json:"case_type"`
+	Description  string  `gorm:"type:text;not null" json:"description"`
+	FilingNumber *string `gorm:"size:100" json:"filing_number,omitempty"` // External filing number from court/process
 
 	// Client's role in the case (demandante/demandado)
 	ClientRole *string `gorm:"size:20" json:"client_role,omitempty"`

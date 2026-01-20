@@ -4,7 +4,6 @@ import (
 	"context"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
-	"strconv"
 )
 
 // SubtypeFormModal renders the form for creating or editing a subtype
@@ -64,8 +63,8 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 				} else {
 					hx-post="/api/subtypes"
 				}
-				hx-target="#subtypes-container"
-				hx-swap="outerHTML"
+				hx-target="#subtypes-list-container"
+				hx-swap="innerHTML"
 				@htmx:after-request="if(event.detail.successful) { open = false; setTimeout(() => { document.getElementById('subtype-modal-container').innerHTML = '' }, 300) }"
 				class="space-y-4"
 			>
@@ -89,7 +88,7 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 				</div>
 
 				<!-- Code -->
-				<div>
+				<div x-data>
 					<label class="block text-sm font-medium text-foreground mb-2">
 						{ i18n.T(ctx, "settings.classifications.code") } <span class="text-red-500">*</span>
 					</label>
@@ -100,6 +99,7 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 						if subtype != nil {
 							value={ subtype.Code }
 						}
+						@input="$el.value = $el.value.replace(/[^a-zA-Z _]/g, '').replace(/ /g, '_').toUpperCase()"
 						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all font-mono uppercase"
 						placeholder="SUBTYPE_CODE"
 					/>
@@ -120,61 +120,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 							{ subtype.Description }
 						}
 					</textarea>
-				</div>
-
-				<!-- Order and Complexity Row -->
-				<div class="grid grid-cols-2 gap-4">
-					<!-- Order -->
-					<div>
-						<label class="block text-sm font-medium text-foreground mb-2">
-							{ i18n.T(ctx, "settings.classifications.order") }
-						</label>
-						<input
-							type="number"
-							name="order"
-							min="0"
-							if subtype != nil {
-								value={ strconv.Itoa(subtype.Order) }
-							} else {
-								value="0"
-							}
-							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-						/>
-					</div>
-
-					<!-- Complexity -->
-					<div>
-						<label class="block text-sm font-medium text-foreground mb-2">
-							{ i18n.T(ctx, "settings.classifications.complexity") }
-						</label>
-						<select
-							name="complexity_level"
-							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-						>
-							<option value="">-</option>
-							<option value="low" selected?={ subtype != nil && subtype.ComplexityLevel == "low" }>{ i18n.T(ctx, "common.low") }</option>
-							<option value="medium" selected?={ subtype != nil && subtype.ComplexityLevel == "medium" }>{ i18n.T(ctx, "common.medium") }</option>
-							<option value="high" selected?={ subtype != nil && subtype.ComplexityLevel == "high" }>{ i18n.T(ctx, "common.high") }</option>
-						</select>
-					</div>
-				</div>
-
-				<!-- Typical Duration -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">
-						{ i18n.T(ctx, "settings.classifications.duration") }
-					</label>
-					<input
-						type="number"
-						name="typical_duration_days"
-						min="1"
-						if subtype != nil && subtype.TypicalDurationDays != nil {
-							value={ strconv.Itoa(*subtype.TypicalDurationDays) }
-						}
-						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-						placeholder="30"
-					/>
-					<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.classifications.duration_hint") }</p>
 				</div>
 
 				<!-- Actions -->

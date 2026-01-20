@@ -33,6 +33,9 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							</a>
 							<div>
 								<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "case.detail.title") }</h1>
+								if caseRecord.FilingNumber != nil {
+									<p class="text-sm text-accent font-medium mb-0.5">{ *caseRecord.FilingNumber }</p>
+								}
 								<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "case.detail.case_number") }: { caseRecord.CaseNumber }</p>
 							</div>
 						</div>
@@ -260,6 +263,12 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 									{ i18n.T(ctx, "case.detail.info_title") }
 								</h2>
 								<div class="space-y-4">
+									if caseRecord.FilingNumber != nil {
+										<div>
+											<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.radicado") }</label>
+											<p class="text-foreground mt-1 text-lg font-medium">{ *caseRecord.FilingNumber }</p>
+										</div>
+									}
 									<div>
 										<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.case_number") }</label>
 										<p class="text-foreground mt-1">{ caseRecord.CaseNumber }</p>

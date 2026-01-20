@@ -165,6 +165,19 @@ func GetCaseLogHandler(c echo.Context) error {
 	return render(c, partials.CaseLogModal(logEntry, documents, false)) // false = isNew
 }
 
+// GetCaseLogViewHandler returns a read-only view modal for a specific log entry
+func GetCaseLogViewHandler(c echo.Context) error {
+	id := c.Param("logId")
+
+	var logEntry models.CaseLog
+	// Use firm-scoped query to prevent IDOR, preload Document if present
+	if err := middleware.GetFirmScopedQuery(c, db.DB).Preload("Document").First(&logEntry, "id = ?", id).Error; err != nil {
+		return c.String(http.StatusNotFound, "Log entry not found")
+	}
+
+	return render(c, partials.CaseLogViewModal(logEntry))
+}
+
 // helper to fetch logs and render the table
 func fetchAndRenderLogs(c echo.Context, caseID string) error {
 	var logs []models.CaseLog

@@ -4,9 +4,10 @@ import (
 	"context"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
 )
 
-templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User) {
+templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User, domains []models.CaseDomain, branches []models.CaseBranch, subtypes []models.CaseSubtype) {
 	<!-- Edit Case Modal -->
 	<div id="edit-case-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999;" onclick="if(event.target === this) closeEditModal()">
 		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
@@ -46,6 +47,20 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 							<option value="ON_HOLD" selected?={ caseRecord.Status == "ON_HOLD" }>{ i18n.T(ctx, "case.status.on_hold") }</option>
 							<option value="CLOSED" selected?={ caseRecord.Status == "CLOSED" }>{ i18n.T(ctx, "case.status.closed") }</option>
 						</select>
+					</div>
+
+					<!-- Filing Number (Radicado) -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "case.edit.radicado") }
+						</label>
+						<input
+							type="text"
+							name="filing_number"
+							value={ func() string { if caseRecord.FilingNumber != nil { return *caseRecord.FilingNumber } else { return "" } }() }
+							placeholder={ i18n.T(ctx, "case.edit.radicado_placeholder") }
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
 					</div>
 
 					<!-- Description -->
@@ -112,6 +127,69 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 								<p class="text-muted-foreground italic py-2">{ i18n.T(ctx, "case.detail.unassigned") }</p>
 							}
 						}
+					</div>
+
+					<!-- Classification Section -->
+					<div class="space-y-4 pt-4 border-t border-white/10">
+						<h4 class="text-lg font-semibold">{ i18n.T(ctx, "case.edit.classification_section") }</h4>
+						
+						<!-- Domain -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "case.detail.domain") }
+							</label>
+							<select
+								name="domain_id"
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+								hx-get="/api/subtypes/branches"
+								hx-target="#branch-select"
+								hx-trigger="change"
+								hx-include="[name='domain_id']"
+								onchange="document.getElementById('branch-select').disabled = this.value === ''"
+							>
+								<option value="">{ i18n.T(ctx, "case.edit.select_domain") }</option>
+								for _, domain := range domains {
+									if caseRecord.DomainID != nil {
+										<option value={ domain.ID } selected?={ domain.ID == *caseRecord.DomainID }>{ domain.Name }</option>
+									} else {
+										<option value={ domain.ID }>{ domain.Name }</option>
+									}
+								}
+							</select>
+						</div>
+
+						<!-- Branch -->
+						<div>
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "case.detail.branch") }
+							</label>
+							<select
+								id="branch-select"
+								name="branch_id"
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+								hx-get="/api/subtypes/options"
+								hx-target="#subtype-container"
+								hx-trigger="change"
+								hx-include="[name='branch_id']"
+								disabled?={ caseRecord.DomainID == nil }
+							>
+								@components.BranchOptions(ctx, branches, caseRecord.BranchID)
+							</select>
+						</div>
+
+						<!-- Subtypes -->
+						<div id="subtype-container">
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "case.detail.subtypes") }
+							</label>
+							@components.SubtypeMultiSelect(ctx, subtypes, func() []string {
+								ids := make([]string, len(caseRecord.Subtypes))
+								for i, s := range caseRecord.Subtypes {
+									ids[i] = s.ID
+								}
+								return ids
+							}())
+						</div>
 					</div>
 
 					<!-- Response Container -->

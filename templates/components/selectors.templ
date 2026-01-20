@@ -1,0 +1,103 @@
+package components
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+// BranchOptions renders the options for the branch select
+templ BranchOptions(ctx context.Context, branches []models.CaseBranch, selectedID *string) {
+	<option value="">{ i18n.T(ctx, "common.select_option") }</option>
+	for _, branch := range branches {
+		if selectedID != nil && branch.ID == *selectedID {
+			<option value={ branch.ID } selected>{ branch.Name }</option>
+		} else {
+			<option value={ branch.ID }>{ branch.Name }</option>
+		}
+	}
+}
+
+// SubtypeMultiSelect renders a custom multi-select dropdown using Alpine.js
+templ SubtypeMultiSelect(ctx context.Context, subtypes []models.CaseSubtype, selectedIDs []string) {
+	if len(subtypes) == 0 {
+		<div class="text-sm text-muted-foreground italic px-2 py-2">
+			{ i18n.T(ctx, "settings.classifications.no_subtypes") }
+		</div>
+	} else {
+		<div
+			class="relative"
+			x-data="{
+				open: false,
+				selectedCount: 0,
+				init() {
+					this.updateCount();
+				},
+				updateCount() {
+					const checkboxes = this.$el.querySelectorAll('input[type=checkbox]:checked');
+					this.selectedCount = checkboxes.length;
+				}
+			}"
+			@click.outside="open = false"
+		>
+			<!-- Trigger Button -->
+			<button
+				type="button"
+				@click="open = !open"
+				class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground flex items-center justify-between hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-accent"
+			>
+				<span x-text="selectedCount > 0 ? selectedCount + ' ' + 'selected' : 'Select subtypes...'">
+					Select subtypes...
+				</span>
+				<svg
+					class="w-4 h-4 ml-2 transition-transform duration-200"
+					:class="{ 'rotate-180': open }"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				</svg>
+			</button>
+
+			<!-- Dropdown Menu -->
+			<div
+				x-show="open"
+				x-transition:enter="transition ease-out duration-100"
+				x-transition:enter-start="transform opacity-0 scale-95"
+				x-transition:enter-end="transform opacity-100 scale-100"
+				x-transition:leave="transition ease-in duration-75"
+				x-transition:leave-start="transform opacity-100 scale-100"
+				x-transition:leave-end="transform opacity-0 scale-95"
+				class="absolute z-50 w-full mt-1 bg-gray-900 border border-white/10 rounded-lg shadow-xl max-h-60 overflow-y-auto backdrop-blur-xl"
+				style="display: none;"
+			>
+				<div class="p-2 space-y-1">
+					for _, subtype := range subtypes {
+						<label class="flex items-center gap-2 cursor-pointer p-2 hover:bg-white/10 rounded transition-colors group">
+							<input
+								type="checkbox"
+								name="subtype_ids[]"
+								value={ subtype.ID }
+								checked?={ func() bool {
+									for _, id := range selectedIDs {
+										if id == subtype.ID {
+											return true
+										}
+									}
+									return false
+								}() }
+								@change="updateCount()"
+								class="w-4 h-4 rounded border-white/20 bg-white/5 text-accent focus:ring-accent focus:ring-offset-0 group-hover:border-accent/50"
+							/>
+							<div class="flex flex-col">
+								<span class="text-sm font-medium text-foreground">{ subtype.Name }</span>
+								<span class="text-xs text-muted-foreground">{ subtype.Code }</span>
+							</div>
+						</label>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}

@@ -37,10 +37,6 @@ type CaseSubtype struct {
 	Order       int    `gorm:"not null;default:0" json:"order"` // For sorting within branch
 	IsActive    bool   `gorm:"not null;default:true;index:idx_case_sub_branch_active" json:"is_active"`
 	IsSystem    bool   `gorm:"not null;default:false" json:"is_system"` // Prevents deletion of system subtypes
-
-	// Optional metadata
-	TypicalDurationDays *int   `json:"typical_duration_days,omitempty"` // Typical case duration in days
-	ComplexityLevel     string `json:"complexity_level,omitempty"`      // low, medium, high
 }
 
 // BeforeCreate hook to generate UUID

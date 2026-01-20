@@ -283,9 +283,11 @@
     "confirm": "Confirmar",
     "submit": "Enviar",
     "cancel": "Cancelar",
+    "select_option": "Seleccione una opción",
     "save": "Guardar",
     "delete": "Eliminar",
     "edit": "Editar",
+    "view": "Ver",
     "back": "Volver",
     "learn_more": "Saber más",
     "created_at": "Creado el",
@@ -714,6 +716,8 @@
       "active_user": "Usuario Activo",
       "inactive_desc": "Los usuarios inactivos no pueden iniciar sesión",
       "cancel": "Cancelar",
+    "select_option": "Seleccione una opción",
+    "required_fields": "Por favor complete todos los campos requeridos",
       "create_btn": "Crear Usuario",
       "update_btn": "Actualizar Usuario",
       "role_help": {
@@ -899,7 +903,8 @@
     },
     "classifications": {
       "title": "Clasificaciones de Casos",
-      "desc": "Visualiza la jerarquía de clasificación legal de tu firma y gestiona los subtipos de caso.",
+      "desc": "Gestione la jerarquía de clasificación legal de su firma",
+      "add_subtype": "Agregar Subtipo",
       "domain": "Dominio",
       "branch": "Rama",
       "subtype": "Subtipo",
@@ -908,8 +913,6 @@
       "inactive": "Inactivo",
       "no_data": "No se encontraron clasificaciones. Las clasificaciones se crean al momento de crear la firma.",
       "no_branches": "No hay ramas en este dominio",
-      "no_subtypes": "No hay subtipos en esta rama",
-      "add_subtype": "Agregar Subtipo",
       "edit_subtype": "Editar Subtipo",
       "name": "Nombre",
       "name_placeholder": "Ingresa el nombre del subtipo...",
@@ -920,14 +923,17 @@
       "complexity": "Complejidad",
       "duration": "Duración Típica (días)",
       "duration_hint": "Días estimados para completar este tipo de caso",
-      "delete_confirm": "¿Estás seguro de que deseas eliminar este subtipo?",
-      "cannot_delete_system": "Los subtipos del sistema no pueden eliminarse"
+      "select_domain_first": "Selecciona un dominio primero",
+      "select_branch_hint": "Selecciona un dominio y una rama para ver los subtipos",
+      "no_subtypes": "No se encontraron subtipos para esta rama",
+      "days_short": "días"
     }
   },
   "case": {
     "detail": {
       "title": "Detalles del Caso",
       "case_number": "Número de Caso",
+      "radicado": "Número de Radicado",
       "edit_btn": "Editar Caso",
       "edit_short": "Editar",
       "tab": {
@@ -1065,11 +1071,17 @@
     "edit": {
       "title": "Editar Caso",
       "status": "Estado",
+      "radicado": "Número de Radicado",
+      "radicado_placeholder": "Ingresa el número de radicado...",
       "description": "Descripción",
       "desc_placeholder": "Descripción del caso...",
       "client": "Cliente",
       "lawyer": "Abogado Asignado",
       "unassigned": "Sin Asignar",
+      "classification_section": "Clasificación",
+      "select_domain": "Seleccionar Dominio",
+      "select_branch": "Seleccionar Rama",
+      "select_branch_first": "Selecciona una rama para ver subtipos",
       "save": "Guardar Cambios",
       "cancel": "Cancelar"
     },
@@ -1219,6 +1231,7 @@
     "by": "Por",
     "create": "Crear Entrada",
     "edit_title": "Editar Entrada",
+    "view_title": "Ver Entrada",
     "delete_confirm_title": "Eliminar Entrada",
     "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?"
   },

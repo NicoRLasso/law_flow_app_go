@@ -330,16 +330,22 @@ func main() {
 			adminRoutes.PUT("/api/admin/templates/categories/:id", handlers.UpdateCategoryHandler)
 			adminRoutes.DELETE("/api/admin/templates/categories/:id", handlers.DeleteCategoryHandler)
 
-			// Classification Subtypes (admin only)
+			// Classification Subtypes (admin only) - Management
 			adminRoutes.GET("/api/subtypes", handlers.GetSubtypesTabHandler)
-			adminRoutes.GET("/api/subtypes/branch/:branchId", handlers.GetSubtypesForBranchHandler)
+			adminRoutes.GET("/api/subtypes/list", handlers.GetSubtypesForBranchHandler)
+			adminRoutes.GET("/api/subtypes/checkboxes", handlers.GetSubtypeCheckboxesHandler)
 			adminRoutes.GET("/api/subtypes/new", handlers.GetSubtypeFormHandler)
+			adminRoutes.GET("/api/subtypes/:id/view", handlers.GetSubtypeViewHandler)
 			adminRoutes.GET("/api/subtypes/:id/edit", handlers.GetSubtypeFormHandler)
 			adminRoutes.POST("/api/subtypes", handlers.CreateSubtypeHandler)
 			adminRoutes.PUT("/api/subtypes/:id", handlers.UpdateSubtypeHandler)
 			adminRoutes.PATCH("/api/subtypes/:id/toggle-active", handlers.ToggleSubtypeActiveHandler)
 			adminRoutes.DELETE("/api/subtypes/:id", handlers.DeleteSubtypeHandler)
 		}
+
+		// Classification Options (accessible to all authenticated users with firm)
+		protected.GET("/api/subtypes/branches", handlers.GetBranchesForDomainHandler)
+		protected.GET("/api/subtypes/options", handlers.GetSubtypeOptionsHandler)
 
 		// Case request routes (admin and lawyer only)
 		caseRequestRoutes := protected.Group("/api/case-requests")
@@ -399,6 +405,7 @@ func main() {
 			caseRoutes.GET("/:id/logs/new", handlers.GetCaseLogFormHandler)
 			caseRoutes.POST("/:id/logs", handlers.CreateCaseLogHandler)
 			caseRoutes.GET("/:id/logs/:logId", handlers.GetCaseLogHandler)
+			caseRoutes.GET("/:id/logs/:logId/view", handlers.GetCaseLogViewHandler)
 			caseRoutes.PUT("/:id/logs/:logId", handlers.UpdateCaseLogHandler)
 			caseRoutes.DELETE("/:id/logs/:logId", handlers.DeleteCaseLogHandler)
 			// Document Generation routes
