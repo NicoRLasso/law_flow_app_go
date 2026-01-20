@@ -1,4 +1,4 @@
-.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css-build css-watch docker-build docker-run
+.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css-build css-watch docker-build docker-run dupl
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -56,3 +56,7 @@ docker-build: ## Build Docker image
 
 docker-run: ## Run Docker container locally
 	docker run -p 8080:8080 --env-file .env -v $(PWD)/db:/app/db lawflow-app
+
+dupl: ## Find duplicate code (threshold: 100 tokens)
+	@test -f $(HOME)/go/bin/dupl || { echo "Installing dupl..."; go install github.com/mibk/dupl@latest; }
+	$(HOME)/go/bin/dupl -t 100 .

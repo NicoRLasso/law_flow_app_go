@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"io"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
@@ -9,7 +10,10 @@ import (
 	"law_flow_app_go/services"
 	"law_flow_app_go/templates/pages"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -272,5 +276,246 @@ func UpdateFirmHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Firm settings updated successfully",
+	})
+}
+
+// UploadFirmLogoHandler handles firm logo file upload (admin only)
+func UploadFirmLogoHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	// Get the uploaded file
+	file, err := c.FormFile("logo")
+	if err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Please select a file to upload</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "No file uploaded")
+	}
+
+	// Validate file size (max 2MB)
+	if file.Size > 2*1024*1024 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">File size must be less than 2MB</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "File size must be less than 2MB")
+	}
+
+	// Validate file type
+	allowedTypes := map[string]bool{
+		"image/png":     true,
+		"image/jpeg":    true,
+		"image/jpg":     true,
+		"image/svg+xml": true,
+	}
+
+	contentType := file.Header.Get("Content-Type")
+	if !allowedTypes[contentType] {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Only PNG, JPG, JPEG, and SVG files are allowed</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid file type. Only PNG, JPG, JPEG, and SVG are allowed")
+	}
+
+	// Get file extension
+	ext := filepath.Ext(file.Filename)
+	if ext == "" {
+		switch contentType {
+		case "image/png":
+			ext = ".png"
+		case "image/jpeg", "image/jpg":
+			ext = ".jpg"
+		case "image/svg+xml":
+			ext = ".svg"
+		}
+	}
+
+	// Capture old values for audit
+	oldLogoURL := firm.LogoURL
+
+	// Delete old logo if exists
+	if oldLogoURL != "" {
+		oldPath := "." + oldLogoURL // Convert URL path to file path
+		if err := os.Remove(oldPath); err != nil && !os.IsNotExist(err) {
+			c.Logger().Warnf("Failed to delete old logo: %v", err)
+		}
+	}
+
+	// Create upload directory if it doesn't exist
+	uploadDir := "./static/uploads/logos"
+	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+		c.Logger().Errorf("Failed to create upload directory: %v", err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create upload directory")
+	}
+
+	// Generate filename using firm ID
+	filename := fmt.Sprintf("%s%s", firm.ID, ext)
+	filePath := filepath.Join(uploadDir, filename)
+
+	// Open the uploaded file
+	src, err := file.Open()
+	if err != nil {
+		c.Logger().Errorf("Failed to open uploaded file: %v", err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to process upload")
+	}
+	defer src.Close()
+
+	// Create destination file
+	dst, err := os.Create(filePath)
+	if err != nil {
+		c.Logger().Errorf("Failed to create destination file: %v", err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save file")
+	}
+	defer dst.Close()
+
+	// Copy file content
+	if _, err := io.Copy(dst, src); err != nil {
+		c.Logger().Errorf("Failed to copy file content: %v", err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save file")
+	}
+
+	// Update firm's logo URL
+	logoURL := "/static/uploads/logos/" + filename
+	firm.LogoURL = logoURL
+
+	if err := db.DB.Save(firm).Error; err != nil {
+		// Clean up the uploaded file if DB update fails
+		os.Remove(filePath)
+		c.Logger().Errorf("Failed to update firm logo URL: %v", err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to save logo. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update firm")
+	}
+
+	// Log security event
+	services.LogSecurityEvent("FIRM_LOGO_UPLOADED", currentUser.ID, "Admin uploaded firm logo: "+firm.ID)
+
+	// Log audit event
+	services.LogAuditEvent(db.DB, services.AuditContext{
+		UserID:    currentUser.ID,
+		UserName:  currentUser.Name,
+		UserRole:  currentUser.Role,
+		FirmID:    firm.ID,
+		FirmName:  firm.Name,
+		IPAddress: c.RealIP(),
+		UserAgent: c.Request().UserAgent(),
+	}, models.AuditActionUpdate, "firm", firm.ID, firm.Name, "Uploaded firm logo",
+		map[string]interface{}{"logo_url": oldLogoURL},
+		map[string]interface{}{"logo_url": logoURL})
+
+	// Return HTMX response with logo preview
+	if c.Request().Header.Get("HX-Request") == "true" {
+		html := fmt.Sprintf(`
+			<div id="logo-preview-container" class="space-y-4">
+				<div class="flex items-center gap-4">
+					<div class="w-20 h-20 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+						<img src="%s?t=%d" alt="Firm Logo" class="max-w-full max-h-full object-contain"/>
+					</div>
+					<div class="flex flex-col gap-2">
+						<span class="text-sm text-green-500">Logo uploaded successfully!</span>
+						<button
+							type="button"
+							hx-delete="/api/firm/logo"
+							hx-target="#logo-preview-container"
+							hx-swap="outerHTML"
+							class="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"
+						>
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+							Remove Logo
+						</button>
+					</div>
+				</div>
+			</div>
+		`, logoURL, time.Now().Unix())
+		return c.HTML(http.StatusOK, html)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message":  "Logo uploaded successfully",
+		"logo_url": logoURL,
+	})
+}
+
+// DeleteFirmLogoHandler deletes the firm's logo (admin only)
+func DeleteFirmLogoHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	if firm.LogoURL == "" {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">No logo to delete</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "No logo to delete")
+	}
+
+	// Capture old value for audit
+	oldLogoURL := firm.LogoURL
+
+	// Delete the file
+	filePath := "." + firm.LogoURL
+	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
+		c.Logger().Warnf("Failed to delete logo file: %v", err)
+	}
+
+	// Clear logo URL in database
+	firm.LogoURL = ""
+	if err := db.DB.Save(firm).Error; err != nil {
+		c.Logger().Errorf("Failed to clear firm logo URL: %v", err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to delete logo. Please try again.</div>`)
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update firm")
+	}
+
+	// Log security event
+	services.LogSecurityEvent("FIRM_LOGO_DELETED", currentUser.ID, "Admin deleted firm logo: "+firm.ID)
+
+	// Log audit event
+	services.LogAuditEvent(db.DB, services.AuditContext{
+		UserID:    currentUser.ID,
+		UserName:  currentUser.Name,
+		UserRole:  currentUser.Role,
+		FirmID:    firm.ID,
+		FirmName:  firm.Name,
+		IPAddress: c.RealIP(),
+		UserAgent: c.Request().UserAgent(),
+	}, models.AuditActionUpdate, "firm", firm.ID, firm.Name, "Deleted firm logo",
+		map[string]interface{}{"logo_url": oldLogoURL},
+		map[string]interface{}{"logo_url": ""})
+
+	// Return HTMX response with empty logo placeholder
+	if c.Request().Header.Get("HX-Request") == "true" {
+		html := `
+			<div id="logo-preview-container" class="space-y-4">
+				<div class="flex items-center gap-4">
+					<div class="w-20 h-20 rounded-xl bg-white/5 border border-white/10 border-dashed flex items-center justify-center">
+						<svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+						</svg>
+					</div>
+					<div class="text-sm text-muted-foreground">
+						No logo uploaded
+					</div>
+				</div>
+			</div>
+		`
+		return c.HTML(http.StatusOK, html)
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Logo deleted successfully",
 	})
 }

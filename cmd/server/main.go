@@ -310,6 +310,8 @@ func main() {
 			// Firm settings (admin only)
 			adminRoutes.GET("/firm/settings", handlers.FirmSettingsPageHandler)
 			adminRoutes.PUT("/api/firm/settings", handlers.UpdateFirmHandler)
+			adminRoutes.POST("/api/firm/logo", handlers.UploadFirmLogoHandler)
+			adminRoutes.DELETE("/api/firm/logo", handlers.DeleteFirmLogoHandler)
 
 			// Audit Logs (admin only)
 			adminRoutes.GET("/audit-logs", handlers.AuditLogsPageHandler)

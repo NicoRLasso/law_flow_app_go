@@ -887,6 +887,7 @@
     "nav": {
       "general": "General",
       "email": "Email Config",
+      "branding": "Branding",
       "details": "Firm Details",
       "templates": "Templates",
       "classifications": "Classifications"
@@ -916,6 +917,17 @@
       "category_description": "Description (optional)",
       "no_categories": "No categories yet. Create one to organize your templates.",
       "delete_category_confirm": "Are you sure you want to delete this category?"
+    },
+    "branding": {
+      "title": "Firm Branding",
+      "desc": "Customize your firm's logo and branding. This will appear in the navigation bar and email signatures.",
+      "current_logo": "Current Logo",
+      "logo_uploaded": "Logo is active",
+      "no_logo": "No logo uploaded",
+      "remove_logo": "Remove Logo",
+      "upload_new": "Upload New Logo",
+      "upload_btn": "Upload",
+      "upload_hint": "Supported formats: PNG, JPG, JPEG, SVG. Maximum size: 2MB."
     },
     "classifications": {
       "title": "Case Classifications",

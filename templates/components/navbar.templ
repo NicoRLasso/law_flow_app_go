@@ -13,9 +13,13 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 				<!-- Left Section: Logo & Nav -->
 				<div class="flex items-center gap-12">
 					<a href="/dashboard" class="group flex items-center gap-3">
-					<img src="/static/images/favicon.png" alt="LawFlow" class="w-9 h-9"/>
+					if firm.LogoURL != "" {
+						<img src={ firm.LogoURL } alt={ firm.Name } class="w-9 h-9 rounded-lg object-contain"/>
+					} else {
+						<img src="/static/images/favicon.png" alt="LawFlow" class="w-9 h-9"/>
+					}
 					<h1 class="text-2xl font-bold font-space-grotesk tracking-tighter">
-						<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
+						<span class="text-gradient">{ firm.Name }</span>
 					</h1>
 				</a>
 					

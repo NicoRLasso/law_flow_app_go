@@ -30,6 +30,9 @@ type Firm struct {
 	NoreplyEmail string `json:"noreply_email"`
 	IsActive     bool   `gorm:"not null;default:true" json:"is_active"`
 
+	// Branding
+	LogoURL string `json:"logo_url"` // Path to firm's logo image
+
 	// Availability settings
 	BufferMinutes int `gorm:"not null;default:15" json:"buffer_minutes"` // Buffer between appointments (30, 45, or 60 min)
 

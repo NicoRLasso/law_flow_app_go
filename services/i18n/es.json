@@ -887,6 +887,7 @@
     "nav": {
       "general": "General",
       "email": "Config Email",
+      "branding": "Marca",
       "details": "Detalles Firma",
       "templates": "Plantillas",
       "classifications": "Clasificaciones"
@@ -916,6 +917,17 @@
       "category_description": "Descripción (opcional)",
       "no_categories": "No hay categorías aún. Crea una para organizar tus plantillas.",
       "delete_category_confirm": "¿Estás seguro de que deseas eliminar esta categoría?"
+    },
+    "branding": {
+      "title": "Marca de la Firma",
+      "desc": "Personaliza el logo y la marca de tu firma. Esto aparecerá en la barra de navegación y en las firmas de correo.",
+      "current_logo": "Logo Actual",
+      "logo_uploaded": "Logo activo",
+      "no_logo": "No hay logo subido",
+      "remove_logo": "Eliminar Logo",
+      "upload_new": "Subir Nuevo Logo",
+      "upload_btn": "Subir",
+      "upload_hint": "Formatos soportados: PNG, JPG, JPEG, SVG. Tamaño máximo: 2MB."
     },
     "classifications": {
       "title": "Clasificaciones de Casos",
