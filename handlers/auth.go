@@ -149,9 +149,12 @@ func LoginPostHandler(c echo.Context) error {
 		UserName:  user.Name,
 		UserRole:  user.Role,
 		FirmID:    firmID,
-		FirmName:  user.Firm.Name, // Assuming firm preloaded (it is: Preload("Firm") at line 66)
+		FirmName:  "", // Will be updated if firm exists
 		IPAddress: ipAddress,
 		UserAgent: userAgent,
+	}
+	if user.Firm != nil {
+		auditCtx.FirmName = user.Firm.Name
 	}
 	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionLogin, "User", user.ID, user.Name, "User logged in", nil, nil)
 

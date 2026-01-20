@@ -1358,10 +1358,6 @@
   "audit": {
     "title": "Registros de Auditoría",
     "noLogs": "No se encontraron registros que coincidan con su búsqueda.",
-    "viewChanges": "Ver Cambios",
-    "changeDetails": "Detalles del Cambio",
-    "oldValues": "Valores Anteriores",
-    "newValues": "Valores Nuevos",
     "filters": {
       "dateFrom": "Desde",
       "dateTo": "Hasta",
@@ -1369,11 +1365,13 @@
       "action": "Acción",
       "searchPlaceholder": "Buscar registros..."
     },
-    "resources": {
-      "case": "Caso",
+    "table": {
+      "timestamp": "Marca de tiempo",
       "user": "Usuario",
-      "document": "Documento",
-      "appointment": "Cita"
+      "action": "Acción",
+      "resource": "Recurso",
+      "description": "Descripción",
+      "details": "Detalles"
     },
     "actions": {
       "create": "Crear",
@@ -1381,7 +1379,9 @@
       "delete": "Eliminar",
       "view": "Ver",
       "download": "Descargar",
-      "visibility": "Visibilidad"
+      "visibility": "Cambio de Visibilidad",
+      "login": "Inicio de Sesión",
+      "logout": "Cierre de Sesión"
     },
     "verbs": {
       "created": "creó",
@@ -1391,13 +1391,28 @@
       "downloaded": "descargó",
       "visibility": "cambió la visibilidad de"
     },
-    "table": {
-      "timestamp": "Fecha y Hora",
+    "resources": {
+      "case": "Caso",
       "user": "Usuario",
-      "action": "Acción",
-      "resource": "Recurso",
-      "description": "Descripción",
-      "details": "Detalles"
+      "document": "Documento",
+      "appointment": "Cita",
+      "blocked_date": "Fecha Bloqueada",
+      "availability": "Disponibilidad",
+      "case_request": "Solicitud de Caso",
+      "firm": "Firma",
+      "template": "Plantilla",
+      "generated_document": "Documento Generado",
+      "appointment_type": "Tipo de Cita"
+    },
+    "viewChanges": "Ver Cambios",
+    "changeDetails": "Detalles del Cambio",
+    "oldValues": "Valores Anteriores",
+    "newValues": "Nuevos Valores",
+    "field": "Campo",
+    "diff": {
+        "field": "Campo",
+        "old": "Valor Anterior",
+        "new": "Nuevo Valor"
     }
   }
 }

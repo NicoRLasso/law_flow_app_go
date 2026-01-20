@@ -1359,10 +1359,6 @@
   "audit": {
     "title": "Audit Logs",
     "noLogs": "No audit logs found matching your criteria.",
-    "viewChanges": "View Changes",
-    "changeDetails": "Change Details",
-    "oldValues": "Old Values",
-    "newValues": "New Values",
     "filters": {
       "dateFrom": "Date From",
       "dateTo": "Date To",
@@ -1370,11 +1366,13 @@
       "action": "Action",
       "searchPlaceholder": "Search logs..."
     },
-    "resources": {
-      "case": "Case",
+    "table": {
+      "timestamp": "Timestamp",
       "user": "User",
-      "document": "Document",
-      "appointment": "Appointment"
+      "action": "Action",
+      "resource": "Resource",
+      "description": "Description",
+      "details": "Details"
     },
     "actions": {
       "create": "Create",
@@ -1382,7 +1380,9 @@
       "delete": "Delete",
       "view": "View",
       "download": "Download",
-      "visibility": "Visibility"
+      "visibility": "Visibility Change",
+      "login": "Login",
+      "logout": "Logout"
     },
     "verbs": {
       "created": "created",
@@ -1392,13 +1392,28 @@
       "downloaded": "downloaded",
       "visibility": "changed visibility of"
     },
-    "table": {
-      "timestamp": "Timestamp",
+    "resources": {
+      "case": "Case",
       "user": "User",
-      "action": "Action",
-      "resource": "Resource",
-      "description": "Description",
-      "details": "Details"
+      "document": "Document",
+      "appointment": "Appointment",
+      "blocked_date": "Blocked Date",
+      "availability": "Availability",
+      "case_request": "Case Request",
+      "firm": "Firm",
+      "template": "Template",
+      "generated_document": "Generated Document",
+      "appointment_type": "Appointment Type"
+    },
+    "viewChanges": "View Changes",
+    "changeDetails": "Change Details",
+    "oldValues": "Old Values",
+    "newValues": "New Values",
+    "field": "Field",
+    "diff": {
+        "field": "Field",
+        "old": "Old Value",
+        "new": "New Value"
     }
   }
 }

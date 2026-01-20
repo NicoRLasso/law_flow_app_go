@@ -1,10 +1,13 @@
+
 package partials
 
 import (
     "context"
+    "encoding/json"
     "fmt"
     "law_flow_app_go/models"
     "law_flow_app_go/services/i18n"
+    "strings"
 )
 
 templ AuditLogTable(ctx context.Context, logs []models.AuditLog, total int64, page, pageSize int) {
@@ -52,7 +55,7 @@ templ AuditLogTable(ctx context.Context, logs []models.AuditLog, total int64, pa
                                     @actionBadge(ctx, log.Action)
                                 </td>
                                 <td class="px-4 md:px-6 py-4 md:py-5 whitespace-nowrap">
-                                    <div class="text-sm text-foreground">{ log.ResourceType }</div>
+                                    <div class="text-sm text-foreground">{ i18n.T(ctx, getResourceKey(log.ResourceType)) }</div>
                                     <div class="text-xs text-muted-foreground truncate max-w-[150px]" title={ log.ResourceName }>{ log.ResourceName }</div>
                                 </td>
                                 <td class="px-4 md:px-6 py-4 md:py-5 text-sm text-muted-foreground max-w-xs truncate" title={ log.Description }>
@@ -76,24 +79,36 @@ templ AuditLogTable(ctx context.Context, logs []models.AuditLog, total int64, pa
                                                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                                                     <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="open = false" aria-hidden="true"></div>
                                                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                                    <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-background border border-white/10 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                                    <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative z-50 inline-block align-bottom bg-background bg-white dark:bg-gray-900 border border-white/10 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                                                         <div class="bg-background px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                                             <h3 class="text-lg leading-6 font-medium text-foreground" id="modal-title">
                                                                 { i18n.T(ctx, "audit.changeDetails") }
                                                             </h3>
-                                                            <div class="mt-4 space-y-4">
-                                                                if log.OldValues != "" {
-                                                                    <div>
-                                                                        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{ i18n.T(ctx, "audit.oldValues") }</h4>
-                                                                        <pre class="bg-white/5 p-2 rounded text-xs overflow-x-auto text-foreground border border-white/10">{ log.OldValues }</pre>
-                                                                    </div>
-                                                                }
-                                                                if log.NewValues != "" {
-                                                                    <div>
-                                                                        <h4 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">{ i18n.T(ctx, "audit.newValues") }</h4>
-                                                                        <pre class="bg-white/5 p-2 rounded text-xs overflow-x-auto text-foreground border border-white/10">{ log.NewValues }</pre>
-                                                                    </div>
-                                                                }
+                                                            <div class="mt-4">
+																<div class="overflow-x-auto rounded-lg border border-white/10">
+																	<table class="w-full text-left text-sm">
+																		<thead class="bg-white/5 text-muted-foreground font-medium">
+																			<tr>
+																				<th class="px-4 py-2 border-b border-white/10">{ i18n.T(ctx, "audit.diff.field") }</th>
+																				<th class="px-4 py-2 border-b border-white/10">{ i18n.T(ctx, "audit.diff.old") }</th>
+																				<th class="px-4 py-2 border-b border-white/10">{ i18n.T(ctx, "audit.diff.new") }</th>
+																			</tr>
+																		</thead>
+																		<tbody class="divide-y divide-white/10">
+																			for _, change := range log.Changes() {
+																				<tr class="hover:bg-white/5">
+																					<td class="px-4 py-2 font-mono text-xs">{ change.Field }</td>
+																					<td class="px-4 py-2 text-muted-foreground break-all">
+																						<pre class="whitespace-pre-wrap font-mono text-xs max-h-32 overflow-y-auto">{ formatAuditValue(change.Old) }</pre>
+																					</td>
+																					<td class="px-4 py-2 text-foreground break-all">
+																						<pre class="whitespace-pre-wrap font-mono text-xs max-h-32 overflow-y-auto">{ formatAuditValue(change.New) }</pre>
+																					</td>
+																				</tr>
+																			}
+																		</tbody>
+																	</table>
+																</div>
                                                             </div>
                                                         </div>
                                                         <div class="bg-white/5 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-white/10">
@@ -208,3 +223,97 @@ templ auditPagination(ctx context.Context, total int64, page, pageSize int) {
     }
 }
 
+
+
+func getResourceKey(resourceType string) string {
+	switch resourceType {
+	case "BlockedDate":
+		return "audit.resources.blocked_date"
+	case "CaseRequest":
+		return "audit.resources.case_request"
+	case "CaseDocument":
+		return "audit.resources.document"
+	case "GeneratedDocument":
+		return "audit.resources.generated_document"
+	case "AppointmentType":
+		return "audit.resources.appointment_type"
+	case "Case":
+		return "audit.resources.case"
+	case "User":
+		return "audit.resources.user"
+	case "Appointment":
+		return "audit.resources.appointment"
+	case "Availability":
+		return "audit.resources.availability"
+	case "Firm":
+		return "audit.resources.firm"
+	case "Template":
+		return "audit.resources.template"
+	default:
+		return "audit.resources." + resourceType
+	}
+}
+
+func formatAuditValue(v interface{}) string {
+	if v == nil {
+		return "-"
+	}
+
+    // Handle slice of things (like subtypes list)
+    if slice, ok := v.([]interface{}); ok {
+        var items []string
+        for _, item := range slice {
+            str := formatAuditValue(item)
+            if str != "" && str != "-" {
+                items = append(items, str)
+            }
+        }
+        if len(items) > 0 {
+             return strings.Join(items, ", ")
+        }
+        return ""
+    }
+
+	// Handle maps (objects) - try to find a readable name
+	if m, ok := v.(map[string]interface{}); ok {
+        // Priority list of fields to represent the object
+        keys := []string{"name", "title", "description", "code", "username", "email", "id"}
+        for _, k := range keys {
+            if val, ok := m[k].(string); ok && val != "" {
+                return val
+            }
+        }
+        
+        // If we can't find a simple string, we still don't want to dump a huge JSON if possible.
+        // But for debugging we might need it. For now, let's look for known empty generic objects
+        // and return something minimal?
+        // Actually, adhering to "Lawyer friendly", if we can't find a name, maybe just return "-" or the type?
+        // Let's stick to JSON fallback for now but the improved list handling above should solve the user's specific issue.
+        b, _ := json.MarshalIndent(v, "", "  ")
+        return string(b)
+	}
+
+    // Default formatting logic
+	switch val := v.(type) {
+	case string:
+		return val
+	case float64:
+		// JSON numbers are float64, check if it's actually an integer
+		if val == float64(int64(val)) {
+			return fmt.Sprintf("%d", int64(val))
+		}
+		return fmt.Sprintf("%g", val)
+	case bool:
+		if val {
+			return "Yes" 
+		}
+		return "No"
+	default:
+        // Try JSON marshal for any other complex types not caught above
+        b, err := json.MarshalIndent(v, "", "  ")
+        if err == nil {
+            return string(b)
+        }
+		return fmt.Sprintf("%v", v)
+	}
+}

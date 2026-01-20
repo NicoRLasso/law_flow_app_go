@@ -1,6 +1,9 @@
 package models
 
 import (
+	"encoding/json"
+	"reflect"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -56,6 +59,51 @@ type AuditLog struct {
 	// Relationships (for reading, not for data integrity)
 	User *User `gorm:"foreignKey:UserID" json:"-"`
 	Firm *Firm `gorm:"foreignKey:FirmID" json:"-"`
+}
+
+// AuditChange represents a single field change
+type AuditChange struct {
+	Field string
+	Old   interface{}
+	New   interface{}
+}
+
+// Changes parses OldValues and NewValues into a slice of AuditChange
+func (a *AuditLog) Changes() []AuditChange {
+	var changes []AuditChange
+	oldMap := make(map[string]interface{})
+	newMap := make(map[string]interface{})
+
+	if a.OldValues != "" {
+		_ = json.Unmarshal([]byte(a.OldValues), &oldMap)
+	}
+	if a.NewValues != "" {
+		_ = json.Unmarshal([]byte(a.NewValues), &newMap)
+	}
+
+	// Combine keys
+	keys := make(map[string]struct{})
+	for k := range oldMap {
+		keys[k] = struct{}{}
+	}
+	for k := range newMap {
+		keys[k] = struct{}{}
+	}
+
+	for k := range keys {
+		o := oldMap[k]
+		n := newMap[k]
+
+		// Skip if both are missing (shouldn't happen) or if equal (optional, but good for cleanliness)
+		// For simple display, we include everything in the diff maps.
+		// Only include if values are different
+		if !reflect.DeepEqual(o, n) {
+			changes = append(changes, AuditChange{Field: k, Old: o, New: n})
+		}
+	}
+
+	sort.Slice(changes, func(i, j int) bool { return changes[i].Field < changes[j].Field })
+	return changes
 }
 
 // BeforeCreate generates UUID and prevents modification

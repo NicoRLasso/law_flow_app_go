@@ -56,6 +56,7 @@ func main() {
 
 	// Configure Debug mode (disable in production)
 	e.Debug = cfg.Environment != "production"
+	e.HideBanner = true
 
 	// Middleware
 	// Body Limit (2MB) - prevent large payloads
@@ -235,6 +236,9 @@ func main() {
 		firmSetup.POST("/setup", handlers.FirmSetupPostHandler)
 	}
 
+	// Logout route (authenticated, no firm required)
+	e.POST("/logout", middleware.RequireAuth()(handlers.LogoutHandler))
+
 	// Superadmin routes (authenticated, superadmin role, no firm required)
 	superadminRoutes := e.Group("/superadmin")
 	superadminRoutes.Use(middleware.RequireAuth())
@@ -277,7 +281,6 @@ func main() {
 	{
 		// All users with a firm can access dashboard and their own profile
 		protected.GET("/dashboard", handlers.DashboardHandler)
-		protected.POST("/logout", handlers.LogoutHandler)
 		protected.GET("/api/me", handlers.GetCurrentUserHandler)
 
 		// Profile settings (all authenticated users)

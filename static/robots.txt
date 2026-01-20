@@ -1,0 +1,36 @@
+User-agent: *
+Allow: /
+Allow: /static/
+
+# Public Pages
+Allow: /about
+Allow: /contact
+Allow: /security
+Allow: /privacy
+Allow: /terms
+Allow: /cookies
+Allow: /compliance
+
+# Auth Routes (Prevent indexing of login forms)
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /firm/setup
+
+# Application Routes (Private)
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /users
+Disallow: /calendar
+Disallow: /appointments
+Disallow: /case-requests
+Disallow: /cases
+Disallow: /historical-cases
+Disallow: /templates
+Disallow: /superadmin/
+
+# API & Dynamic
+Disallow: /api/
+Disallow: /appointment/
+
+Sitemap: https://lawflowapp.com/sitemap.xml

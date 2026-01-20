@@ -136,10 +136,20 @@ templ Dashboard(
 							<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all">
 								<div class="flex items-center gap-3">
 									<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent/20 to-purple-600/20 flex items-center justify-center font-bold text-accent text-sm">
-										{ string(firm.Name[0]) }
+										if len(firm.Name) > 0 {
+											{ string(firm.Name[0]) }
+										} else {
+											?
+										}
 									</div>
 									<div>
-										<p class="font-medium text-sm text-foreground">{ firm.Name }</p>
+										<p class="font-medium text-sm text-foreground">
+											if firm.Name != "" {
+												{ firm.Name }
+											} else {
+												<span class="italic text-muted-foreground">Unnamed Firm</span>
+											}
+										</p>
 										<p class="text-xs text-muted-foreground">{ firm.City }, { firm.Country }</p>
 									</div>
 								</div>
@@ -171,10 +181,20 @@ templ Dashboard(
 							<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all">
 								<div class="flex items-center gap-3">
 									<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-600/20 flex items-center justify-center font-bold text-blue-400 text-sm">
-										{ string(u.Name[0]) }
+										if len(u.Name) > 0 {
+											{ string(u.Name[0]) }
+										} else {
+											?
+										}
 									</div>
 									<div>
-										<p class="font-medium text-sm text-foreground">{ u.Name }</p>
+										<p class="font-medium text-sm text-foreground">
+											if u.Name != "" {
+												{ u.Name }
+											} else {
+												<span class="italic text-muted-foreground">Unnamed User</span>
+											}
+										</p>
 										<p class="text-xs text-muted-foreground">{ u.Email }</p>
 									</div>
 								</div>
