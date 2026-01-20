@@ -135,63 +135,103 @@ templ StepIndicator(ctx context.Context) {
 templ ClientReviewStep(ctx context.Context, request models.CaseRequest) {
 	<div class="p-6">
 		<h3 class="text-lg font-semibold text-foreground mb-4">Review Client Information</h3>
-		
-		<div class="glass-panel p-6 rounded-xl border border-white/5 space-y-4">
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div>
-					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</label>
-					<p class="text-base text-foreground font-medium">{ request.Name }</p>
-				</div>
-				<div>
-					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
-					<p class="text-base text-foreground font-medium">{ request.Email }</p>
-				</div>
-				<div>
-					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Phone</label>
-					<p class="text-base text-foreground font-medium">{ request.Phone }</p>
-				</div>
-				<div>
-					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Document</label>
-					<p class="text-base text-foreground font-medium">
-						if request.DocumentTypeOption != nil {
-							{ request.DocumentTypeOption.Label } - { request.DocumentNumber }
-						} else {
-							{ request.DocumentType } - { request.DocumentNumber }
-						}
-					</p>
-				</div>
-			</div>
-			
-			<div>
-				<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Description</label>
-				<p class="text-base text-foreground leading-relaxed whitespace-pre-wrap">{ request.Description }</p>
-			</div>
-		</div>
 
-		<!-- Footer -->
-		<div class="flex items-center justify-end gap-3 mt-6">
-			<button
-				type="button"
-				class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
-				@click="document.getElementById('case-acceptance-modal').remove()"
-			>
-				{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
-			</button>
-			<button
-				type="button"
-				class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200"
-				hx-post={ "/api/case-requests/" + request.ID + "/accept/client" }
-				hx-target="#acceptance-step-container"
-				hx-swap="innerHTML"
-			>
-				{ i18n.T(ctx, "case_requests.accept_modal.next_lawyer") }
-			</button>
-		</div>
+		<form
+			id="client-review-form"
+			hx-post={ "/api/case-requests/" + request.ID + "/accept/client" }
+			hx-target="#acceptance-step-container"
+			hx-swap="innerHTML"
+		>
+			<div class="glass-panel p-6 rounded-xl border border-white/5 space-y-4">
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div>
+						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Name</label>
+						<p class="text-base text-foreground font-medium">{ request.Name }</p>
+					</div>
+					<div>
+						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Email</label>
+						<p class="text-base text-foreground font-medium">{ request.Email }</p>
+					</div>
+					<div>
+						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Phone</label>
+						<p class="text-base text-foreground font-medium">{ request.Phone }</p>
+					</div>
+					<div>
+						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Document</label>
+						<p class="text-base text-foreground font-medium">
+							if request.DocumentTypeOption != nil {
+								{ request.DocumentTypeOption.Label } - { request.DocumentNumber }
+							} else {
+								{ request.DocumentType } - { request.DocumentNumber }
+							}
+						</p>
+					</div>
+				</div>
+
+				<div>
+					<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Description</label>
+					<p class="text-base text-foreground leading-relaxed whitespace-pre-wrap">{ request.Description }</p>
+				</div>
+			</div>
+
+			<!-- Client Role Selection -->
+			<div class="mt-6">
+				<h4 class="text-base font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.client_role_title") }</h4>
+				<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "case_requests.accept_modal.client_role_description") }</p>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+					<label class="glass-panel p-4 rounded-lg border border-white/5 hover:border-accent/50 cursor-pointer transition-all duration-200 flex items-center gap-4">
+						<input
+							type="radio"
+							name="client_role"
+							value="DEMANDANTE"
+							class="w-5 h-5 text-accent focus:ring-accent focus:ring-2"
+							required
+						/>
+						<div class="flex-1">
+							<span class="font-medium text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante") }</span>
+							<span class="block text-sm text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante_desc") }</span>
+						</div>
+					</label>
+
+					<label class="glass-panel p-4 rounded-lg border border-white/5 hover:border-accent/50 cursor-pointer transition-all duration-200 flex items-center gap-4">
+						<input
+							type="radio"
+							name="client_role"
+							value="DEMANDADO"
+							class="w-5 h-5 text-accent focus:ring-accent focus:ring-2"
+							required
+						/>
+						<div class="flex-1">
+							<span class="font-medium text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado") }</span>
+							<span class="block text-sm text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado_desc") }</span>
+						</div>
+					</label>
+				</div>
+			</div>
+
+			<!-- Footer -->
+			<div class="flex items-center justify-end gap-3 mt-6">
+				<button
+					type="button"
+					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					@click="document.getElementById('case-acceptance-modal').remove()"
+				>
+					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
+				</button>
+				<button
+					type="submit"
+					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200"
+				>
+					{ i18n.T(ctx, "case_requests.accept_modal.next_lawyer") }
+				</button>
+			</div>
+		</form>
 	</div>
 }
 
 // LawyerSelectionStep shows the lawyer selection interface
-templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClient bool, request models.CaseRequest) {
+templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClient bool, request models.CaseRequest, clientRole string) {
 	<div class="p-6">
 		<div class="flex items-center justify-between mb-4">
 			<h3 class="text-lg font-semibold text-foreground">Assign Lawyer</h3>
@@ -208,6 +248,7 @@ templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClien
 			hx-target="#acceptance-step-container"
 			hx-swap="innerHTML"
 		>
+			<input type="hidden" name="client_role" value={ clientRole }/>
 			<div class="space-y-3 max-h-96 overflow-y-auto">
 				if len(lawyers) == 0 {
 					<div class="glass-panel p-8 rounded-xl border border-white/5 text-center">
@@ -260,10 +301,10 @@ templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClien
 }
 
 // ClassificationStep shows the classification selection interface
-templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, request models.CaseRequest, lawyerID string) {
+templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, request models.CaseRequest, lawyerID string, clientRole string) {
 	<div class="p-6">
 		<h3 class="text-lg font-semibold text-foreground mb-4">Case Classification (Optional)</h3>
-		
+
 		<form
 			id="classification-form"
 			hx-post={ "/api/case-requests/" + request.ID + "/accept/classification" }
@@ -272,6 +313,7 @@ templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, reque
 			x-data="{ selectedDomain: '', selectedBranch: '', branches: [], subtypes: [] }"
 		>
 			<input type="hidden" name="lawyer_id" value={ lawyerID }/>
+			<input type="hidden" name="client_role" value={ clientRole }/>
 			
 			<div class="space-y-4">
 				<!-- Domain Selection -->
@@ -376,10 +418,11 @@ templ ReviewConfirmStep(
 	branchID string,
 	subtypeIDs []string,
 	lawyerID string,
+	clientRole string,
 ) {
 	<div class="p-6">
 		<h3 class="text-lg font-semibold text-foreground mb-4">Review & Confirm</h3>
-		
+
 		<div class="space-y-4">
 			<!-- Client Info -->
 			<div class="glass-panel p-4 rounded-lg border border-white/5">
@@ -392,6 +435,16 @@ templ ReviewConfirmStep(
 					}
 				</div>
 				<p class="text-sm text-foreground">{ request.Name } ({ request.Email })</p>
+			</div>
+
+			<!-- Client Role Info -->
+			<div class="glass-panel p-4 rounded-lg border border-white/5">
+				<h4 class="font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.client_role_label") }</h4>
+				if clientRole == "DEMANDANTE" {
+					<p class="text-sm text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante") }</p>
+				} else {
+					<p class="text-sm text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado") }</p>
+				}
 			</div>
 
 			<!-- Lawyer Info -->
@@ -436,6 +489,7 @@ templ ReviewConfirmStep(
 			hx-swap="none"
 		>
 			<input type="hidden" name="lawyer_id" value={ lawyerID }/>
+			<input type="hidden" name="client_role" value={ clientRole }/>
 			<input type="hidden" name="domain_id" value={ domainID }/>
 			<input type="hidden" name="branch_id" value={ branchID }/>
 			for _, subtypeID := range subtypeIDs {

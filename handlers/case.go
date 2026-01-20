@@ -175,12 +175,15 @@ func GetCaseDetailHandler(c echo.Context) error {
 	var caseRecord models.Case
 	if err := query.
 		Preload("Client").
+		Preload("Client.DocumentType").
 		Preload("AssignedTo").
 		Preload("Domain").
 		Preload("Branch").
 		Preload("Subtypes").
 		Preload("Documents").
 		Preload("Collaborators").
+		Preload("OpposingParty").
+		Preload("OpposingParty.DocumentType").
 		First(&caseRecord, "id = ?", id).Error; err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Case not found")
 	}

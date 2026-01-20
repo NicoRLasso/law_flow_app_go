@@ -39,7 +39,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -329,6 +329,16 @@ func main() {
 			adminRoutes.POST("/api/admin/templates/categories", handlers.CreateCategoryHandler)
 			adminRoutes.PUT("/api/admin/templates/categories/:id", handlers.UpdateCategoryHandler)
 			adminRoutes.DELETE("/api/admin/templates/categories/:id", handlers.DeleteCategoryHandler)
+
+			// Classification Subtypes (admin only)
+			adminRoutes.GET("/api/subtypes", handlers.GetSubtypesTabHandler)
+			adminRoutes.GET("/api/subtypes/branch/:branchId", handlers.GetSubtypesForBranchHandler)
+			adminRoutes.GET("/api/subtypes/new", handlers.GetSubtypeFormHandler)
+			adminRoutes.GET("/api/subtypes/:id/edit", handlers.GetSubtypeFormHandler)
+			adminRoutes.POST("/api/subtypes", handlers.CreateSubtypeHandler)
+			adminRoutes.PUT("/api/subtypes/:id", handlers.UpdateSubtypeHandler)
+			adminRoutes.PATCH("/api/subtypes/:id/toggle-active", handlers.ToggleSubtypeActiveHandler)
+			adminRoutes.DELETE("/api/subtypes/:id", handlers.DeleteSubtypeHandler)
 		}
 
 		// Case request routes (admin and lawyer only)
@@ -379,6 +389,11 @@ func main() {
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)
 			caseRoutes.GET("/:id/collaborators/available", handlers.GetAvailableCollaboratorsHandler)
+			// Opposing Party routes
+			caseRoutes.GET("/:id/party/modal", handlers.GetCasePartyModalHandler)
+			caseRoutes.POST("/:id/party", handlers.AddCasePartyHandler)
+			caseRoutes.PUT("/:id/party", handlers.UpdateCasePartyHandler)
+			caseRoutes.DELETE("/:id/party", handlers.DeleteCasePartyHandler)
 			// Case Log routes
 			caseRoutes.GET("/:id/logs", handlers.GetCaseLogsHandler)
 			caseRoutes.GET("/:id/logs/new", handlers.GetCaseLogFormHandler)

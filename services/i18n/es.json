@@ -808,7 +808,15 @@
       "next_lawyer": "Siguiente: Asignar Abogado",
       "next_class": "Siguiente: Clasificación",
       "next_review": "Siguiente: Revisar",
-      "create_case": "Crear Caso"
+      "create_case": "Crear Caso",
+      "client_role_title": "Rol del Cliente en el Caso",
+      "client_role_description": "Seleccione si el cliente actúa como demandante o demandado en este caso.",
+      "client_role_label": "Rol del Cliente",
+      "role_demandante": "Demandante",
+      "role_demandante_desc": "El cliente inicia la acción legal",
+      "role_demandado": "Demandado",
+      "role_demandado_desc": "El cliente responde a la acción legal",
+      "client_role_required": "Debe seleccionar el rol del cliente"
     }
   },
   "settings": {
@@ -860,7 +868,8 @@
       "general": "General",
       "email": "Config Email",
       "details": "Detalles Firma",
-      "templates": "Plantillas"
+      "templates": "Plantillas",
+      "classifications": "Clasificaciones"
     },
     "email": {
       "title": "Configuración de Correo",
@@ -887,6 +896,32 @@
       "category_description": "Descripción (opcional)",
       "no_categories": "No hay categorías aún. Crea una para organizar tus plantillas.",
       "delete_category_confirm": "¿Estás seguro de que deseas eliminar esta categoría?"
+    },
+    "classifications": {
+      "title": "Clasificaciones de Casos",
+      "desc": "Visualiza la jerarquía de clasificación legal de tu firma y gestiona los subtipos de caso.",
+      "domain": "Dominio",
+      "branch": "Rama",
+      "subtype": "Subtipo",
+      "system_badge": "Sistema",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "no_data": "No se encontraron clasificaciones. Las clasificaciones se crean al momento de crear la firma.",
+      "no_branches": "No hay ramas en este dominio",
+      "no_subtypes": "No hay subtipos en esta rama",
+      "add_subtype": "Agregar Subtipo",
+      "edit_subtype": "Editar Subtipo",
+      "name": "Nombre",
+      "name_placeholder": "Ingresa el nombre del subtipo...",
+      "code": "Código",
+      "code_hint": "Identificador único (ej: CIVIL_DIVORCIO). Será en mayúsculas.",
+      "description": "Descripción",
+      "order": "Orden de Clasificación",
+      "complexity": "Complejidad",
+      "duration": "Duración Típica (días)",
+      "duration_hint": "Días estimados para completar este tipo de caso",
+      "delete_confirm": "¿Estás seguro de que deseas eliminar este subtipo?",
+      "cannot_delete_system": "Los subtipos del sistema no pueden eliminarse"
     }
   },
   "case": {
@@ -897,9 +932,37 @@
       "edit_short": "Editar",
       "tab": {
         "summary": "Resumen",
-        "client": "Cliente",
+        "parties": "Partes",
         "documents": "Documentos",
         "bitacora": "Bitácora"
+      },
+      "parties": {
+        "client_section": "Cliente",
+        "opposing_section": "Contraparte",
+        "add_demandante": "Agregar Demandante",
+        "add_demandado": "Agregar Demandado",
+        "no_opposing": "No se ha agregado contraparte",
+        "role_demandante": "Demandante",
+        "role_demandado": "Demandado",
+        "edit_btn": "Editar",
+        "delete_btn": "Eliminar",
+        "delete_confirm": "¿Está seguro de que desea eliminar esta contraparte?",
+        "modal": {
+          "add_title": "Agregar Contraparte",
+          "edit_title": "Editar Contraparte",
+          "name": "Nombre",
+          "name_placeholder": "Nombre completo",
+          "email": "Correo Electrónico",
+          "email_placeholder": "correo@ejemplo.com",
+          "phone": "Teléfono",
+          "phone_placeholder": "+57 300 123 4567",
+          "document_type": "Tipo de Documento",
+          "select_document_type": "Seleccionar tipo...",
+          "document_number": "Número de Documento",
+          "document_placeholder": "Número de identificación",
+          "save_btn": "Guardar",
+          "cancel_btn": "Cancelar"
+        }
       },
       "info_title": "Información del Caso",
       "type": "Tipo",

@@ -14,6 +14,12 @@ const (
 	CaseStatusClosed = "CLOSED"
 )
 
+// Client role constants (role of client in the case)
+const (
+	ClientRoleDemandante = "DEMANDANTE" // Plaintiff - initiates the legal action
+	ClientRoleDemandado  = "DEMANDADO"  // Defendant - responds to the legal action
+)
+
 // Case represents a legal case
 type Case struct {
 	ID        string         `gorm:"type:uuid;primarykey" json:"id"`
@@ -34,6 +40,9 @@ type Case struct {
 	Title       *string `json:"title,omitempty"` // Brief case title for identification
 	CaseType    string  `gorm:"not null" json:"case_type"`
 	Description string  `gorm:"type:text;not null" json:"description"`
+
+	// Client's role in the case (demandante/demandado)
+	ClientRole *string `gorm:"size:20" json:"client_role,omitempty"`
 
 	// Status and lifecycle
 	Status          string     `gorm:"not null;default:OPEN;index:idx_case_firm_status" json:"status"`
@@ -81,6 +90,7 @@ type Case struct {
 	Subtypes      []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
 	Documents     []CaseDocument `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
 	Collaborators []User         `gorm:"many2many:case_collaborators;" json:"collaborators,omitempty"`
+	OpposingParty *CaseParty     `gorm:"foreignKey:CaseID" json:"opposing_party,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID and set OpenedAt
@@ -143,4 +153,9 @@ func IsValidCaseStatus(status string) bool {
 		}
 	}
 	return false
+}
+
+// IsValidClientRole checks if the client role is valid
+func IsValidClientRole(role string) bool {
+	return role == ClientRoleDemandante || role == ClientRoleDemandado
 }

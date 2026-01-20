@@ -97,6 +97,18 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											<span>{ i18n.T(ctx, "settings.nav.templates") }</span>
 										</button>
 									</li>
+									<li>
+										<button
+											@click="activeTab = 'classifications'; sidebarOpen = false"
+											:class="activeTab === 'classifications' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+										>
+											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+											</svg>
+											<span>{ i18n.T(ctx, "settings.nav.classifications") }</span>
+										</button>
+									</li>
 								</ul>
 							</nav>
 						</aside>
@@ -464,6 +476,33 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											<div class="text-center py-8 text-muted-foreground">
 												{ i18n.T(ctx, "common.loading") }
 											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- Classifications Tab -->
+							<div x-show="activeTab === 'classifications'" x-transition class="space-y-6">
+								<!-- Classifications Card -->
+								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+									<div class="flex items-center justify-between mb-6">
+										<h2 class="text-xl font-bold flex items-center gap-2">
+											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+											</svg>
+											{ i18n.T(ctx, "settings.classifications.title") }
+										</h2>
+									</div>
+									
+									<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "settings.classifications.desc") }</p>
+									
+									<!-- Classifications Container -->
+									<div 
+										hx-get="/api/subtypes"
+										hx-trigger="load"
+										hx-swap="innerHTML"
+									>
+										<div class="text-center py-8 text-muted-foreground">
+											{ i18n.T(ctx, "common.loading") }
 										</div>
 									</div>
 								</div>

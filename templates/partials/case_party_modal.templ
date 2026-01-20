@@ -1,0 +1,178 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+// CasePartyModal renders the modal for adding/editing an opposing party
+templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes []models.ChoiceOption, partyType string) {
+	<div
+		id="case-party-modal"
+		class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+		style="z-index: 9999;"
+		onclick="if(event.target === this) closeCasePartyModal()"
+	>
+		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-lg p-6" onclick="event.stopPropagation()">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-6">
+				if caseRecord.OpposingParty != nil {
+					<h3 class="text-xl font-bold">{ i18n.T(ctx, "case.detail.parties.modal.edit_title") }</h3>
+				} else {
+					<h3 class="text-xl font-bold">{ i18n.T(ctx, "case.detail.parties.modal.add_title") }</h3>
+				}
+				<button
+					type="button"
+					onclick="closeCasePartyModal()"
+					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Party Type Badge -->
+			<div class="mb-4">
+				if partyType == models.ClientRoleDemandante {
+					<span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold">
+						{ i18n.T(ctx, "case.detail.parties.role_demandante") }
+					</span>
+				} else {
+					<span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
+						{ i18n.T(ctx, "case.detail.parties.role_demandado") }
+					</span>
+				}
+			</div>
+
+			<!-- Form -->
+			<form
+				id="case-party-form"
+				if caseRecord.OpposingParty != nil {
+					hx-put={ "/api/cases/" + caseRecord.ID + "/party" }
+				} else {
+					hx-post={ "/api/cases/" + caseRecord.ID + "/party" }
+				}
+				hx-target="#party-response"
+				hx-swap="innerHTML"
+			>
+				<div class="space-y-4">
+					<!-- Name -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "case.detail.parties.modal.name") } <span class="text-red-400">*</span>
+						</label>
+						<input
+							type="text"
+							name="name"
+							required
+							if caseRecord.OpposingParty != nil {
+								value={ caseRecord.OpposingParty.Name }
+							}
+							placeholder={ i18n.T(ctx, "case.detail.parties.modal.name_placeholder") }
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
+					</div>
+
+					<!-- Email -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "case.detail.parties.modal.email") }
+						</label>
+						<input
+							type="email"
+							name="email"
+							if caseRecord.OpposingParty != nil && caseRecord.OpposingParty.Email != nil {
+								value={ *caseRecord.OpposingParty.Email }
+							}
+							placeholder={ i18n.T(ctx, "case.detail.parties.modal.email_placeholder") }
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
+					</div>
+
+					<!-- Phone -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "case.detail.parties.modal.phone") }
+						</label>
+						<input
+							type="tel"
+							name="phone"
+							if caseRecord.OpposingParty != nil && caseRecord.OpposingParty.Phone != nil {
+								value={ *caseRecord.OpposingParty.Phone }
+							}
+							placeholder={ i18n.T(ctx, "case.detail.parties.modal.phone_placeholder") }
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
+					</div>
+
+					<!-- Document Type -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "case.detail.parties.modal.document_type") }
+						</label>
+						<select
+							name="document_type_id"
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>
+							<option value="">{ i18n.T(ctx, "case.detail.parties.modal.select_document_type") }</option>
+							for _, docType := range documentTypes {
+								if caseRecord.OpposingParty != nil && caseRecord.OpposingParty.DocumentTypeID != nil && *caseRecord.OpposingParty.DocumentTypeID == docType.ID {
+									<option value={ docType.ID } selected>{ docType.Label }</option>
+								} else {
+									<option value={ docType.ID }>{ docType.Label }</option>
+								}
+							}
+						</select>
+					</div>
+
+					<!-- Document Number -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "case.detail.parties.modal.document_number") }
+						</label>
+						<input
+							type="text"
+							name="document_number"
+							if caseRecord.OpposingParty != nil && caseRecord.OpposingParty.DocumentNumber != nil {
+								value={ *caseRecord.OpposingParty.DocumentNumber }
+							}
+							placeholder={ i18n.T(ctx, "case.detail.parties.modal.document_placeholder") }
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
+					</div>
+				</div>
+
+				<!-- Response container -->
+				<div id="party-response" class="mt-4"></div>
+
+				<!-- Actions -->
+				<div class="flex justify-end gap-3 mt-6">
+					<button
+						type="button"
+						onclick="closeCasePartyModal()"
+						class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-foreground transition-all duration-200"
+					>
+						{ i18n.T(ctx, "case.detail.parties.modal.cancel_btn") }
+					</button>
+					<button
+						type="submit"
+						class="px-4 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg font-medium transition-all duration-200"
+					>
+						{ i18n.T(ctx, "case.detail.parties.modal.save_btn") }
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		function closeCasePartyModal() {
+			const modal = document.getElementById('case-party-modal');
+			if (modal) {
+				modal.remove();
+			}
+		}
+	</script>
+}

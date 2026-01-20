@@ -44,6 +44,15 @@ func ProcessClientStepHandler(c echo.Context) error {
 	id := c.Param("id")
 	firm := middleware.GetCurrentFirm(c)
 
+	// Parse client role from form (required)
+	clientRole := strings.TrimSpace(c.FormValue("client_role"))
+	if clientRole == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Client role selection is required")
+	}
+	if !models.IsValidClientRole(clientRole) {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid client role selection")
+	}
+
 	// Fetch request
 	var request models.CaseRequest
 	query := middleware.GetFirmScopedQuery(c, db.DB)
@@ -72,7 +81,7 @@ func ProcessClientStepHandler(c echo.Context) error {
 	c.Logger().Infof("Found %d lawyers", len(lawyers))
 
 	// Render Step 2
-	component := partials.LawyerSelectionStep(c.Request().Context(), lawyers, isNewClient, request)
+	component := partials.LawyerSelectionStep(c.Request().Context(), lawyers, isNewClient, request, clientRole)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -102,6 +111,12 @@ func AssignLawyerStepHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Lawyer selection is required")
 	}
 
+	// Parse client role from form (passed from previous step)
+	clientRole := strings.TrimSpace(c.FormValue("client_role"))
+	if clientRole == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Client role is required")
+	}
+
 	// Validate lawyer exists and is active
 	var lawyer models.User
 	if err := db.DB.Where("id = ? AND firm_id = ? AND is_active = ? AND role IN ?",
@@ -126,7 +141,7 @@ func AssignLawyerStepHandler(c echo.Context) error {
 	}
 
 	// Render Step 3
-	component := partials.ClassificationStep(c.Request().Context(), domains, request, lawyerID)
+	component := partials.ClassificationStep(c.Request().Context(), domains, request, lawyerID, clientRole)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -183,7 +198,13 @@ func SaveClassificationStepHandler(c echo.Context) error {
 	domainID := strings.TrimSpace(c.FormValue("domain_id"))
 	branchID := strings.TrimSpace(c.FormValue("branch_id"))
 	lawyerID := strings.TrimSpace(c.FormValue("lawyer_id"))
+	clientRole := strings.TrimSpace(c.FormValue("client_role"))
 	subtypeIDs := c.Request().Form["subtype_ids[]"]
+
+	// Validate client role
+	if clientRole == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Client role is required")
+	}
 
 	// Validate classification IDs if provided
 	if domainID != "" {
@@ -244,7 +265,7 @@ func SaveClassificationStepHandler(c echo.Context) error {
 	}
 
 	// Render Step 4 (Review)
-	component := partials.ReviewConfirmStep(c.Request().Context(), request, lawyer, isNewClient, domain, branch, subtypes, domainID, branchID, subtypeIDs, lawyerID)
+	component := partials.ReviewConfirmStep(c.Request().Context(), request, lawyer, isNewClient, domain, branch, subtypes, domainID, branchID, subtypeIDs, lawyerID, clientRole)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -257,12 +278,17 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 
 	// Parse form data
 	lawyerID := strings.TrimSpace(c.FormValue("lawyer_id"))
+	clientRole := strings.TrimSpace(c.FormValue("client_role"))
 	domainID := strings.TrimSpace(c.FormValue("domain_id"))
 	branchID := strings.TrimSpace(c.FormValue("branch_id"))
 	subtypeIDs := c.Request().Form["subtype_ids[]"]
 
 	if lawyerID == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "Lawyer assignment is required")
+	}
+
+	if clientRole == "" || !models.IsValidClientRole(clientRole) {
+		return echo.NewHTTPError(http.StatusBadRequest, "Valid client role is required")
 	}
 
 	// Begin transaction
@@ -352,6 +378,7 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 		CaseType:             "General", // Default type
 		Description:          request.Description,
 		Status:               models.CaseStatusOpen,
+		ClientRole:           &clientRole,
 		CreatedFromRequestID: &request.ID,
 	}
 
