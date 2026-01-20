@@ -13,7 +13,7 @@ templ FirmDeleteConfirmModal(ctx context.Context, firm *models.Firm) {
 			<div class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="document.getElementById('modal-container').innerHTML = ''"></div>
 
 			<!-- Modal panel -->
-			<div class="inline-block align-bottom bg-[#0A0A0B] rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-red-500/20 ring-1 ring-red-500/10">
+			<div class="relative z-50 inline-block align-bottom bg-[#0A0A0B] rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-red-500/20 ring-1 ring-red-500/10">
 				<div class="px-6 py-6">
 					<div class="flex items-center gap-4 mb-4">
 						<div class="p-3 bg-red-500/10 rounded-xl">
