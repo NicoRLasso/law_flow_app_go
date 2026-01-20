@@ -158,8 +158,8 @@ func CreateTemplateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Error creating template")
 	}
 
-	// Redirect to templates list
-	c.Response().Header().Set("HX-Redirect", "/templates")
+	// Redirect to editor workspace
+	c.Response().Header().Set("HX-Redirect", "/templates/"+template.ID+"/edit")
 	return c.NoContent(http.StatusOK)
 }
 
@@ -216,9 +216,16 @@ func UpdateTemplateHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Error updating template")
 	}
 
-	// Redirect to templates list
-	c.Response().Header().Set("HX-Redirect", "/templates")
-	return c.NoContent(http.StatusOK)
+	// Check if this was a metadata update (Stage 1)
+	if c.FormValue("is_metadata_update") == "true" {
+		// Redirect to editor workspace
+		c.Response().Header().Set("HX-Redirect", "/templates/"+template.ID+"/edit")
+		return c.NoContent(http.StatusOK)
+	}
+
+	// Content update (Stage 2) - re-render workspace
+	ctx := context.Background()
+	return partials.TemplateWorkspace(ctx, template).Render(c.Request().Context(), c.Response().Writer)
 }
 
 // DeleteTemplateHandler soft-deletes a template
@@ -241,6 +248,42 @@ func DeleteTemplateHandler(c echo.Context) error {
 func GetTemplateVariablesHandler(c echo.Context) error {
 	variables := services.GetVariableDictionary()
 	return c.JSON(http.StatusOK, variables)
+}
+
+// GetTemplateMetadataHandler returns the metadata form for an existing template
+func GetTemplateMetadataHandler(c echo.Context) error {
+	id := c.Param("id")
+	// firm declaration removed
+
+	var template models.DocumentTemplate
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&template, "id = ?", id).Error; err != nil {
+		return c.String(http.StatusNotFound, "Template not found")
+	}
+
+	// Fetch categories
+	var categories []models.TemplateCategory
+	middleware.GetFirmScopedQuery(c, db.DB).Where("is_active = ?", true).Order("sort_order ASC, name ASC").Find(&categories)
+
+	ctx := context.Background()
+	// Use T with firm.Name context if needed, simplified here
+	return partials.TemplateMetadataForm(ctx, template, categories, false).Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetTemplateMetadataModalHandler returns the metadata form wrapped in a modal
+func GetTemplateMetadataModalHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	var template models.DocumentTemplate
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&template, "id = ?", id).Error; err != nil {
+		return c.String(http.StatusNotFound, "Template not found")
+	}
+
+	// Fetch categories
+	var categories []models.TemplateCategory
+	middleware.GetFirmScopedQuery(c, db.DB).Where("is_active = ?", true).Order("sort_order ASC, name ASC").Find(&categories)
+
+	ctx := context.Background()
+	return partials.MetadataModal(ctx, template, categories).Render(c.Request().Context(), c.Response().Writer)
 }
 
 // --- Category Handlers ---

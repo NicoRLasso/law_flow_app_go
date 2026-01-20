@@ -321,6 +321,8 @@ func main() {
 			adminRoutes.POST("/api/admin/templates", handlers.CreateTemplateHandler)
 			adminRoutes.PUT("/api/admin/templates/:id", handlers.UpdateTemplateHandler)
 			adminRoutes.DELETE("/api/admin/templates/:id", handlers.DeleteTemplateHandler)
+			adminRoutes.GET("/api/admin/templates/:id/metadata", handlers.GetTemplateMetadataHandler)
+			adminRoutes.GET("/api/admin/templates/:id/metadata/modal", handlers.GetTemplateMetadataModalHandler)
 			adminRoutes.GET("/api/admin/templates/variables", handlers.GetTemplateVariablesHandler)
 			// Template Categories
 			adminRoutes.GET("/api/admin/templates/categories", handlers.GetCategoriesHandler)

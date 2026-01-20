@@ -6,217 +6,23 @@ import (
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
 	"law_flow_app_go/templates/partials"
-	"law_flow_app_go/services/i18n"
 )
 
 templ TemplateEditor(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, template models.DocumentTemplate, categories []models.TemplateCategory, isNew bool) {
 	@layouts.Base(ctx, title, csrfToken) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-background text-foreground">
 			@components.Navbar(ctx, user, firm, "/templates")
 			
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8">
-				<div class="mx-auto">
-					<!-- Header -->
-					<div class="flex items-center gap-4 mb-6">
-						<a 
-							href="/templates" 
-							class="p-2 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-							</svg>
-						</a>
-						<div>
-							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">
-								if isNew {
-									{ i18n.T(ctx, "templates.create") }
-								} else {
-									{ i18n.T(ctx, "templates.edit") }
-								}
-							</h1>
-						</div>
+			<!-- Editor Root Container for HTMX Swaps -->
+			<main class="w-full" id="template-editor-root">
+				if isNew {
+					<div class="container mx-auto px-4 py-8">
+						@partials.TemplateMetadataForm(ctx, template, categories, true)
 					</div>
-
-					<!-- Form -->
-					<form
-						if isNew {
-							hx-post="/api/admin/templates"
-						} else {
-							hx-put={ "/api/admin/templates/" + template.ID }
-						}
-						hx-target="body"
-						hx-push-url="/templates"
-						class="space-y-6"
-					>
-						<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-							<!-- Left Column: Main Content -->
-							<div class="lg:col-span-2 space-y-6">
-								<!-- Basic Info Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
-									<h2 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "templates.name") }</h2>
-									<div class="space-y-4">
-										<div>
-											<input
-												type="text"
-												name="name"
-												value={ template.Name }
-												placeholder={ i18n.T(ctx, "templates.name_placeholder") }
-												class="input-field w-full text-lg"
-												required
-											/>
-										</div>
-										<div>
-											<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "templates.description") }</label>
-											<textarea
-												name="description"
-												rows="2"
-												placeholder={ i18n.T(ctx, "templates.description_placeholder") }
-												class="input-field w-full resize-none"
-											>
-												if template.Description != nil {
-													{ *template.Description }
-												}
-											</textarea>
-										</div>
-									</div>
-								</div>
-
-								<!-- Content Editor Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
-									<h2 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "templates.content") }</h2>
-									
-									<!-- Toolbar -->
-									<div class="flex flex-wrap gap-1 p-2 bg-white/5 rounded-lg mb-4">
-										<button type="button" onclick="document.execCommand('bold', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors" title="Bold">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path></svg>
-										</button>
-										<button type="button" onclick="document.execCommand('italic', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors" title="Italic">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4M14 4l-4 16M6 20h4"></path></svg>
-										</button>
-										<button type="button" onclick="document.execCommand('underline', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors" title="Underline">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3M4 21h16"></path></svg>
-										</button>
-										<div class="w-px h-6 bg-white/10 mx-1 self-center"></div>
-										<button type="button" onclick="document.execCommand('formatBlock', false, 'h1')" class="p-2 hover:bg-white/10 rounded transition-colors text-sm font-bold" title="Heading 1">H1</button>
-										<button type="button" onclick="document.execCommand('formatBlock', false, 'h2')" class="p-2 hover:bg-white/10 rounded transition-colors text-sm font-bold" title="Heading 2">H2</button>
-										<button type="button" onclick="document.execCommand('formatBlock', false, 'p')" class="p-2 hover:bg-white/10 rounded transition-colors text-sm" title="Paragraph">P</button>
-										<div class="w-px h-6 bg-white/10 mx-1 self-center"></div>
-										<button type="button" onclick="document.execCommand('insertUnorderedList', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors" title="Bullet List">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-										</button>
-										<button type="button" onclick="document.execCommand('insertOrderedList', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors" title="Numbered List">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-										</button>
-									</div>
-
-									<!-- Editor -->
-									<div
-										id="template-editor"
-										contenteditable="true"
-										class="min-h-[400px] p-4 bg-white/5 rounded-lg border border-white/10 focus:border-accent focus:ring-1 focus:ring-accent outline-none prose prose-invert max-w-none"
-										oninput="document.getElementById('content-input').value = this.innerHTML"
-									>
-										if template.Content != "" {
-											@templ.Raw(template.Content)
-										} else {
-											<p>Start typing your template content here...</p>
-										}
-									</div>
-									<input type="hidden" name="content" id="content-input" value={ template.Content }/>
-								</div>
-							</div>
-
-							<!-- Right Column: Settings & Variables -->
-							<div class="lg:col-span-1 space-y-6">
-								<!-- Settings Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
-									<h2 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "common.settings") }</h2>
-									<div class="space-y-4">
-										<div>
-											<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "templates.category") }</label>
-											<select name="category_id" class="input-field w-full">
-												<option value="">{ i18n.T(ctx, "templates.select_category") }</option>
-												for _, cat := range categories {
-													<option 
-														value={ cat.ID }
-														if template.CategoryID != nil && *template.CategoryID == cat.ID {
-															selected
-														}
-													>
-														{ cat.Name }
-													</option>
-												}
-											</select>
-										</div>
-
-										<div class="grid grid-cols-2 gap-4">
-											<div>
-												<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "templates.orientation") }</label>
-												<select name="page_orientation" class="input-field w-full">
-													<option value="portrait" selected?={ template.PageOrientation == "portrait" || template.PageOrientation == "" }>Portrait</option>
-													<option value="landscape" selected?={ template.PageOrientation == "landscape" }>Landscape</option>
-												</select>
-											</div>
-											<div>
-												<label class="block text-sm font-medium text-muted-foreground mb-2">{ i18n.T(ctx, "templates.page_size") }</label>
-												<select name="page_size" class="input-field w-full">
-													<option value="letter" selected?={ template.PageSize == "letter" || template.PageSize == "" }>Letter</option>
-													<option value="legal" selected?={ template.PageSize == "legal" }>Legal</option>
-													<option value="a4" selected?={ template.PageSize == "a4" }>A4</option>
-												</select>
-											</div>
-										</div>
-
-										if !isNew {
-											<div class="flex items-center gap-3 pt-2">
-												<input 
-													type="checkbox" 
-													name="is_active" 
-													id="is_active"
-													class="w-4 h-4 rounded border-white/20 bg-white/5 text-accent focus:ring-accent"
-													checked?={ template.IsActive }
-												/>
-												<label for="is_active" class="text-sm font-medium">{ i18n.T(ctx, "templates.active") }</label>
-											</div>
-										}
-									</div>
-								</div>
-
-								<!-- Variables Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
-									<h2 class="text-lg font-semibold mb-2">{ i18n.T(ctx, "templates.variables_title") }</h2>
-									<p class="text-xs text-muted-foreground mb-4">{ i18n.T(ctx, "templates.insert_variable") }</p>
-									@partials.VariablesSidebar(ctx)
-								</div>
-							</div>
-						</div>
-
-						<!-- Actions -->
-						<div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-							<a href="/templates" class="btn-secondary px-6 py-2.5 rounded-lg">
-								{ i18n.T(ctx, "common.cancel") }
-							</a>
-							<button type="submit" class="btn-primary px-6 py-2.5 rounded-lg">
-								if isNew {
-									{ i18n.T(ctx, "templates.create") }
-								} else {
-									{ i18n.T(ctx, "common.save") }
-								}
-							</button>
-						</div>
-					</form>
-				</div>
+				} else {
+					@partials.TemplateWorkspace(ctx, template)
+				}
 			</main>
 		</div>
-
-		<!-- JavaScript for variable insertion -->
-		@templ.Raw(`<script>
-			function insertVariable(variable) {
-				const editor = document.getElementById('template-editor');
-				editor.focus();
-				document.execCommand('insertText', false, '{{' + variable + '}}');
-				document.getElementById('content-input').value = editor.innerHTML;
-			}
-		</script>`)
 	}
 }

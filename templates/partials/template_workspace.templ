@@ -1,0 +1,168 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
+	<div 
+		id="template-workspace" 
+		class="flex flex-col h-[calc(100vh-140px)]"
+		x-data="{ 
+			showContextMenu: false, 
+			contextMenuX: 0, 
+			contextMenuY: 0, 
+			variables: [],
+			async loadVariables() {
+				const response = await fetch('/api/admin/templates/variables');
+				this.variables = await response.json();
+			},
+			insertVariable(tag) {
+				document.execCommand('insertText', false, '{{' + tag + '}}');
+				this.showContextMenu = false;
+			}
+		}"
+		x-init="loadVariables()"
+		@click="showContextMenu = false"
+		@contextmenu.prevent="showContextMenu = true; contextMenuX = $event.clientX; contextMenuY = $event.clientY"
+	>
+		<!-- Top Bar: Actions -->
+		<div class="glass-panel border-b border-white/10 px-6 py-3 flex items-center justify-between z-20">
+			<div class="flex items-center gap-4">
+				<a 
+					href="/templates" 
+					class="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+					{ i18n.T(ctx, "templates.return_list") }
+				</a>
+				<div class="h-6 w-px bg-white/10"></div>
+				<h2 class="font-semibold text-foreground">{ template.Name }</h2>
+				<span class="text-xs text-muted-foreground px-2 py-0.5 rounded-full bg-white/5 border border-white/10 uppercase tracking-wider">
+					{ template.PageSize } - { template.PageOrientation }
+				</span>
+			</div>
+
+			<div class="flex items-center gap-3">
+				<button
+					hx-get={ "/api/admin/templates/" + template.ID + "/metadata/modal" }
+					hx-target="body"
+					hx-swap="beforeend"
+					class="btn-secondary px-3 py-1.5 text-sm font-medium transition-colors"
+				>
+					{ i18n.T(ctx, "templates.edit_metadata") }
+				</button>
+				<button
+					type="button"
+					onclick="saveTemplateContent()" 
+					class="btn-primary px-4 py-1.5 text-lg font-medium shadow-md hover:shadow-accent/20 transition-all flex items-center gap-2"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+					{ i18n.T(ctx, "common.save") }
+				</button>
+			</div>
+		</div>
+
+		<!-- Toolbar -->
+		<div class="bg-background/80 backdrop-blur-md border-b border-white/5 py-2 px-6 flex justify-center gap-1 z-10 sticky top-0">
+			<!-- Formatting Buttons -->
+			<button type="button" onclick="document.execCommand('bold', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Bold">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path></svg>
+			</button>
+			<button type="button" onclick="document.execCommand('italic', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Italic">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4M14 4l-4 16M6 20h4"></path></svg>
+			</button>
+			<button type="button" onclick="document.execCommand('underline', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Underline">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3M4 21h16"></path></svg>
+			</button>
+			<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+			<button type="button" onclick="document.execCommand('justifyLeft', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Align Left">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+			</button>
+			<button type="button" onclick="document.execCommand('justifyCenter', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Align Center">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M4 18h16"></path></svg>
+			</button>
+			<button type="button" onclick="document.execCommand('justifyRight', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Align Right">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 12h10M4 18h16"></path></svg>
+			</button>
+			<button type="button" onclick="document.execCommand('justifyFull', false, null)" class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" title="Justify">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+			</button>
+		</div>
+
+		<!-- Editor Canvas (Gray Background) -->
+		<div class="flex-1 bg-[#1A1A1C] overflow-y-auto p-8 relative flex justify-center items-start" id="editor-scroller">
+			<!-- Paper Sheet -->
+			<div
+				id="editor-content"
+				contenteditable="true"
+				class="bg-white text-black shadow-2xl mx-auto p-[72pt] outline-none min-h-[1000px] text-[12pt] font-serif leading-relaxed"
+				style={ getPaperStyle(template) }
+			>
+				@templ.Raw(template.Content)
+			</div>
+			
+			<!-- Bottom padding for scrolling -->
+			<div class="h-24"></div>
+		</div>
+
+		<!-- Context Menu -->
+		<div
+			x-show="showContextMenu"
+			x-transition.opacity.duration.100ms
+			@click.away="showContextMenu = false"
+			:style="`top: ${contextMenuY}px; left: ${contextMenuX}px`"
+			class="fixed z-50 w-64 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80"
+			style="display: none;"
+		>
+			<div class="p-3 border-b border-white/10 bg-white/5">
+				<h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "templates.insert_variable_title") }</h3>
+			</div>
+			<div class="overflow-y-auto p-1">
+				<template x-for="category in variables" :key="category.name">
+					<div class="mb-1">
+						<div class="px-2 py-1 text-xs font-medium text-accent opacity-80" x-text="category.name"></div>
+						<template x-for="variable in category.variables" :key="variable.key">
+							<button
+								@click="insertVariable(variable.key)"
+								class="w-full text-left px-2 py-1.5 text-sm hover:bg-white/10 rounded-lg transition-colors flex items-center justify-between group"
+							>
+								<span x-text="variable.label" class="text-foreground"></span>
+								<span x-text="variable.key" class="text-xs text-muted-foreground opacity-50 font-mono group-hover:opacity-100"></span>
+							</button>
+						</template>
+					</div>
+				</template>
+			</div>
+		</div>
+
+		<!-- Hidden Form for Save -->
+		<form id="save-template-form" hx-put={ "/api/admin/templates/" + template.ID } hx-target="body" class="hidden">
+			<input type="hidden" name="content" id="hidden-content-input" />
+			<input type="hidden" name="name" value={ template.Name } />
+		</form>
+
+		<script>
+			function saveTemplateContent() {
+				const content = document.getElementById('editor-content').innerHTML;
+				document.getElementById('hidden-content-input').value = content;
+				htmx.trigger('#save-template-form', 'submit');
+			}
+		</script>
+	</div>
+}
+
+func getPaperStyle(t models.DocumentTemplate) string {
+	width := "816px" // Letter default
+	if t.PageSize == "A4" {
+		width = "794px"
+	} else if t.PageSize == "legal" {
+		width = "816px"
+	}
+	
+	// Add height for preview (min-height handled in class)
+	
+	return "width: " + width + "; max-width: 100%;"
+}
