@@ -74,6 +74,7 @@
     "landscape": "Horizontal",
     "page_size": "Tamaño de Página",
     "active": "Activo",
+    "active_desc": "Las plantillas activas pueden usarse para generar documentos",
     "search_placeholder": "Buscar plantillas...",
     "no_templates": "No se encontraron plantillas",
     "create_first": "Crea tu primera plantilla para comenzar",
@@ -92,6 +93,10 @@
     "generated_by": "Generado Por",
     "date": "Fecha",
     "size": "Tamaño",
+    "view_continuous": "Continuo",
+    "view_paginated": "Paginado",
+    "page": "Página",
+    "insert_page_break": "Insertar Salto de Página (Ctrl+Enter)",
     "variables": {
       "client": "Cliente",
       "client_name": "Nombre del Cliente",

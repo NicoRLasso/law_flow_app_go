@@ -178,7 +178,13 @@ func UpdateTemplateHandler(c echo.Context) error {
 	content := c.FormValue("content")
 	pageOrientation := c.FormValue("page_orientation")
 	pageSize := c.FormValue("page_size")
-	isActive := c.FormValue("is_active") == "true" || c.FormValue("is_active") == "on"
+
+	// For content updates (from editor), preserve existing is_active value
+	// Only update is_active when explicitly set in metadata form
+	isActive := template.IsActive // Default to current value
+	if c.FormValue("is_metadata_update") == "true" {
+		isActive = c.FormValue("is_active") == "true" || c.FormValue("is_active") == "on"
+	}
 
 	if name == "" {
 		return c.String(http.StatusBadRequest, "Name is required")
@@ -223,9 +229,9 @@ func UpdateTemplateHandler(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	}
 
-	// Content update (Stage 2) - re-render workspace
-	ctx := context.Background()
-	return partials.TemplateWorkspace(ctx, template).Render(c.Request().Context(), c.Response().Writer)
+	// Content update (Stage 2) - redirect to template list
+	c.Response().Header().Set("HX-Redirect", "/templates")
+	return c.NoContent(http.StatusOK)
 }
 
 // DeleteTemplateHandler soft-deletes a template
