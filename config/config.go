@@ -9,16 +9,16 @@ import (
 )
 
 type Config struct {
-	ServerPort       string
-	DBPath           string
-	Environment      string
-	UploadDir        string
-	SMTPHost         string
-	SMTPPort         string
-	SMTPUsername     string
-	SMTPPassword     string
-	EmailFrom        string
-	EmailFromName    string
+	ServerPort  string
+	DBPath      string
+	Environment string
+	UploadDir   string
+	// Email (Resend)
+	ResendAPIKey  string
+	EmailFrom     string
+	EmailFromName string
+	EmailTestMode bool // When true, emails are logged to console instead of sent
+	// Other
 	AllowedOrigins   []string
 	AppURL           string
 	SessionSecret    string
@@ -43,12 +43,10 @@ func Load() *Config {
 		DBPath:            getEnv("DB_PATH", "db/app.db"),
 		Environment:       getEnv("ENVIRONMENT", "development"),
 		UploadDir:         getEnv("UPLOAD_DIR", "uploads"),
-		SMTPHost:          getEnv("SMTP_HOST", "smtp.gmail.com"),
-		SMTPPort:          getEnv("SMTP_PORT", "587"),
-		SMTPUsername:      getEnv("SMTP_USERNAME", ""),
-		SMTPPassword:      getEnv("SMTP_PASSWORD", ""),
+		ResendAPIKey:      getEnv("RESEND_API_KEY", ""),
 		EmailFrom:         getEnv("EMAIL_FROM", "noreply@lawflowapp.com"),
 		EmailFromName:     getEnv("EMAIL_FROM_NAME", "LawFlow App"),
+		EmailTestMode:     getEnvBool("EMAIL_TEST_MODE", true), // Default true for safety
 		AllowedOrigins:    strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
 		AppURL:            getEnv("APP_URL", "http://localhost:8080"),
 		SessionSecret:     getEnv("SESSION_SECRET", ""),
@@ -69,4 +67,20 @@ func getEnv(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
+}
+
+func getEnvBool(key string, defaultValue bool) bool {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	// Accept common boolean representations
+	switch strings.ToLower(value) {
+	case "true", "1", "yes", "on":
+		return true
+	case "false", "0", "no", "off":
+		return false
+	default:
+		return defaultValue
+	}
 }

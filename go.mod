@@ -15,8 +15,8 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.15.0
+	github.com/resend/resend-go/v2 v2.28.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20251219100830-236aa1ff8acc
-	github.com/wneessen/go-mail v0.7.2
 	golang.org/x/crypto v0.47.0
 	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.31.1

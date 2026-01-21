@@ -279,6 +279,22 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 												>{ firm.Description }</textarea>
 												<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.firm.desc_ph") }</p>
 											</div>
+											<!-- Email Sender Name -->
+											<div>
+												<label for="email_sender_name" class="block text-sm font-medium text-foreground mb-2">
+													{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-red-500">*</span>
+												</label>
+												<input
+													type="text"
+													id="email_sender_name"
+													name="email_sender_name"
+													value={ firm.EmailSenderName }
+													required
+													placeholder="My Law Firm"
+													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+												/>
+												<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.sender_name_desc") }</p>
+											</div>
 											<!-- Message Container -->
 											<div id="firm-message"></div>
 											<!-- Submit Button -->
@@ -398,16 +414,33 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										<!-- Noreply Email -->
 										<div>
 											<label for="noreply_email" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.email.noreply") }
+												{ i18n.T(ctx, "settings.email.noreply") } <span class="text-red-500">*</span>
 											</label>
 											<input
 												type="email"
 												id="noreply_email"
 												name="noreply_email"
 												value={ firm.NoreplyEmail }
+												required
 												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
 											/>
 											<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.noreply_desc") }</p>
+										</div>
+										<!-- Email Sender Name -->
+										<div>
+											<label for="email_sender_name" class="block text-sm font-medium text-foreground mb-2">
+												{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-red-500">*</span>
+											</label>
+											<input
+												type="text"
+												id="email_sender_name"
+												name="email_sender_name"
+												value={ firm.EmailSenderName }
+												required
+												placeholder="My Law Firm"
+												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+											/>
+											<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.sender_name_desc") }</p>
 										</div>
 										<!-- Message Container -->
 										<div id="email-message"></div>

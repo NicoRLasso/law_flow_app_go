@@ -912,7 +912,9 @@
       "info": "Info Email",
       "info_desc": "General information email",
       "noreply": "No-Reply Email",
-      "noreply_desc": "Email for automated notifications",
+      "noreply_desc": "Email address for sending automated notifications (required)",
+      "sender_name": "Email Sender Name",
+      "sender_name_desc": "Display name shown in sent emails (required)",
       "save_btn": "Save Email Settings"
     },
     "details": {

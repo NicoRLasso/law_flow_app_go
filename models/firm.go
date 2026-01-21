@@ -17,18 +17,19 @@ type Firm struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
-	Name         string `gorm:"not null" json:"name"`
-	Slug         string `gorm:"uniqueIndex;not null" json:"slug"`
-	Country      string `gorm:"not null" json:"country"`
-	Timezone     string `gorm:"not null;default:UTC" json:"timezone"`
-	Address      string `json:"address"`
-	City         string `json:"city"`
-	Phone        string `json:"phone"`
-	Description  string `gorm:"type:text" json:"description"`
-	BillingEmail string `gorm:"not null" json:"billing_email"`
-	InfoEmail    string `json:"info_email"`
-	NoreplyEmail string `json:"noreply_email"`
-	IsActive     bool   `gorm:"not null;default:true" json:"is_active"`
+	Name            string `gorm:"not null" json:"name"`
+	Slug            string `gorm:"uniqueIndex;not null" json:"slug"`
+	Country         string `gorm:"not null" json:"country"`
+	Timezone        string `gorm:"not null;default:UTC" json:"timezone"`
+	Address         string `json:"address"`
+	City            string `json:"city"`
+	Phone           string `json:"phone"`
+	Description     string `gorm:"type:text" json:"description"`
+	BillingEmail    string `gorm:"not null" json:"billing_email"`
+	InfoEmail       string `json:"info_email"`
+	NoreplyEmail    string `gorm:"not null" json:"noreply_email"`
+	EmailSenderName string `gorm:"not null" json:"email_sender_name"`
+	IsActive        bool   `gorm:"not null;default:true" json:"is_active"`
 
 	// Branding
 	LogoURL string `json:"logo_url"` // Path to firm's logo image

@@ -8,10 +8,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
-	"github.com/wneessen/go-mail"
+	"github.com/resend/resend-go/v2"
 )
 
 // Email represents an email message
@@ -64,7 +63,7 @@ func loadTemplate(templateName string, data interface{}) (html string, text stri
 	return htmlBuf.String(), textBuf.String(), nil
 }
 
-// SendEmail sends an email synchronously using SMTP
+// SendEmail sends an email using Resend API
 func SendEmail(cfg *config.Config, email *Email) error {
 	// In development mode, log the email instead of sending
 	if cfg.Environment == "development" {
@@ -74,55 +73,43 @@ func SendEmail(cfg *config.Config, email *Email) error {
 	}
 
 	// Validate configuration
-	if cfg.SMTPUsername == "" || cfg.SMTPPassword == "" {
-		return fmt.Errorf("SMTP credentials not configured")
+	if cfg.ResendAPIKey == "" {
+		return fmt.Errorf("RESEND_API_KEY not configured")
 	}
 
-	// Create message
-	m := mail.NewMsg()
-	if err := m.From(fmt.Sprintf("%s <%s>", cfg.EmailFromName, cfg.EmailFrom)); err != nil {
-		return fmt.Errorf("failed to set From address: %w", err)
-	}
-	if err := m.To(email.To...); err != nil {
-		return fmt.Errorf("failed to set To address: %w", err)
-	}
-	m.Subject(email.Subject)
+	// Create Resend client
+	client := resend.NewClient(cfg.ResendAPIKey)
 
-	// Set body (prefer HTML if available, fallback to text)
+	// Build the from address
+	fromAddress := fmt.Sprintf("%s <%s>", cfg.EmailFromName, cfg.EmailFrom)
+
+	// Create email params
+	params := &resend.SendEmailRequest{
+		From:    fromAddress,
+		To:      email.To,
+		Subject: email.Subject,
+	}
+
+	// Set body (prefer HTML if available)
 	if email.HTMLBody != "" {
-		m.SetBodyString(mail.TypeTextHTML, email.HTMLBody)
-		if email.TextBody != "" {
-			m.SetBodyString(mail.TypeTextPlain, email.TextBody)
-		}
-	} else if email.TextBody != "" {
-		m.SetBodyString(mail.TypeTextPlain, email.TextBody)
-	} else {
+		params.Html = email.HTMLBody
+	}
+	if email.TextBody != "" {
+		params.Text = email.TextBody
+	}
+
+	// Validate we have at least one body
+	if params.Html == "" && params.Text == "" {
 		return fmt.Errorf("email must have either HTMLBody or TextBody")
 	}
 
-	// Parse SMTP port
-	port, err := strconv.Atoi(cfg.SMTPPort)
+	// Send email via Resend
+	sent, err := client.Emails.Send(params)
 	if err != nil {
-		return fmt.Errorf("invalid SMTP port: %v", err)
+		return fmt.Errorf("failed to send email via Resend: %v", err)
 	}
 
-	// Create client with options
-	c, err := mail.NewClient(cfg.SMTPHost,
-		mail.WithPort(port),
-		mail.WithSMTPAuth(mail.SMTPAuthPlain),
-		mail.WithUsername(cfg.SMTPUsername),
-		mail.WithPassword(cfg.SMTPPassword),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to create mail client: %w", err)
-	}
-
-	// Send email
-	if err := c.DialAndSend(m); err != nil {
-		return fmt.Errorf("failed to send email: %v", err)
-	}
-
-	log.Printf("Email sent successfully to: %v", email.To)
+	log.Printf("Email sent successfully via Resend (ID: %s) to: %v", sent.Id, email.To)
 	return nil
 }
 

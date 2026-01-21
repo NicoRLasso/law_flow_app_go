@@ -505,16 +505,6 @@ func main() {
 		}
 	}
 
-	// Development-only routes
-	if cfg.Environment == "development" {
-		devRoutes := e.Group("/dev")
-		devRoutes.Use(middleware.RequireAuth())
-		devRoutes.Use(middleware.RequireRole("admin"))
-		{
-			devRoutes.GET("/email/test", handlers.TestEmailHandler)
-		}
-	}
-
 	// Start background cleanup jobs (runs every hour)
 	go func() {
 		ticker := time.NewTicker(1 * time.Hour)
@@ -574,9 +564,6 @@ func main() {
 // checkSensitiveConfig performs startup security checks
 func checkSensitiveConfig(cfg *config.Config) {
 	if cfg.Environment == "production" {
-		if cfg.SMTPPassword == "" {
-			log.Println("[WARNING] SMTP_PASSWORD is not set in production!")
-		}
 		if len(cfg.AllowedOrigins) == 1 && cfg.AllowedOrigins[0] == "*" {
 			log.Println("[WARNING] ALLOWED_ORIGINS is set to '*' in production! This is insecure.")
 		}
