@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f5;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: none;
+            color: #18181b;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: #18181b;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        h1 {
+            color: #18181b;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #52525b;
+        }
+        .credentials-box {
+            background-color: #f4f4f5;
+            border: 1px solid #e4e4e7;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .credential-item {
+            margin-bottom: 12px;
+        }
+        .credential-item:last-child {
+            margin-bottom: 0;
+        }
+        .credential-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #71717a;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .credential-value {
+            font-family: monospace;
+            font-size: 16px;
+            color: #18181b;
+            background-color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e4e4e7;
+            display: block;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #18181b; /* Zinc 900 */
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #a1a1aa;
+        }
+        .warning {
+            background-color: #fff7ed;
+            border: 1px solid #ffedd5;
+            color: #9a3412;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">lexlegalcloud App</div>
+        </div>
+        
+        <h1>Welcome to lexlegalcloud!</h1>
+        
+        <p>Hello {{.UserName}},</p>
+        
+        <p>A new account has been created for you. You can now access the lexlegalcloud platform using the credentials below.</p>
+        
+        <div class="credentials-box">
+            <div class="credential-item">
+                <span class="credential-label">Username</span>
+                <span class="credential-value">{{.UserEmail}}</span>
+            </div>
+            <div class="credential-item">
+                <span class="credential-label">Temporary Password</span>
+                <span class="credential-value">{{.Password}}</span>
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>Security Notice:</strong> Please log in and change your password immediately.
+        </div>
+        
+        <a href="{{.LoginURL}}" class="btn">Log In to Your Account</a>
+        
+        <div class="footer">
+            <p>If you have any questions, please contact your administrator.</p>
+            <p>&copy; 2026 lexlegalcloud App. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

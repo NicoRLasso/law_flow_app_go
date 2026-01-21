@@ -33,4 +33,4 @@ Disallow: /superadmin/
 Disallow: /api/
 Disallow: /appointment/
 
-Sitemap: https://lawflowapp.com/sitemap.xml
+Sitemap: https://lexlegalcloud.org/sitemap.xml

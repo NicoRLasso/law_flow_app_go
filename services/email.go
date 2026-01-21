@@ -66,7 +66,7 @@ func loadTemplate(templateName string, data interface{}) (html string, text stri
 // SendEmail sends an email using Resend API
 func SendEmail(cfg *config.Config, email *Email) error {
 	// In development mode, log the email instead of sending
-	if cfg.Environment == "development" {
+	if cfg.EmailTestMode {
 		logEmailToConsole(email)
 		log.Printf("✅ Email logged successfully (development mode - not actually sent)")
 		return nil // Return early in development mode
@@ -166,13 +166,13 @@ func BuildWelcomeEmail(userEmail, userName string) *Email {
 	if err != nil {
 		log.Printf("Error loading welcome email template: %v", err)
 		// Fallback to simple text email
-		textBody = fmt.Sprintf("Welcome to LawFlow App, %s!", userName)
-		htmlBody = fmt.Sprintf("<p>Welcome to LawFlow App, %s!</p>", userName)
+		textBody = fmt.Sprintf("Welcome to lexlegalcloud App, %s!", userName)
+		htmlBody = fmt.Sprintf("<p>Welcome to lexlegalcloud App, %s!</p>", userName)
 	}
 
 	return &Email{
 		To:       []string{userEmail},
-		Subject:  "Welcome to LawFlow App!",
+		Subject:  "Welcome to lexlegalcloud App!",
 		HTMLBody: htmlBody,
 		TextBody: textBody,
 	}
@@ -201,7 +201,7 @@ func BuildFirmSetupEmail(userEmail, userName, firmName string) *Email {
 
 	return &Email{
 		To:       []string{userEmail},
-		Subject:  "Firm Setup Complete - LawFlow App",
+		Subject:  "Firm Setup Complete - lexlegalcloud App",
 		HTMLBody: htmlBody,
 		TextBody: textBody,
 	}
@@ -232,7 +232,7 @@ func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt string) *
 
 	return &Email{
 		To:       []string{userEmail},
-		Subject:  "Password Reset Request - LawFlow App",
+		Subject:  "Password Reset Request - lexlegalcloud App",
 		HTMLBody: htmlBody,
 		TextBody: textBody,
 	}
@@ -492,6 +492,38 @@ func BuildLawyerAppointmentNotificationEmail(lawyerEmail string, data LawyerAppo
 	return &Email{
 		To:       []string{lawyerEmail},
 		Subject:  fmt.Sprintf("New Appointment: %s - %s @ %s", data.ClientName, data.Date, data.Time),
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
+// NewUserWelcomeEmailData contains data for the new user welcome email
+type NewUserWelcomeEmailData struct {
+	UserName  string
+	UserEmail string
+	Password  string
+	LoginURL  string
+}
+
+// BuildNewUserWelcomeEmail creates a welcome email for new users created by superadmin
+func BuildNewUserWelcomeEmail(userEmail, userName, password, loginURL string) *Email {
+	data := NewUserWelcomeEmailData{
+		UserName:  userName,
+		UserEmail: userEmail,
+		Password:  password,
+		LoginURL:  loginURL,
+	}
+
+	htmlBody, textBody, err := loadTemplate("new_user_welcome", data)
+	if err != nil {
+		log.Printf("Error loading new user welcome email template: %v", err)
+		textBody = fmt.Sprintf("Welcome to lexlegalcloud!\n\nHello %s,\n\nA new account has been created for you.\nUsername: %s\nPassword: %s\n\nPlease log in at: %s", userName, userEmail, password, loginURL)
+		htmlBody = fmt.Sprintf("<p>Welcome to lexlegalcloud!</p><p>Hello %s,</p><p>A new account has been created for you.</p><p>Username: %s<br>Password: %s</p><p>Please log in at: <a href=\"%s\">%s</a></p>", userName, userEmail, password, loginURL, loginURL)
+	}
+
+	return &Email{
+		To:       []string{userEmail},
+		Subject:  "Welcome to lexlegalcloud - Your Account Credentials",
 		HTMLBody: htmlBody,
 		TextBody: textBody,
 	}

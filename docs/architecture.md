@@ -1,6 +1,6 @@
 # System Architecture
 
-LawFlowApp is designed as a **modern monolith** that prioritizes simplicity, type-safety, and interactive user experiences without the complexity of a heavy frontend framework.
+lexlegalcloud is designed as a **modern monolith** that prioritizes simplicity, type-safety, and interactive user experiences without the complexity of a heavy frontend framework.
 
 ## 🏛️ Conceptual Model
 
@@ -27,7 +27,7 @@ graph TD
 
 ## ⚡ Unified Stack (THE GOTH STACK)
 
-Instead of a separate SPA and API, LawFlowApp uses the **GOTH stack** to keep logic on the server while providing a reactive UI.
+Instead of a separate SPA and API, lexlegalcloud uses the **GOTH stack** to keep logic on the server while providing a reactive UI.
 
 - **Go (Echo)**: Handles all routing, security, and business logic.
 - **Templ**: Generates HTML dynamically on the server with full Go type-safety.

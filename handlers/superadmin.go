@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
@@ -198,6 +200,12 @@ func SuperadminCreateUserHandler(c echo.Context) error {
 	}
 
 	services.LogSecurityEvent("SUPERADMIN_USER_CREATED", currentUser.ID, "Created user: "+user.ID)
+
+	// Send welcome email asynchronously
+	cfg := c.Get("config").(*config.Config)
+	loginURL := fmt.Sprintf("%s/login", cfg.AppURL)
+	emailMsg := services.BuildNewUserWelcomeEmail(user.Email, user.Name, password, loginURL) // Use raw password here
+	services.SendEmailAsync(cfg, emailMsg)
 
 	// Return updated list
 	// We need to fetch and render the list again to close modal and show new data

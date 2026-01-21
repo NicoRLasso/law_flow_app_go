@@ -1,4 +1,4 @@
-# ⚖️ LawFlowApp - Go Fullstack
+# ⚖️ lexlegalcloud - Go Fullstack
 
 A modern, high-performance legal management application built with **Go (Echo)**, **Templ**, **HTMX**, and **Alpine.js**.
 

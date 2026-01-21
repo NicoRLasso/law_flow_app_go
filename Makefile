@@ -52,10 +52,10 @@ create-user: ## Create a new user (interactive CLI)
 	@go run cmd/create-user/main.go
 
 docker-build: ## Build Docker image
-	docker build -t lawflow-app .
+	docker build -t lexlegalcloud-app .
 
 docker-run: ## Run Docker container locally
-	docker run -p 8080:8080 --env-file .env -v $(PWD)/db:/app/db lawflow-app
+	docker run -p 8080:8080 --env-file .env -v $(PWD)/db:/app/db lexlegalcloud-app
 
 dupl: ## Find duplicate code (threshold: 100 tokens)
 	@test -f $(HOME)/go/bin/dupl || { echo "Installing dupl..."; go install github.com/mibk/dupl@latest; }

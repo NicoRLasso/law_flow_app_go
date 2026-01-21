@@ -44,8 +44,8 @@ func Load() *Config {
 		Environment:       getEnv("ENVIRONMENT", "development"),
 		UploadDir:         getEnv("UPLOAD_DIR", "uploads"),
 		ResendAPIKey:      getEnv("RESEND_API_KEY", ""),
-		EmailFrom:         getEnv("EMAIL_FROM", "noreply@lawflowapp.com"),
-		EmailFromName:     getEnv("EMAIL_FROM_NAME", "LawFlow App"),
+		EmailFrom:         getEnv("EMAIL_FROM", "noreply@lexlegalcloud.org"),
+		EmailFromName:     getEnv("EMAIL_FROM_NAME", "lexlegalcloud App"),
 		EmailTestMode:     getEnvBool("EMAIL_TEST_MODE", true), // Default true for safety
 		AllowedOrigins:    strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
 		AppURL:            getEnv("APP_URL", "http://localhost:8080"),

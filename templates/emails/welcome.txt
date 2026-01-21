@@ -1,12 +1,12 @@
-Welcome to LawFlow App!
+Welcome to lexlegalcloud App!
 
 Hello {{.UserName}}!
 
-Thank you for joining LawFlow App. We're excited to have you on board!
+Thank you for joining lexlegalcloud App. We're excited to have you on board!
 
-LawFlow App is your comprehensive legal practice management solution, designed to streamline your workflow and help you focus on what matters most - serving your clients.
+lexlegalcloud App is your comprehensive legal practice management solution, designed to streamline your workflow and help you focus on what matters most - serving your clients.
 
-What you can do with LawFlow App:
+What you can do with lexlegalcloud App:
 - Manage cases and clients efficiently
 - Track time and billing
 - Collaborate with your team
@@ -15,7 +15,7 @@ What you can do with LawFlow App:
 If you have any questions or need assistance, please don't hesitate to reach out to our support team.
 
 Best regards,
-The LawFlow Team
+The lexlegalcloud Team
 
 ---
-© 2026 LawFlow App. All rights reserved.
+© 2026 lexlegalcloud App. All rights reserved.

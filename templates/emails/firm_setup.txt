@@ -2,7 +2,7 @@ Firm Setup Complete!
 
 Congratulations, {{.UserName}}!
 
-Your firm {{.FirmName}} has been successfully set up on LawFlow App!
+Your firm {{.FirmName}} has been successfully set up on lexlegalcloud App!
 
 You're now ready to start managing your legal practice with our comprehensive suite of tools.
 
@@ -15,7 +15,7 @@ Next Steps:
 If you need any help getting started, our documentation and support team are here to assist you.
 
 Best regards,
-The LawFlow Team
+The lexlegalcloud Team
 
 ---
-© 2026 LawFlow App. All rights reserved.
+© 2026 lexlegalcloud App. All rights reserved.

@@ -3,7 +3,7 @@
 **Auditor:** Antigravity AI
 
 ## Executive Summary
-A deep security audit of the LawFlowApp codebase was performed, focusing on new features (Case History, Activity Logs, Collaborators) and re-verifying core security controls. 
+A deep security audit of the lexlegalcloud codebase was performed, focusing on new features (Case History, Activity Logs, Collaborators) and re-verifying core security controls. 
 
 **CRITICAL FINDING:** An **Insecure Direct Object Reference (IDOR)** vulnerability was discovered in the new **Case Activity Log** feature. This vulnerability triggers a high-severity risk as it allows users to access functionality without proper firm-level authorization checks.
 

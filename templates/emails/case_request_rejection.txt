@@ -26,4 +26,4 @@ Best regards,
 
 ---
 © 2026 {{.FirmName}}. All rights reserved.
-This is an automated message sent via LawFlow App.
+This is an automated message sent via lexlegalcloud App.
