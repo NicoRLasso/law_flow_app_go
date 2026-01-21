@@ -1,0 +1,90 @@
+package editor
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+)
+
+templ Toolbar(ctx context.Context) {
+	<!-- Toolbar -->
+	<div class="bg-background/80 backdrop-blur-md border-b border-white/5 py-2 px-6 flex justify-center items-center gap-1 z-10 sticky top-0">
+		<!-- Formatting Buttons with Active States -->
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('bold')"
+			:class="isBold ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Bold (Ctrl+B)"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path></svg>
+		</button>
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('italic')"
+			:class="isItalic ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Italic (Ctrl+I)"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4M14 4l-4 16M6 20h4"></path></svg>
+		</button>
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('underline')"
+			:class="isUnderline ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Underline (Ctrl+U)"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3M4 21h16"></path></svg>
+		</button>
+		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('justifyLeft')"
+			:class="alignment === 'left' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Align Left"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+		</button>
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('justifyCenter')"
+			:class="alignment === 'center' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Align Center"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M4 18h16"></path></svg>
+		</button>
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('justifyRight')"
+			:class="alignment === 'right' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Align Right"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 12h10M4 18h16"></path></svg>
+		</button>
+		<button
+			type="button"
+			@mousedown.prevent="execCommand('justifyFull')"
+			:class="alignment === 'justify' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+			class="p-2 hover:bg-white/10 rounded transition-colors"
+			title="Justify"
+		>
+			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+		</button>
+		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+		<!-- View Mode Toggle -->
+		<div class="flex items-center bg-white/5 rounded-lg p-0.5">
+			<button
+				type="button"
+				@click="viewMode = 'paginated'"
+				:class="viewMode === 'paginated' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+				class="px-3 py-1 text-xs font-medium rounded-md transition-colors"
+			>
+				{ i18n.T(ctx, "templates.view_paginated") }
+			</button>
+		</div>
+	</div>
+}

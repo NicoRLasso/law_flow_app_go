@@ -1,0 +1,54 @@
+package editor
+
+import (
+	"context"
+	"law_flow_app_go/models"
+)
+
+templ Canvas(ctx context.Context, template models.DocumentTemplate) {
+	<!-- Editor Canvas -->
+	<div
+		class="flex-1 bg-[#525659] overflow-auto relative"
+		id="editor-scroller"
+		@scroll="updateCurrentPage()"
+	>
+		<div class="flex justify-center py-8 px-4 min-w-fit">
+			<div
+				class="relative"
+				id="editor-wrapper"
+				:style="`width: ${pageWidth}px;`"
+			>
+				<!-- Page backgrounds (visual only) -->
+				<template x-for="page in totalPages" :key="'bg-' + page">
+					<div
+						class="absolute left-0 right-0 pointer-events-none"
+						:style="`top: ${(page - 1) * (pageHeight + pageGap)}px; height: ${pageHeight}px;`"
+					>
+						<!-- Shadow -->
+						<div class="absolute inset-0 bg-black/30 translate-x-1 translate-y-1 rounded-sm"></div>
+						<!-- White page background -->
+						<div class="absolute inset-0 bg-white rounded-sm shadow-xl"></div>
+						<!-- Page number -->
+						<div class="absolute -top-6 left-0 text-xs text-white/70 font-medium">
+							<span x-text="`Page ${page}`"></span>
+						</div>
+					</div>
+				</template>
+				<!-- Editable content -->
+				<div
+					id="editor-content"
+					contenteditable="true"
+					class="relative text-black outline-none text-[12pt] font-serif leading-relaxed z-10"
+					:style="`width: ${pageWidth}px; min-height: ${pageHeight}px; padding: ${pagePadding}px; box-sizing: border-box;`"
+					style={ GetPaperStyle(template) }
+					@keydown="handleKeydown($event)"
+					@input="handleInput()"
+				>
+					@templ.Raw(template.Content)
+				</div>
+			</div>
+		</div>
+		<!-- Bottom padding -->
+		<div class="h-16"></div>
+	</div>
+}
