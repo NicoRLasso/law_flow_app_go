@@ -476,3 +476,118 @@ func DeleteCaseRequestHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Request deleted successfully"})
 }
+
+// ClientCaseRequestHandler renders the case request modal for authenticated clients
+func ClientCaseRequestHandler(c echo.Context) error {
+	user := middleware.GetCurrentUser(c)
+	csrfToken := middleware.GetCSRFToken(c)
+
+	// Render the modal
+	component := partials.ClientCaseRequestModal(c.Request().Context(), user, csrfToken)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// ClientSubmitCaseRequestHandler handles the submission of a case request by an authenticated client
+func ClientSubmitCaseRequestHandler(c echo.Context) error {
+	user := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+
+	// Parse form data
+	description := strings.TrimSpace(c.FormValue("description"))
+
+	// Validate required fields
+	if description == "" {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, "<div class=\"text-red-500\">Description is required</div>")
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Description is required")
+	}
+
+	// Prepare user data
+	phone := ""
+	if user.PhoneNumber != nil {
+		phone = *user.PhoneNumber
+	}
+
+	docNumber := ""
+	if user.DocumentNumber != nil {
+		docNumber = *user.DocumentNumber
+	}
+
+	docTypeCode := ""
+	if user.DocumentType != nil {
+		docTypeCode = user.DocumentType.Code
+	} else if user.DocumentTypeID != nil {
+		var opt models.ChoiceOption
+		if err := db.DB.First(&opt, "id = ?", *user.DocumentTypeID).Error; err == nil {
+			docTypeCode = opt.Code
+		}
+	}
+
+	// Create case request
+	caseRequest := models.CaseRequest{
+		FirmID:         firm.ID,
+		Name:           user.Name,
+		Email:          user.Email,
+		Phone:          phone,
+		DocumentType:   docTypeCode,
+		DocumentTypeID: user.DocumentTypeID,
+		DocumentNumber: docNumber,
+		Description:    description,
+		Priority:       models.PriorityMedium, // Default priority
+		Status:         models.StatusPending,
+		IPAddress:      c.RealIP(),
+		UserAgent:      c.Request().UserAgent(),
+	}
+
+	// Handle optional file upload
+	file, err := c.FormFile("file")
+	if err == nil && file != nil {
+		// Validate document upload (includes PDF check)
+		if err := services.ValidateDocumentUpload(file); err != nil {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusBadRequest, "<div class=\"text-red-500\">"+err.Error()+"</div>")
+			}
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+
+		// Generate storage key and upload file
+		storageKey := services.GenerateCaseRequestFileKey(firm.ID, "requests", file.Filename)
+		uploadResult, err := services.Storage.Upload(context.Background(), file, storageKey)
+		if err != nil {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusInternalServerError, "<div class=\"text-red-500\">Failed to upload file</div>")
+			}
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to upload file")
+		}
+
+		// Store file metadata
+		caseRequest.FileName = uploadResult.FileName
+		caseRequest.FileOriginalName = file.Filename
+		caseRequest.FilePath = uploadResult.Key
+		caseRequest.FileSize = uploadResult.FileSize
+	}
+
+	// Save to database
+	if err := db.DB.Create(&caseRequest).Error; err != nil {
+		// Cleanup uploaded file on error
+		if caseRequest.FilePath != "" {
+			services.Storage.Delete(context.Background(), caseRequest.FilePath)
+		}
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusInternalServerError, "<div class=\"text-red-500\">Failed to submit request</div>")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to submit request")
+	}
+
+	// Create Audit Log
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionCreate, "CaseRequest", caseRequest.ID, "Request from "+caseRequest.Name, "Client submitted new case request", nil, caseRequest)
+
+	// Return success message
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return c.HTML(http.StatusOK, "<div class=\"p-4 bg-green-500/20 text-green-400 rounded-lg\">Request submitted successfully! We will contact you soon.</div>")
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "Request submitted successfully"})
+}

@@ -1,0 +1,92 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+)
+
+// ClientCaseRequestModal renders the modal for clients to request a new case
+templ ClientCaseRequestModal(ctx context.Context, user *models.User, csrfToken string) {
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" id="client-case-request-modal">
+		<div class="bg-card w-full max-w-lg rounded-xl shadow-2xl border border-white/10 m-4 animation-in fade-in zoom-in duration-200">
+			<!-- Header -->
+			<div class="flex items-center justify-between p-6 border-b border-white/10">
+				<h3 class="text-xl font-bold">{ i18n.T(ctx, "case.request.title") }</h3>
+				<button 
+					type="button" 
+					class="text-muted-foreground hover:text-foreground transition-colors"
+					onclick="document.getElementById('client-case-request-modal').remove()"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+			
+			<!-- Body -->
+			<form 
+				hx-post="/api/client/case-request" 
+				hx-encoding="multipart/form-data"
+				hx-target="#request-form-response"
+				class="p-6 space-y-6"
+			>
+				<input type="hidden" name="_csrf" value={ csrfToken } />
+				
+				<div id="request-form-response"></div>
+
+				<!-- Pre-filled User Info (Read-only) -->
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1">{ i18n.T(ctx, "users.table.name") }</label>
+						<input type="text" value={ user.Name } disabled class="w-full px-4 py-2 bg-muted/50 border border-white/10 rounded-lg text-muted-foreground cursor-not-allowed" />
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-1">{ i18n.T(ctx, "users.table.email") }</label>
+						<input type="text" value={ user.Email } disabled class="w-full px-4 py-2 bg-muted/50 border border-white/10 rounded-lg text-muted-foreground cursor-not-allowed" />
+					</div>
+				</div>
+
+				<!-- Description -->
+				<div>
+					@components.TextareaWithLabel(
+						i18n.T(ctx, "public.request.case_desc"),
+						"description",
+						i18n.T(ctx, "public.request.case_desc_ph"),
+						4,
+					)
+				</div>
+
+				<!-- File Upload -->
+				<div>
+					<label class="block text-sm font-medium mb-1">{ i18n.T(ctx, "public.request.support_doc") } <span class="text-muted-foreground font-normal">({ i18n.T(ctx, "common.optional") })</span></label>
+					<input 
+						type="file" 
+						name="file" 
+						accept=".pdf,application/pdf"
+						class="w-full text-base file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-base file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer" 
+					/>
+					<p class="mt-1 text-xs text-muted-foreground">{ i18n.T(ctx, "public.request.pdf_only") }</p>
+				</div>
+
+				<!-- Actions -->
+				<div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+					<button 
+						type="button" 
+						class="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
+						onclick="document.getElementById('client-case-request-modal').remove()"
+					>
+						{ i18n.T(ctx, "common.cancel") }
+					</button>
+					<button 
+						type="submit" 
+						class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
+					>
+						{ i18n.T(ctx, "public.request.submit_btn") }
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}

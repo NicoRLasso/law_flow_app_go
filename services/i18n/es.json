@@ -373,6 +373,10 @@
       "submit_btn": "Enviar Solicitud",
       "terms": "Al enviar este formulario, usted acepta nuestros términos de servicio y política de privacidad."
     },
+    "case_request": {
+      "title": "Solicitar Nuevo Caso",
+      "new_btn": "Solicitar Nuevo Caso"
+    },
     "success": {
       "title": "Solicitud Enviada",
       "header": "¡Solicitud Enviada Exitosamente!",
@@ -404,11 +408,14 @@
     "welcome": "Bienvenido de nuevo, {name}",
     "overview": "Resumen General",
     "subtitle": "Esto es lo que está pasando con tu práctica hoy.",
+    "subtitle_client": "Bienvenido a su portal de cliente.",
     "stats": {
       "active_cases": "Casos Activos",
+      "my_active_cases": "Mis Casos Activos",
       "total_clients": "Clientes Totales",
       "completed_monthly": "Completados Este Mes",
       "pending_tasks": "Tareas Pendientes",
+      "my_upcoming_appointments": "Mis Próximas Citas",
       "urgent_label": "Urgente"
     },
     "firm_info": {

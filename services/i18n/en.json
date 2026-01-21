@@ -375,6 +375,10 @@
       "submit_btn": "Submit Request",
       "terms": "By submitting this form, you agree to our terms of service and privacy policy."
     },
+    "case_request": {
+      "title": "Request New Case",
+      "new_btn": "Request New Case"
+    },
     "success": {
       "title": "Request Submitted",
       "header": "Request Submitted Successfully!",
@@ -406,11 +410,14 @@
     "welcome": "Welcome back, {name}",
     "overview": "Overview",
     "subtitle": "Here's what's happening with your practice today.",
+    "subtitle_client": "Welcome to your client portal.",
     "stats": {
       "active_cases": "Active Cases",
+      "my_active_cases": "My Active Cases",
       "total_clients": "Total Clients",
       "completed_monthly": "Completed This Month",
       "pending_tasks": "Pending Tasks",
+      "my_upcoming_appointments": "My Upcoming Appointments",
       "urgent_label": "Urgent"
     },
     "firm_info": {

@@ -411,16 +411,37 @@ func main() {
 		protected.GET("/cases", handlers.CasesPageHandler)
 		protected.GET("/cases/:id", handlers.GetCaseDetailHandler)
 
+		// Case Routes Configuration
+
+		// 1. Client Accessible Case Routes (Admin, Lawyer, Client) - STRICTLY for viewing list and documents
+		clientCaseRoutes := protected.Group("/api/cases")
+		clientCaseRoutes.Use(middleware.RequireRole("admin", "lawyer", "client"))
+		{
+			clientCaseRoutes.GET("", handlers.GetCasesHandler)
+
+			// Document routes (Audit logs in handlers ensure strict permission checks)
+			clientCaseRoutes.GET("/:id/documents", handlers.GetCaseDocumentsHandler)
+			clientCaseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
+			clientCaseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
+			clientCaseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
+		}
+
+		// Client Case Request Routes (Authenticated Clients)
+		clientRequestRoutes := protected.Group("/api/client")
+		clientRequestRoutes.Use(middleware.RequireRole("client"))
+		{
+			clientRequestRoutes.GET("/case-request", handlers.ClientCaseRequestHandler)
+			clientRequestRoutes.POST("/case-request", handlers.ClientSubmitCaseRequestHandler)
+		}
+
+		// 2. Restricted Case Routes (Admin, Lawyer ONLY) - Management and editing
 		caseRoutes := protected.Group("/api/cases")
 		caseRoutes.Use(middleware.RequireRole("admin", "lawyer"))
 		{
-			caseRoutes.GET("", handlers.GetCasesHandler)
+			// Note: GET "" and document viewing routes are in clientCaseRoutes above
+
 			caseRoutes.GET("/:id/edit", handlers.GetCaseEditFormHandler)
 			caseRoutes.PUT("/:id", handlers.UpdateCaseHandler)
-			caseRoutes.GET("/:id/documents", handlers.GetCaseDocumentsHandler)
-			caseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
-			caseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
-			caseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
 			caseRoutes.PATCH("/:id/documents/:docId/visibility", handlers.ToggleDocumentVisibilityHandler)
 			// Collaborator routes
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)

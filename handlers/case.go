@@ -62,6 +62,9 @@ func GetCasesHandler(c echo.Context) error {
 			db.DB.Where("assigned_to_id = ?", currentUser.ID).
 				Or("EXISTS (SELECT 1 FROM case_collaborators WHERE case_collaborators.case_id = cases.id AND case_collaborators.user_id = ?)", currentUser.ID),
 		)
+	} else if currentUser.Role == "client" {
+		// Clients see only their own cases
+		query = query.Where("client_id = ?", currentUser.ID)
 	}
 	// Admins see all cases (no additional filter)
 
@@ -164,12 +167,16 @@ func GetCaseDetailHandler(c echo.Context) error {
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 
 	// Apply role-based filter
+	// Apply role-based filter
 	if currentUser.Role == "lawyer" {
 		// Lawyers see cases assigned to them OR where they are collaborators
 		query = query.Where(
 			db.DB.Where("assigned_to_id = ?", currentUser.ID).
 				Or("EXISTS (SELECT 1 FROM case_collaborators WHERE case_collaborators.case_id = cases.id AND case_collaborators.user_id = ?)", currentUser.ID),
 		)
+	} else if currentUser.Role == "client" {
+		// Clients see only their own cases
+		query = query.Where("client_id = ?", currentUser.ID)
 	}
 
 	// Fetch case with all relationships
@@ -241,6 +248,8 @@ func GetCaseDocumentsHandler(c echo.Context) error {
 	caseQuery := middleware.GetFirmScopedQuery(c, db.DB)
 	if currentUser.Role == "lawyer" {
 		caseQuery = caseQuery.Where("assigned_to_id = ?", currentUser.ID)
+	} else if currentUser.Role == "client" {
+		caseQuery = caseQuery.Where("client_id = ?", currentUser.ID)
 	}
 
 	var caseRecord models.Case
@@ -315,6 +324,8 @@ func DownloadCaseDocumentHandler(c echo.Context) error {
 	caseQuery := middleware.GetFirmScopedQuery(c, db.DB)
 	if currentUser.Role == "lawyer" {
 		caseQuery = caseQuery.Where("assigned_to_id = ?", currentUser.ID)
+	} else if currentUser.Role == "client" {
+		caseQuery = caseQuery.Where("client_id = ?", currentUser.ID)
 	}
 
 	var caseRecord models.Case
@@ -390,6 +401,8 @@ func ViewCaseDocumentHandler(c echo.Context) error {
 	caseQuery := middleware.GetFirmScopedQuery(c, db.DB)
 	if currentUser.Role == "lawyer" {
 		caseQuery = caseQuery.Where("assigned_to_id = ?", currentUser.ID)
+	} else if currentUser.Role == "client" {
+		caseQuery = caseQuery.Where("client_id = ?", currentUser.ID)
 	}
 
 	var caseRecord models.Case
@@ -453,6 +466,8 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 	caseQuery := middleware.GetFirmScopedQuery(c, db.DB)
 	if currentUser.Role == "lawyer" {
 		caseQuery = caseQuery.Where("assigned_to_id = ?", currentUser.ID)
+	} else if currentUser.Role == "client" {
+		caseQuery = caseQuery.Where("client_id = ?", currentUser.ID)
 	}
 
 	var caseRecord models.Case
@@ -589,6 +604,8 @@ func ToggleDocumentVisibilityHandler(c echo.Context) error {
 			db.DB.Where("assigned_to_id = ?", currentUser.ID).
 				Or("EXISTS (SELECT 1 FROM case_collaborators WHERE case_collaborators.case_id = cases.id AND case_collaborators.user_id = ?)", currentUser.ID),
 		)
+	} else if currentUser.Role == "client" {
+		caseQuery = caseQuery.Where("client_id = ?", currentUser.ID)
 	}
 
 	var caseRecord models.Case

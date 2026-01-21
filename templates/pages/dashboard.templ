@@ -19,7 +19,13 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 				<!-- Welcome Section -->
 				<div class="mb-8">
 					<h2 class="text-3xl font-bold mb-2">{ i18n.T(ctx, "dashboard.welcome", map[string]interface{}{"name": user.Name}) }</h2>
-					<p class="text-muted-foreground">{ i18n.T(ctx, "dashboard.subtitle") }</p>
+					<p class="text-muted-foreground">
+						if user.Role == "client" {
+							{ i18n.T(ctx, "dashboard.subtitle_client") }
+						} else {
+							{ i18n.T(ctx, "dashboard.subtitle") }
+						}
+					</p>
 				</div>
 				<!-- Stats Grid -->
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -34,35 +40,43 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							// <span class="text-xs text-accent font-medium">+12%</span>
 						</div>
 						<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.ActiveCases) }</h3>
-						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
+						if user.Role == "client" {
+							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.my_active_cases") }</p>
+						} else {
+							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
+						}
 					</div>
-					<!-- Stat Card 2: Total Clients -->
-					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
-						<div class="flex items-center justify-between mb-4">
-							<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-								<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-								</svg>
+					<!-- Stat Card 2: Total Clients (Hidden for Clients) -->
+					if user.Role != "client" {
+						<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
+							<div class="flex items-center justify-between mb-4">
+								<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+									<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+									</svg>
+								</div>
+								// <span class="text-xs text-accent font-medium">+5%</span>
 							</div>
-							// <span class="text-xs text-accent font-medium">+5%</span>
+							<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.TotalClients) }</h3>
+							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
 						</div>
-						<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.TotalClients) }</h3>
-						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
-					</div>
-					<!-- Stat Card 3: Completed Monthly -->
-					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
-						<div class="flex items-center justify-between mb-4">
-							<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-								<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-								</svg>
+					}
+					<!-- Stat Card 3: Completed Monthly (Hidden for Clients) -->
+					if user.Role != "client" {
+						<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
+							<div class="flex items-center justify-between mb-4">
+								<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+									<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+									</svg>
+								</div>
+								// <span class="text-xs text-accent font-medium">+8%</span>
 							</div>
-							// <span class="text-xs text-accent font-medium">+8%</span>
+							<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.CompletedMonthly) }</h3>
+							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
 						</div>
-						<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.CompletedMonthly) }</h3>
-						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
-					</div>
-					<!-- Stat Card 4: Pending Tasks -->
+					}
+					<!-- Stat Card 4: Pending Tasks / Appointments -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
 						<div class="flex items-center justify-between mb-4">
 							<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
@@ -73,10 +87,14 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							<span class="text-xs text-accent font-medium">{ i18n.T(ctx, "dashboard.stats.urgent_label") }</span>
 						</div>
 						<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.PendingTasks) }</h3>
-						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
+						if user.Role == "client" {
+							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.my_upcoming_appointments") }</p>
+						} else {
+							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
+						}
 					</div>
 				</div>
-				<div class="grid grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
+				<div class={ "grid gap-8 mb-8", templ.KV("grid-cols-2 lg:grid-cols-2", user.Role != "client"), templ.KV("grid-cols-1 lg:grid-cols-2", user.Role == "client") }>
 					<!-- Recent Cases -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10">
 						<div class="flex items-center justify-between mb-4">
