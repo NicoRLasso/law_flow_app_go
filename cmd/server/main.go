@@ -192,9 +192,12 @@ func main() {
 	if cfg.Environment == "production" {
 		staticGroup.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 			return func(c echo.Context) error {
-				// Cache static assets for 1 year
-				c.Response().Header().Set("Cache-Control", "public, max-age=31536000")
-				return next(c)
+				err := next(c)
+				// Only cache successful responses
+				if c.Response().Status >= 200 && c.Response().Status < 300 {
+					c.Response().Header().Set("Cache-Control", "public, max-age=31536000")
+				}
+				return err
 			}
 		})
 	}
