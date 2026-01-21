@@ -3,12 +3,18 @@ FROM golang:1.24-alpine AS builder
 
 RUN apk add --no-cache gcc musl-dev
 
+# Install templ CLI
+RUN go install github.com/a-h/templ/cmd/templ@latest
+
 WORKDIR /app
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
+
+# Generate templ files
+RUN templ generate
 
 # Build with CGO for SQLite
 RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go
