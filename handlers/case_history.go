@@ -312,7 +312,23 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 	`)
 }
 
-// saveHistoricalCaseDocument saves an uploaded document to the case
+// fetchDropdownOptions is a helper to fetch and return dropdown options as JSON
+func fetchDropdownOptions(c echo.Context, queryField, queryValue string, model interface{}, responseKey string) error {
+	if queryValue == "" {
+		return c.JSON(http.StatusOK, map[string]interface{}{responseKey: []interface{}{}})
+	}
+
+	query := middleware.GetFirmScopedQuery(c, db.DB)
+	if err := query.
+		Where(queryField+" = ?", queryValue).
+		Where("is_active = ?", true).
+		Order("name ASC").
+		Find(model).Error; err != nil {
+		return c.JSON(http.StatusOK, map[string]interface{}{responseKey: []interface{}{}})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{responseKey: model})
+}
 func saveHistoricalCaseDocument(c echo.Context, fileHeader *multipart.FileHeader, caseID, firmID, uploadedByID string) error {
 	// Generate storage key and upload file
 	storageKey := services.GenerateCaseDocumentKey(firmID, caseID, fileHeader.Filename)
@@ -345,40 +361,12 @@ func saveHistoricalCaseDocument(c echo.Context, fileHeader *multipart.FileHeader
 
 // GetHistoricalCaseBranchesHandler returns branches for a domain (JSON for Alpine.js)
 func GetHistoricalCaseBranchesHandler(c echo.Context) error {
-	domainID := c.QueryParam("domain_id")
-	if domainID == "" {
-		return c.JSON(http.StatusOK, map[string]interface{}{"branches": []interface{}{}})
-	}
-
 	var branches []models.CaseBranch
-	branchQuery := middleware.GetFirmScopedQuery(c, db.DB)
-	if err := branchQuery.
-		Where("domain_id = ?", domainID).
-		Where("is_active = ?", true).
-		Order("name ASC").
-		Find(&branches).Error; err != nil {
-		return c.JSON(http.StatusOK, map[string]interface{}{"branches": []interface{}{}})
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{"branches": branches})
+	return fetchDropdownOptions(c, "domain_id", c.QueryParam("domain_id"), &branches, "branches")
 }
 
 // GetHistoricalCaseSubtypesHandler returns subtypes for a branch (JSON for Alpine.js)
 func GetHistoricalCaseSubtypesHandler(c echo.Context) error {
-	branchID := c.QueryParam("branch_id")
-	if branchID == "" {
-		return c.JSON(http.StatusOK, map[string]interface{}{"subtypes": []interface{}{}})
-	}
-
 	var subtypes []models.CaseSubtype
-	subtypeQuery := middleware.GetFirmScopedQuery(c, db.DB)
-	if err := subtypeQuery.
-		Where("branch_id = ?", branchID).
-		Where("is_active = ?", true).
-		Order("name ASC").
-		Find(&subtypes).Error; err != nil {
-		return c.JSON(http.StatusOK, map[string]interface{}{"subtypes": []interface{}{}})
-	}
-
-	return c.JSON(http.StatusOK, map[string]interface{}{"subtypes": subtypes})
+	return fetchDropdownOptions(c, "branch_id", c.QueryParam("branch_id"), &subtypes, "subtypes")
 }

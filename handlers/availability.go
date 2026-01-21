@@ -237,38 +237,67 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, slot)
 }
 
-// DeleteAvailabilityHandler deletes an availability slot
-func DeleteAvailabilityHandler(c echo.Context) error {
-	currentUser := middleware.GetCurrentUser(c)
-	slotID := c.Param("id")
+// deleteEntityConfig holds configuration for the generic delete handler
+type deleteEntityConfig struct {
+	EntityName  string
+	AuditType   string
+	TriggerName string
+	FetchFunc   func(id string) (interface{}, string, error) // Returns entity, ownerID, error
+	DeleteFunc  func(id string) error
+}
 
-	slot, err := services.GetAvailabilityByID(slotID)
+// handleDeleteEntity is a generic helper for deleting entities with ownership check and audit logging
+func handleDeleteEntity(c echo.Context, id string, cfg deleteEntityConfig) error {
+	currentUser := middleware.GetCurrentUser(c)
+
+	entity, ownerID, err := cfg.FetchFunc(id)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Slot not found")
+		return echo.NewHTTPError(http.StatusNotFound, cfg.EntityName+" not found")
 	}
 
 	// Verify ownership
-	if slot.LawyerID != currentUser.ID && currentUser.Role != "admin" {
+	if ownerID != currentUser.ID && currentUser.Role != "admin" {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
 	}
 
-	if err := services.DeleteAvailabilitySlot(slotID); err != nil {
+	if err := cfg.DeleteFunc(id); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to delete slot</div>`)
+			return c.HTML(http.StatusOK, fmt.Sprintf(`<div class="text-red-500 text-sm">Failed to delete %s</div>`, strings.ToLower(cfg.EntityName)))
 		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete slot")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete "+strings.ToLower(cfg.EntityName))
 	}
 
 	// Audit logging
 	auditCtx := middleware.GetAuditContext(c)
-	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete, "Availability", slotID, "Availability Slot", "Deleted availability slot", slot, nil)
+	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete, cfg.AuditType, id, cfg.EntityName, "Deleted "+strings.ToLower(cfg.EntityName), entity, nil)
 
 	if c.Request().Header.Get("HX-Request") == "true" {
-		c.Response().Header().Set("HX-Trigger", "availability-updated")
+		c.Response().Header().Set("HX-Trigger", cfg.TriggerName)
 		return c.HTML(http.StatusOK, "")
 	}
 
 	return c.NoContent(http.StatusNoContent)
+}
+
+// DeleteAvailabilityHandler deletes an availability slot
+func DeleteAvailabilityHandler(c echo.Context) error {
+	slotID := c.Param("id")
+
+	cfg := deleteEntityConfig{
+		EntityName:  "Availability Slot",
+		AuditType:   "Availability",
+		TriggerName: "availability-updated",
+		FetchFunc: func(id string) (interface{}, string, error) {
+			slot, err := services.GetAvailabilityByID(id)
+			if err != nil {
+				return nil, "", err
+			}
+			return slot, slot.LawyerID, nil
+		},
+		DeleteFunc: services.DeleteAvailabilitySlot,
+	}
+
+	return handleDeleteEntity(c, slotID, cfg)
 }
 
 // GetBlockedDatesHandler returns blocked dates for the current lawyer
@@ -350,36 +379,23 @@ func CreateBlockedDateHandler(c echo.Context) error {
 
 // DeleteBlockedDateHandler deletes a blocked date
 func DeleteBlockedDateHandler(c echo.Context) error {
-	currentUser := middleware.GetCurrentUser(c)
 	dateID := c.Param("id")
 
-	blockedDate, err := services.GetBlockedDateByID(dateID)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Blocked date not found")
+	cfg := deleteEntityConfig{
+		EntityName:  "Blocked Date",
+		AuditType:   "BlockedDate",
+		TriggerName: "blocked-dates-updated",
+		FetchFunc: func(id string) (interface{}, string, error) {
+			date, err := services.GetBlockedDateByID(id)
+			if err != nil {
+				return nil, "", err
+			}
+			return date, date.LawyerID, nil
+		},
+		DeleteFunc: services.DeleteBlockedDate,
 	}
 
-	// Verify ownership
-	if blockedDate.LawyerID != currentUser.ID && currentUser.Role != "admin" {
-		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
-	}
-
-	if err := services.DeleteBlockedDate(dateID); err != nil {
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to delete blocked date</div>`)
-		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete blocked date")
-	}
-
-	// Audit logging
-	auditCtx := middleware.GetAuditContext(c)
-	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete, "BlockedDate", dateID, "Blocked Date", "Deleted blocked date", blockedDate, nil)
-
-	if c.Request().Header.Get("HX-Request") == "true" {
-		c.Response().Header().Set("HX-Trigger", "blocked-dates-updated")
-		return c.HTML(http.StatusOK, "")
-	}
-
-	return c.NoContent(http.StatusNoContent)
+	return handleDeleteEntity(c, dateID, cfg)
 }
 
 // UpdateBufferSettingsHandler updates the firm's buffer time settings

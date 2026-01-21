@@ -13,6 +13,23 @@ import (
 	"github.com/resend/resend-go/v2"
 )
 
+// buildEmailWithFallback handles the common logic of loading a template or falling back to a plain text string
+func buildEmailWithFallback(templateName string, tmplData interface{}, toEmail, subject, fallbackHTML, fallbackText string) *Email {
+	htmlBody, textBody, err := loadTemplate(templateName, tmplData)
+	if err != nil {
+		log.Printf("Error loading %s email template: %v", templateName, err)
+		htmlBody = fallbackHTML
+		textBody = fallbackText
+	}
+
+	return &Email{
+		To:       []string{toEmail},
+		Subject:  subject,
+		HTMLBody: htmlBody,
+		TextBody: textBody,
+	}
+}
+
 // Email represents an email message
 type Email struct {
 	To       []string
@@ -162,20 +179,11 @@ func BuildWelcomeEmail(userEmail, userName string) *Email {
 		UserName: userName,
 	}
 
-	htmlBody, textBody, err := loadTemplate("welcome", data)
-	if err != nil {
-		log.Printf("Error loading welcome email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Welcome to lexlegalcloud App, %s!", userName)
-		htmlBody = fmt.Sprintf("<p>Welcome to lexlegalcloud App, %s!</p>", userName)
-	}
+	fallbackText := fmt.Sprintf("Welcome to lexlegalcloud App, %s!", userName)
+	fallbackHTML := fmt.Sprintf("<p>Welcome to lexlegalcloud App, %s!</p>", userName)
+	subject := "Welcome to lexlegalcloud App!"
 
-	return &Email{
-		To:       []string{userEmail},
-		Subject:  "Welcome to lexlegalcloud App!",
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("welcome", data, userEmail, subject, fallbackHTML, fallbackText)
 }
 
 // FirmSetupEmailData contains data for the firm setup email template
@@ -191,20 +199,11 @@ func BuildFirmSetupEmail(userEmail, userName, firmName string) *Email {
 		FirmName: firmName,
 	}
 
-	htmlBody, textBody, err := loadTemplate("firm_setup", data)
-	if err != nil {
-		log.Printf("Error loading firm setup email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Congratulations %s! Your firm %s has been set up successfully.", userName, firmName)
-		htmlBody = fmt.Sprintf("<p>Congratulations %s! Your firm %s has been set up successfully.</p>", userName, firmName)
-	}
+	fallbackText := fmt.Sprintf("Congratulations %s! Your firm %s has been set up successfully.", userName, firmName)
+	fallbackHTML := fmt.Sprintf("<p>Congratulations %s! Your firm %s has been set up successfully.</p>", userName, firmName)
+	subject := "Firm Setup Complete - lexlegalcloud App"
 
-	return &Email{
-		To:       []string{userEmail},
-		Subject:  "Firm Setup Complete - lexlegalcloud App",
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("firm_setup", data, userEmail, subject, fallbackHTML, fallbackText)
 }
 
 // PasswordResetEmailData contains data for the password reset email template
@@ -222,20 +221,11 @@ func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt string) *
 		ExpiresAt: expiresAt,
 	}
 
-	htmlBody, textBody, err := loadTemplate("password_reset", data)
-	if err != nil {
-		log.Printf("Error loading password reset email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Password reset requested for %s. Reset link: %s (expires: %s)", userName, resetLink, expiresAt)
-		htmlBody = fmt.Sprintf("<p>Password reset requested for %s.</p><p>Reset link: <a href=\"%s\">%s</a></p><p>Expires: %s</p>", userName, resetLink, resetLink, expiresAt)
-	}
+	fallbackText := fmt.Sprintf("Password reset requested for %s. Reset link: %s (expires: %s)", userName, resetLink, expiresAt)
+	fallbackHTML := fmt.Sprintf("<p>Password reset requested for %s.</p><p>Reset link: <a href=\"%s\">%s</a></p><p>Expires: %s</p>", userName, resetLink, resetLink, expiresAt)
+	subject := "Password Reset Request - lexlegalcloud App"
 
-	return &Email{
-		To:       []string{userEmail},
-		Subject:  "Password Reset Request - lexlegalcloud App",
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("password_reset", data, userEmail, subject, fallbackHTML, fallbackText)
 }
 
 // CaseRequestRejectionEmailData contains data for the case request rejection email template
@@ -257,20 +247,11 @@ func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejection
 		FirmPhone:     firmPhone,
 	}
 
-	htmlBody, textBody, err := loadTemplate("case_request_rejection", data)
-	if err != nil {
-		log.Printf("Error loading case request rejection email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Dear %s,\n\nThank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.\n\nReason:\n%s\n\nIf you have any questions, please contact us at %s or %s.\n\nBest regards,\n%s", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Thank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.</p><p><strong>Reason:</strong><br>%s</p><p>If you have any questions, please contact us at %s or %s.</p><p>Best regards,<br>%s</p>", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nThank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.\n\nReason:\n%s\n\nIf you have any questions, please contact us at %s or %s.\n\nBest regards,\n%s", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Thank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.</p><p><strong>Reason:</strong><br>%s</p><p>If you have any questions, please contact us at %s or %s.</p><p>Best regards,<br>%s</p>", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
+	subject := fmt.Sprintf("Case Request Update - %s", firmName)
 
-	return &Email{
-		To:       []string{clientEmail},
-		Subject:  fmt.Sprintf("Case Request Update - %s", firmName),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("case_request_rejection", data, clientEmail, subject, fallbackHTML, fallbackText)
 }
 
 // CaseAcceptanceEmailData contains data for the case acceptance email template
@@ -288,20 +269,11 @@ func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber stri
 		CaseNumber: caseNumber,
 	}
 
-	htmlBody, textBody, err := loadTemplate("case_acceptance", data)
-	if err != nil {
-		log.Printf("Error loading case acceptance email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Dear %s,\n\nWe are pleased to inform you that %s has accepted your case request.\n\nCase Number: %s\n\nYour assigned lawyer will contact you shortly.\n\nBest regards,\n%s", clientName, firmName, caseNumber, firmName)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>We are pleased to inform you that %s has accepted your case request.</p><p><strong>Case Number: %s</strong></p><p>Your assigned lawyer will contact you shortly.</p><p>Best regards,<br>%s</p>", clientName, firmName, caseNumber, firmName)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nWe are pleased to inform you that %s has accepted your case request.\n\nCase Number: %s\n\nYour assigned lawyer will contact you shortly.\n\nBest regards,\n%s", clientName, firmName, caseNumber, firmName)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>We are pleased to inform you that %s has accepted your case request.</p><p><strong>Case Number: %s</strong></p><p>Your assigned lawyer will contact you shortly.</p><p>Best regards,<br>%s</p>", clientName, firmName, caseNumber, firmName)
+	subject := fmt.Sprintf("Case Accepted - %s", firmName)
 
-	return &Email{
-		To:       []string{clientEmail},
-		Subject:  fmt.Sprintf("Case Accepted - %s", firmName),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("case_acceptance", data, clientEmail, subject, fallbackHTML, fallbackText)
 }
 
 // LawyerAssignmentEmailData contains data for the lawyer assignment email template
@@ -319,20 +291,11 @@ func BuildLawyerAssignmentEmail(lawyerEmail, lawyerName, caseNumber, clientName 
 		ClientName: clientName,
 	}
 
-	htmlBody, textBody, err := loadTemplate("lawyer_assignment", data)
-	if err != nil {
-		log.Printf("Error loading lawyer assignment email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Dear %s,\n\nA new case has been assigned to you.\n\nCase Number: %s\nClient Name: %s\n\nPlease log in to the dashboard to view the complete case information.\n\nBest regards", lawyerName, caseNumber, clientName)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>A new case has been assigned to you.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s</p><p>Please log in to the dashboard to view the complete case information.</p>", lawyerName, caseNumber, clientName)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nA new case has been assigned to you.\n\nCase Number: %s\nClient Name: %s\n\nPlease log in to the dashboard to view the complete case information.\n\nBest regards", lawyerName, caseNumber, clientName)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>A new case has been assigned to you.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s</p><p>Please log in to the dashboard to view the complete case information.</p>", lawyerName, caseNumber, clientName)
+	subject := fmt.Sprintf("New Case Assigned - %s", caseNumber)
 
-	return &Email{
-		To:       []string{lawyerEmail},
-		Subject:  fmt.Sprintf("New Case Assigned - %s", caseNumber),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("lawyer_assignment", data, lawyerEmail, subject, fallbackHTML, fallbackText)
 }
 
 // CollaboratorAddedEmailData contains data for the collaborator added email template
@@ -352,20 +315,11 @@ func BuildCollaboratorAddedEmail(collaboratorEmail, collaboratorName, caseNumber
 		AssignedLawyer:   assignedLawyer,
 	}
 
-	htmlBody, textBody, err := loadTemplate("collaborator_added", data)
-	if err != nil {
-		log.Printf("Error loading collaborator added email template: %v", err)
-		// Fallback to simple text email
-		textBody = fmt.Sprintf("Dear %s,\n\nYou have been added as a collaborator on a case.\n\nCase Number: %s\nClient Name: %s\nPrimary Lawyer: %s\n\nPlease log in to the dashboard to view the case details.\n\nBest regards", collaboratorName, caseNumber, clientName, assignedLawyer)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>You have been added as a collaborator on a case.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s<br><strong>Primary Lawyer:</strong> %s</p><p>Please log in to the dashboard to view the case details.</p>", collaboratorName, caseNumber, clientName, assignedLawyer)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nYou have been added as a collaborator on a case.\n\nCase Number: %s\nClient Name: %s\nPrimary Lawyer: %s\n\nPlease log in to the dashboard to view the case details.\n\nBest regards", collaboratorName, caseNumber, clientName, assignedLawyer)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>You have been added as a collaborator on a case.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s<br><strong>Primary Lawyer:</strong> %s</p><p>Please log in to the dashboard to view the case details.</p>", collaboratorName, caseNumber, clientName, assignedLawyer)
+	subject := fmt.Sprintf("Added as Collaborator - Case %s", caseNumber)
 
-	return &Email{
-		To:       []string{collaboratorEmail},
-		Subject:  fmt.Sprintf("Added as Collaborator - Case %s", caseNumber),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("collaborator_added", data, collaboratorEmail, subject, fallbackHTML, fallbackText)
 }
 
 // AppointmentConfirmationEmailData contains data for appointment confirmation email
@@ -383,19 +337,11 @@ type AppointmentConfirmationEmailData struct {
 
 // BuildAppointmentConfirmationEmail creates a confirmation email for new appointments
 func BuildAppointmentConfirmationEmail(clientEmail string, data AppointmentConfirmationEmailData) *Email {
-	htmlBody, textBody, err := loadTemplate("appointment_confirmation", data)
-	if err != nil {
-		log.Printf("Error loading appointment confirmation email template: %v", err)
-		textBody = fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been confirmed.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been confirmed.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been confirmed.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been confirmed.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+	subject := fmt.Sprintf("Appointment Confirmed - %s", data.FirmName)
 
-	return &Email{
-		To:       []string{clientEmail},
-		Subject:  fmt.Sprintf("Appointment Confirmed - %s", data.FirmName),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("appointment_confirmation", data, clientEmail, subject, fallbackHTML, fallbackText)
 }
 
 // AppointmentReminderEmailData contains data for appointment reminder email
@@ -412,19 +358,11 @@ type AppointmentReminderEmailData struct {
 
 // BuildAppointmentReminderEmail creates a reminder email for upcoming appointments
 func BuildAppointmentReminderEmail(clientEmail string, data AppointmentReminderEmailData) *Email {
-	htmlBody, textBody, err := loadTemplate("appointment_reminder", data)
-	if err != nil {
-		log.Printf("Error loading appointment reminder email template: %v", err)
-		textBody = fmt.Sprintf("Dear %s,\n\nReminder: You have an appointment tomorrow with %s.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Reminder: You have an appointment tomorrow with %s.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nReminder: You have an appointment tomorrow with %s.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Reminder: You have an appointment tomorrow with %s.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
+	subject := fmt.Sprintf("Appointment Reminder - Tomorrow @ %s", data.Time)
 
-	return &Email{
-		To:       []string{clientEmail},
-		Subject:  fmt.Sprintf("Appointment Reminder - Tomorrow @ %s", data.Time),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("appointment_reminder", data, clientEmail, subject, fallbackHTML, fallbackText)
 }
 
 // AppointmentCancelledEmailData contains data for appointment cancellation email
@@ -440,19 +378,11 @@ type AppointmentCancelledEmailData struct {
 
 // BuildAppointmentCancelledEmail creates a cancellation notification email
 func BuildAppointmentCancelledEmail(clientEmail string, data AppointmentCancelledEmailData) *Email {
-	htmlBody, textBody, err := loadTemplate("appointment_cancelled", data)
-	if err != nil {
-		log.Printf("Error loading appointment cancelled email template: %v", err)
-		textBody = fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been cancelled.\n\nDate: %s\nTime: %s\n\nTo book a new appointment: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
-		htmlBody = fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been cancelled.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s</p><p><a href=\"%s\">Book a new appointment</a></p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
-	}
+	fallbackText := fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been cancelled.\n\nDate: %s\nTime: %s\n\nTo book a new appointment: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been cancelled.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s</p><p><a href=\"%s\">Book a new appointment</a></p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
+	subject := fmt.Sprintf("Appointment Cancelled - %s", data.FirmName)
 
-	return &Email{
-		To:       []string{clientEmail},
-		Subject:  fmt.Sprintf("Appointment Cancelled - %s", data.FirmName),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("appointment_cancelled", data, clientEmail, subject, fallbackHTML, fallbackText)
 }
 
 // LawyerAppointmentNotificationEmailData contains data for lawyer notification email
@@ -514,17 +444,9 @@ func BuildNewUserWelcomeEmail(userEmail, userName, password, loginURL string) *E
 		LoginURL:  loginURL,
 	}
 
-	htmlBody, textBody, err := loadTemplate("new_user_welcome", data)
-	if err != nil {
-		log.Printf("Error loading new user welcome email template: %v", err)
-		textBody = fmt.Sprintf("Welcome to lexlegalcloud!\n\nHello %s,\n\nA new account has been created for you.\nUsername: %s\nPassword: %s\n\nPlease log in at: %s", userName, userEmail, password, loginURL)
-		htmlBody = fmt.Sprintf("<p>Welcome to lexlegalcloud!</p><p>Hello %s,</p><p>A new account has been created for you.</p><p>Username: %s<br>Password: %s</p><p>Please log in at: <a href=\"%s\">%s</a></p>", userName, userEmail, password, loginURL, loginURL)
-	}
+	fallbackText := fmt.Sprintf("Welcome to lexlegalcloud!\n\nHello %s,\n\nA new account has been created for you.\nUsername: %s\nPassword: %s\n\nPlease log in at: %s", userName, userEmail, password, loginURL)
+	fallbackHTML := fmt.Sprintf("<p>Welcome to lexlegalcloud!</p><p>Hello %s,</p><p>A new account has been created for you.</p><p>Username: %s<br>Password: %s</p><p>Please log in at: <a href=\"%s\">%s</a></p>", userName, userEmail, password, loginURL, loginURL)
+	subject := "Welcome to lexlegalcloud - Your Account Credentials"
 
-	return &Email{
-		To:       []string{userEmail},
-		Subject:  "Welcome to lexlegalcloud - Your Account Credentials",
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+	return buildEmailWithFallback("new_user_welcome", data, userEmail, subject, fallbackHTML, fallbackText)
 }

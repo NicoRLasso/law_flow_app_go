@@ -61,6 +61,6 @@ docker-build: ## Build Docker image
 docker-run: ## Run Docker container locally
 	docker run -p 8080:8080 --env-file .env -v $(PWD)/db:/app/db lexlegalcloud-app
 
-dupl: ## Find duplicate code (threshold: 100 tokens)
+dupl: ## Find duplicate code (threshold: 100 tokens), excluding templ files
 	@test -f $(HOME)/go/bin/dupl || { echo "Installing dupl..."; go install github.com/mibk/dupl@latest; }
-	$(HOME)/go/bin/dupl -t 100 .
+	find . -type f -name "*.go" -not -name "*_templ.go" | $(HOME)/go/bin/dupl -files -t 100
