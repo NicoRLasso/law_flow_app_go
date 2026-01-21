@@ -10,7 +10,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 	<div
 		id="template-workspace"
 		class="flex flex-col h-[calc(100vh-140px)]"
-		x-data="templateEditor()"
+		x-data={ "templateEditor(" + getPageHeight(template) + ")" }
 		x-init="init()"
 		@click="showContextMenu = false"
 		@contextmenu.prevent="openContextMenu($event)"
@@ -122,29 +122,9 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 			</button>
 			<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
-			<!-- Page Break Button -->
-			<button
-				type="button"
-				@mousedown.prevent="insertPageBreak()"
-				class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground"
-				title={ i18n.T(ctx, "templates.insert_page_break") }
-			>
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16"></path>
-				</svg>
-			</button>
 			<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
 			<!-- View Mode Toggle -->
 			<div class="flex items-center bg-white/5 rounded-lg p-0.5">
-				<button
-					type="button"
-					@click="viewMode = 'continuous'"
-					:class="viewMode === 'continuous' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-					class="px-3 py-1 text-xs font-medium rounded-md transition-colors"
-				>
-					{ i18n.T(ctx, "templates.view_continuous") }
-				</button>
 				<button
 					type="button"
 					@click="viewMode = 'paginated'"
@@ -157,33 +137,48 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 		</div>
 		<!-- Editor Canvas -->
 		<div
-			class="flex-1 bg-[#1A1A1C] overflow-y-auto relative p-8"
+			class="flex-1 bg-[#525659] overflow-auto relative"
 			id="editor-scroller"
 			@scroll="updateCurrentPage()"
 		>
-			<!-- Unified Editor View -->
-			<div class="flex justify-center items-start min-h-full">
-				<div class="relative group">
-					<!-- Visual Pagination Guides (Overlay) -->
-					<div
-						x-show="viewMode === 'paginated'"
-						class="absolute inset-x-0 top-0 bottom-0 pointer-events-none z-20"
-						:style="`background-image: repeating-linear-gradient(to bottom, transparent, transparent calc(${pageHeight}px - 1px), rgba(0, 0, 0, 0.2) calc(${pageHeight}px - 1px), rgba(0, 0, 0, 0.2) ${pageHeight}px);`"
-					></div>
+			<div class="flex justify-center py-8 px-4 min-w-fit">
+				<div
+					class="relative"
+					id="editor-wrapper"
+					:style="`width: ${pageWidth}px;`"
+				>
+					<!-- Page backgrounds (visual only) -->
+					<template x-for="page in totalPages" :key="'bg-' + page">
+						<div
+							class="absolute left-0 right-0 pointer-events-none"
+							:style="`top: ${(page - 1) * (pageHeight + pageGap)}px; height: ${pageHeight}px;`"
+						>
+							<!-- Shadow -->
+							<div class="absolute inset-0 bg-black/30 translate-x-1 translate-y-1 rounded-sm"></div>
+							<!-- White page background -->
+							<div class="absolute inset-0 bg-white rounded-sm shadow-xl"></div>
+							<!-- Page number -->
+							<div class="absolute -top-6 left-0 text-xs text-white/70 font-medium">
+								<span x-text="`Page ${page}`"></span>
+							</div>
+						</div>
+					</template>
+					<!-- Editable content -->
 					<div
 						id="editor-content"
 						contenteditable="true"
-						class="bg-white text-black shadow-2xl mx-auto p-[72pt] outline-none min-h-[1056px] text-[12pt] font-serif leading-relaxed relative z-10"
-						style={ getPaperStyle(template) + " padding: 72pt;" }
+						class="relative text-black outline-none text-[12pt] font-serif leading-relaxed z-10"
+						:style="`width: ${pageWidth}px; min-height: ${pageHeight}px; padding: ${pagePadding}px; box-sizing: border-box;`"
+						style={ getPaperStyle(template) }
 						@keydown="handleKeydown($event)"
-						@input="updatePageCount()"
+						@input="handleInput()"
 					>
 						@templ.Raw(template.Content)
 					</div>
 				</div>
 			</div>
-			<!-- Bottom padding for scrolling -->
-			<div class="h-24"></div>
+			<!-- Bottom padding -->
+			<div class="h-16"></div>
 		</div>
 		<!-- Context Menu -->
 		<div
@@ -221,7 +216,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 			<input type="hidden" name="name" value={ template.Name }/>
 		</form>
 		<script>
-			function templateEditor() {
+			function templateEditor(configuredPageHeight = 1056) {
 				return {
 					// Context Menu
 					showContextMenu: false,
@@ -235,15 +230,14 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 					isUnderline: false,
 					alignment: 'left',
 
-					// View Mode
-					viewMode: 'continuous',
-					pageHeight: 1056, // Letter page height in px (11" * 96dpi)
+					// View Mode & Page Dimensions
+					viewMode: 'paginated',
+					pageHeight: configuredPageHeight, // Height based on document type
+					pageWidth: configuredPageHeight === 1123 ? 794 : 816, // A4 vs Letter/Legal width
+					pageGap: 32, // Gap between pages in pixels
+					pagePadding: 96, // 72pt ≈ 96px at 96dpi
 					currentPage: 1,
 					totalPages: 1,
-
-					get pageStyle() {
-						return `width: 816px; height: ${this.pageHeight}px; max-width: 100%;`;
-					},
 
 					get contextMenuStyle() {
 						return `top: ${this.contextMenuY}px; left: ${this.contextMenuX}px`;
@@ -257,7 +251,14 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 						document.addEventListener('selectionchange', () => this.updateFormattingState());
 
 						// Initial page count
-						this.$nextTick(() => this.updatePageCount());
+						this.$nextTick(() => {
+							this.updatePageCount();
+						});
+					},
+
+					// Handle input events
+					handleInput() {
+						this.updatePageCount();
 					},
 
 					async loadVariables() {
@@ -342,7 +343,9 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 						if (!editor) return;
 
 						const contentHeight = editor.scrollHeight;
-						this.totalPages = Math.max(1, Math.ceil(contentHeight / this.pageHeight));
+						// Account for page gaps in calculation
+						const effectivePageHeight = this.pageHeight + this.pageGap;
+						this.totalPages = Math.max(1, Math.ceil(contentHeight / effectivePageHeight));
 					},
 
 					updateCurrentPage() {
@@ -350,18 +353,22 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 						if (!scroller) return;
 
 						const scrollTop = scroller.scrollTop;
+						const effectivePageHeight = this.pageHeight + this.pageGap;
 						// Calculate based on the center of the viewport
 						const middle = scrollTop + (scroller.clientHeight / 3);
 						this.currentPage = Math.max(1, Math.min(
 							this.totalPages,
-							Math.floor(middle / this.pageHeight) + 1
+							Math.floor(middle / effectivePageHeight) + 1
 						));
 					}
 				};
 			}
 
 			function saveTemplateContent() {
-				const content = document.getElementById('editor-content')?.innerHTML || '';
+				const editor = document.getElementById('editor-content');
+				if (!editor) return;
+
+				const content = editor.innerHTML;
 				document.getElementById('hidden-content-input').value = content;
 				htmx.trigger('#save-template-form', 'submit');
 			}
@@ -370,12 +377,21 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 }
 
 func getPaperStyle(t models.DocumentTemplate) string {
-	width := "816px" // Letter default
+	width := "816px" // Letter default (8.5" * 96dpi)
+
 	if t.PageSize == "A4" {
-		width = "794px"
-	} else if t.PageSize == "legal" {
-		width = "816px"
+		width = "794px" // 210mm at 96dpi
 	}
+	// Legal uses same width as Letter (8.5" = 816px)
 
 	return "width: " + width + "; max-width: 100%;"
+}
+
+func getPageHeight(t models.DocumentTemplate) string {
+	if t.PageSize == "A4" {
+		return "1123" // 297mm at 96dpi
+	} else if t.PageSize == "legal" {
+		return "1344" // 14" at 96dpi
+	}
+	return "1056" // Letter: 11" at 96dpi
 }
