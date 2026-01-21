@@ -36,6 +36,10 @@ build: generate ## Build the application
 clean: ## Clean build artifacts
 	rm -rf bin/
 	rm -f db/*.db
+	rm -f db/*.db-shm
+	rm -f db/*.db-wal
+	rm -rf static/uploads/
+	rm -rf uploads/
 	find . -name "*_templ.go" -delete
 
 test: ## Run tests
