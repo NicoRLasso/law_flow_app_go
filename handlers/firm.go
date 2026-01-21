@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"io"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
@@ -11,7 +10,6 @@ import (
 	"law_flow_app_go/templates/pages"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -317,82 +315,53 @@ func UploadFirmLogoHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid file type. Only PNG, JPG, JPEG, and SVG are allowed")
 	}
 
-	// Get file extension
-	ext := filepath.Ext(file.Filename)
-	if ext == "" {
-		switch contentType {
-		case "image/png":
-			ext = ".png"
-		case "image/jpeg", "image/jpg":
-			ext = ".jpg"
-		case "image/svg+xml":
-			ext = ".svg"
-		}
-	}
-
 	// Capture old values for audit
 	oldLogoURL := firm.LogoURL
 
-	// Delete old logo if exists
+	// Delete old logo if exists (handle both R2 and local paths)
 	if oldLogoURL != "" {
-		oldPath := "." + oldLogoURL // Convert URL path to file path
-		if err := os.Remove(oldPath); err != nil && !os.IsNotExist(err) {
-			c.Logger().Warnf("Failed to delete old logo: %v", err)
+		ctx := c.Request().Context()
+		// Check if it's an R2 URL or local path
+		if strings.HasPrefix(oldLogoURL, "/static/uploads/logos/") {
+			// Old local path - delete from filesystem
+			oldPath := "." + oldLogoURL
+			if err := os.Remove(oldPath); err != nil && !os.IsNotExist(err) {
+				c.Logger().Warnf("Failed to delete old local logo: %v", err)
+			}
+		} else {
+			// R2 path - extract key and delete
+			oldKey := extractStorageKeyFromURL(oldLogoURL)
+			if oldKey != "" {
+				if err := services.Storage.Delete(ctx, oldKey); err != nil {
+					c.Logger().Warnf("Failed to delete old logo from storage: %v", err)
+				}
+			}
 		}
 	}
 
-	// Create upload directory if it doesn't exist
-	uploadDir := "./static/uploads/logos"
-	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		c.Logger().Errorf("Failed to create upload directory: %v", err)
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
-		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create upload directory")
-	}
+	// Generate storage key for the logo
+	storageKey := services.GenerateFirmLogoKey(firm.ID, file.Filename)
 
-	// Generate filename using firm ID
-	filename := fmt.Sprintf("%s%s", firm.ID, ext)
-	filePath := filepath.Join(uploadDir, filename)
-
-	// Open the uploaded file
-	src, err := file.Open()
+	// Upload to storage (R2 or local depending on configuration)
+	ctx := c.Request().Context()
+	result, err := services.Storage.Upload(ctx, file, storageKey)
 	if err != nil {
-		c.Logger().Errorf("Failed to open uploaded file: %v", err)
+		c.Logger().Errorf("Failed to upload logo to storage: %v", err)
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
 		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to process upload")
-	}
-	defer src.Close()
-
-	// Create destination file
-	dst, err := os.Create(filePath)
-	if err != nil {
-		c.Logger().Errorf("Failed to create destination file: %v", err)
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
-		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save file")
-	}
-	defer dst.Close()
-
-	// Copy file content
-	if _, err := io.Copy(dst, src); err != nil {
-		c.Logger().Errorf("Failed to copy file content: %v", err)
-		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to upload logo. Please try again.</div>`)
-		}
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save file")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to upload logo")
 	}
 
 	// Update firm's logo URL
-	logoURL := "/static/uploads/logos/" + filename
+	logoURL := result.URL
 	firm.LogoURL = logoURL
 
 	if err := db.DB.Save(firm).Error; err != nil {
 		// Clean up the uploaded file if DB update fails
-		os.Remove(filePath)
+		if delErr := services.Storage.Delete(ctx, storageKey); delErr != nil {
+			c.Logger().Warnf("Failed to cleanup uploaded logo after DB error: %v", delErr)
+		}
 		c.Logger().Errorf("Failed to update firm logo URL: %v", err)
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="text-red-500 text-sm mt-2">Failed to save logo. Please try again.</div>`)
@@ -464,10 +433,22 @@ func DeleteFirmLogoHandler(c echo.Context) error {
 	// Capture old value for audit
 	oldLogoURL := firm.LogoURL
 
-	// Delete the file
-	filePath := "." + firm.LogoURL
-	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
-		c.Logger().Warnf("Failed to delete logo file: %v", err)
+	// Delete the file (handle both R2 and local paths)
+	ctx := c.Request().Context()
+	if strings.HasPrefix(oldLogoURL, "/static/uploads/logos/") {
+		// Old local path - delete from filesystem
+		filePath := "." + oldLogoURL
+		if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
+			c.Logger().Warnf("Failed to delete local logo file: %v", err)
+		}
+	} else {
+		// R2 path - extract key and delete from storage
+		storageKey := extractStorageKeyFromURL(oldLogoURL)
+		if storageKey != "" {
+			if err := services.Storage.Delete(ctx, storageKey); err != nil {
+				c.Logger().Warnf("Failed to delete logo from storage: %v", err)
+			}
+		}
 	}
 
 	// Clear logo URL in database
@@ -518,4 +499,18 @@ func DeleteFirmLogoHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Logo deleted successfully",
 	})
+}
+
+// extractStorageKeyFromURL extracts the storage key from an R2 public URL
+// For example, "https://cdn.example.com/logos/firm123.png" -> "logos/firm123.png"
+func extractStorageKeyFromURL(url string) string {
+	cfg := config.Load()
+	if cfg.R2PublicURL == "" {
+		return ""
+	}
+	publicURL := strings.TrimSuffix(cfg.R2PublicURL, "/")
+	if strings.HasPrefix(url, publicURL+"/") {
+		return strings.TrimPrefix(url, publicURL+"/")
+	}
+	return ""
 }
