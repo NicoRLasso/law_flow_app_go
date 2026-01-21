@@ -2,10 +2,10 @@ package partials
 
 import (
 	"context"
-	"law_flow_app_go/models"
-	"law_flow_app_go/templates/components"
-	"law_flow_app_go/services/i18n"
 	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
 	"strings"
 )
 
@@ -42,7 +42,6 @@ templ CaseDocumentTable(ctx context.Context, documents []models.CaseDocument, cu
 				</table>
 			</div>
 		</div>
-
 		<!-- Pagination Controls -->
 		@components.Pagination(ctx, components.PaginationData{
 			CurrentPage: currentPage,
@@ -73,14 +72,12 @@ templ CaseDocumentRow(ctx context.Context, doc models.CaseDocument, caseID strin
 				</div>
 			</div>
 		</td>
-
 		<!-- Document Type -->
 		<td class="hidden sm:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-foreground">
 				{ doc.DocumentType }
 			</span>
 		</td>
-
 		<!-- Visibility Badge -->
 		<td class="hidden sm:table-cell px-4 md:px-6 py-4 md:py-5">
 			if doc.IsPublic {
@@ -93,12 +90,10 @@ templ CaseDocumentRow(ctx context.Context, doc models.CaseDocument, caseID strin
 				</span>
 			}
 		</td>
-
 		<!-- File Size -->
 		<td class="hidden md:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="text-sm text-muted-foreground">{ formatFileSize(doc.FileSize) }</span>
 		</td>
-
 		<!-- Uploaded By -->
 		<td class="hidden lg:table-cell px-4 md:px-6 py-4 md:py-5">
 			if doc.UploadedBy != nil {
@@ -107,14 +102,12 @@ templ CaseDocumentRow(ctx context.Context, doc models.CaseDocument, caseID strin
 				<span class="text-sm text-muted-foreground">{ i18n.T(ctx, "case.document.table.system") }</span>
 			}
 		</td>
-
 		<!-- Uploaded At -->
 		<td class="hidden md:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="text-xs text-muted-foreground">
 				{ formatRelativeTime(doc.CreatedAt) }
 			</span>
 		</td>
-
 		<!-- Actions -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
 			<div class="flex items-center gap-2">

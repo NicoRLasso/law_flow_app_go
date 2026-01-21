@@ -2,17 +2,17 @@ package models
 
 // SEO contains metadata for search engine optimization and social sharing
 type SEO struct {
-	Title       string // Page title
-	Description string // Meta description (150-160 chars recommended)
-	Keywords    string // Meta keywords (comma-separated)
-	Canonical   string // Canonical URL
-	OGTitle     string // Open Graph title (defaults to Title if empty)
-	OGDesc      string // Open Graph description (defaults to Description if empty)
-	OGImage     string // Open Graph image URL
-	OGType      string // Open Graph type (website, article, etc.)
-	TwitterCard string // Twitter card type (summary, summary_large_image)
-	NoIndex     bool   // If true, adds noindex directive
-	Locale      string // Current locale (e.g., "en", "es")
+	Title       string   // Page title
+	Description string   // Meta description (150-160 chars recommended)
+	Keywords    string   // Meta keywords (comma-separated)
+	Canonical   string   // Canonical URL
+	OGTitle     string   // Open Graph title (defaults to Title if empty)
+	OGDesc      string   // Open Graph description (defaults to Description if empty)
+	OGImage     string   // Open Graph image URL
+	OGType      string   // Open Graph type (website, article, etc.)
+	TwitterCard string   // Twitter card type (summary, summary_large_image)
+	NoIndex     bool     // If true, adds noindex directive
+	Locale      string   // Current locale (e.g., "en", "es")
 	AltLocales  []string // Alternative locales for hreflang
 }
 

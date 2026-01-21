@@ -16,12 +16,11 @@ templ LanguageSwitcher(ctx context.Context) {
 				}
 			</span>
 			<svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 			</svg>
 		</button>
-		
-		<div 
-			x-show="open" 
+		<div
+			x-show="open"
 			x-transition:enter="transition ease-out duration-100"
 			x-transition:enter-start="opacity-0 scale-95"
 			x-transition:enter-end="opacity-100 scale-100"
@@ -37,7 +36,7 @@ templ LanguageSwitcher(ctx context.Context) {
 				</span>
 				if i18n.GetLocale(ctx) == "en" {
 					<svg class="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 					</svg>
 				}
 			</a>
@@ -47,7 +46,7 @@ templ LanguageSwitcher(ctx context.Context) {
 				</span>
 				if i18n.GetLocale(ctx) == "es" {
 					<svg class="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 					</svg>
 				}
 			</a>

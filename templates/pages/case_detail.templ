@@ -3,10 +3,10 @@ package pages
 import (
 	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
 	"law_flow_app_go/templates/partials"
-	"law_flow_app_go/services/i18n"
 	"strings"
 )
 
@@ -14,8 +14,13 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
-			@components.Navbar(ctx, user, firm, func() string { if caseRecord.IsHistorical { return "/historical-cases" } else { return "/cases" } }())
-			
+			@components.Navbar(ctx, user, firm, func() string {
+				if caseRecord.IsHistorical {
+					return "/historical-cases"
+				} else {
+					return "/cases"
+				}
+			}())
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
 				<div class="w-full max-w-7xl" x-data="{ activeTab: 'summary', sidebarOpen: false }">
@@ -23,7 +28,13 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 					<div class="flex items-center justify-between mb-6 md:mb-8">
 						<div class="flex items-center gap-4">
 							<a
-								href={ templ.SafeURL(func() string { if caseRecord.IsHistorical { return "/historical-cases" } else { return "/cases" } }()) }
+								href={ templ.SafeURL(func() string {
+	if caseRecord.IsHistorical {
+		return "/historical-cases"
+	} else {
+		return "/cases"
+	}
+}()) }
 								class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
 								title={ i18n.T(ctx, "common.back") }
 							>
@@ -56,7 +67,6 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							</button>
 						</div>
 					</div>
-
 					<!-- Layout with Sidebar -->
 					<div class="settings-layout">
 						<!-- Sidebar Navigation -->
@@ -73,17 +83,16 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									</svg>
 									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'parties' ? '" + i18n.T(ctx, "case.detail.tab.parties") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "case.detail.tab.documents") + "' : '" + i18n.T(ctx, "case.detail.tab.bitacora") + "'" }></span>
 								</span>
-								<svg 
+								<svg
 									class="w-5 h-5 transition-transform duration-200"
 									:class="{ 'rotate-180': sidebarOpen }"
-									fill="none" 
-									stroke="currentColor" 
+									fill="none"
+									stroke="currentColor"
 									viewBox="0 0 24 24"
 								>
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 								</svg>
 							</button>
-
 							<!-- Navigation Menu -->
 							<nav
 								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav"
@@ -128,58 +137,53 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 											<span>{ i18n.T(ctx, "case.detail.tab.documents") }</span>
 										</button>
 									</li>
-                                    <!-- Bitácora Tab -->
-                                    if user.Role != "client" {
-                                        <li>
-                                            <button
-                                                @click={ "activeTab = 'bitacora'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-logs-container')) htmx.ajax('GET', '/api/cases/" + caseRecord.ID + "/logs', {target: '#case-logs-wrapper', swap: 'innerHTML'}) }, 50)" }
-                                                :class="activeTab === 'bitacora' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-                                                class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
-                                            >
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                </svg>
-                                                <span>{ i18n.T(ctx, "case.detail.tab.bitacora") }</span>
-                                            </button>
-                                        </li>
-                                    }
+									<!-- Bitácora Tab -->
+									if user.Role != "client" {
+										<li>
+											<button
+												@click={ "activeTab = 'bitacora'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-logs-container')) htmx.ajax('GET', '/api/cases/" + caseRecord.ID + "/logs', {target: '#case-logs-wrapper', swap: 'innerHTML'}) }, 50)" }
+												:class="activeTab === 'bitacora' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+												class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											>
+												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+												</svg>
+												<span>{ i18n.T(ctx, "case.detail.tab.bitacora") }</span>
+											</button>
+										</li>
+									}
 								</ul>
 							</nav>
 						</aside>
-
 						<!-- Main Content Area -->
 						<div class="settings-content space-y-6">
 							<!-- Summary Tab -->
 							<div x-show="activeTab === 'summary'" x-transition class="space-y-6">
 								@CaseResumenTab(ctx, caseRecord, user)
 							</div>
-
 							<!-- Parties Tab -->
 							<div x-show="activeTab === 'parties'" x-transition class="space-y-6">
 								@CasePartiesTab(ctx, caseRecord, user)
 							</div>
-
 							<!-- Documents Tab -->
 							<div x-show="activeTab === 'documents'" x-transition class="space-y-6">
 								@CaseDocumentsTab(ctx, caseRecord)
 							</div>
-
-                            <!-- Bitácora Tab Content -->
-                            if user.Role != "client" {
-                                <div x-show="activeTab === 'bitacora'" x-transition class="space-y-6">
-                                    <h2 class="text-xl font-semibold">{ i18n.T(ctx, "bitacora.title") }</h2>
-                                    <div id="case-logs-wrapper">
-                                        <!-- Will be loaded via HTMX on tab click -->
-                                        <div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
-                                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-                                            <p class="text-muted-foreground">{ i18n.T(ctx, "bitacora.loading") }</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
+							<!-- Bitácora Tab Content -->
+							if user.Role != "client" {
+								<div x-show="activeTab === 'bitacora'" x-transition class="space-y-6">
+									<h2 class="text-xl font-semibold">{ i18n.T(ctx, "bitacora.title") }</h2>
+									<div id="case-logs-wrapper">
+										<!-- Will be loaded via HTMX on tab click -->
+										<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
+											<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
+											<p class="text-muted-foreground">{ i18n.T(ctx, "bitacora.loading") }</p>
+										</div>
+									</div>
+								</div>
+							}
 						</div>
 					</div>
-
 					<script>
 						function openUploadModal() {
 							const modal = document.getElementById('upload-document-modal');
@@ -228,19 +232,14 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 				</script>
 				</div>
 			</main>
-
 			<!-- Upload Document Modal (outside main content) -->
 			@UploadDocumentModal(ctx, caseRecord)
-
 			<!-- PDF Viewer Modal -->
 			@partials.PDFViewerModal(ctx, caseRecord)
-
 			<!-- Edit Case Modal Container -->
 			<div id="edit-case-modal-container"></div>
-            
-            <!-- Log Entry Modal Container -->
-            <div id="log-entry-modal-container"></div>
-
+			<!-- Log Entry Modal Container -->
+			<div id="log-entry-modal-container"></div>
 			<!-- Template Selector Modal Container -->
 			<div id="template-modal-container"></div>
 			@components.ConfirmationModal(ctx)
@@ -252,68 +251,65 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.User) {
 	<!-- Case Information Grid -->
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-						<!-- Left Column -->
-						<div class="space-y-6">
-							<!-- Case Information -->
-							<div class="glass-panel p-6 rounded-xl border border-white/10">
-								<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-									</svg>
-									{ i18n.T(ctx, "case.detail.info_title") }
-								</h2>
-								<div class="space-y-4">
-									if caseRecord.FilingNumber != nil {
-										<div>
-											<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.radicado") }</label>
-											<p class="text-foreground mt-1 text-lg font-medium">{ *caseRecord.FilingNumber }</p>
-										</div>
-									}
-									<div>
-										<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.case_number") }</label>
-										<p class="text-foreground mt-1">{ caseRecord.CaseNumber }</p>
-									</div>
-									<div>
-										<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.type") }</label>
-										<p class="text-foreground mt-1">{ caseRecord.CaseType }</p>
-									</div>
-									if caseRecord.Title != nil {
-										<div>
-											<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.table.title") }</label>
-											<p class="text-foreground mt-1">{ *caseRecord.Title }</p>
-										</div>
-									}
-									<div>
-										<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.desc") }</label>
-										<p class="text-foreground mt-1 whitespace-pre-wrap">{ caseRecord.Description }</p>
-									</div>
-								</div>
-							</div>
-
-
-							<!-- Timeline -->
-							<div class="glass-panel p-6 rounded-xl border border-white/10">
-								<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-									</svg>
-									{ i18n.T(ctx, "case.detail.timeline_title") }
-								</h2>
-								<div class="space-y-4">
-									<div>
-										<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.opened") }</label>
-										<p class="text-foreground mt-1">{ caseRecord.OpenedAt.Format("January 2, 2006 at 3:04 PM") }</p>
-									</div>
-									if caseRecord.ClosedAt != nil {
-										<div>
-											<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.closed") }</label>
-											<p class="text-foreground mt-1">{ caseRecord.ClosedAt.Format("January 2, 2006 at 3:04 PM") }</p>
-										</div>
-									}
-								</div>
-							</div>
+		<!-- Left Column -->
+		<div class="space-y-6">
+			<!-- Case Information -->
+			<div class="glass-panel p-6 rounded-xl border border-white/10">
+				<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+					</svg>
+					{ i18n.T(ctx, "case.detail.info_title") }
+				</h2>
+				<div class="space-y-4">
+					if caseRecord.FilingNumber != nil {
+						<div>
+							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.radicado") }</label>
+							<p class="text-foreground mt-1 text-lg font-medium">{ *caseRecord.FilingNumber }</p>
 						</div>
-
+					}
+					<div>
+						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.case_number") }</label>
+						<p class="text-foreground mt-1">{ caseRecord.CaseNumber }</p>
+					</div>
+					<div>
+						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.type") }</label>
+						<p class="text-foreground mt-1">{ caseRecord.CaseType }</p>
+					</div>
+					if caseRecord.Title != nil {
+						<div>
+							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.table.title") }</label>
+							<p class="text-foreground mt-1">{ *caseRecord.Title }</p>
+						</div>
+					}
+					<div>
+						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.desc") }</label>
+						<p class="text-foreground mt-1 whitespace-pre-wrap">{ caseRecord.Description }</p>
+					</div>
+				</div>
+			</div>
+			<!-- Timeline -->
+			<div class="glass-panel p-6 rounded-xl border border-white/10">
+				<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					</svg>
+					{ i18n.T(ctx, "case.detail.timeline_title") }
+				</h2>
+				<div class="space-y-4">
+					<div>
+						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.opened") }</label>
+						<p class="text-foreground mt-1">{ caseRecord.OpenedAt.Format("January 2, 2006 at 3:04 PM") }</p>
+					</div>
+					if caseRecord.ClosedAt != nil {
+						<div>
+							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.closed") }</label>
+							<p class="text-foreground mt-1">{ caseRecord.ClosedAt.Format("January 2, 2006 at 3:04 PM") }</p>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
 		<!-- Right Column -->
 		<div class="space-y-6">
 			<!-- Assignment -->
@@ -398,12 +394,11 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 								</div>
 							</div>
 						}
-						<!-- Collaborator Response -->  
+						<!-- Collaborator Response -->
 						<div id="collaborator-response"></div>
 					</div>
 				</div>
 			</div>
-
 			<!-- Classification -->
 			if caseRecord.Domain != nil || caseRecord.Branch != nil || len(caseRecord.Subtypes) > 0 {
 				<div class="glass-panel p-6 rounded-xl border border-white/10">
@@ -478,7 +473,6 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case) {
 				</button>
 			</div>
 		</div>
-
 		<!-- Document Filters -->
 		<div class="glass-panel p-4 rounded-xl border border-white/10">
 			<div class="flex flex-col md:flex-row gap-4">
@@ -491,7 +485,6 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case) {
 						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 					/>
 				</div>
-
 				<div class="flex gap-4 flex-col sm:flex-row md:items-center">
 					<!-- Document Type Filter -->
 					<div class="w-full sm:w-[200px]">
@@ -507,7 +500,6 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case) {
 							<option value="other">{ i18n.T(ctx, "case.document.types.other") }</option>
 						</select>
 					</div>
-
 					<!-- Apply Filter Button -->
 					<button
 						type="button"
@@ -519,7 +511,6 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case) {
 				</div>
 			</div>
 		</div>
-
 		<!-- Documents Table Container -->
 		<div
 			id="case-documents-list"
@@ -535,7 +526,6 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case) {
 			</div>
 		</div>
 	</div>
-
 	<script>
 		function filterDocuments() {
 			const keyword = document.getElementById('doc-keyword').value;
@@ -605,7 +595,6 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 					</svg>
 				</button>
 			</div>
-
 			<!-- Upload Form -->
 			<form
 				id="upload-form"
@@ -629,7 +618,6 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 						/>
 						<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "case.document.upload.accepted_formats") }</p>
 					</div>
-
 					<!-- Document Type -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -650,7 +638,6 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 							<option value="other">{ i18n.T(ctx, "case.document.types.other") }</option>
 						</select>
 					</div>
-
 					<!-- Description -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -663,7 +650,6 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 						></textarea>
 					</div>
-
 					<!-- Visibility Toggle -->
 					<div class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-lg">
 						<label class="flex items-center gap-3 cursor-pointer flex-1">
@@ -679,10 +665,8 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 							</div>
 						</label>
 					</div>
-
 					<!-- Response Container -->
 					<div id="upload-response"></div>
-
 					<!-- Action Buttons -->
 					<div class="flex items-center gap-3 pt-4">
 						<button
@@ -762,7 +746,6 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 				<p class="text-muted-foreground">{ i18n.T(ctx, "case.detail.no_client") }</p>
 			}
 		</div>
-
 		<!-- Opposing Party Section -->
 		<div class="glass-panel p-6 rounded-xl border border-white/10">
 			<div class="flex items-center justify-between mb-4">
@@ -785,7 +768,6 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 					}
 				}
 			</div>
-
 			if caseRecord.OpposingParty != nil {
 				<!-- Show opposing party info -->
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">

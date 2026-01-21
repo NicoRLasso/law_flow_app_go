@@ -23,7 +23,7 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "appointments.title") }</h1>
 							<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "appointments.description") }</p>
 						</div>
-						<button 
+						<button
 							@click="showCreateModal = true"
 							class="px-4 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20"
 						>
@@ -33,30 +33,24 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 							<span>{ i18n.T(ctx, "appointments.new") }</span>
 						</button>
 					</div>
-
 					<!-- Filters -->
 					@partials.AppointmentFilters(ctx, user)
-					
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
 						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
 					</div>
-					
 					<!-- Appointments Table -->
-					<div 
+					<div
 						id="appointments-table"
 						hx-get="/api/appointments"
 						hx-trigger="load, reload-appointments from:body"
 						hx-indicator="#loading-indicator"
-					>
-					</div>
+					></div>
 				</div>
 			</main>
-
 			@components.ConfirmationModal(ctx)
-
 			<!-- Create Appointment Modal -->
-			<div 
+			<div
 				x-show="showCreateModal"
 				x-transition:enter="transition ease-out duration-300"
 				x-transition:enter-start="opacity-0"
@@ -68,7 +62,7 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 				@click.self="showCreateModal = false"
 				@keydown.escape.window="showCreateModal = false"
 			>
-				<div 
+				<div
 					x-show="showCreateModal"
 					x-transition:enter="transition ease-out duration-300"
 					x-transition:enter-start="opacity-0 scale-95"
@@ -87,22 +81,20 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 							</svg>
 						</button>
 					</div>
-
-					<form 
-						hx-post="/api/appointments" 
+					<form
+						hx-post="/api/appointments"
 						hx-target="#create-result"
 						hx-swap="innerHTML"
 						@htmx:after-request="if(event.detail.successful && event.detail.xhr.status === 201) { showCreateModal = false; htmx.trigger('body', 'reload-appointments'); }"
 						class="space-y-4"
 					>
 						<input type="hidden" name="_csrf" value={ csrfToken }/>
-						
 						<!-- Case Selection -->
 						<div>
 							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "case.title") }</label>
-							<select 
+							<select
 								id="case-select"
-								name="case_id" 
+								name="case_id"
 								x-model="selectedCase"
 								required
 								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
@@ -110,14 +102,13 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 								<option value="">{ i18n.T(ctx, "appointments.form.select_case") }</option>
 							</select>
 						</div>
-
 						<!-- Lawyer Selection (for admins only) -->
 						if user.Role == "admin" {
 							<div>
 								<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.lawyer") }</label>
-								<select 
+								<select
 									id="lawyer-select"
-									name="lawyer_id" 
+									name="lawyer_id"
 									x-model="selectedLawyer"
 									@change="loadSlots()"
 									required
@@ -130,19 +121,17 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- For lawyers, default to their own ID -->
 							<input type="hidden" name="lawyer_id" value={ user.ID }/>
 						}
-
 						<!-- Date Selection -->
 						<div>
 							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.date") }</label>
-							<input 
-								type="date" 
+							<input
+								type="date"
 								x-model="selectedDate"
 								@change="loadSlots()"
 								required
 								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
 							/>
 						</div>
-
 						<!-- Available Slots -->
 						<div x-show="selectedDate">
 							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.time_slot") }</label>
@@ -150,35 +139,31 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 								<p class="col-span-3 text-muted-foreground text-sm">{ i18n.T(ctx, "appointments.form.select_date_first") }</p>
 							</div>
 						</div>
-
 						<!-- Hidden inputs for selected time -->
 						<input type="hidden" name="start_time" x-model="selectedStartTime"/>
 						<input type="hidden" name="end_time" x-model="selectedEndTime"/>
-
 						<!-- Notes -->
 						<div>
 							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.notes") }</label>
-							<textarea 
+							<textarea
 								name="notes"
 								rows="3"
 								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
 								placeholder={ i18n.T(ctx, "appointments.form.notes_placeholder") }
 							></textarea>
 						</div>
-
 						<!-- Result/Error Display -->
 						<div id="create-result"></div>
-
 						<!-- Buttons -->
 						<div class="flex gap-3 pt-4">
-							<button 
+							<button
 								type="button"
 								@click="showCreateModal = false"
 								class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all"
 							>
 								{ i18n.T(ctx, "common.cancel") }
 							</button>
-							<button 
+							<button
 								type="submit"
 								:disabled="!selectedStartTime"
 								class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all"
@@ -190,7 +175,6 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 				</div>
 			</div>
 		</div>
-
 		<script>
 			function appointmentPage() {
 				return {

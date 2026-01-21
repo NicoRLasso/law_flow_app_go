@@ -3,9 +3,9 @@ package pages
 import (
 	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
-	"law_flow_app_go/services/i18n"
 )
 
 templ FirmSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
@@ -136,7 +136,8 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										</svg>
 										{ i18n.T(ctx, "settings.firm.info_title") }
 									</h2>
-									<div x-data="{ 
+									<div
+										x-data="{ 
 										originalName: $el.dataset.originalName, 
 										currentName: $el.dataset.originalName, 
 										country: $el.dataset.country,
@@ -157,10 +158,10 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										submitForm() {
 											htmx.trigger(document.getElementById('firm-settings-form'), 'submit');
 										}
-									}" 
-									data-original-name={ firm.Name } 
-									data-country={ firm.Country }
-									data-initial-timezone={ firm.Timezone }
+									}"
+										data-original-name={ firm.Name }
+										data-country={ firm.Country }
+										data-initial-timezone={ firm.Timezone }
 									>
 										<form
 											id="firm-settings-form"
@@ -169,7 +170,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											hx-swap="innerHTML"
 											class="space-y-4"
 										>
-											<input type="hidden" name="update_type" value="general" />
+											<input type="hidden" name="update_type" value="general"/>
 											<!-- Firm Name -->
 											<div>
 												<label for="name" class="block text-sm font-medium text-foreground mb-2">
@@ -217,10 +218,10 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 														class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
 													/>
 													<!-- Hidden input to ensure value is sent when disabled -->
-													<input 
-														type="hidden" 
-														name="timezone" 
-														x-model="timezone" 
+													<input
+														type="hidden"
+														name="timezone"
+														x-model="timezone"
 													/>
 												</div>
 											</div>
@@ -311,7 +312,6 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 												</button>
 											</div>
 										</form>
-
 										<!-- Warning Modal -->
 										<div
 											x-show="showWarning"
@@ -332,7 +332,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 												<div class="flex items-start gap-4">
 													<div class="p-3 bg-red-500/10 rounded-full shrink-0">
 														<svg class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
 														</svg>
 													</div>
 													<div class="flex-1">
@@ -381,7 +381,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										hx-swap="innerHTML"
 										class="space-y-4"
 									>
-										<input type="hidden" name="update_type" value="email" />
+										<input type="hidden" name="update_type" value="email"/>
 										<!-- Billing Email -->
 										<div>
 											<label for="billing_email" class="block text-sm font-medium text-foreground mb-2">
@@ -470,7 +470,6 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										{ i18n.T(ctx, "settings.branding.title") }
 									</h2>
 									<p class="text-sm text-muted-foreground mb-6">{ i18n.T(ctx, "settings.branding.desc") }</p>
-									
 									<!-- Logo Preview -->
 									<div class="mb-6">
 										<label class="block text-sm font-medium text-foreground mb-3">{ i18n.T(ctx, "settings.branding.current_logo") }</label>
@@ -510,7 +509,6 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											</div>
 										}
 									</div>
-
 									<!-- Upload Form -->
 									<div class="border-t border-white/10 pt-6">
 										<label class="block text-sm font-medium text-foreground mb-3">{ i18n.T(ctx, "settings.branding.upload_new") }</label>
@@ -591,11 +589,9 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											{ i18n.T(ctx, "settings.templates.add_category") }
 										</button>
 									</div>
-									
 									<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "settings.templates.categories_desc") }</p>
-									
 									<!-- Categories List -->
-									<div 
+									<div
 										id="categories-list"
 										hx-get="/api/templates/categories"
 										hx-trigger="load, categoryUpdated from:body"
@@ -621,11 +617,9 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											{ i18n.T(ctx, "settings.classifications.title") }
 										</h2>
 									</div>
-									
 									<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "settings.classifications.desc") }</p>
-									
 									<!-- Classifications Container -->
-									<div 
+									<div
 										hx-get="/api/subtypes"
 										hx-trigger="load"
 										hx-swap="innerHTML"
@@ -638,71 +632,70 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							</div>
 						</div>
 					</div>
-
-				<!-- Category Modal (inside x-data scope) -->
-				<div
-					x-show="showCategoryModal"
-					x-transition.opacity
-					class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-					style="display: none;"
-				>
+					<!-- Category Modal (inside x-data scope) -->
 					<div
-						class="bg-background border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl"
-						@click.away="showCategoryModal = false"
-						x-transition:enter="transition ease-out duration-200"
-						x-transition:enter-start="opacity-0 scale-95"
-						x-transition:enter-end="opacity-100 scale-100"
-						x-transition:leave="transition ease-in duration-150"
-						x-transition:leave-start="opacity-100 scale-100"
-						x-transition:leave-end="opacity-0 scale-95"
+						x-show="showCategoryModal"
+						x-transition.opacity
+						class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+						style="display: none;"
 					>
-						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "settings.templates.category_modal_title") }</h3>
-						<form
-							hx-post="/api/templates/categories"
-							hx-target="#categories-list-content"
-							hx-swap="innerHTML"
-							@htmx:after-request="if(event.detail.successful) { showCategoryModal = false; }"
-							@submit="setTimeout(() => { $el.reset(); }, 100)"
+						<div
+							class="bg-background border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl"
+							@click.away="showCategoryModal = false"
+							x-transition:enter="transition ease-out duration-200"
+							x-transition:enter-start="opacity-0 scale-95"
+							x-transition:enter-end="opacity-100 scale-100"
+							x-transition:leave="transition ease-in duration-150"
+							x-transition:leave-start="opacity-100 scale-100"
+							x-transition:leave-end="opacity-0 scale-95"
 						>
-							<div class="space-y-4">
-								<div>
-									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "settings.templates.category_name") }</label>
-									<input
-										type="text"
-										name="name"
-										required
-										class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-									/>
-								</div>
-								<div>
-									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "settings.templates.category_description") }</label>
-									<textarea
-										name="description"
-										rows="2"
-										class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-									></textarea>
-								</div>
-							</div>
-							<div class="flex justify-end gap-3 mt-6">
-							<button
-								type="button"
-								@click="showCategoryModal = false"
-								class="px-4 py-2 text-foreground hover:bg-white/5 rounded-lg transition-colors"
+							<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "settings.templates.category_modal_title") }</h3>
+							<form
+								hx-post="/api/templates/categories"
+								hx-target="#categories-list-content"
+								hx-swap="innerHTML"
+								@htmx:after-request="if(event.detail.successful) { showCategoryModal = false; }"
+								@submit="setTimeout(() => { $el.reset(); }, 100)"
 							>
-								{ i18n.T(ctx, "common.cancel") }
-							</button>
-							<button
-								type="submit"
-								class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors"
-							>
-								{ i18n.T(ctx, "common.save") }
-							</button>
+								<div class="space-y-4">
+									<div>
+										<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "settings.templates.category_name") }</label>
+										<input
+											type="text"
+											name="name"
+											required
+											class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+										/>
+									</div>
+									<div>
+										<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "settings.templates.category_description") }</label>
+										<textarea
+											name="description"
+											rows="2"
+											class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+										></textarea>
+									</div>
+								</div>
+								<div class="flex justify-end gap-3 mt-6">
+									<button
+										type="button"
+										@click="showCategoryModal = false"
+										class="px-4 py-2 text-foreground hover:bg-white/5 rounded-lg transition-colors"
+									>
+										{ i18n.T(ctx, "common.cancel") }
+									</button>
+									<button
+										type="submit"
+										class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors"
+									>
+										{ i18n.T(ctx, "common.save") }
+									</button>
+								</div>
+							</form>
 						</div>
-					</form>
+					</div>
 				</div>
-			</div>
-			</div>
-		</main>
+			</main>
 		</div>
 	}
 }

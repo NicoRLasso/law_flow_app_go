@@ -10,11 +10,10 @@ templ ConfirmationModal(ctx context.Context) {
 	<div id="confirmation-modal" class="hidden fixed inset-0 z-[100]" role="dialog" aria-modal="true">
 		<!-- Backdrop -->
 		<div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeConfirmationModal()"></div>
-
 		<div class="fixed inset-0 z-10 overflow-y-auto">
 			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
 				<!-- Modal Content -->
-				<div 
+				<div
 					class="relative transform overflow-hidden rounded-xl bg-[#0A0A0B] border border-white/10 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
 					onclick="event.stopPropagation()"
 				>
@@ -34,7 +33,6 @@ templ ConfirmationModal(ctx context.Context) {
 								</p>
 							</div>
 						</div>
-
 						<div class="flex items-center justify-end gap-3 mt-6">
 							<button
 								type="button"
@@ -56,7 +54,6 @@ templ ConfirmationModal(ctx context.Context) {
 			</div>
 		</div>
 	</div>
-
 	<script>
 		let confirmationModalTriggerElement = null;
 

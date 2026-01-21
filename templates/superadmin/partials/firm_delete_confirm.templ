@@ -11,7 +11,6 @@ templ FirmDeleteConfirmModal(ctx context.Context, firm *models.Firm) {
 		<div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 			<!-- Background overlay -->
 			<div class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="document.getElementById('modal-container').innerHTML = ''"></div>
-
 			<!-- Modal panel -->
 			<div class="relative z-50 inline-block align-bottom bg-[#0A0A0B] rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-red-500/20 ring-1 ring-red-500/10">
 				<div class="px-6 py-6">
@@ -28,22 +27,20 @@ templ FirmDeleteConfirmModal(ctx context.Context, firm *models.Firm) {
 							</p>
 						</div>
 					</div>
-
 					<div class="bg-red-500/5 border border-red-500/10 rounded-xl p-4 mb-6">
 						<p class="text-sm text-red-400">
 							{ i18n.T(ctx, "firm.delete.warning_message") }
 						</p>
 					</div>
-
 					<div class="flex items-center justify-end gap-3">
-						<button 
-							type="button" 
+						<button
+							type="button"
 							onclick="document.getElementById('modal-container').innerHTML = ''"
 							class="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 						>
 							{ i18n.T(ctx, "common.cancel") }
 						</button>
-						<button 
+						<button
 							hx-delete={ "/superadmin/firms/" + firm.ID }
 							hx-target="#firms-table-container"
 							hx-swap="innerHTML"

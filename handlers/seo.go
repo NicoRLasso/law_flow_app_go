@@ -3,7 +3,7 @@ package handlers
 import "law_flow_app_go/models"
 
 const (
-	baseURL     = "https://lexlegalcloud.org"
+	baseURL        = "https://lexlegalcloud.org"
 	defaultOGImage = "https://lexlegalcloud.org/static/images/og-image.png"
 )
 

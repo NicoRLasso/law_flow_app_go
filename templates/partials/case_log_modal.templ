@@ -3,8 +3,8 @@ package partials
 import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
-    "time"
-    "strconv"
+	"strconv"
+	"time"
 )
 
 templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bool) {
@@ -13,11 +13,11 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-6">
-                if isNew {
-				    <h3 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "bitacora.create") }</h3>
-                } else {
-                    <h3 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "bitacora.edit_title") }</h3>
-                }
+				if isNew {
+					<h3 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "bitacora.create") }</h3>
+				} else {
+					<h3 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "bitacora.edit_title") }</h3>
+				}
 				<button
 					type="button"
 					onclick="closeLogModal()"
@@ -28,136 +28,129 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 					</svg>
 				</button>
 			</div>
-
 			<!-- Form -->
 			<form
 				id="log-form"
-                x-data={ "{ type: '" + log.EntryType + "' || 'note' }" }
-                if isNew {
-				    hx-post={ "/api/cases/" + log.CaseID + "/logs" }
-                } else {
-                    hx-put={ "/api/cases/" + log.CaseID + "/logs/" + log.ID }
-                }
+				x-data={ "{ type: '" + log.EntryType + "' || 'note' }" }
+				if isNew {
+					hx-post={ "/api/cases/" + log.CaseID + "/logs" }
+				} else {
+					hx-put={ "/api/cases/" + log.CaseID + "/logs/" + log.ID }
+				}
 				hx-target="#case-logs-container"
 				hx-swap="innerHTML"
-                hx-on::after-request="if(event.detail.successful) closeLogModal()"
+				hx-on::after-request="if(event.detail.successful) closeLogModal()"
 			>
 				<div class="space-y-4">
-                    <!-- Title Row -->
-                    <div>
-                        <label class="block text-sm font-medium text-muted-foreground mb-2">
-                            { i18n.T(ctx, "bitacora.title_label") } <span class="text-red-400">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="title"
-                            value={ log.Title }
-                            required
-                            placeholder={ i18n.T(ctx, "bitacora.title_placeholder") }
-                            class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                        />
-                    </div>
-
-                    <!-- Type and Date Row -->
-                    <div class="flex flex-col sm:flex-row gap-4">
-					    <div class="w-full sm:w-1/3">
-						    <label class="block text-sm font-medium text-muted-foreground mb-2">
-							    { i18n.T(ctx, "bitacora.entry_type") } <span class="text-red-400">*</span>
-						    </label>
-                            <select
-                                name="entry_type"
-                                required
-                                class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                                x-model="type"
-                            >
-                                <option value="note">{ i18n.T(ctx, "bitacora.types.note") }</option>
-                                <option value="document">{ i18n.T(ctx, "bitacora.types.document") }</option>
-                                <option value="call">{ i18n.T(ctx, "bitacora.types.call") }</option>
-                                <option value="meeting">{ i18n.T(ctx, "bitacora.types.meeting") }</option>
-                            </select>
-					    </div>
-                        <div class="flex-1">
-                            <label class="block text-sm font-medium text-muted-foreground mb-2">
-                                { i18n.T(ctx, "bitacora.occurred_at") }
-                            </label>
-                            <input
-                                type="datetime-local"
-                                name="occurred_at"
-                                value={ formatDateTimeLocal(log.OccurredAt) }
-                                class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                            />
-                        </div>
-                    </div>
-
-                    <!-- Duration (Conditional) -->
-                    <div x-show="['call', 'meeting'].includes(type)" x-transition>
-                         <label class="block text-sm font-medium text-muted-foreground mb-2">
-                            { i18n.T(ctx, "bitacora.duration") } ({ i18n.T(ctx, "bitacora.minutes") })
-                        </label>
-                        <input
-                            type="number"
-                            name="duration"
-                            min="0"
-                            if log.Duration != nil {
-                                value={ strconv.Itoa(*log.Duration) }
-                            }
-                            class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                        />
-                    </div>
-
-                    <!-- Contact Info -->
-                    <div class="flex flex-col sm:flex-row gap-4" x-show="['call', 'meeting'].includes(type)" x-transition>
-                        <div class="flex-1">
-                             <label class="block text-sm font-medium text-muted-foreground mb-2">
-                                { i18n.T(ctx, "bitacora.contact_name") }
-                            </label>
-                            <input
-                                type="text"
-                                name="contact_name"
-                                if log.ContactName != nil {
-                                    value={ *log.ContactName }
-                                }
-                                placeholder={ i18n.T(ctx, "bitacora.contact_name_placeholder") }
-                                class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                            />
-                        </div>
-                         <div class="flex-1">
-                             <label class="block text-sm font-medium text-muted-foreground mb-2">
-                                { i18n.T(ctx, "bitacora.contact_phone") }
-                            </label>
-                            <input
-                                type="text"
-                                name="contact_phone"
-                                if log.ContactPhone != nil {
-                                    value={ *log.ContactPhone }
-                                }
-                                class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                            />
-                        </div>
-                    </div>
-
-
+					<!-- Title Row -->
+					<div>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "bitacora.title_label") } <span class="text-red-400">*</span>
+						</label>
+						<input
+							type="text"
+							name="title"
+							value={ log.Title }
+							required
+							placeholder={ i18n.T(ctx, "bitacora.title_placeholder") }
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
+					</div>
+					<!-- Type and Date Row -->
+					<div class="flex flex-col sm:flex-row gap-4">
+						<div class="w-full sm:w-1/3">
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "bitacora.entry_type") } <span class="text-red-400">*</span>
+							</label>
+							<select
+								name="entry_type"
+								required
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+								x-model="type"
+							>
+								<option value="note">{ i18n.T(ctx, "bitacora.types.note") }</option>
+								<option value="document">{ i18n.T(ctx, "bitacora.types.document") }</option>
+								<option value="call">{ i18n.T(ctx, "bitacora.types.call") }</option>
+								<option value="meeting">{ i18n.T(ctx, "bitacora.types.meeting") }</option>
+							</select>
+						</div>
+						<div class="flex-1">
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "bitacora.occurred_at") }
+							</label>
+							<input
+								type="datetime-local"
+								name="occurred_at"
+								value={ formatDateTimeLocal(log.OccurredAt) }
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							/>
+						</div>
+					</div>
+					<!-- Duration (Conditional) -->
+					<div x-show="['call', 'meeting'].includes(type)" x-transition>
+						<label class="block text-sm font-medium text-muted-foreground mb-2">
+							{ i18n.T(ctx, "bitacora.duration") } ({ i18n.T(ctx, "bitacora.minutes") })
+						</label>
+						<input
+							type="number"
+							name="duration"
+							min="0"
+							if log.Duration != nil {
+								value={ strconv.Itoa(*log.Duration) }
+							}
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						/>
+					</div>
+					<!-- Contact Info -->
+					<div class="flex flex-col sm:flex-row gap-4" x-show="['call', 'meeting'].includes(type)" x-transition>
+						<div class="flex-1">
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "bitacora.contact_name") }
+							</label>
+							<input
+								type="text"
+								name="contact_name"
+								if log.ContactName != nil {
+									value={ *log.ContactName }
+								}
+								placeholder={ i18n.T(ctx, "bitacora.contact_name_placeholder") }
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							/>
+						</div>
+						<div class="flex-1">
+							<label class="block text-sm font-medium text-muted-foreground mb-2">
+								{ i18n.T(ctx, "bitacora.contact_phone") }
+							</label>
+							<input
+								type="text"
+								name="contact_phone"
+								if log.ContactPhone != nil {
+									value={ *log.ContactPhone }
+								}
+								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							/>
+						</div>
+					</div>
 					<!-- Document Link -->
 					<div x-show="type === 'document'" x-transition>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
 							{ i18n.T(ctx, "bitacora.document_reference") }
 						</label>
-                        <select
-                            name="document_id"
-                            class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                        >
-                            <option value="">{ i18n.T(ctx, "bitacora.select_document") }</option>
-                            for _, doc := range documents {
-                                <option 
-                                    value={ doc.ID } 
-                                    selected?={ log.DocumentID != nil && *log.DocumentID == doc.ID }
-                                >
-                                    { doc.FileName } ({ doc.DocumentType })
-                                </option>
-                            }
-                        </select>
+						<select
+							name="document_id"
+							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						>
+							<option value="">{ i18n.T(ctx, "bitacora.select_document") }</option>
+							for _, doc := range documents {
+								<option
+									value={ doc.ID }
+									selected?={ log.DocumentID != nil && *log.DocumentID == doc.ID }
+								>
+									{ doc.FileName } ({ doc.DocumentType })
+								</option>
+							}
+						</select>
 					</div>
-
 					<!-- Content -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -170,18 +163,17 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 						>{ log.Content }</textarea>
 					</div>
-
 					<!-- Action Buttons -->
 					<div class="flex items-center gap-3 pt-4">
 						<button
 							type="submit"
 							class="flex-1 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
 						>
-                            if isNew {
-							    { i18n.T(ctx, "bitacora.create") }
-                            } else {
-                                { i18n.T(ctx, "common.save") }
-                            }
+							if isNew {
+								{ i18n.T(ctx, "bitacora.create") }
+							} else {
+								{ i18n.T(ctx, "common.save") }
+							}
 						</button>
 						<button
 							type="button"
@@ -195,7 +187,7 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 			</form>
 		</div>
 	</div>
-    <script>
+	<script>
         // Auto-focus title
         setTimeout(() => {
             const titleInput = document.querySelector('input[name="title"]');
@@ -212,17 +204,17 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 }
 
 func formatDateTimeLocal(t *time.Time) string {
-    if t == nil {
-        return time.Now().Format("2006-01-02T15:04")
-    }
-    return t.Format("2006-01-02T15:04")
+	if t == nil {
+		return time.Now().Format("2006-01-02T15:04")
+	}
+	return t.Format("2006-01-02T15:04")
 }
 
 func formatDateTimeDisplay(t *time.Time) string {
-    if t == nil {
-        return "-"
-    }
-    return t.Format("Jan 02, 2006 at 15:04")
+	if t == nil {
+		return "-"
+	}
+	return t.Format("Jan 02, 2006 at 15:04")
 }
 
 // CaseLogViewModal renders a read-only view of a log entry
@@ -242,7 +234,6 @@ templ CaseLogViewModal(log models.CaseLog) {
 					</svg>
 				</button>
 			</div>
-
 			<!-- Content -->
 			<div class="space-y-5">
 				<!-- Title -->
@@ -268,9 +259,7 @@ templ CaseLogViewModal(log models.CaseLog) {
 							{ i18n.T(ctx, "bitacora.types." + log.EntryType) }
 						</span>
 					</div>
-					
 				</div>
-
 				<!-- Duration (if call or meeting) -->
 				if log.Duration != nil && (log.EntryType == "call" || log.EntryType == "meeting") {
 					<div>
@@ -280,7 +269,6 @@ templ CaseLogViewModal(log models.CaseLog) {
 						<p class="text-foreground">{ strconv.Itoa(*log.Duration) } { i18n.T(ctx, "bitacora.minutes") }</p>
 					</div>
 				}
-
 				<!-- Contact Info (if call or meeting) -->
 				if (log.ContactName != nil || log.ContactPhone != nil) && (log.EntryType == "call" || log.EntryType == "meeting") {
 					<div class="flex flex-col sm:flex-row gap-4">
@@ -302,7 +290,6 @@ templ CaseLogViewModal(log models.CaseLog) {
 						}
 					</div>
 				}
-
 				<!-- Document Reference (if document type) -->
 				if log.EntryType == "document" && log.Document != nil {
 					<div>
@@ -312,7 +299,6 @@ templ CaseLogViewModal(log models.CaseLog) {
 						<p class="text-foreground">{ log.Document.FileName }</p>
 					</div>
 				}
-
 				<!-- Content -->
 				if log.Content != "" {
 					<div>
@@ -324,7 +310,6 @@ templ CaseLogViewModal(log models.CaseLog) {
 						</div>
 					</div>
 				}
-
 				<!-- Close Button -->
 				<div class="flex justify-end pt-4">
 					<button
@@ -338,7 +323,7 @@ templ CaseLogViewModal(log models.CaseLog) {
 			</div>
 		</div>
 	</div>
-    <script>
+	<script>
         function closeLogModal() {
              const modal = document.getElementById('log-entry-modal');
              if (modal) {
@@ -349,14 +334,14 @@ templ CaseLogViewModal(log models.CaseLog) {
 }
 
 func getLogTypeBadgeClassView(entryType string) string {
-    switch entryType {
-    case "call":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30"
-    case "meeting":
-        return "bg-purple-500/20 text-purple-400 border-purple-500/30"
-    case "document":
-        return "bg-orange-500/20 text-orange-400 border-orange-500/30"
-    default:
-        return "bg-green-500/20 text-green-400 border-green-500/30"
-    }
+	switch entryType {
+	case "call":
+		return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+	case "meeting":
+		return "bg-purple-500/20 text-purple-400 border-purple-500/30"
+	case "document":
+		return "bg-orange-500/20 text-orange-400 border-orange-500/30"
+	default:
+		return "bg-green-500/20 text-green-400 border-green-500/30"
+	}
 }

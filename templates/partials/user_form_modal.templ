@@ -28,7 +28,6 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 					</svg>
 				</button>
 			</div>
-
 			<!-- Modal Body -->
 			<form
 				if isEdit {
@@ -55,7 +54,6 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 						placeholder="John Doe"
 					/>
 				</div>
-
 				<!-- Email -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
@@ -70,7 +68,6 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 						placeholder="john@example.com"
 					/>
 				</div>
-
 				<!-- Password -->
 				if !isEdit {
 					<div>
@@ -88,7 +85,6 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 						<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "users.modal.min_chars") }</p>
 					</div>
 				}
-
 				<!-- Role -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
@@ -106,13 +102,12 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 						<option value="client" selected?={ getUserRole(user) == "client" }>{ i18n.T(ctx, "users.roles.client") }</option>
 					</select>
 					<p class="text-xs text-muted-foreground mt-1">
-						<strong>{ i18n.T(ctx, "users.roles.admin") }:</strong> { i18n.T(ctx, "users.modal.role_help.admin") } 
-						<strong>{ i18n.T(ctx, "users.roles.lawyer") }:</strong> { i18n.T(ctx, "users.modal.role_help.lawyer") } 
-						<strong>{ i18n.T(ctx, "users.roles.staff") }:</strong> { i18n.T(ctx, "users.modal.role_help.staff") } 
+						<strong>{ i18n.T(ctx, "users.roles.admin") }:</strong> { i18n.T(ctx, "users.modal.role_help.admin") }
+						<strong>{ i18n.T(ctx, "users.roles.lawyer") }:</strong> { i18n.T(ctx, "users.modal.role_help.lawyer") }
+						<strong>{ i18n.T(ctx, "users.roles.staff") }:</strong> { i18n.T(ctx, "users.modal.role_help.staff") }
 						<strong>{ i18n.T(ctx, "users.roles.client") }:</strong> { i18n.T(ctx, "users.modal.role_help.client") }
 					</p>
 				</div>
-
 				<!-- Status -->
 				<div>
 					<label class="flex items-center gap-3 cursor-pointer">
@@ -127,7 +122,6 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 					</label>
 					<p class="text-xs text-muted-foreground mt-1 ml-8">{ i18n.T(ctx, "users.modal.inactive_desc") }</p>
 				</div>
-
 				<!-- Form Actions -->
 				<div class="flex gap-3 pt-4">
 					<button

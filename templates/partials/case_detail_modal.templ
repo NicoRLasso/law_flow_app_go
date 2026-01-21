@@ -24,7 +24,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 				</div>
 				@CaseStatusBadge(ctx, caseRecord.Status)
 			</div>
-
 			<!-- Body -->
 			<div class="overflow-y-auto max-h-[calc(95vh-180px)] p-8">
 				<div class="space-y-8">
@@ -52,7 +51,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 							</div>
 						</div>
 					</div>
-
 					<!-- Client Information -->
 					if caseRecord.Client.ID != "" {
 						<div>
@@ -75,7 +73,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 							</div>
 						</div>
 					}
-
 					<!-- Assignment -->
 					if caseRecord.AssignedTo != nil {
 						<div>
@@ -88,7 +85,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 							</div>
 						</div>
 					}
-
 					<!-- Classification -->
 					if caseRecord.Domain != nil || caseRecord.Branch != nil {
 						<div>
@@ -121,7 +117,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 							</div>
 						</div>
 					}
-
 					<!-- Documents -->
 					<div>
 						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.documents") }</h3>
@@ -153,7 +148,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 							</div>
 						}
 					</div>
-
 					<!-- Timeline -->
 					<div>
 						<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "case.detail.modal.timeline") }</h3>
@@ -172,7 +166,6 @@ templ CaseDetailModal(ctx context.Context, caseRecord models.Case) {
 					</div>
 				</div>
 			</div>
-
 			<!-- Footer -->
 			<div class="flex items-center justify-end p-6 border-t border-white/10">
 				<button

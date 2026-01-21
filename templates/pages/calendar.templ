@@ -13,7 +13,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/calendar")
-			
 			<main class="w-full mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
 				<div class="space-y-6">
 					<!-- Header -->
@@ -23,7 +22,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							<p class="text-sm sm:text-base text-muted-foreground mt-1">{ i18n.T(ctx, "calendar.description") }</p>
 						</div>
 					</div>
-
 					<!-- Calendar Container -->
 					<div class="glass-panel p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl md:rounded-3xl border border-white/10">
 						<div
@@ -35,7 +33,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							data-label-status={ i18n.T(ctx, "calendar.events.status") }
 						></div>
 					</div>
-
 					<!-- Legend -->
 					if len(aptTypes) > 0 {
 						<div class="flex flex-wrap gap-x-4 gap-y-2 mt-3 sm:mt-4">
@@ -50,7 +47,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 				</div>
 			</main>
 		</div>
-
 		<!-- Event Detail Modal -->
 		<div
 			id="event-detail-modal"
@@ -69,7 +65,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 						</svg>
 					</button>
 				</div>
-
 				<!-- Body -->
 				<div class="p-4 sm:p-6 space-y-4">
 					<!-- Time -->
@@ -82,7 +77,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							<p id="modal-event-time" class="text-sm text-foreground"></p>
 						</div>
 					</div>
-
 					<!-- Client -->
 					<div class="flex items-start gap-3">
 						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +87,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							<p id="modal-event-client" class="text-sm text-foreground"></p>
 						</div>
 					</div>
-
 					<!-- Lawyer -->
 					<div class="flex items-start gap-3">
 						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +97,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							<p id="modal-event-lawyer" class="text-sm text-foreground"></p>
 						</div>
 					</div>
-
 					<!-- Status -->
 					<div class="flex items-start gap-3">
 						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +107,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							<p id="modal-event-status" class="text-sm text-foreground"></p>
 						</div>
 					</div>
-
 					<!-- Notes (if available) -->
 					<div id="modal-notes-container" class="hidden">
 						<div class="flex items-start gap-3">
@@ -129,7 +120,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 						</div>
 					</div>
 				</div>
-
 				<!-- Footer -->
 				<div class="flex items-center justify-between p-4 sm:p-6 border-t border-white/10">
 					<button
@@ -147,9 +137,8 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 				</div>
 			</div>
 		</div>
-
 		<!-- Include FullCalendar -->
-		<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales-all.global.min.js"></script>
 		<script>
 			// Modal functions (global scope)
@@ -316,7 +305,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 				}
 			});
 		</script>
-		
 		<style>
 			/* FullCalendar Dark Mode Overrides */
 			:root {

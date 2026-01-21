@@ -39,23 +39,19 @@ templ HistoricalCases(ctx context.Context, title string, csrfToken string, user 
 							</button>
 						}
 					</div>
-
 					<!-- Case Filters (without status filter for historical cases) -->
 					@partials.CaseFiltersHistorical(ctx, user)
-					
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
 						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
 					</div>
-					
 					<!-- Historical Cases Table -->
-					<div 
+					<div
 						id="cases-table"
 						hx-get="/api/cases?historical=true"
 						hx-trigger="load, reload-cases from:body"
 						hx-indicator="#loading-indicator"
-					>
-					</div>
+					></div>
 				</div>
 			</main>
 		</div>

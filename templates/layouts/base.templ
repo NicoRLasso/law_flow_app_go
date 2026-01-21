@@ -15,7 +15,6 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<meta name="csrf-token" content={ csrfToken }/>
 			<title>{ title }</title>
-
 			<!-- SEO Meta Tags -->
 			if seo != nil {
 				if seo.Description != "" {
@@ -32,7 +31,6 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				if seo.Canonical != "" {
 					<link rel="canonical" href={ seo.Canonical }/>
 				}
-
 				<!-- Open Graph Tags -->
 				<meta property="og:type" content={ seo.OGType }/>
 				<meta property="og:title" content={ seo.GetOGTitle() }/>
@@ -50,7 +48,6 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				for _, altLocale := range seo.AltLocales {
 					<meta property="og:locale:alternate" content={ getOGLocale(altLocale) }/>
 				}
-
 				<!-- Twitter Card Tags -->
 				<meta name="twitter:card" content={ seo.TwitterCard }/>
 				<meta name="twitter:title" content={ seo.GetOGTitle() }/>
@@ -60,7 +57,6 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				if seo.OGImage != "" {
 					<meta name="twitter:image" content={ seo.OGImage }/>
 				}
-
 				<!-- Hreflang Tags -->
 				if seo.Canonical != "" {
 					<link rel="alternate" hreflang={ seo.Locale } href={ seo.Canonical }/>
@@ -69,43 +65,33 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 					}
 					<link rel="alternate" hreflang="x-default" href={ seo.Canonical }/>
 				}
-
 				<!-- JSON-LD Structured Data -->
 				@templ.Raw(generateJSONLD(seo))
 			}
-
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
-
 			<!-- Preconnect to external domains for faster loading -->
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link rel="preconnect" href="https://unpkg.com" crossorigin/>
 			<link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
 			<link rel="dns-prefetch" href="https://unpkg.com"/>
-
 			<!-- Preload critical CSS -->
 			<link rel="preload" href="/static/css/output.css" as="style"/>
 			<link rel="preload" href="/static/css/kinetic.css" as="style"/>
-
 			<!-- Google Fonts - Inter (with font-display swap) -->
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
 			<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/></noscript>
-
 			<!-- Critical CSS -->
 			<link rel="stylesheet" href="/static/css/kinetic.css"/>
 			<link rel="stylesheet" href="/static/css/output.css"/>
-
 			<!-- HTMX - defer loading -->
 			<script src="https://unpkg.com/htmx.org@2.0.0" defer></script>
-
 			<!-- Alpine.js Plugins (must load before Alpine) -->
 			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer></script>
 			<script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
-
 			<!-- Alpine.js -->
 			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
 			<!-- CSRF Configuration for HTMX -->
 			<script>
 				// Configure HTMX to include CSRF token in all requests
@@ -116,22 +102,18 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 					});
 				});
 			</script>
-
 			<!-- Custom JavaScript -->
 			<script src="/static/js/marquee.js" defer></script>
 			<script src="/static/js/app.js" defer></script>
-
-
 		</head>
 		<body class="bg-background text-foreground">
 			<!-- Noise Texture Overlay -->
 			<svg class="noise-overlay" aria-hidden="true">
 				<filter id="noise">
-					<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+					<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"></feTurbulence>
 				</filter>
-				<rect width="100%" height="100%" filter="url(#noise)"/>
+				<rect width="100%" height="100%" filter="url(#noise)"></rect>
 			</svg>
-
 			<!-- Ambient Gradient Blobs -->
 			<div class="ambient-blobs" aria-hidden="true">
 				<div class="blob blob-1"></div>
@@ -139,7 +121,6 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				<div class="blob blob-3"></div>
 				<div class="blob blob-4"></div>
 			</div>
-
 			{ children... }
 		</body>
 	</html>

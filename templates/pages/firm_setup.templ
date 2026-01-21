@@ -3,8 +3,8 @@ package pages
 import (
 	"context"
 	"law_flow_app_go/models"
-	"law_flow_app_go/templates/layouts"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
 )
 
 templ FirmSetup(ctx context.Context, title string, csrfToken string, user *models.User) {
@@ -35,9 +35,9 @@ templ FirmSetup(ctx context.Context, title string, csrfToken string, user *model
 						<!-- Firm Name -->
 						<div class="space-y-3">
 							<label for="name" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.name") } <span class="text-red-500">*</span></label>
-							<input 
-								type="text" 
-								id="name" 
+							<input
+								type="text"
+								id="name"
 								name="name"
 								required
 								placeholder="Smith & Associates Law Firm"

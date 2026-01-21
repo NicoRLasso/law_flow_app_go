@@ -20,7 +20,6 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 				{ i18n.T(ctx, "templates.metadata_desc") }
 			</p>
 		</div>
-
 		<form
 			if isNew {
 				hx-post="/api/templates"
@@ -32,9 +31,8 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 			class="glass-panel rounded-2xl p-8 border border-white/10 space-y-8"
 		>
 			if !isNew {
-				<input type="hidden" name="is_metadata_update" value="true" />
+				<input type="hidden" name="is_metadata_update" value="true"/>
 			}
-
 			<!-- Name & Description -->
 			<div class="space-y-6">
 				<div>
@@ -49,7 +47,6 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 						autofocus
 					/>
 				</div>
-
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.description") }</label>
 					<textarea
@@ -64,9 +61,7 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 					</textarea>
 				</div>
 			</div>
-
 			<div class="h-px bg-white/5"></div>
-
 			<!-- Configuration Grid -->
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<!-- Category -->
@@ -79,7 +74,7 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 						>
 							<option value="">{ i18n.T(ctx, "templates.select_category") }</option>
 							for _, cat := range categories {
-								<option 
+								<option
 									value={ cat.ID }
 									selected?={ template.CategoryID != nil && *template.CategoryID == cat.ID }
 								>
@@ -92,45 +87,43 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 						</div>
 					</div>
 				</div>
-
 				<!-- Page Size -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.page_size") }</label>
 					<div class="grid grid-cols-3 gap-3">
 						<label class="relative cursor-pointer group">
-							<input type="radio" name="page_size" value="letter" class="peer sr-only" checked?={ template.PageSize == "letter" || template.PageSize == "" } />
+							<input type="radio" name="page_size" value="letter" class="peer sr-only" checked?={ template.PageSize == "letter" || template.PageSize == "" }/>
 							<div class="p-3 text-center rounded-xl border border-white/10 bg-white/5 peer-checked:bg-accent/20 peer-checked:border-accent/50 peer-checked:text-accent transition-all hover:bg-white/10">
 								<span class="text-sm font-medium">Letter</span>
 							</div>
 						</label>
 						<label class="relative cursor-pointer group">
-							<input type="radio" name="page_size" value="A4" class="peer sr-only" checked?={ template.PageSize == "A4" } />
+							<input type="radio" name="page_size" value="A4" class="peer sr-only" checked?={ template.PageSize == "A4" }/>
 							<div class="p-3 text-center rounded-xl border border-white/10 bg-white/5 peer-checked:bg-accent/20 peer-checked:border-accent/50 peer-checked:text-accent transition-all hover:bg-white/10">
 								<span class="text-sm font-medium">A4</span>
 							</div>
 						</label>
 						<label class="relative cursor-pointer group">
-							<input type="radio" name="page_size" value="legal" class="peer sr-only" checked?={ template.PageSize == "legal" } />
+							<input type="radio" name="page_size" value="legal" class="peer sr-only" checked?={ template.PageSize == "legal" }/>
 							<div class="p-3 text-center rounded-xl border border-white/10 bg-white/5 peer-checked:bg-accent/20 peer-checked:border-accent/50 peer-checked:text-accent transition-all hover:bg-white/10">
 								<span class="text-sm font-medium">Legal</span>
 							</div>
 						</label>
 					</div>
 				</div>
-
-					<!-- Orientation -->
+				<!-- Orientation -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.orientation") }</label>
 					<div class="grid grid-cols-2 gap-3">
 						<label class="relative cursor-pointer group">
-							<input type="radio" name="page_orientation" value="portrait" class="peer sr-only" checked?={ template.PageOrientation == "portrait" || template.PageOrientation == "" } />
+							<input type="radio" name="page_orientation" value="portrait" class="peer sr-only" checked?={ template.PageOrientation == "portrait" || template.PageOrientation == "" }/>
 							<div class="p-3 flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-accent/20 peer-checked:border-accent/50 peer-checked:text-accent transition-all hover:bg-white/10">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
 								<span class="text-sm font-medium">{ i18n.T(ctx, "templates.portrait") }</span>
 							</div>
 						</label>
 						<label class="relative cursor-pointer group">
-							<input type="radio" name="page_orientation" value="landscape" class="peer sr-only" checked?={ template.PageOrientation == "landscape" } />
+							<input type="radio" name="page_orientation" value="landscape" class="peer sr-only" checked?={ template.PageOrientation == "landscape" }/>
 							<div class="p-3 flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-accent/20 peer-checked:border-accent/50 peer-checked:text-accent transition-all hover:bg-white/10">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2z"></path></svg>
 								<span class="text-sm font-medium">{ i18n.T(ctx, "templates.landscape") }</span>
@@ -138,7 +131,6 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 						</label>
 					</div>
 				</div>
-
 				<!-- Active Status (only for existing templates) -->
 				if !isNew {
 					<div class="md:col-span-2">
@@ -155,11 +147,11 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 								</div>
 							</div>
 							<div class="relative">
-								<input 
-									type="checkbox" 
-									name="is_active" 
-									value="true" 
-									class="peer sr-only" 
+								<input
+									type="checkbox"
+									name="is_active"
+									value="true"
+									class="peer sr-only"
 									checked?={ template.IsActive }
 								/>
 								<div class="w-11 h-6 bg-white/10 rounded-full peer-checked:bg-accent transition-colors"></div>
@@ -169,7 +161,6 @@ templ TemplateMetadataForm(ctx context.Context, template models.DocumentTemplate
 					</div>
 				}
 			</div>
-
 			<div class="flex justify-end pt-4">
 				<button
 					type="submit"

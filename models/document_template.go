@@ -55,7 +55,7 @@ type DocumentTemplate struct {
 	// PDF Settings
 	PageOrientation string `gorm:"not null;default:portrait" json:"page_orientation"`
 	PageSize        string `gorm:"not null;default:letter" json:"page_size"`
-	MarginTop       int    `gorm:"not null;default:72" json:"margin_top"`    // 72 points = 1 inch
+	MarginTop       int    `gorm:"not null;default:72" json:"margin_top"` // 72 points = 1 inch
 	MarginBottom    int    `gorm:"not null;default:72" json:"margin_bottom"`
 	MarginLeft      int    `gorm:"not null;default:72" json:"margin_left"`
 	MarginRight     int    `gorm:"not null;default:72" json:"margin_right"`

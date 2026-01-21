@@ -12,7 +12,6 @@ templ TemplateEditor(ctx context.Context, title string, csrfToken string, user *
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-background text-foreground">
 			@components.Navbar(ctx, user, firm, "/templates")
-			
 			<!-- Editor Root Container for HTMX Swaps -->
 			<main class="w-full" id="template-editor-root">
 				if isNew {

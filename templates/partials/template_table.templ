@@ -54,7 +54,6 @@ templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate) {
 				</div>
 			}
 		</div>
-
 		<!-- Desktop Table View -->
 		<div class="hidden md:block overflow-x-auto">
 			<table class="w-full">
@@ -139,4 +138,3 @@ templ templateStatusBadge(ctx context.Context, isActive bool) {
 func templateIntToString(n int) string {
 	return fmt.Sprintf("%d", n)
 }
-

@@ -7,8 +7,8 @@ import (
 )
 
 templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
-	<div 
-		id="template-workspace" 
+	<div
+		id="template-workspace"
 		class="flex flex-col h-[calc(100vh-140px)]"
 		x-data="templateEditor()"
 		x-init="init()"
@@ -18,8 +18,8 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 		<!-- Top Bar: Actions -->
 		<div class="glass-panel border-b border-white/10 px-6 py-3 flex items-center justify-between z-20">
 			<div class="flex items-center gap-4">
-				<a 
-					href="/templates" 
+				<a
+					href="/templates"
 					class="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -31,7 +31,6 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 					{ template.PageSize } - { template.PageOrientation }
 				</span>
 			</div>
-
 			<div class="flex items-center gap-3">
 				<!-- Page Indicator -->
 				<span x-show="viewMode === 'paginated'" class="text-xs text-muted-foreground px-3 py-1 rounded-full bg-white/5 border border-white/10">
@@ -47,7 +46,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 				</button>
 				<button
 					type="button"
-					onclick="saveTemplateContent()" 
+					onclick="saveTemplateContent()"
 					class="btn-primary px-4 py-1.5 text-lg font-medium shadow-md hover:shadow-accent/20 transition-all flex items-center gap-2"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
@@ -55,84 +54,79 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 				</button>
 			</div>
 		</div>
-
 		<!-- Toolbar -->
 		<div class="bg-background/80 backdrop-blur-md border-b border-white/5 py-2 px-6 flex justify-center items-center gap-1 z-10 sticky top-0">
 			<!-- Formatting Buttons with Active States -->
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('bold')"
 				:class="isBold ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Bold (Ctrl+B)"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path></svg>
 			</button>
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('italic')"
 				:class="isItalic ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Italic (Ctrl+I)"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4M14 4l-4 16M6 20h4"></path></svg>
 			</button>
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('underline')"
 				:class="isUnderline ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Underline (Ctrl+U)"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3M4 21h16"></path></svg>
 			</button>
-			
 			<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
-			
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('justifyLeft')"
 				:class="alignment === 'left' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Align Left"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
 			</button>
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('justifyCenter')"
 				:class="alignment === 'center' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Align Center"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M4 18h16"></path></svg>
 			</button>
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('justifyRight')"
 				:class="alignment === 'right' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Align Right"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 12h10M4 18h16"></path></svg>
 			</button>
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="execCommand('justifyFull')"
 				:class="alignment === 'justify' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="p-2 hover:bg-white/10 rounded transition-colors" 
+				class="p-2 hover:bg-white/10 rounded transition-colors"
 				title="Justify"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 			</button>
-
 			<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
-
 			<!-- Page Break Button -->
-			<button 
-				type="button" 
+			<button
+				type="button"
 				@mousedown.prevent="insertPageBreak()"
-				class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground" 
+				class="p-2 hover:bg-white/10 rounded transition-colors text-muted-foreground hover:text-foreground"
 				title={ i18n.T(ctx, "templates.insert_page_break") }
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,21 +134,19 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16"></path>
 				</svg>
 			</button>
-
 			<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
-
 			<!-- View Mode Toggle -->
 			<div class="flex items-center bg-white/5 rounded-lg p-0.5">
-				<button 
-					type="button" 
+				<button
+					type="button"
 					@click="viewMode = 'continuous'"
 					:class="viewMode === 'continuous' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
 					class="px-3 py-1 text-xs font-medium rounded-md transition-colors"
 				>
 					{ i18n.T(ctx, "templates.view_continuous") }
 				</button>
-				<button 
-					type="button" 
+				<button
+					type="button"
 					@click="viewMode = 'paginated'"
 					:class="viewMode === 'paginated' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
 					class="px-3 py-1 text-xs font-medium rounded-md transition-colors"
@@ -163,9 +155,8 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 				</button>
 			</div>
 		</div>
-
 		<!-- Editor Canvas -->
-		<div 
+		<div
 			class="flex-1 bg-[#1A1A1C] overflow-y-auto relative p-8"
 			id="editor-scroller"
 			@scroll="updateCurrentPage()"
@@ -174,12 +165,11 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 			<div class="flex justify-center items-start min-h-full">
 				<div class="relative group">
 					<!-- Visual Pagination Guides (Overlay) -->
-					<div 
+					<div
 						x-show="viewMode === 'paginated'"
 						class="absolute inset-x-0 top-0 bottom-0 pointer-events-none z-20"
 						:style="`background-image: repeating-linear-gradient(to bottom, transparent, transparent calc(${pageHeight}px - 1px), rgba(0, 0, 0, 0.2) calc(${pageHeight}px - 1px), rgba(0, 0, 0, 0.2) ${pageHeight}px);`"
 					></div>
-
 					<div
 						id="editor-content"
 						contenteditable="true"
@@ -192,11 +182,9 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 					</div>
 				</div>
 			</div>
-
 			<!-- Bottom padding for scrolling -->
 			<div class="h-24"></div>
 		</div>
-
 		<!-- Context Menu -->
 		<div
 			x-show="showContextMenu"
@@ -227,13 +215,11 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 				</template>
 			</div>
 		</div>
-
 		<!-- Hidden Form for Save -->
 		<form id="save-template-form" hx-put={ "/api/templates/" + template.ID } hx-target="body" class="hidden">
-			<input type="hidden" name="content" id="hidden-content-input" />
-			<input type="hidden" name="name" value={ template.Name } />
+			<input type="hidden" name="content" id="hidden-content-input"/>
+			<input type="hidden" name="name" value={ template.Name }/>
 		</form>
-
 		<script>
 			function templateEditor() {
 				return {
@@ -311,7 +297,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 					},
 
 					insertVariable(tag) {
-						document.execCommand("insertText", false, "{{" + tag + "}}");
+						document.execCommand("insertText", false, "{{ " + tag + " }}");
 						this.showContextMenu = false;
 					},
 
@@ -390,6 +376,6 @@ func getPaperStyle(t models.DocumentTemplate) string {
 	} else if t.PageSize == "legal" {
 		width = "816px"
 	}
-	
+
 	return "width: " + width + "; max-width: 100%;"
 }

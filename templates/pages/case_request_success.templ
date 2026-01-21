@@ -3,19 +3,18 @@ package pages
 import (
 	"context"
 	"law_flow_app_go/models"
-	"law_flow_app_go/templates/layouts"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/layouts"
 )
 
 templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm) {
-	@layouts.Base(ctx, i18n.T(ctx, "public.success.title") + " - " + firm.Name, csrfToken, nil) {
+	@layouts.Base(ctx, i18n.T(ctx, "public.success.title")+" - "+firm.Name, csrfToken, nil) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">
 				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
 				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px]"></div>
 			</div>
-
 			<div class="w-full max-w-2xl relative z-10 px-6">
 				<!-- Success Card -->
 				<div class="glass-panel p-12 rounded-2xl border border-white/10 text-center">
@@ -25,13 +24,11 @@ templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
 						</svg>
 					</div>
-
 					<!-- Success Message -->
 					<h1 class="text-3xl md:text-4xl font-bold mb-4">{ i18n.T(ctx, "public.success.header") }</h1>
 					<p class="text-lg text-muted-foreground mb-8">
 						{ i18n.T(ctx, "public.success.thank_you") } <span class="text-foreground font-semibold">{ firm.Name }</span>
 					</p>
-
 					<!-- Details -->
 					<div class="glass-panel p-6 rounded-xl border border-white/10 mb-8 text-left">
 						<h2 class="text-lg font-semibold mb-4 text-center">{ i18n.T(ctx, "public.success.next_steps") }</h2>
@@ -56,7 +53,6 @@ templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm
 							</li>
 						</ul>
 					</div>
-
 					<!-- Contact Info -->
 					<div class="text-sm text-muted-foreground mb-8">
 						<p>{ i18n.T(ctx, "public.success.need_help") }</p>
@@ -71,16 +67,14 @@ templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm
 							</p>
 						}
 					</div>
-
 					<!-- Action Button -->
-					<a 
+					<a
 						href={ templ.URL("/firm/" + firm.Slug + "/request") }
 						class="inline-block bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-medium py-3 px-8 rounded-xl transition-all duration-300 hover:scale-105"
 					>
 						{ i18n.T(ctx, "public.success.another_request") }
 					</a>
 				</div>
-
 				<!-- Footer Note -->
 				<p class="text-center text-xs text-muted-foreground mt-6">
 					{ i18n.T(ctx, "public.success.close_note") }

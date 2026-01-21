@@ -28,7 +28,6 @@ templ UserFilters(ctx context.Context) {
 					<option value="client">{ i18n.T(ctx, "users.roles.client") }</option>
 				</select>
 			</div>
-
 			<div class="flex items-center gap-2 w-full sm:w-auto">
 				<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "users.filters.status") }</label>
 				<select
@@ -96,22 +95,18 @@ templ UserRow(ctx context.Context, user models.User, currentUserRole string) {
 				</div>
 			</div>
 		</td>
-
 		<!-- Email (hidden on mobile) -->
 		<td class="hidden md:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="text-sm text-muted-foreground">{ user.Email }</span>
 		</td>
-
 		<!-- Role -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
 			@RoleBadge(ctx, user.Role)
 		</td>
-
 		<!-- Status (hidden on mobile) -->
 		<td class="hidden sm:table-cell px-4 md:px-6 py-4 md:py-5">
 			@UserStatusBadge(ctx, user.IsActive)
 		</td>
-
 		<!-- Last Login (hidden on small screens) -->
 		<td class="hidden lg:table-cell px-4 md:px-6 py-4 md:py-5">
 			<span class="text-xs text-muted-foreground">
@@ -122,7 +117,6 @@ templ UserRow(ctx context.Context, user models.User, currentUserRole string) {
 				}
 			</span>
 		</td>
-
 		<!-- Actions -->
 		<td class="px-4 md:px-6 py-4 md:py-5">
 			<div class="flex items-center gap-1 md:gap-2">
@@ -249,7 +243,6 @@ templ DeleteConfirmModal(ctx context.Context, user models.User) {
 			<div class="px-4 md:px-6 py-3 md:py-4 border-b border-white/10">
 				<h2 class="text-lg md:text-xl font-bold text-red-400">{ i18n.T(ctx, "users.delete_modal.title") }</h2>
 			</div>
-
 			<!-- Modal Body -->
 			<div class="px-4 md:px-6 py-4 md:py-6">
 				<div class="flex items-start gap-3 md:gap-4">
@@ -268,7 +261,6 @@ templ DeleteConfirmModal(ctx context.Context, user models.User) {
 					</div>
 				</div>
 			</div>
-
 			<!-- Modal Footer -->
 			<div class="px-4 md:px-6 py-3 md:py-4 bg-white/5 border-t border-white/10 flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 rounded-b-xl md:rounded-b-2xl">
 				<button

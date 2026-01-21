@@ -43,7 +43,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 					</svg>
 				</button>
 			</div>
-
 			<!-- Branch Info -->
 			<div class="mb-4 p-3 bg-white/5 rounded-lg">
 				<div class="text-xs text-muted-foreground mb-1">{ i18n.T(ctx, "settings.classifications.branch") }</div>
@@ -55,7 +54,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 					<span>{ branch.Name }</span>
 				</div>
 			</div>
-
 			<!-- Form -->
 			<form
 				if subtype != nil {
@@ -69,7 +67,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 				class="space-y-4"
 			>
 				<input type="hidden" name="branch_id" value={ branch.ID }/>
-
 				<!-- Name -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
@@ -86,7 +83,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 						placeholder={ i18n.T(ctx, "settings.classifications.name_placeholder") }
 					/>
 				</div>
-
 				<!-- Code -->
 				<div x-data>
 					<label class="block text-sm font-medium text-foreground mb-2">
@@ -105,7 +101,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 					/>
 					<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.classifications.code_hint") }</p>
 				</div>
-
 				<!-- Description -->
 				<div>
 					<label class="block text-sm font-medium text-foreground mb-2">
@@ -121,7 +116,6 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 						}
 					</textarea>
 				</div>
-
 				<!-- Actions -->
 				<div class="flex justify-end gap-3 pt-4">
 					<button

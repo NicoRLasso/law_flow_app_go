@@ -1,108 +1,101 @@
 package pages
 
 import (
-    "context"
-    "law_flow_app_go/models"
-    "law_flow_app_go/services/i18n"
-    "law_flow_app_go/templates/components"
-    "law_flow_app_go/templates/layouts"
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
 )
 
 templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
-    @layouts.Base(ctx, i18n.T(ctx, "audit.title"), "", nil) {
-        <div class="min-h-screen bg-background">
-             <!-- Navigation Bar -->
-            @components.Navbar(ctx, user, firm, "/audit-logs")
-            
-            <!-- Main Content -->
-            <main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
-                <div class="space-y-4 md:space-y-6">
-                    <!-- Header -->
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                            { i18n.T(ctx, "audit.title") }
-                        </h1>
-                    </div>
-
-                    <!-- Filters Card -->
-                    <div class="glass-panel p-4 rounded-xl border border-white/10">
-                        <form hx-get="/api/audit-logs" hx-target="#audit-logs-table" hx-trigger="submit, change from:#filter-form" id="filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Date Range -->
-                            <div>
-                                <label class="block text-sm font-medium text-muted-foreground mb-1">
-                                    { i18n.T(ctx, "audit.filters.dateFrom") }
-                                </label>
-                                <input type="date" name="date_from" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent" />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-muted-foreground mb-1">
-                                    { i18n.T(ctx, "audit.filters.dateTo") }
-                                </label>
-                                <input type="date" name="date_to" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent" />
-                            </div>
-
-                            <!-- Resource Type Filter -->
-                            <div>
-                                <label class="block text-sm font-medium text-muted-foreground mb-1">
-                                    { i18n.T(ctx, "audit.filters.resourceType") }
-                                </label>
-                                <select name="resource_type" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent">
-                                    <option value="">{ i18n.T(ctx, "common.all") }</option>
-                                    <option value="Case">{ i18n.T(ctx, "audit.resources.case") }</option>
-                                    <option value="User">{ i18n.T(ctx, "audit.resources.user") }</option>
-                                    <option value="CaseDocument">{ i18n.T(ctx, "audit.resources.document") }</option>
-                                    <option value="Appointment">{ i18n.T(ctx, "audit.resources.appointment") }</option>
-                                    <option value="BlockedDate">{ i18n.T(ctx, "audit.resources.blocked_date") }</option>
-                                    <option value="Availability">{ i18n.T(ctx, "audit.resources.availability") }</option>
-                                    <option value="CaseRequest">{ i18n.T(ctx, "audit.resources.case_request") }</option>
-                                    <option value="Firm">{ i18n.T(ctx, "audit.resources.firm") }</option>
-                                    <option value="Template">{ i18n.T(ctx, "audit.resources.template") }</option>
-                                    <option value="GeneratedDocument">{ i18n.T(ctx, "audit.resources.generated_document") }</option>
-                                    <option value="AppointmentType">{ i18n.T(ctx, "audit.resources.appointment_type") }</option>
-                                </select>
-                            </div>
-
-                            <!-- Action Filter -->
-                            <div>
-                                <label class="block text-sm font-medium text-muted-foreground mb-1">
-                                    { i18n.T(ctx, "audit.filters.action") }
-                                </label>
-                                <select name="action" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent">
-                                    <option value="">{ i18n.T(ctx, "common.all") }</option>
-                                    <option value="CREATE">{ i18n.T(ctx, "audit.actions.create") }</option>
-                                    <option value="UPDATE">{ i18n.T(ctx, "audit.actions.update") }</option>
-                                    <option value="DELETE">{ i18n.T(ctx, "audit.actions.delete") }</option>
-                                    <option value="VIEW">{ i18n.T(ctx, "audit.actions.view") }</option>
-                                    <option value="DOWNLOAD">{ i18n.T(ctx, "audit.actions.download") }</option>
-                                    <option value="VISIBILITY_CHANGE">{ i18n.T(ctx, "audit.actions.visibility") }</option>
-                                    <option value="LOGIN">LOGIN</option>
-                                    <option value="LOGOUT">LOGOUT</option>
-                                </select>
-                            </div>
-
-                            <!-- Search -->
-                            <div class="md:col-span-4">
-                                <input 
-                                    type="text" 
-                                    name="search" 
-                                    placeholder={ i18n.T(ctx, "audit.filters.searchPlaceholder") }
-                                    class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"
-                                    hx-trigger="keyup changed delay:300ms"
-                                />
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Audit Logs Table -->
-                    <div id="audit-logs-table" hx-get="/api/audit-logs" hx-trigger="load">
-                        <!-- Loading indicator -->
-                        <div class="flex justify-center py-8">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    }
+	@layouts.Base(ctx, i18n.T(ctx, "audit.title"), "", nil) {
+		<div class="min-h-screen bg-background">
+			<!-- Navigation Bar -->
+			@components.Navbar(ctx, user, firm, "/audit-logs")
+			<!-- Main Content -->
+			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
+				<div class="space-y-4 md:space-y-6">
+					<!-- Header -->
+					<div class="flex justify-between items-center">
+						<h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+							{ i18n.T(ctx, "audit.title") }
+						</h1>
+					</div>
+					<!-- Filters Card -->
+					<div class="glass-panel p-4 rounded-xl border border-white/10">
+						<form hx-get="/api/audit-logs" hx-target="#audit-logs-table" hx-trigger="submit, change from:#filter-form" id="filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+							<!-- Date Range -->
+							<div>
+								<label class="block text-sm font-medium text-muted-foreground mb-1">
+									{ i18n.T(ctx, "audit.filters.dateFrom") }
+								</label>
+								<input type="date" name="date_from" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-muted-foreground mb-1">
+									{ i18n.T(ctx, "audit.filters.dateTo") }
+								</label>
+								<input type="date" name="date_to" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"/>
+							</div>
+							<!-- Resource Type Filter -->
+							<div>
+								<label class="block text-sm font-medium text-muted-foreground mb-1">
+									{ i18n.T(ctx, "audit.filters.resourceType") }
+								</label>
+								<select name="resource_type" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent">
+									<option value="">{ i18n.T(ctx, "common.all") }</option>
+									<option value="Case">{ i18n.T(ctx, "audit.resources.case") }</option>
+									<option value="User">{ i18n.T(ctx, "audit.resources.user") }</option>
+									<option value="CaseDocument">{ i18n.T(ctx, "audit.resources.document") }</option>
+									<option value="Appointment">{ i18n.T(ctx, "audit.resources.appointment") }</option>
+									<option value="BlockedDate">{ i18n.T(ctx, "audit.resources.blocked_date") }</option>
+									<option value="Availability">{ i18n.T(ctx, "audit.resources.availability") }</option>
+									<option value="CaseRequest">{ i18n.T(ctx, "audit.resources.case_request") }</option>
+									<option value="Firm">{ i18n.T(ctx, "audit.resources.firm") }</option>
+									<option value="Template">{ i18n.T(ctx, "audit.resources.template") }</option>
+									<option value="GeneratedDocument">{ i18n.T(ctx, "audit.resources.generated_document") }</option>
+									<option value="AppointmentType">{ i18n.T(ctx, "audit.resources.appointment_type") }</option>
+								</select>
+							</div>
+							<!-- Action Filter -->
+							<div>
+								<label class="block text-sm font-medium text-muted-foreground mb-1">
+									{ i18n.T(ctx, "audit.filters.action") }
+								</label>
+								<select name="action" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent">
+									<option value="">{ i18n.T(ctx, "common.all") }</option>
+									<option value="CREATE">{ i18n.T(ctx, "audit.actions.create") }</option>
+									<option value="UPDATE">{ i18n.T(ctx, "audit.actions.update") }</option>
+									<option value="DELETE">{ i18n.T(ctx, "audit.actions.delete") }</option>
+									<option value="VIEW">{ i18n.T(ctx, "audit.actions.view") }</option>
+									<option value="DOWNLOAD">{ i18n.T(ctx, "audit.actions.download") }</option>
+									<option value="VISIBILITY_CHANGE">{ i18n.T(ctx, "audit.actions.visibility") }</option>
+									<option value="LOGIN">LOGIN</option>
+									<option value="LOGOUT">LOGOUT</option>
+								</select>
+							</div>
+							<!-- Search -->
+							<div class="md:col-span-4">
+								<input
+									type="text"
+									name="search"
+									placeholder={ i18n.T(ctx, "audit.filters.searchPlaceholder") }
+									class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"
+									hx-trigger="keyup changed delay:300ms"
+								/>
+							</div>
+						</form>
+					</div>
+					<!-- Audit Logs Table -->
+					<div id="audit-logs-table" hx-get="/api/audit-logs" hx-trigger="load">
+						<!-- Loading indicator -->
+						<div class="flex justify-center py-8">
+							<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	}
 }
-

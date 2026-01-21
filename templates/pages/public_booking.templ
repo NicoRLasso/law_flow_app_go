@@ -8,209 +8,194 @@ import (
 templ PublicBooking(ctx context.Context, firm models.Firm, lawyers []models.User, aptTypes []models.AppointmentType) {
 	<!DOCTYPE html>
 	<html lang="en">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Book Appointment - { firm.Name }</title>
-		<link rel="stylesheet" href="/static/css/style.css"/>
-		<link rel="stylesheet" href="/static/css/kinetic.css"/>
-		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-	</head>
-	<body class="min-h-screen bg-background">
-		<div x-data="bookingWizard()" class="min-h-screen flex items-center justify-center p-4">
-			<div class="glass-panel w-full max-w-2xl rounded-3xl p-8 border border-white/10">
-				<!-- Header -->
-				<div class="text-center mb-8">
-					<h1 class="text-3xl font-bold text-gradient">{ firm.Name }</h1>
-					<p class="text-muted-foreground mt-2">Book Your Appointment</p>
-				</div>
-
-				<!-- Progress Steps -->
-				<div class="flex justify-center gap-2 mb-8">
-					<template x-for="i in 4">
-						<div 
-							class="w-3 h-3 rounded-full transition-all"
-							:class="step >= i ? 'bg-accent' : 'bg-white/20'"
-						></div>
-					</template>
-				</div>
-
-				<!-- Step 1: Select Lawyer -->
-				<div x-show="step === 1" x-transition class="space-y-6">
-					<h2 class="text-xl font-semibold text-foreground">Select a Lawyer</h2>
-					<div class="grid gap-4">
-						for _, lawyer := range lawyers {
-							<button 
-								type="button"
-								@click={ "selectLawyer('" + lawyer.ID + "', '" + lawyer.Name + "')" }
-								class="w-full p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left transition-all flex items-center gap-4"
-							>
-								<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-									<span class="text-accent font-bold">{ string(lawyer.Name[0]) }</span>
-								</div>
-								<div>
-									<p class="font-medium text-foreground">{ lawyer.Name }</p>
-									<p class="text-sm text-muted-foreground">{ lawyer.Email }</p>
-								</div>
-							</button>
-						}
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Book Appointment - { firm.Name }</title>
+			<link rel="stylesheet" href="/static/css/style.css"/>
+			<link rel="stylesheet" href="/static/css/kinetic.css"/>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		</head>
+		<body class="min-h-screen bg-background">
+			<div x-data="bookingWizard()" class="min-h-screen flex items-center justify-center p-4">
+				<div class="glass-panel w-full max-w-2xl rounded-3xl p-8 border border-white/10">
+					<!-- Header -->
+					<div class="text-center mb-8">
+						<h1 class="text-3xl font-bold text-gradient">{ firm.Name }</h1>
+						<p class="text-muted-foreground mt-2">Book Your Appointment</p>
 					</div>
-				</div>
-
-				<!-- Step 2: Select Date & Time -->
-				<div x-show="step === 2" x-transition class="space-y-6">
-					<h2 class="text-xl font-semibold text-foreground">Choose Date & Time</h2>
-					
-					<!-- Date picker -->
-					<div>
-						<label class="block text-sm font-medium text-foreground mb-2">Date</label>
-						<input 
-							type="date" 
-							x-model="selectedDate"
-							@change="loadSlots()"
-							:min="minDate"
-							class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-						/>
+					<!-- Progress Steps -->
+					<div class="flex justify-center gap-2 mb-8">
+						<template x-for="i in 4">
+							<div
+								class="w-3 h-3 rounded-full transition-all"
+								:class="step >= i ? 'bg-accent' : 'bg-white/20'"
+							></div>
+						</template>
 					</div>
-
-					<!-- Time slots -->
-					<div x-show="selectedDate">
-						<label class="block text-sm font-medium text-foreground mb-2">Available Times</label>
-						<div x-show="loadingSlots" class="text-center py-8">
-							<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto"></div>
-						</div>
-						<div x-show="!loadingSlots && slots.length === 0" class="text-center py-8">
-							<p class="text-muted-foreground">No available slots for this date</p>
-						</div>
-						<div x-show="!loadingSlots && slots.length > 0" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-							<template x-for="slot in slots" :key="slot.start_time">
-								<button 
+					<!-- Step 1: Select Lawyer -->
+					<div x-show="step === 1" x-transition class="space-y-6">
+						<h2 class="text-xl font-semibold text-foreground">Select a Lawyer</h2>
+						<div class="grid gap-4">
+							for _, lawyer := range lawyers {
+								<button
 									type="button"
-									@click="selectSlot(slot)"
-									:class="selectedSlot?.start_time === slot.start_time ? 'bg-accent text-white' : 'bg-white/5 hover:bg-white/10 text-foreground'"
-									class="px-3 py-2 rounded-lg text-sm transition-all border border-white/10"
-									x-text="formatTime(slot.start_time)"
-								></button>
-							</template>
+									@click={ "selectLawyer('" + lawyer.ID + "', '" + lawyer.Name + "')" }
+									class="w-full p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-left transition-all flex items-center gap-4"
+								>
+									<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+										<span class="text-accent font-bold">{ string(lawyer.Name[0]) }</span>
+									</div>
+									<div>
+										<p class="font-medium text-foreground">{ lawyer.Name }</p>
+										<p class="text-sm text-muted-foreground">{ lawyer.Email }</p>
+									</div>
+								</button>
+							}
 						</div>
 					</div>
-
-					<div class="flex gap-3">
-						<button @click="step = 1" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all">
-							Back
-						</button>
-						<button @click="step = 3" :disabled="!selectedSlot" class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 text-white rounded-xl font-medium transition-all">
-							Continue
-						</button>
-					</div>
-				</div>
-
-				<!-- Step 3: Your Details -->
-				<div x-show="step === 3" x-transition class="space-y-6">
-					<h2 class="text-xl font-semibold text-foreground">Your Details</h2>
-					
-					<div class="space-y-4">
+					<!-- Step 2: Select Date & Time -->
+					<div x-show="step === 2" x-transition class="space-y-6">
+						<h2 class="text-xl font-semibold text-foreground">Choose Date & Time</h2>
+						<!-- Date picker -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">Full Name *</label>
-							<input 
-								type="text" 
-								x-model="clientName"
+							<label class="block text-sm font-medium text-foreground mb-2">Date</label>
+							<input
+								type="date"
+								x-model="selectedDate"
+								@change="loadSlots()"
+								:min="minDate"
 								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-								placeholder="John Doe"
 							/>
 						</div>
-						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">Email *</label>
-							<input 
-								type="email" 
-								x-model="clientEmail"
-								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-								placeholder="john@example.com"
-							/>
+						<!-- Time slots -->
+						<div x-show="selectedDate">
+							<label class="block text-sm font-medium text-foreground mb-2">Available Times</label>
+							<div x-show="loadingSlots" class="text-center py-8">
+								<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto"></div>
+							</div>
+							<div x-show="!loadingSlots && slots.length === 0" class="text-center py-8">
+								<p class="text-muted-foreground">No available slots for this date</p>
+							</div>
+							<div x-show="!loadingSlots && slots.length > 0" class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+								<template x-for="slot in slots" :key="slot.start_time">
+									<button
+										type="button"
+										@click="selectSlot(slot)"
+										:class="selectedSlot?.start_time === slot.start_time ? 'bg-accent text-white' : 'bg-white/5 hover:bg-white/10 text-foreground'"
+										class="px-3 py-2 rounded-lg text-sm transition-all border border-white/10"
+										x-text="formatTime(slot.start_time)"
+									></button>
+								</template>
+							</div>
 						</div>
-						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">Phone</label>
-							<input 
-								type="tel" 
-								x-model="clientPhone"
-								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
-								placeholder="+1 (555) 123-4567"
-							/>
-						</div>
-						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">Notes (optional)</label>
-							<textarea 
-								x-model="notes"
-								rows="3"
-								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
-								placeholder="Any additional information..."
-							></textarea>
-						</div>
-					</div>
-
-					<div class="flex gap-3">
-						<button @click="step = 2" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all">
-							Back
-						</button>
-						<button @click="step = 4" :disabled="!clientName || !clientEmail" class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 text-white rounded-xl font-medium transition-all">
-							Review
-						</button>
-					</div>
-				</div>
-
-				<!-- Step 4: Review & Confirm -->
-				<div x-show="step === 4" x-transition class="space-y-6">
-					<h2 class="text-xl font-semibold text-foreground">Confirm Booking</h2>
-					
-					<div class="bg-white/5 rounded-xl p-6 space-y-4 border border-white/10">
-						<div class="flex justify-between">
-							<span class="text-muted-foreground">Lawyer</span>
-							<span class="text-foreground font-medium" x-text="lawyerName"></span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-muted-foreground">Date</span>
-							<span class="text-foreground font-medium" x-text="formatDate(selectedDate)"></span>
-						</div>
-						<div class="flex justify-between">
-							<span class="text-muted-foreground">Time</span>
-							<span class="text-foreground font-medium" x-text="selectedSlot ? formatTime(selectedSlot.start_time) : ''"></span>
-						</div>
-						<div class="border-t border-white/10 pt-4">
-							<span class="text-muted-foreground">Client</span>
-							<p class="text-foreground font-medium" x-text="clientName"></p>
-							<p class="text-sm text-muted-foreground" x-text="clientEmail"></p>
+						<div class="flex gap-3">
+							<button @click="step = 1" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all">
+								Back
+							</button>
+							<button @click="step = 3" :disabled="!selectedSlot" class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 text-white rounded-xl font-medium transition-all">
+								Continue
+							</button>
 						</div>
 					</div>
-
-					<div x-show="error" class="bg-red-500/20 text-red-400 p-4 rounded-xl" x-text="error"></div>
-
-					<div class="flex gap-3">
-						<button @click="step = 3" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all">
-							Back
-						</button>
-						<button @click="submitBooking()" :disabled="submitting" class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2">
-							<span x-show="!submitting">Confirm Booking</span>
-							<span x-show="submitting">Booking...</span>
-						</button>
+					<!-- Step 3: Your Details -->
+					<div x-show="step === 3" x-transition class="space-y-6">
+						<h2 class="text-xl font-semibold text-foreground">Your Details</h2>
+						<div class="space-y-4">
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-2">Full Name *</label>
+								<input
+									type="text"
+									x-model="clientName"
+									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+									placeholder="John Doe"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-2">Email *</label>
+								<input
+									type="email"
+									x-model="clientEmail"
+									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+									placeholder="john@example.com"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-2">Phone</label>
+								<input
+									type="tel"
+									x-model="clientPhone"
+									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+									placeholder="+1 (555) 123-4567"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-2">Notes (optional)</label>
+								<textarea
+									x-model="notes"
+									rows="3"
+									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+									placeholder="Any additional information..."
+								></textarea>
+							</div>
+						</div>
+						<div class="flex gap-3">
+							<button @click="step = 2" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all">
+								Back
+							</button>
+							<button @click="step = 4" :disabled="!clientName || !clientEmail" class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 text-white rounded-xl font-medium transition-all">
+								Review
+							</button>
+						</div>
 					</div>
-				</div>
-
-				<!-- Success -->
-				<div x-show="step === 5" x-transition class="space-y-6 text-center">
-					<div class="w-16 h-16 mx-auto bg-green-500/20 rounded-full flex items-center justify-center">
-						<svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-						</svg>
+					<!-- Step 4: Review & Confirm -->
+					<div x-show="step === 4" x-transition class="space-y-6">
+						<h2 class="text-xl font-semibold text-foreground">Confirm Booking</h2>
+						<div class="bg-white/5 rounded-xl p-6 space-y-4 border border-white/10">
+							<div class="flex justify-between">
+								<span class="text-muted-foreground">Lawyer</span>
+								<span class="text-foreground font-medium" x-text="lawyerName"></span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground">Date</span>
+								<span class="text-foreground font-medium" x-text="formatDate(selectedDate)"></span>
+							</div>
+							<div class="flex justify-between">
+								<span class="text-muted-foreground">Time</span>
+								<span class="text-foreground font-medium" x-text="selectedSlot ? formatTime(selectedSlot.start_time) : ''"></span>
+							</div>
+							<div class="border-t border-white/10 pt-4">
+								<span class="text-muted-foreground">Client</span>
+								<p class="text-foreground font-medium" x-text="clientName"></p>
+								<p class="text-sm text-muted-foreground" x-text="clientEmail"></p>
+							</div>
+						</div>
+						<div x-show="error" class="bg-red-500/20 text-red-400 p-4 rounded-xl" x-text="error"></div>
+						<div class="flex gap-3">
+							<button @click="step = 3" class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all">
+								Back
+							</button>
+							<button @click="submitBooking()" :disabled="submitting" class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+								<span x-show="!submitting">Confirm Booking</span>
+								<span x-show="submitting">Booking...</span>
+							</button>
+						</div>
 					</div>
-					<h2 class="text-2xl font-bold text-foreground">Appointment Booked!</h2>
-					<p class="text-muted-foreground">A confirmation email has been sent to <span class="text-foreground" x-text="clientEmail"></span></p>
-					<p class="text-sm text-muted-foreground">You can manage your appointment using the link in the email.</p>
+					<!-- Success -->
+					<div x-show="step === 5" x-transition class="space-y-6 text-center">
+						<div class="w-16 h-16 mx-auto bg-green-500/20 rounded-full flex items-center justify-center">
+							<svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+							</svg>
+						</div>
+						<h2 class="text-2xl font-bold text-foreground">Appointment Booked!</h2>
+						<p class="text-muted-foreground">A confirmation email has been sent to <span class="text-foreground" x-text="clientEmail"></span></p>
+						<p class="text-sm text-muted-foreground">You can manage your appointment using the link in the email.</p>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<script>
+			<script>
 			function bookingWizard() {
 				return {
 					step: 1,
@@ -297,95 +282,91 @@ templ PublicBooking(ctx context.Context, firm models.Firm, lawyers []models.User
 				}
 			}
 		</script>
-	</body>
+		</body>
 	</html>
 }
 
 templ PublicAppointmentDetail(ctx context.Context, apt models.Appointment) {
 	<!DOCTYPE html>
 	<html lang="en">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Your Appointment - { apt.Firm.Name }</title>
-		<link rel="stylesheet" href="/static/css/style.css"/>
-		<link rel="stylesheet" href="/static/css/kinetic.css"/>
-		<script src="https://unpkg.com/htmx.org@1.9.10"></script>
-		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-	</head>
-	<body class="min-h-screen bg-background">
-		<div class="min-h-screen flex items-center justify-center p-4" x-data="{ showCancel: false, cancelling: false }">
-			<div class="glass-panel w-full max-w-md rounded-3xl p-8 border border-white/10">
-				<div class="text-center mb-6">
-					<h1 class="text-2xl font-bold text-gradient">{ apt.Firm.Name }</h1>
-					<p class="text-muted-foreground mt-1">Appointment Details</p>
-				</div>
-
-				if apt.Status == "CANCELLED" {
-					<div class="bg-red-500/20 text-red-400 p-4 rounded-xl text-center mb-6">
-						This appointment has been cancelled.
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Your Appointment - { apt.Firm.Name }</title>
+			<link rel="stylesheet" href="/static/css/style.css"/>
+			<link rel="stylesheet" href="/static/css/kinetic.css"/>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+		</head>
+		<body class="min-h-screen bg-background">
+			<div class="min-h-screen flex items-center justify-center p-4" x-data="{ showCancel: false, cancelling: false }">
+				<div class="glass-panel w-full max-w-md rounded-3xl p-8 border border-white/10">
+					<div class="text-center mb-6">
+						<h1 class="text-2xl font-bold text-gradient">{ apt.Firm.Name }</h1>
+						<p class="text-muted-foreground mt-1">Appointment Details</p>
 					</div>
-				}
-
-				<div class="space-y-4">
-					<div class="flex justify-between py-3 border-b border-white/10">
-						<span class="text-muted-foreground">Date</span>
-						<span class="text-foreground font-medium">{ apt.StartTime.Format("Monday, Jan 2, 2006") }</span>
-					</div>
-					<div class="flex justify-between py-3 border-b border-white/10">
-						<span class="text-muted-foreground">Time</span>
-						<span class="text-foreground font-medium">{ apt.StartTime.Format("3:04 PM") } - { apt.EndTime.Format("3:04 PM") }</span>
-					</div>
-					<div class="flex justify-between py-3 border-b border-white/10">
-						<span class="text-muted-foreground">Lawyer</span>
-						<span class="text-foreground font-medium">{ apt.Lawyer.Name }</span>
-					</div>
-					<div class="flex justify-between py-3 border-b border-white/10">
-						<span class="text-muted-foreground">Status</span>
-						if apt.Status == "SCHEDULED" {
-							<span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-semibold">Scheduled</span>
-						} else if apt.Status == "CONFIRMED" {
-							<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">Confirmed</span>
-						} else if apt.Status == "CANCELLED" {
-							<span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-semibold">Cancelled</span>
-						} else {
-							<span class="px-2 py-1 bg-white/10 text-foreground rounded-full text-xs font-semibold">{ apt.Status }</span>
-						}
-					</div>
-				</div>
-
-				if apt.IsCancellable() {
-					<div class="mt-8">
-						<button 
-							@click="showCancel = true"
-							class="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-xl font-medium transition-all"
-						>
-							Cancel Appointment
-						</button>
-					</div>
-
-					<!-- Cancel Modal -->
-					<div x-show="showCancel" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" @click.self="showCancel = false">
-						<div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-white/10">
-							<h3 class="text-lg font-semibold text-foreground mb-4">Cancel Appointment?</h3>
-							<p class="text-muted-foreground mb-4">Are you sure you want to cancel this appointment?</p>
-							<div class="flex gap-3">
-								<button @click="showCancel = false" class="flex-1 px-4 py-2 bg-white/5 hover:bg-white/10 text-foreground rounded-xl">
-									Keep
-								</button>
-								<button 
-									@click="cancelling = true; fetch('/appointment/' + '{ apt.BookingToken }' + '/cancel', { method: 'POST' }).then(() => location.reload())"
-									:disabled="cancelling"
-									class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl"
-								>
-									<span x-text="cancelling ? 'Cancelling...' : 'Cancel'"></span>
-								</button>
-							</div>
+					if apt.Status == "CANCELLED" {
+						<div class="bg-red-500/20 text-red-400 p-4 rounded-xl text-center mb-6">
+							This appointment has been cancelled.
+						</div>
+					}
+					<div class="space-y-4">
+						<div class="flex justify-between py-3 border-b border-white/10">
+							<span class="text-muted-foreground">Date</span>
+							<span class="text-foreground font-medium">{ apt.StartTime.Format("Monday, Jan 2, 2006") }</span>
+						</div>
+						<div class="flex justify-between py-3 border-b border-white/10">
+							<span class="text-muted-foreground">Time</span>
+							<span class="text-foreground font-medium">{ apt.StartTime.Format("3:04 PM") } - { apt.EndTime.Format("3:04 PM") }</span>
+						</div>
+						<div class="flex justify-between py-3 border-b border-white/10">
+							<span class="text-muted-foreground">Lawyer</span>
+							<span class="text-foreground font-medium">{ apt.Lawyer.Name }</span>
+						</div>
+						<div class="flex justify-between py-3 border-b border-white/10">
+							<span class="text-muted-foreground">Status</span>
+							if apt.Status == "SCHEDULED" {
+								<span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-semibold">Scheduled</span>
+							} else if apt.Status == "CONFIRMED" {
+								<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">Confirmed</span>
+							} else if apt.Status == "CANCELLED" {
+								<span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-semibold">Cancelled</span>
+							} else {
+								<span class="px-2 py-1 bg-white/10 text-foreground rounded-full text-xs font-semibold">{ apt.Status }</span>
+							}
 						</div>
 					</div>
-				}
+					if apt.IsCancellable() {
+						<div class="mt-8">
+							<button
+								@click="showCancel = true"
+								class="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-xl font-medium transition-all"
+							>
+								Cancel Appointment
+							</button>
+						</div>
+						<!-- Cancel Modal -->
+						<div x-show="showCancel" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" @click.self="showCancel = false">
+							<div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-white/10">
+								<h3 class="text-lg font-semibold text-foreground mb-4">Cancel Appointment?</h3>
+								<p class="text-muted-foreground mb-4">Are you sure you want to cancel this appointment?</p>
+								<div class="flex gap-3">
+									<button @click="showCancel = false" class="flex-1 px-4 py-2 bg-white/5 hover:bg-white/10 text-foreground rounded-xl">
+										Keep
+									</button>
+									<button
+										@click="cancelling = true; fetch('/appointment/' + '{ apt.BookingToken }' + '/cancel', { method: 'POST' }).then(() => location.reload())"
+										:disabled="cancelling"
+										class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl"
+									>
+										<span x-text="cancelling ? 'Cancelling...' : 'Cancel'"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
 			</div>
-		</div>
-	</body>
+		</body>
 	</html>
 }

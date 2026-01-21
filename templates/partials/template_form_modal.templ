@@ -27,7 +27,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 				class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
 				@click="open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200)"
 			></div>
-
 			<!-- Modal -->
 			<div
 				class="inline-block w-full max-w-4xl transform overflow-hidden rounded-2xl bg-[#0A0A0B]/95 text-left align-bottom shadow-xl transition-all sm:my-8 sm:align-middle border border-white/10"
@@ -71,7 +70,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 							</button>
 						</div>
 					</div>
-
 					<!-- Content -->
 					<div class="px-6 py-4 max-h-[70vh] overflow-y-auto">
 						<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -89,7 +87,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 										placeholder={ i18n.T(ctx, "templates.name_placeholder") }
 									/>
 								</div>
-
 								<!-- Description -->
 								<div>
 									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.description") }</label>
@@ -100,7 +97,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 										placeholder={ i18n.T(ctx, "templates.description_placeholder") }
 									>{ safeStringFromPtr(template.Description) }</textarea>
 								</div>
-
 								<!-- Category -->
 								<div>
 									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.category") }</label>
@@ -116,7 +112,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 										}
 									</select>
 								</div>
-
 								<!-- Content Editor -->
 								<div>
 									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.content") } *</label>
@@ -155,9 +150,8 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 											}
 										</div>
 									</div>
-									<input type="hidden" name="content" x-model="content" />
+									<input type="hidden" name="content" x-model="content"/>
 								</div>
-
 								<!-- Page Settings (Collapsible) -->
 								<details class="group">
 									<summary class="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2">
@@ -170,21 +164,30 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 										<div>
 											<label class="block text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "templates.orientation") }</label>
 											<select name="page_orientation" class="input-field w-full text-sm">
-												<option value="portrait" if template.PageOrientation == "portrait" || template.PageOrientation == "" { selected }>Portrait</option>
-												<option value="landscape" if template.PageOrientation == "landscape" { selected }>Landscape</option>
+												<option value="portrait" if template.PageOrientation == "portrait" || template.PageOrientation == "" {
+	selected
+}>Portrait</option>
+												<option value="landscape" if template.PageOrientation == "landscape" {
+	selected
+}>Landscape</option>
 											</select>
 										</div>
 										<div>
 											<label class="block text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "templates.page_size") }</label>
 											<select name="page_size" class="input-field w-full text-sm">
-												<option value="letter" if template.PageSize == "letter" || template.PageSize == "" { selected }>Letter</option>
-												<option value="legal" if template.PageSize == "legal" { selected }>Legal</option>
-												<option value="A4" if template.PageSize == "A4" { selected }>A4</option>
+												<option value="letter" if template.PageSize == "letter" || template.PageSize == "" {
+	selected
+}>Letter</option>
+												<option value="legal" if template.PageSize == "legal" {
+	selected
+}>Legal</option>
+												<option value="A4" if template.PageSize == "A4" {
+	selected
+}>A4</option>
 											</select>
 										</div>
 									</div>
 								</details>
-
 								if !isNew {
 									<!-- Active Toggle -->
 									<div class="flex items-center gap-3">
@@ -201,7 +204,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 									</div>
 								}
 							</div>
-
 							<!-- Right: Variables Sidebar -->
 							<div class="lg:col-span-1">
 								<div class="sticky top-0">
@@ -212,7 +214,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 							</div>
 						</div>
 					</div>
-
 					<!-- Footer -->
 					<div class="px-6 py-4 border-t border-white/10 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
 						<button
@@ -234,7 +235,6 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 			</div>
 		</div>
 	</div>
-
 	@templ.Raw(`<script>
 		function templateEditor() {
 			return {

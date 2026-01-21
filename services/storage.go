@@ -79,11 +79,11 @@ func InitializeStorage(cfg *config.Config) {
 
 // R2Storage implements StorageProvider for Cloudflare R2
 type R2Storage struct {
-	client     *s3.Client
-	presigner  *s3.PresignClient
-	bucket     string
-	publicURL  string
-	accountID  string
+	client    *s3.Client
+	presigner *s3.PresignClient
+	bucket    string
+	publicURL string
+	accountID string
 }
 
 // NewR2Storage creates a new R2 storage provider

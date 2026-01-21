@@ -46,9 +46,9 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 			<!-- Noise Texture Overlay -->
 			<svg class="noise-overlay" aria-hidden="true">
 				<filter id="noise">
-					<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+					<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"></feTurbulence>
 				</filter>
-				<rect width="100%" height="100%" filter="url(#noise)"/>
+				<rect width="100%" height="100%" filter="url(#noise)"></rect>
 			</svg>
 			<!-- Ambient Gradient Blobs -->
 			<div class="ambient-blobs" aria-hidden="true">
@@ -60,14 +60,12 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 			<div class="min-h-screen bg-background">
 				<!-- Superadmin Navbar -->
 				@Navbar(ctx, user, currentPath)
-				
 				<!-- Main Content -->
 				<main class="w-full mx-auto px-6 py-8">
 					{ children... }
 				</main>
 				<div id="modal-container"></div>
 			</div>
-			
 		</body>
 	</html>
 }

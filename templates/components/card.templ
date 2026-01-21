@@ -20,15 +20,17 @@ const (
 
 // Card renders a Linear/Modern styled card with variants
 templ Card(variant CardVariant, size CardSize, hover bool, sticky bool) {
-	<div class={
-		"card",
-		templ.KV("card-sm", size == CardSmall),
-		templ.KV("card-lg", size == CardLarge),
-		templ.KV("card-glass", variant == CardGlass),
-		templ.KV("card-gradient", variant == CardGradient),
-		templ.KV("card-hover", hover),
-		templ.KV("card-sticky", sticky),
-	}>
+	<div
+		class={
+			"card",
+			templ.KV("card-sm", size == CardSmall),
+			templ.KV("card-lg", size == CardLarge),
+			templ.KV("card-glass", variant == CardGlass),
+			templ.KV("card-gradient", variant == CardGradient),
+			templ.KV("card-hover", hover),
+			templ.KV("card-sticky", sticky),
+		}
+	>
 		{ children... }
 	</div>
 }

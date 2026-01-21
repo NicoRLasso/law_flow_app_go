@@ -3,9 +3,9 @@ package pages
 import (
 	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
-	"law_flow_app_go/services/i18n"
 )
 
 templ ProfileSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
@@ -253,7 +253,8 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 											<label for="new_password" class="block text-sm font-medium text-foreground mb-2">
 												{ i18n.T(ctx, "settings.security.new_pass") } <span class="text-red-500">*</span>
 											</label>
-											<div x-data="{ 
+											<div
+												x-data="{ 
 												password: '', 
 												strength: 0,
 												get color() {
@@ -277,7 +278,8 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 													if (this.password.match(/[^A-Za-z0-9]/)) score++;
 													this.strength = score;
 												}
-											}">
+											}"
+											>
 												<input
 													type="password"
 													id="new_password"

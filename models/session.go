@@ -16,7 +16,7 @@ type Session struct {
 	UserAgent string    `gorm:"type:text" json:"user_agent"`
 
 	// Relationships
-	User User `gorm:"foreignKey:UserID" json:"-"`
+	User User  `gorm:"foreignKey:UserID" json:"-"`
 	Firm *Firm `gorm:"foreignKey:FirmID" json:"-"`
 }
 

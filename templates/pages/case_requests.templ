@@ -24,23 +24,19 @@ templ CaseRequests(ctx context.Context, title string, csrfToken string, user *mo
 							<p class="text-muted-foreground mt-1 text-sm md:text-base">{ i18n.T(ctx, "case_requests.description") }</p>
 						</div>
 					</div>
-
 					<!-- Case Requests Filters (static, not reloaded) -->
 					@partials.CaseRequestFilters(ctx)
-					
 					<!-- Loading indicator (outside the replaceable content) -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
 						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
 					</div>
-					
 					<!-- Case Requests Table (reloadable content) -->
-					<div 
+					<div
 						id="case-requests-table"
 						hx-get="/api/case-requests"
 						hx-trigger="load, reload-case-requests from:body"
 						hx-indicator="#loading-indicator"
-					>
-					</div>
+					></div>
 				</div>
 			</main>
 		</div>

@@ -76,7 +76,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
 					</div>
 				</div>
-
 				<div class="grid grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
 					<!-- Recent Cases -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10">
@@ -112,7 +111,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							</div>
 						}
 					</div>
-
 					<!-- Upcoming Appointments -->
 					<div class="glass-panel p-6 rounded-2xl border border-white/10">
 						<div class="flex items-center justify-between mb-4">
@@ -152,7 +150,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						}
 					</div>
 				</div>
-
 				<!-- Firm Information Panel -->
 				<div class="glass-panel p-8 rounded-2xl border border-white/10 mb-8">
 					<h3 class="text-xl font-bold mb-6">{ i18n.T(ctx, "dashboard.firm_info.label") }</h3>
@@ -189,7 +186,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						</div>
 					</div>
 				</div>
-
 			</main>
 		</div>
 	}

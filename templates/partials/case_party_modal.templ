@@ -32,7 +32,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 					</svg>
 				</button>
 			</div>
-
 			<!-- Party Type Badge -->
 			<div class="mb-4">
 				if partyType == models.ClientRoleDemandante {
@@ -45,7 +44,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 					</span>
 				}
 			</div>
-
 			<!-- Form -->
 			<form
 				id="case-party-form"
@@ -74,7 +72,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 						/>
 					</div>
-
 					<!-- Email -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -90,7 +87,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 						/>
 					</div>
-
 					<!-- Phone -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -106,7 +102,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 						/>
 					</div>
-
 					<!-- Document Type -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -126,7 +121,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 							}
 						</select>
 					</div>
-
 					<!-- Document Number -->
 					<div>
 						<label class="block text-sm font-medium text-muted-foreground mb-2">
@@ -143,10 +137,8 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 						/>
 					</div>
 				</div>
-
 				<!-- Response container -->
 				<div id="party-response" class="mt-4"></div>
-
 				<!-- Actions -->
 				<div class="flex justify-end gap-3 mt-6">
 					<button
@@ -166,7 +158,6 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 			</form>
 		</div>
 	</div>
-
 	<script>
 		function closeCasePartyModal() {
 			const modal = document.getElementById('case-party-modal');

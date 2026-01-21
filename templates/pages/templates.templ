@@ -3,16 +3,15 @@ package pages
 import (
 	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
-	"law_flow_app_go/services/i18n"
 )
 
 templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, categories []models.TemplateCategory) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-background">
 			@components.Navbar(ctx, user, firm, "/templates")
-			
 			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
 				<div class="w-full ">
 					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 md:mb-8">
@@ -30,7 +29,6 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 							{ i18n.T(ctx, "templates.create") }
 						</a>
 					</div>
-
 					<!-- Filters -->
 					<div class="glass-panel rounded-2xl p-4 md:p-6 border border-white/10 mb-6">
 						<div class="flex flex-col sm:flex-row gap-4">
@@ -65,7 +63,6 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 							</div>
 						</div>
 					</div>
-
 					<!-- Templates Table -->
 					<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
 						<div
@@ -81,7 +78,6 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 					</div>
 				</div>
 			</main>
-
 			@components.ConfirmationModal(ctx)
 			<!-- Modal Container -->
 			<div id="template-modal-container"></div>

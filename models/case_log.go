@@ -13,8 +13,8 @@ type CaseLog struct {
 	CaseID       string `gorm:"index"`
 	EntryType    string // note, document, call, meeting
 	Title        string
-	Content      string  `gorm:"type:text"`
-	DocumentID   *string        `gorm:"index"` // Optional reference to a document
+	Content      string        `gorm:"type:text"`
+	DocumentID   *string       `gorm:"index"` // Optional reference to a document
 	Document     *CaseDocument `gorm:"foreignKey:DocumentID"`
 	ContactName  *string
 	ContactPhone *string

@@ -20,7 +20,7 @@ const (
 
 // Button renders a Kinetic Typography styled button
 templ Button(text string, href string, variant ButtonVariant, size ButtonSize) {
-	<a 
+	<a
 		href={ templ.URL(href) }
 		class={ "btn", "btn-" + string(variant), "btn-" + string(size) }
 	>
@@ -30,7 +30,7 @@ templ Button(text string, href string, variant ButtonVariant, size ButtonSize) {
 
 // ButtonAsButton renders a button element instead of anchor
 templ ButtonAsButton(text string, variant ButtonVariant, size ButtonSize, attrs templ.Attributes) {
-	<button 
+	<button
 		class={ "btn", "btn-" + string(variant), "btn-" + string(size) }
 		{ attrs... }
 	>

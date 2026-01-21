@@ -26,8 +26,8 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 					<!-- Mobile menu button -->
 					<div class="flex items-center gap-4 md:hidden">
 						@components.LanguageSwitcher(ctx)
-						<button 
-							class="btn btn-ghost btn-sm" 
+						<button
+							class="btn btn-ghost btn-sm"
 							@click="mobileMenuOpen = !mobileMenuOpen"
 							aria-label="Toggle menu"
 						>
@@ -37,10 +37,9 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 					</div>
 				</div>
 			</div>
-
 			<!-- Mobile Menu Dropdown -->
-			<div 
-				x-show="mobileMenuOpen" 
+			<div
+				x-show="mobileMenuOpen"
 				x-transition:enter="transition ease-out duration-200"
 				x-transition:enter-start="opacity-0 -translate-y-2"
 				x-transition:enter-end="opacity-100 translate-y-0"
@@ -58,9 +57,7 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 				</div>
 			</div>
 		</nav>
-
 		{ children... }
-
 		<!-- Footer -->
 		<footer class="border-t border-white/[0.06] bg-background-deep text-center">
 			<div class="container mx-auto px-6 py-16">
@@ -82,7 +79,6 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 							</a>
 						</div>
 					</div>
-
 					<div>
 						<h4 class="text-label text-foreground mb-4">{ i18n.T(ctx, "footer.product") }</h4>
 						<ul class="space-y-3">
@@ -91,7 +87,6 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 							<li><a href="/security" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.security") }</a></li>
 						</ul>
 					</div>
-
 					<div>
 						<h4 class="text-label text-foreground mb-4">{ i18n.T(ctx, "footer.company") }</h4>
 						<ul class="space-y-3">
@@ -99,7 +94,6 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 							<li><a href="/contact" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.contact") }</a></li>
 						</ul>
 					</div>
-
 					<div>
 						<h4 class="text-label text-foreground mb-4">{ i18n.T(ctx, "footer.legal") }</h4>
 						<ul class="space-y-3">
@@ -110,7 +104,6 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 						</ul>
 					</div>
 				</div>
-
 				<div class="border-t border-white/[0.06] pt-8 flex flex-col justify-center items-center gap-6">
 					<p class="text-body text-subtle">
 						{ i18n.T(ctx, "footer.rights") }
