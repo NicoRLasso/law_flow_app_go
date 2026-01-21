@@ -1,4 +1,18 @@
-# Build stage
+# CSS build stage
+FROM node:20-alpine AS css-builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Copy files needed for Tailwind to scan classes
+COPY static/css/input.css ./static/css/
+COPY templates ./templates
+COPY postcss.config.js ./
+RUN npm run build:css
+
+# Go build stage
 FROM golang:1.24-alpine AS builder
 
 RUN apk add --no-cache gcc musl-dev
@@ -11,12 +25,18 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Pre-build CGO dependencies (cached layer)
+RUN CGO_ENABLED=1 go build -v std
+
 COPY . .
+
+# Copy built CSS from css-builder stage
+COPY --from=css-builder /app/static/css/output.css ./static/css/output.css
 
 # Generate templ files
 RUN templ generate
 
-# Build with CGO for SQLite
+# Build with CGO for SQLite (uses cached dependencies)
 RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go
 
 # Runtime stage - minimal image
