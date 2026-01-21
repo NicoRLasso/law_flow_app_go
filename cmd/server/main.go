@@ -208,6 +208,10 @@ func main() {
 		return c.JSON(http.StatusOK, map[string]string{"status": "healthy"})
 	})
 
+	// SEO Files
+	e.File("/robots.txt", "static/robots.txt")
+	e.File("/sitemap.xml", "static/sitemap.xml")
+
 	// Public routes (no authentication required)
 	e.GET("/", handlers.LandingHandler)
 	e.GET("/login", handlers.LoginHandler)
