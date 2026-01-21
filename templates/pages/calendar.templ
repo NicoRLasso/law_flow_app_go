@@ -9,7 +9,7 @@ import (
 )
 
 templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, csrfToken string, aptTypes []models.AppointmentType) {
-	@layouts.Base(ctx, "Calendar", csrfToken) {
+	@layouts.Base(ctx, "Calendar", csrfToken, nil) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/calendar")

@@ -2,12 +2,13 @@ package legal
 
 import (
 	"context"
+	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/layouts"
 )
 
-templ Privacy(ctx context.Context, title string, csrfToken string) {
-	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+templ Privacy(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
 		<!-- Hero Section -->
 		<section class="section-lg relative overflow-hidden">
 			<!-- Animated background elements -->

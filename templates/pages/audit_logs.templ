@@ -9,7 +9,7 @@ import (
 )
 
 templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
-    @layouts.Base(ctx, i18n.T(ctx, "audit.title"), "") {
+    @layouts.Base(ctx, i18n.T(ctx, "audit.title"), "", nil) {
         <div class="min-h-screen bg-background">
              <!-- Navigation Bar -->
             @components.Navbar(ctx, user, firm, "/audit-logs")

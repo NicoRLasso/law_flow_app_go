@@ -11,7 +11,7 @@ import (
 )
 
 templ CaseDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, caseRecord models.Case) {
-	@layouts.Base(ctx, title, csrfToken) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, func() string { if caseRecord.IsHistorical { return "/historical-cases" } else { return "/cases" } }())

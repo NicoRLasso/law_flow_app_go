@@ -2,12 +2,13 @@ package pages
 
 import (
 	"context"
+	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/layouts"
 )
 
-templ Landing(ctx context.Context, title string, csrfToken string) {
-	@layouts.WebsiteLayout(ctx, title, csrfToken) {
+templ Landing(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
+	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
 		<!-- Hero Section - Split Layout -->
 		<section class="section-lg relative overflow-hidden min-h-[90vh] flex items-center">
 			<!-- Animated background elements -->
@@ -68,6 +69,10 @@ templ Landing(ctx context.Context, title string, csrfToken string) {
 									src="/static/images/hero_dashboard_mockup.png"
 									alt="LexLegal Cloud Dashboard"
 									class="hero-tilt rounded-xl border border-white/20 shadow-2xl w-full"
+									fetchpriority="high"
+									decoding="async"
+									width="1200"
+									height="800"
 								/>
 
 								<!-- Floating feature callouts -->

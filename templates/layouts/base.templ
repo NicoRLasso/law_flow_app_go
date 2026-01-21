@@ -2,10 +2,12 @@ package layouts
 
 import (
 	"context"
+	"encoding/json"
+	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 )
 
-templ Base(ctx context.Context, title string, csrfToken string) {
+templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	<!DOCTYPE html>
 	<html lang={ i18n.GetLocale(ctx) }>
 		<head>
@@ -14,22 +16,88 @@ templ Base(ctx context.Context, title string, csrfToken string) {
 			<meta name="csrf-token" content={ csrfToken }/>
 			<title>{ title }</title>
 
+			<!-- SEO Meta Tags -->
+			if seo != nil {
+				if seo.Description != "" {
+					<meta name="description" content={ seo.Description }/>
+				}
+				if seo.Keywords != "" {
+					<meta name="keywords" content={ seo.Keywords }/>
+				}
+				if seo.NoIndex {
+					<meta name="robots" content="noindex, nofollow"/>
+				} else {
+					<meta name="robots" content="index, follow"/>
+				}
+				if seo.Canonical != "" {
+					<link rel="canonical" href={ seo.Canonical }/>
+				}
+
+				<!-- Open Graph Tags -->
+				<meta property="og:type" content={ seo.OGType }/>
+				<meta property="og:title" content={ seo.GetOGTitle() }/>
+				if seo.GetOGDesc() != "" {
+					<meta property="og:description" content={ seo.GetOGDesc() }/>
+				}
+				if seo.OGImage != "" {
+					<meta property="og:image" content={ seo.OGImage }/>
+				}
+				if seo.Canonical != "" {
+					<meta property="og:url" content={ seo.Canonical }/>
+				}
+				<meta property="og:site_name" content="LexLegal Cloud"/>
+				<meta property="og:locale" content={ getOGLocale(seo.Locale) }/>
+				for _, altLocale := range seo.AltLocales {
+					<meta property="og:locale:alternate" content={ getOGLocale(altLocale) }/>
+				}
+
+				<!-- Twitter Card Tags -->
+				<meta name="twitter:card" content={ seo.TwitterCard }/>
+				<meta name="twitter:title" content={ seo.GetOGTitle() }/>
+				if seo.GetOGDesc() != "" {
+					<meta name="twitter:description" content={ seo.GetOGDesc() }/>
+				}
+				if seo.OGImage != "" {
+					<meta name="twitter:image" content={ seo.OGImage }/>
+				}
+
+				<!-- Hreflang Tags -->
+				if seo.Canonical != "" {
+					<link rel="alternate" hreflang={ seo.Locale } href={ seo.Canonical }/>
+					for _, altLocale := range seo.AltLocales {
+						<link rel="alternate" hreflang={ altLocale } href={ getAltURL(seo.Canonical, altLocale) }/>
+					}
+					<link rel="alternate" hreflang="x-default" href={ seo.Canonical }/>
+				}
+
+				<!-- JSON-LD Structured Data -->
+				@templ.Raw(generateJSONLD(seo))
+			}
+
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
 
-			<!-- Google Fonts - Inter -->
+			<!-- Preconnect to external domains for faster loading -->
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+			<link rel="preconnect" href="https://unpkg.com" crossorigin/>
+			<link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
+			<link rel="dns-prefetch" href="https://unpkg.com"/>
 
-			<!-- Linear/Modern Design System -->
+			<!-- Preload critical CSS -->
+			<link rel="preload" href="/static/css/output.css" as="style"/>
+			<link rel="preload" href="/static/css/kinetic.css" as="style"/>
+
+			<!-- Google Fonts - Inter (with font-display swap) -->
+			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+			<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/></noscript>
+
+			<!-- Critical CSS -->
 			<link rel="stylesheet" href="/static/css/kinetic.css"/>
-
-			<!-- Tailwind CSS (Compiled) -->
 			<link rel="stylesheet" href="/static/css/output.css"/>
 
-			<!-- HTMX -->
-			<script src="https://unpkg.com/htmx.org@2.0.0"></script>
+			<!-- HTMX - defer loading -->
+			<script src="https://unpkg.com/htmx.org@2.0.0" defer></script>
 
 			<!-- Alpine.js Plugins (must load before Alpine) -->
 			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer></script>
@@ -77,3 +145,73 @@ templ Base(ctx context.Context, title string, csrfToken string) {
 	</html>
 }
 
+// getOGLocale converts locale code to Open Graph format
+func getOGLocale(locale string) string {
+	switch locale {
+	case "es":
+		return "es_ES"
+	case "en":
+		return "en_US"
+	default:
+		return "en_US"
+	}
+}
+
+// getAltURL generates alternate language URL
+func getAltURL(canonical string, locale string) string {
+	// For now, just append locale as query param
+	// In a real implementation, you might have /es/ prefix or subdomain
+	return canonical + "?lang=" + locale
+}
+
+// generateJSONLD creates JSON-LD structured data for SEO
+func generateJSONLD(seo *models.SEO) string {
+	if seo == nil || seo.Canonical == "" {
+		return ""
+	}
+
+	data := map[string]interface{}{
+		"@context": "https://schema.org",
+		"@graph": []map[string]interface{}{
+			{
+				"@type": "Organization",
+				"@id":   "https://lexlegalcloud.org/#organization",
+				"name":  "LexLegal Cloud",
+				"url":   "https://lexlegalcloud.org",
+				"logo": map[string]string{
+					"@type": "ImageObject",
+					"url":   "https://lexlegalcloud.org/static/images/logo.png",
+				},
+				"description": "Modern cloud-based legal practice management software for law firms",
+			},
+			{
+				"@type": "WebSite",
+				"@id":   "https://lexlegalcloud.org/#website",
+				"url":   "https://lexlegalcloud.org",
+				"name":  "LexLegal Cloud",
+				"publisher": map[string]string{
+					"@id": "https://lexlegalcloud.org/#organization",
+				},
+				"inLanguage": []string{"en", "es"},
+			},
+			{
+				"@type":       "WebPage",
+				"@id":         seo.Canonical,
+				"url":         seo.Canonical,
+				"name":        seo.Title,
+				"description": seo.Description,
+				"isPartOf": map[string]string{
+					"@id": "https://lexlegalcloud.org/#website",
+				},
+				"inLanguage": seo.Locale,
+			},
+		},
+	}
+
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		return ""
+	}
+
+	return `<script type="application/ld+json">` + string(jsonBytes) + `</script>`
+}

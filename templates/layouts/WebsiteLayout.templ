@@ -2,12 +2,13 @@ package layouts
 
 import (
 	"context"
+	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 )
 
-templ WebsiteLayout(ctx context.Context, title string, csrfToken string) {
-	@Base(ctx, title, csrfToken) {
+templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
+	@Base(ctx, title, csrfToken, seo) {
 		<!-- Navigation -->
 		<nav class="border-b border-white/[0.06] backdrop-blur-xl bg-background/80 sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
 			<div class="container mx-auto px-6">

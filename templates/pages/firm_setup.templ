@@ -8,7 +8,7 @@ import (
 )
 
 templ FirmSetup(ctx context.Context, title string, csrfToken string, user *models.User) {
-	@layouts.Base(ctx, title, csrfToken) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">

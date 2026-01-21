@@ -8,7 +8,7 @@ import (
 )
 
 templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption) {
-	@layouts.Base(ctx, i18n.T(ctx, "public.request.title") + " - " + firm.Name, csrfToken) {
+	@layouts.Base(ctx, i18n.T(ctx, "public.request.title") + " - " + firm.Name, csrfToken, nil) {
 		<div class="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">

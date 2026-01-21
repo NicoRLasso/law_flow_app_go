@@ -10,7 +10,7 @@ import (
 )
 
 templ Users(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
-	@layouts.Base(ctx, title, csrfToken) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-background">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/users")

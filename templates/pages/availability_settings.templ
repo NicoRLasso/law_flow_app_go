@@ -88,7 +88,7 @@ func isDayActive(day int) string {
 }
 
 templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, slots []models.Availability, blockedDates []models.BlockedDate) {
-	@layouts.Base(ctx, title, csrfToken) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-background" x-data="{ 
 			deleteSlotId: '', 
 			deleteSlotDay: '',
