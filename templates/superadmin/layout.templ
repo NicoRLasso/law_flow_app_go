@@ -34,6 +34,11 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 						const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 						event.detail.headers['X-CSRF-Token'] = csrfToken;
 					});
+					
+					// Listen for server-triggered modal close
+					document.body.addEventListener('closeModal', function() {
+						document.getElementById('modal-container').innerHTML = '';
+					});
 				});
 			</script>
 		</head>

@@ -47,7 +47,7 @@ templ FirmDeleteConfirmModal(ctx context.Context, firm *models.Firm) {
 							hx-delete={ "/superadmin/firms/" + firm.ID }
 							hx-target="#firms-table-container"
 							hx-swap="innerHTML"
-							onclick="document.getElementById('modal-container').innerHTML = ''"
+							hx-on::after-request="document.getElementById('modal-container').innerHTML = ''"
 							class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl transition-all shadow-lg shadow-red-500/20"
 						>
 							{ i18n.T(ctx, "common.delete") }

@@ -207,15 +207,8 @@ func SuperadminCreateUserHandler(c echo.Context) error {
 	// To close the modal, we can return OOB swap to empty the modal container.
 
 	// Fetch updated users
+	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetUsersListHTMX(c)
-	// Note: This replaces the table. But the modal background is in #modal-container.
-	// If the modal form targets #users-table-container, it replaces the table.
-	// The modal itself (which is in #modal-container) remains open?
-	// Ah, the UserFormModal template has `hx-target="#users-table-container"`.
-	// The modal is OVER the table. If I update the table, the modal is still there.
-	// I need to close the modal too.
-	// I can use `hx-swap-oob` to close the modal.
-	// I will return the table AND an OOB swap for #modal-container.
 }
 
 // SuperadminUpdateUser updates a user
@@ -255,7 +248,7 @@ func SuperadminUpdateUser(c echo.Context) error {
 	services.LogSecurityEvent("SUPERADMIN_USER_UPDATED", currentUser.ID, "Updated user: "+user.ID)
 
 	// Return updated list + close modal via OOB
-	c.Response().Header().Set("HX-Trigger", "closeModal") // Or I can use OOB
+	c.Response().Header().Set("HX-Trigger", "closeModal")
 
 	return SuperadminGetUsersListHTMX(c)
 }
@@ -297,6 +290,7 @@ func SuperadminDeleteUser(c echo.Context) error {
 
 	services.LogSecurityEvent("SUPERADMIN_USER_DELETED", currentUser.ID, "Deleted user: "+id)
 
+	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetUsersListHTMX(c)
 }
 
@@ -398,6 +392,7 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 
 	services.LogSecurityEvent("SUPERADMIN_FIRM_CREATED", currentUser.ID, "Created firm: "+firm.ID)
 
+	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetFirmsListHTMX(c)
 }
 
@@ -428,10 +423,7 @@ func SuperadminUpdateFirm(c echo.Context) error {
 	// Return updated list, relying on client-side modal removal (like user update)
 	// But unlike user updated, we are replacing the LIST only.
 	// We need to close the modal too.
-	// The modal is in #modal-container. The list is #firms-table-container.
-	// If the form target is #firms-table-container, the modal stays open.
-	// We can add an OOB swap to close the modal or use a trigger.
-	c.Response().Header().Set("HX-Trigger", "closeModal") // Requires JS handling or OOB
+	c.Response().Header().Set("HX-Trigger", "closeModal")
 
 	return SuperadminGetFirmsListHTMX(c)
 }
@@ -473,5 +465,6 @@ func SuperadminDeleteFirm(c echo.Context) error {
 
 	services.LogSecurityEvent("SUPERADMIN_FIRM_DELETED", currentUser.ID, "Deleted firm: "+id)
 
+	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetFirmsListHTMX(c)
 }

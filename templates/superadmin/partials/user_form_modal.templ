@@ -35,6 +35,7 @@ templ UserFormModal(ctx context.Context, user *models.User, firms []models.Firm,
 					}
 					hx-target="#users-table-container"
 					hx-swap="innerHTML"
+					hx-disabled-elt="find button[type='submit']"
 					class="p-6 space-y-4"
 				>
 					<!-- Name -->
