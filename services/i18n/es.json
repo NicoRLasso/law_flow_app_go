@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Law Flow",
+    "name": "LexLegal Cloud",
     "description": "Gestión Legal Simplificada",
     "tagline": "Gestión de Práctica Evolucionada"
   },
@@ -152,7 +152,7 @@
     "status": "Estado",
     "changelog": "Changelog",
     "docs": "Documentación",
-    "rights": "© 2026 Law Flow. Todos los derechos reservados.",
+    "rights": "© 2026 LexLegal Cloud. Todos los derechos reservados.",
     "slogan": "Gestión moderna para firmas de abogados modernas. Optimiza tu flujo de trabajo y enfócate en lo que importa."
   },
   "pages": {
@@ -194,12 +194,12 @@
       "access_title": "Control de Acceso",
       "access_desc": "Control de acceso basado en roles (RBAC), autenticación multifactor (MFA) y registros de auditoría detallados le dan control total y visibilidad sobre sus datos.",
       "cta_title": "¿Listo para proteger su práctica?",
-      "cta_desc": "Únase a cientos de firmas de abogados que confían en Law Flow con sus datos."
+      "cta_desc": "Únase a cientos de firmas de abogados que confían en LexLegal Cloud con sus datos."
     },
     "privacy": {
       "title": "Política de Privacidad",
       "updated": "Última actualización: Enero 2026",
-      "intro": "En Law Flow, tomamos su privacidad en serio. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestro sitio web o utiliza nuestra aplicación.",
+      "intro": "En LexLegal Cloud, tomamos su privacidad en serio. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestro sitio web o utiliza nuestra aplicación.",
       "section1_title": "1. Información que Recopilamos",
       "section1_content": "Recopilamos información que usted nos proporciona directamente cuando se registra para una cuenta, crea o modifica su perfil, establece preferencias, se suscribe a nuestro boletín o contacta al soporte al cliente. Esta información puede incluir su nombre, dirección de email, número de teléfono, información de pago y cualquier otra información que elija proporcionar.",
       "section2_title": "2. Cómo Usamos Su Información",
@@ -216,19 +216,19 @@
     "terms": {
       "title": "Términos de Servicio",
       "updated": "Última actualización: Enero 2026",
-      "intro": "Por favor lea estos Términos de Servicio cuidadosamente antes de usar la aplicación Law Flow.",
+      "intro": "Por favor lea estos Términos de Servicio cuidadosamente antes de usar la aplicación LexLegal Cloud.",
       "section1_title": "1. Aceptación de Términos",
       "section1_content": "Al acceder o usar el Servicio, usted acepta estar sujeto a estos Términos. Si no está de acuerdo con alguna parte de los términos, entonces no puede acceder al Servicio.",
       "section2_title": "2. Cuentas",
       "section2_content": "Cuando crea una cuenta con nosotros, debe proporcionarnos información que sea precisa, completa y actual en todo momento. No hacerlo constituye una violación de los Términos, lo que puede resultar en la terminación inmediata de su cuenta en nuestro Servicio.",
       "section3_title": "3. Propiedad Intelectual",
-      "section3_content": "El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de Law Flow Inc y sus licenciantes.",
+      "section3_content": "El Servicio y su contenido original, características y funcionalidad son y seguirán siendo propiedad exclusiva de LexLegal Cloud Inc y sus licenciantes.",
       "section4_title": "4. Contenido del Usuario",
       "section4_content": "Usted conserva todos los derechos sobre el contenido que sube al Servicio. Al subir contenido, nos otorga una licencia para almacenar y mostrar ese contenido según sea necesario para proporcionar el Servicio.",
       "section5_title": "5. Terminación",
       "section5_content": "Podemos terminar o suspender el acceso a nuestro Servicio inmediatamente, sin previo aviso ni responsabilidad, por cualquier motivo, incluyendo sin limitación si usted viola los Términos.",
       "section6_title": "6. Limitación de Responsabilidad",
-      "section6_content": "En ningún caso Law Flow Inc, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos.",
+      "section6_content": "En ningún caso LexLegal Cloud Inc, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos.",
       "section7_title": "7. Ley Aplicable",
       "section7_content": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de Delaware, Estados Unidos, sin tener en cuenta sus disposiciones sobre conflictos de leyes."
     },
@@ -238,7 +238,7 @@
       "intro": "Esta Política de Cookies explica qué son las cookies y cómo las usamos.",
       "section1_title": "¿Qué son las cookies?",
       "section1_content": "Las cookies son pequeños archivos de texto que un sitio web que visita envía a su navegador web. Un archivo de cookie se almacena en su navegador web y permite que el Servicio o un tercero lo reconozca y haga que su próxima visita sea más fácil y el Servicio más útil para usted.",
-      "section2_title": "Cómo usa Law Flow las cookies",
+      "section2_title": "Cómo usa LexLegal Cloud las cookies",
       "section2_content": "Cuando usa y accede al Servicio, podemos colocar varios archivos de cookies en su navegador web. Usamos cookies para los siguientes propósitos: para habilitar ciertas funciones del Servicio, para proporcionar análisis, para almacenar sus preferencias, para habilitar la entrega de anuncios, incluyendo publicidad conductual.",
       "section3_title": "Cookies Esenciales",
       "section3_content": "Usamos cookies esenciales para autenticar usuarios y prevenir el uso fraudulento de cuentas de usuario.",
@@ -448,7 +448,7 @@
       "cta_primary": "Iniciar Prueba Gratis",
       "cta_secondary": "Ver Demo",
       "trial_note": "Prueba gratis de 14 días · Sin tarjeta de crédito",
-      "social_proof": "Únete a más de 500 firmas que ya usan Law Flow"
+      "social_proof": "Únete a más de 500 firmas que ya usan LexLegal Cloud"
     },
     "logos": {
       "title": "Confiado por más de 500 firmas de abogados en todo el mundo"
@@ -496,7 +496,7 @@
     },
     "benefits": {
       "label": "Beneficios",
-      "title": "Por Qué Elegir Law Flow",
+      "title": "Por Qué Elegir LexLegal Cloud",
       "time": {
         "title": "Ahorra Tiempo",
         "description": "Automatiza tareas rutinarias y reduce la carga administrativa. Enfócate en lo que más importa: servir a los clientes y ganar casos.",
@@ -504,7 +504,7 @@
       },
       "revenue": {
         "title": "Aumenta Ingresos",
-        "description": "Captura cada hora facturable con seguimiento preciso del tiempo. Las firmas que usan Law Flow reportan aumentos significativos en horas facturables.",
+        "description": "Captura cada hora facturable con seguimiento preciso del tiempo. Las firmas que usan LexLegal Cloud reportan aumentos significativos en horas facturables.",
         "metric": "Horas Facturables"
       },
       "collaboration": {
@@ -537,7 +537,7 @@
       "label": "Testimonios",
       "title": "Confiado por Firmas Líderes",
       "testimonial1": {
-        "quote": "Law Flow transformó nuestra práctica. Hemos reducido el tiempo administrativo en un 60% y a nuestros clientes les encanta el portal.",
+        "quote": "LexLegal Cloud transformó nuestra práctica. Hemos reducido el tiempo administrativo en un 60% y a nuestros clientes les encanta el portal.",
         "name": "Sarah Chen",
         "title": "Socia, Chen & Asociados"
       },
@@ -624,7 +624,7 @@
     },
     "final_cta": {
       "title": "¿Listo para Transformar tu Práctica?",
-      "subtitle": "Únete a cientos de firmas de abogados que ya usan Law Flow para optimizar operaciones, aumentar ingresos y ofrecer experiencias excepcionales a los clientes.",
+      "subtitle": "Únete a cientos de firmas de abogados que ya usan LexLegal Cloud para optimizar operaciones, aumentar ingresos y ofrecer experiencias excepcionales a los clientes.",
       "email_placeholder": "Ingresa tu email",
       "button": "Iniciar Prueba Gratis",
       "no_credit_card": "Sin tarjeta de crédito",

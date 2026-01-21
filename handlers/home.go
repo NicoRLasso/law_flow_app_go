@@ -11,6 +11,6 @@ import (
 func LandingHandler(c echo.Context) error {
 	csrfToken := middleware.GetCSRFToken(c)
 	// Render the landing page template
-	component := pages.Landing(c.Request().Context(), "Law Flow - Modern Legal Practice Management", csrfToken)
+	component := pages.Landing(c.Request().Context(), "LexLegal Cloud - Modern Legal Practice Management", csrfToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

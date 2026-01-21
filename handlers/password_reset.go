@@ -16,7 +16,7 @@ import (
 // ForgotPasswordHandler renders the forgot password page
 func ForgotPasswordHandler(c echo.Context) error {
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.ForgotPassword(c.Request().Context(), "Forgot Password | Law Flow", csrfToken)
+	component := pages.ForgotPassword(c.Request().Context(), "Forgot Password | LexLegal Cloud", csrfToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -93,7 +93,7 @@ func ResetPasswordHandler(c echo.Context) error {
 	token := c.QueryParam("token")
 
 	if token == "" {
-		component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", csrfToken, "", false)
+		component := pages.ResetPassword(c.Request().Context(), "Reset Password | LexLegal Cloud", csrfToken, "", false)
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -101,7 +101,7 @@ func ResetPasswordHandler(c echo.Context) error {
 	_, err := services.ValidateResetToken(db.DB, token)
 	validToken := err == nil
 
-	component := pages.ResetPassword(c.Request().Context(), "Reset Password | Law Flow", csrfToken, token, validToken)
+	component := pages.ResetPassword(c.Request().Context(), "Reset Password | LexLegal Cloud", csrfToken, token, validToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

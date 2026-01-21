@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Law Flow",
+    "name": "LexLegal Cloud",
     "description": "Legal Practice Management Simplified",
     "tagline": "Practice Management Evolved"
   },
@@ -153,7 +153,7 @@
     "status": "Status",
     "changelog": "Changelog",
     "docs": "Documentation",
-    "rights": "© 2026 Law Flow. All rights reserved.",
+    "rights": "© 2026 LexLegal Cloud. All rights reserved.",
     "slogan": "Modern practice management for modern law firms. Streamline your workflow and focus on what matters."
   },
   "pages": {
@@ -195,12 +195,12 @@
       "access_title": "Access Control",
       "access_desc": "Role-based access control (RBAC), multi-factor authentication (MFA), and detailed audit logs give you complete control and visibility over your data.",
       "cta_title": "Ready to secure your practice?",
-      "cta_desc": "Join hundreds of law firms trusting Law Flow with their data."
+      "cta_desc": "Join hundreds of law firms trusting LexLegal Cloud with their data."
     },
     "privacy": {
       "title": "Privacy Policy",
       "updated": "Last updated: January 2026",
-      "intro": "At Law Flow, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our application.",
+      "intro": "At LexLegal Cloud, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our application.",
       "section1_title": "1. Information We Collect",
       "section1_content": "We collect information that you provide directly to us when you register for an account, create or modify your profile, set preferences, sign up for our newsletter, or contact customer support. This information may include your name, email address, phone number, payment information, and any other information you choose to provide.",
       "section2_title": "2. How We Use Your Information",
@@ -217,19 +217,19 @@
     "terms": {
       "title": "Terms of Service",
       "updated": "Last updated: January 2026",
-      "intro": "Please read these Terms of Service carefully before using the Law Flow application.",
+      "intro": "Please read these Terms of Service carefully before using the LexLegal Cloud application.",
       "section1_title": "1. Acceptance of Terms",
       "section1_content": "By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.",
       "section2_title": "2. Accounts",
       "section2_content": "When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.",
       "section3_title": "3. Intellectual Property",
-      "section3_content": "The Service and its original content, features and functionality are and will remain the exclusive property of Law Flow Inc and its licensors.",
+      "section3_content": "The Service and its original content, features and functionality are and will remain the exclusive property of LexLegal Cloud Inc and its licensors.",
       "section4_title": "4. User Content",
       "section4_content": "You retain all rights to the content you upload to the Service. By uploading content, you grant us a license to store and display that content as necessary to provide the Service.",
       "section5_title": "5. Termination",
       "section5_content": "We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.",
       "section6_title": "6. Limitation of Liability",
-      "section6_content": "In no event shall Law Flow Inc, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.",
+      "section6_content": "In no event shall LexLegal Cloud Inc, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.",
       "section7_title": "7. Governing Law",
       "section7_content": "These Terms shall be governed and construed in accordance with the laws of Delaware, United States, without regard to its conflict of law provisions."
     },
@@ -239,7 +239,7 @@
       "intro": "This Cookie Policy explains what cookies are and how we use them.",
       "section1_title": "What are cookies?",
       "section1_content": "Cookies are small text files that are sent to your web browser by a website you visit. A cookie file is stored in your web browser and allows the Service or a third-party to recognize you and make your next visit easier and the Service more useful to you.",
-      "section2_title": "How Law Flow uses cookies",
+      "section2_title": "How LexLegal Cloud uses cookies",
       "section2_content": "When you use and access the Service, we may place a number of cookies files in your web browser. We use cookies for the following purposes: to enable certain functions of the Service, to provide analytics, to store your preferences, to enable advertisements delivery, including behavioral advertising.",
       "section3_title": "Essential Cookies",
       "section3_content": "We use essential cookies to authenticate users and prevent fraudulent use of user accounts.",
@@ -450,7 +450,7 @@
       "cta_primary": "Start Free Trial",
       "cta_secondary": "Watch Demo",
       "trial_note": "14-day free trial · No credit card required",
-      "social_proof": "Join 500+ firms already using Law Flow"
+      "social_proof": "Join 500+ firms already using LexLegal Cloud"
     },
     "logos": {
       "title": "Trusted by 500+ law firms worldwide"
@@ -498,7 +498,7 @@
     },
     "benefits": {
       "label": "Benefits",
-      "title": "Why Choose Law Flow",
+      "title": "Why Choose LexLegal Cloud",
       "time": {
         "title": "Save Time",
         "description": "Automate routine tasks and reduce administrative overhead. Focus on what matters most—serving clients and winning cases.",
@@ -506,7 +506,7 @@
       },
       "revenue": {
         "title": "Increase Revenue",
-        "description": "Capture every billable hour with accurate time tracking. Firms using Law Flow report significant increases in billable hours.",
+        "description": "Capture every billable hour with accurate time tracking. Firms using LexLegal Cloud report significant increases in billable hours.",
         "metric": "Billable Hours"
       },
       "collaboration": {
@@ -539,7 +539,7 @@
       "label": "Testimonials",
       "title": "Trusted by Leading Firms",
       "testimonial1": {
-        "quote": "Law Flow transformed our practice. We've cut administrative time by 60% and our clients love the portal.",
+        "quote": "LexLegal Cloud transformed our practice. We've cut administrative time by 60% and our clients love the portal.",
         "name": "Sarah Chen",
         "title": "Partner, Chen & Associates"
       },
@@ -626,7 +626,7 @@
     },
     "final_cta": {
       "title": "Ready to Transform Your Practice?",
-      "subtitle": "Join hundreds of law firms already using Law Flow to streamline operations, increase revenue, and deliver exceptional client experiences.",
+      "subtitle": "Join hundreds of law firms already using LexLegal Cloud to streamline operations, increase revenue, and deliver exceptional client experiences.",
       "email_placeholder": "Enter your email",
       "button": "Start Free Trial",
       "no_credit_card": "No credit card required",

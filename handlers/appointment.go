@@ -21,7 +21,7 @@ func AppointmentsPageHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 	csrfToken := middleware.GetCSRFToken(c)
 
-	component := pages.Appointments(c.Request().Context(), "Appointments | Law Flow", csrfToken, user, firm)
+	component := pages.Appointments(c.Request().Context(), "Appointments | LexLegal Cloud", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

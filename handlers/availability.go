@@ -64,7 +64,7 @@ func AvailabilityPageHandler(c echo.Context) error {
 	}
 
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.AvailabilitySettings(c.Request().Context(), "Availability Settings | Law Flow", csrfToken, currentUser, firm, slots, blockedDates)
+	component := pages.AvailabilitySettings(c.Request().Context(), "Availability Settings | LexLegal Cloud", csrfToken, currentUser, firm, slots, blockedDates)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

@@ -23,7 +23,7 @@ func CasesPageHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 	csrfToken := middleware.GetCSRFToken(c)
 
-	component := pages.Cases(c.Request().Context(), "Cases | Law Flow", csrfToken, user, firm)
+	component := pages.Cases(c.Request().Context(), "Cases | LexLegal Cloud", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -191,7 +191,7 @@ func GetCaseDetailHandler(c echo.Context) error {
 
 	// Render detail page
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.CaseDetail(c.Request().Context(), "Case Details | Law Flow", csrfToken, currentUser, currentFirm, caseRecord)
+	component := pages.CaseDetail(c.Request().Context(), "Case Details | LexLegal Cloud", csrfToken, currentUser, currentFirm, caseRecord)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

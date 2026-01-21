@@ -31,7 +31,7 @@ var globalDummyHash string = "$2a$10$X7.G.t8./.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t.t
 // LoginHandler renders the login page
 func LoginHandler(c echo.Context) error {
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.Login(c.Request().Context(), "Login | Law Flow", csrfToken)
+	component := pages.Login(c.Request().Context(), "Login | LexLegal Cloud", csrfToken)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

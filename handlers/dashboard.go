@@ -76,6 +76,6 @@ func DashboardHandler(c echo.Context) error {
 		c.Logger().Error("Failed to fetch upcoming appointments:", err)
 	}
 
-	component := pages.Dashboard(c.Request().Context(), "Dashboard | Law Flow", csrfToken, user, firm, stats)
+	component := pages.Dashboard(c.Request().Context(), "Dashboard | LexLegal Cloud", csrfToken, user, firm, stats)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

@@ -31,7 +31,7 @@ func FirmSetupHandler(c echo.Context) error {
 	}
 
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | Law Flow", csrfToken, user)
+	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | LexLegal Cloud", csrfToken, user)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -146,7 +146,7 @@ func FirmSettingsPageHandler(c echo.Context) error {
 	csrfToken := middleware.GetCSRFToken(c)
 
 	// Render the firm settings page
-	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | Law Flow", csrfToken, user, firm)
+	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

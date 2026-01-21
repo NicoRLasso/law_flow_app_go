@@ -24,7 +24,7 @@ func CaseRequestsPageHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 	csrfToken := middleware.GetCSRFToken(c)
 
-	component := pages.CaseRequests(c.Request().Context(), "Case Requests | Law Flow", csrfToken, user, firm)
+	component := pages.CaseRequests(c.Request().Context(), "Case Requests | LexLegal Cloud", csrfToken, user, firm)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
