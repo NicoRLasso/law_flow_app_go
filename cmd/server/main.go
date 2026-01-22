@@ -454,6 +454,8 @@ func main() {
 		{
 			// Note: GET "" and document viewing routes are in clientCaseRoutes above
 
+			caseRoutes.GET("/new", handlers.CreateCaseModalHandler)
+			caseRoutes.POST("", handlers.CreateCaseHandler)
 			caseRoutes.GET("/:id/edit", handlers.GetCaseEditFormHandler)
 			caseRoutes.PUT("/:id", handlers.UpdateCaseHandler)
 			caseRoutes.PATCH("/:id/documents/:docId/visibility", handlers.ToggleDocumentVisibilityHandler)

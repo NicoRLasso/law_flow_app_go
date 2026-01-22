@@ -662,3 +662,91 @@ func ToggleDocumentVisibilityHandler(c echo.Context) error {
 		"is_public": document.IsPublic,
 	})
 }
+
+// CreateCaseModalHandler renders the create case modal
+func CreateCaseModalHandler(c echo.Context) error {
+	currentFirm := middleware.GetCurrentFirm(c)
+
+	// Fetch clients
+	var clients []models.User
+	if err := db.DB.Where("firm_id = ? AND role = ?", currentFirm.ID, "client").Order("name ASC").Find(&clients).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch clients")
+	}
+
+	// Fetch lawyers (for assignment)
+	var lawyers []models.User
+	if err := db.DB.Where("firm_id = ? AND role IN (?, ?)", currentFirm.ID, "lawyer", "admin").Order("name ASC").Find(&lawyers).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch lawyers")
+	}
+
+	component := partials.CaseCreateModal(c.Request().Context(), clients, lawyers)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// CreateCaseHandler handles the creation of a new case
+func CreateCaseHandler(c echo.Context) error {
+	currentUser := middleware.GetCurrentUser(c)
+	currentFirm := middleware.GetCurrentFirm(c)
+
+	// Parse form
+	clientID := c.FormValue("client_id")
+	clientRole := c.FormValue("client_role")
+	title := c.FormValue("title")
+	caseType := c.FormValue("case_type")
+	caseNumber := c.FormValue("case_number")
+	description := c.FormValue("description")
+	assignedToID := c.FormValue("assigned_to_id")
+
+	// Validation
+	if clientID == "" || clientRole == "" || caseType == "" || caseNumber == "" || description == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Missing required fields")
+	}
+	
+	now := time.Now()
+
+	// Create Case Model
+	newCase := models.Case{
+		FirmID:          currentFirm.ID,
+		ClientID:        clientID,
+		CaseNumber:      caseNumber,
+		CaseType:        caseType,
+		Description:     description,
+		Status:          models.CaseStatusOpen,
+		OpenedAt:        now,
+		StatusChangedBy: &currentUser.ID,
+		StatusChangedAt: &now,
+	}
+
+	if title != "" {
+		newCase.Title = &title
+	}
+	if clientRole != "" {
+		newCase.ClientRole = &clientRole
+	}
+	if assignedToID != "" {
+		newCase.AssignedToID = &assignedToID
+	}
+
+	if err := db.DB.Create(&newCase).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create case: "+err.Error())
+	}
+
+	// Audit logging
+	auditCtx := middleware.GetAuditContext(c)
+	services.LogAuditEvent(
+db.DB,
+auditCtx,
+models.AuditActionCreate,
+"Case",
+newCase.ID,
+newCase.CaseNumber,
+"Case created manually",
+nil,
+newCase,
+)
+
+	// Trigger reload of table via HTMX
+	c.Response().Header().Set("HX-Trigger", "reload-cases")
+
+	return c.NoContent(http.StatusOK)
+}
