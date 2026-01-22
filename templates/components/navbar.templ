@@ -24,128 +24,85 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 					</a>
 					<!-- Desktop Navigation -->
 					<div class="hidden md:flex items-center gap-1">
-						// Users (first)
-						if currentPath == "/users" {
-							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.users") }</a>
+						// Superadmin Navigation
+						if user.Role == "superadmin" {
+							<div class="hidden md:flex ml-10 space-x-1">
+								<a
+									href="/superadmin/dashboard"
+									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									func() string {
+										if currentPath == "/superadmin/dashboard" {
+											return "text-foreground bg-white/5 border border-white/10"
+										}
+										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+									}() }
+								>
+									{ i18n.T(ctx, "nav.dashboard") }
+								</a>
+								<a
+									href="/superadmin/users"
+									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									func() string {
+										if currentPath == "/superadmin/users" {
+											return "text-foreground bg-white/5 border border-white/10"
+										}
+										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+									}() }
+								>
+									{ i18n.T(ctx, "nav.users") }
+								</a>
+								<a
+									href="/superadmin/firms"
+									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									func() string {
+										if currentPath == "/superadmin/firms" {
+											return "text-foreground bg-white/5 border border-white/10"
+										}
+										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+									}() }
+								>
+									{ i18n.T(ctx, "nav.firms") }
+								</a>
+								<a
+									href="/superadmin/support"
+									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									func() string {
+										if currentPath == "/superadmin/support" {
+											return "text-foreground bg-white/5 border border-white/10"
+										}
+										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+									}() }
+								>
+									{ i18n.T(ctx, "nav.support_tickets") }
+								</a>
+							</div>
 						} else {
-							<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.users") }</a>
-						}
-						// Cases Dropdown (second)
-						<div x-data="{ casesOpen: false }" class="relative">
-							<button
-								@click="casesOpen = !casesOpen"
-								class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+							// Users (first)
+							if currentPath == "/users" {
+								<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.users") }</a>
+							} else {
+								<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.users") }</a>
+							}
+							// Cases Dropdown (second)
+							<div x-data="{ casesOpen: false }" class="relative">
+								<button
+									@click="casesOpen = !casesOpen"
+									class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
 									func() string {
 										if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" {
 											return "text-foreground bg-white/5 border border-white/10 hover:bg-white/10"
 										}
 										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
 									}() }
-							>
-								{ i18n.T(ctx, "nav.cases") }
-								<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': casesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-								</svg>
-							</button>
-							<div
-								x-show="casesOpen"
-								@click.away="casesOpen = false"
-								x-transition:enter="transition ease-out duration-200"
-								x-transition:enter-start="opacity-0 translate-y-2"
-								x-transition:enter-end="opacity-100 translate-y-0"
-								x-transition:leave="transition ease-in duration-150"
-								x-transition:leave-start="opacity-100 translate-y-0"
-								x-transition:leave-end="opacity-0 translate-y-2"
-								class="absolute left-1/2 -translate-x-1/2 mt-2 w-40 bg-[#0A0A0B]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden ring-1 ring-white/5"
-								style="display: none;"
-							>
-								<div class="p-2 space-y-1">
-									<a
-										href="/cases"
-										class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
-										func() string {
-											if currentPath == "/cases" {
-												return "text-foreground bg-white/10"
-											}
-											return "text-muted-foreground hover:text-foreground hover:bg-white/5"
-										}() }
-									>
-										{ i18n.T(ctx, "nav.cases") }
-									</a>
-									if user.Role == "client" {
-										<a
-											href="/api/client/requests"
-											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
-											func() string {
-												if currentPath == "/api/client/requests" {
-													return "text-foreground bg-white/10"
-												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
-											}() }
-										>
-											{ i18n.T(ctx, "case.request.my_requests") }
-										</a>
-									}
-									if user.Role == "admin" || user.Role == "lawyer" {
-										<a
-											href="/case-requests"
-											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
-											func() string {
-												if currentPath == "/case-requests" {
-													return "text-foreground bg-white/10"
-												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
-											}() }
-										>
-											{ i18n.T(ctx, "nav.requests") }
-										</a>
-									}
-									if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
-										<a
-											href="/historical-cases"
-											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
-									func() string {
-										if currentPath == "/historical-cases" {
-											return "text-foreground bg-white/10"
-										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
-									}() }
-										>
-											{ i18n.T(ctx, "nav.historical_cases") }
-										</a>
-									}
-								</div>
-							</div>
-						</div>
-						// Templates (third - admin only)
-						if user.Role == "admin" || user.Role == "lawyer" {
-							if currentPath == "/templates" {
-								<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.templates") }</a>
-							} else {
-								<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.templates") }</a>
-							}
-						}
-						if user.Role == "admin" || user.Role == "lawyer" {
-							// Calendars Dropdown (fourth)
-							<div x-data="{ calendarsOpen: false }" class="relative">
-								<button
-									@click="calendarsOpen = !calendarsOpen"
-									class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
-										func() string {
-											if currentPath == "/availability" || currentPath == "/appointments" || currentPath == "/calendar" {
-												return "text-foreground bg-white/5 border border-white/10 hover:bg-white/10"
-											}
-											return "text-muted-foreground hover:text-foreground hover:bg-white/5"
-										}() }
 								>
-									Calendars
-									<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': calendarsOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									{ i18n.T(ctx, "nav.cases") }
+									<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': casesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 									</svg>
 								</button>
 								<div
-									x-show="calendarsOpen"
-									@click.away="calendarsOpen = false"
+									x-show="casesOpen"
+									@click.away="casesOpen = false"
 									x-transition:enter="transition ease-out duration-200"
 									x-transition:enter-start="opacity-0 translate-y-2"
 									x-transition:enter-end="opacity-100 translate-y-0"
@@ -157,44 +114,141 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 								>
 									<div class="p-2 space-y-1">
 										<a
-											href="/calendar"
+											href="/cases"
 											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+										func() string {
+											if currentPath == "/cases" {
+												return "text-foreground bg-white/10"
+											}
+											return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										}() }
+										>
+											{ i18n.T(ctx, "nav.cases") }
+										</a>
+										if user.Role == "client" {
+											<a
+												href="/api/client/requests"
+												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+											func() string {
+												if currentPath == "/api/client/requests" {
+													return "text-foreground bg-white/10"
+												}
+												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+											}() }
+											>
+												{ i18n.T(ctx, "case.request.my_requests") }
+											</a>
+										}
+										if user.Role == "admin" || user.Role == "lawyer" {
+											<a
+												href="/case-requests"
+												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+											func() string {
+												if currentPath == "/case-requests" {
+													return "text-foreground bg-white/10"
+												}
+												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+											}() }
+											>
+												{ i18n.T(ctx, "nav.requests") }
+											</a>
+										}
+										if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+											<a
+												href="/historical-cases"
+												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+									func() string {
+										if currentPath == "/historical-cases" {
+											return "text-foreground bg-white/10"
+										}
+										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+									}() }
+											>
+												{ i18n.T(ctx, "nav.historical_cases") }
+											</a>
+										}
+									</div>
+								</div>
+							</div>
+							// Templates (third - admin only)
+							if user.Role == "admin" || user.Role == "lawyer" {
+								if currentPath == "/templates" {
+									<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.templates") }</a>
+								} else {
+									<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.templates") }</a>
+								}
+							}
+							if user.Role == "admin" || user.Role == "lawyer" {
+								// Calendars Dropdown (fourth)
+								<div x-data="{ calendarsOpen: false }" class="relative">
+									<button
+										@click="calendarsOpen = !calendarsOpen"
+										class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+										func() string {
+											if currentPath == "/availability" || currentPath == "/appointments" || currentPath == "/calendar" {
+												return "text-foreground bg-white/5 border border-white/10 hover:bg-white/10"
+											}
+											return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										}() }
+									>
+										Calendars
+										<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': calendarsOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+										</svg>
+									</button>
+									<div
+										x-show="calendarsOpen"
+										@click.away="calendarsOpen = false"
+										x-transition:enter="transition ease-out duration-200"
+										x-transition:enter-start="opacity-0 translate-y-2"
+										x-transition:enter-end="opacity-100 translate-y-0"
+										x-transition:leave="transition ease-in duration-150"
+										x-transition:leave-start="opacity-100 translate-y-0"
+										x-transition:leave-end="opacity-0 translate-y-2"
+										class="absolute left-1/2 -translate-x-1/2 mt-2 w-40 bg-[#0A0A0B]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden ring-1 ring-white/5"
+										style="display: none;"
+									>
+										<div class="p-2 space-y-1">
+											<a
+												href="/calendar"
+												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
 											func() string {
 												if currentPath == "/calendar" {
 													return "text-foreground bg-white/10"
 												}
 												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
 											}() }
-										>
-											Calendar
-										</a>
-										<a
-											href="/availability"
-											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+											>
+												Calendar
+											</a>
+											<a
+												href="/availability"
+												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
 											func() string {
 												if currentPath == "/availability" {
 													return "text-foreground bg-white/10"
 												}
 												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
 											}() }
-										>
-											{ i18n.T(ctx, "nav.availability") }
-										</a>
-										<a
-											href="/appointments"
-											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+											>
+												{ i18n.T(ctx, "nav.availability") }
+											</a>
+											<a
+												href="/appointments"
+												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
 											func() string {
 												if currentPath == "/appointments" {
 													return "text-foreground bg-white/10"
 												}
 												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
 											}() }
-										>
-											{ i18n.T(ctx, "nav.appointments") }
-										</a>
+											>
+												{ i18n.T(ctx, "nav.appointments") }
+											</a>
+										</div>
 									</div>
 								</div>
-							</div>
+							}
 						}
 					</div>
 				</div>
@@ -276,7 +330,6 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.firm_settings") }</span>
 									</a>
 								}
-
 								if user.Role == "admin" {
 									<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
 										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
@@ -286,6 +339,14 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "audit.title") }</span>
 									</a>
 								}
+								<div class="h-px bg-white/5 my-1 mx-2"></div>
+								<a href="/support" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
+									<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
+									<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+									</div>
+									<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.support") }</span>
+								</a>
 								<div class="h-px bg-white/5 my-1 mx-2"></div>
 								<form hx-post="/logout" hx-swap="none">
 									<button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all group relative overflow-hidden">

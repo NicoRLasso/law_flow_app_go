@@ -43,11 +43,8 @@ templ Cases(ctx context.Context, title string, csrfToken string, user *models.Us
 							</button>
 						}
 					</div>
-
 					<!-- Case Filters (static, not reloaded) -->
 					@partials.CaseFilters(ctx, user)
-					
-
 					<!-- Loading indicator (outside the replaceable content) -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
 						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>

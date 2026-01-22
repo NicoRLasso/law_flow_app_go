@@ -3,9 +3,9 @@ package layouts
 import (
 	"context"
 	"encoding/json"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
-	"law_flow_app_go/middleware"
 )
 
 templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO) {

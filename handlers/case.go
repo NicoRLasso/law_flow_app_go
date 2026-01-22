@@ -701,7 +701,7 @@ func CreateCaseHandler(c echo.Context) error {
 	if clientID == "" || clientRole == "" || caseType == "" || caseNumber == "" || description == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "Missing required fields")
 	}
-	
+
 	now := time.Now()
 
 	// Create Case Model
@@ -734,16 +734,16 @@ func CreateCaseHandler(c echo.Context) error {
 	// Audit logging
 	auditCtx := middleware.GetAuditContext(c)
 	services.LogAuditEvent(
-db.DB,
-auditCtx,
-models.AuditActionCreate,
-"Case",
-newCase.ID,
-newCase.CaseNumber,
-"Case created manually",
-nil,
-newCase,
-)
+		db.DB,
+		auditCtx,
+		models.AuditActionCreate,
+		"Case",
+		newCase.ID,
+		newCase.CaseNumber,
+		"Case created manually",
+		nil,
+		newCase,
+	)
 
 	// Trigger reload of table via HTMX
 	c.Response().Header().Set("HX-Trigger", "reload-cases")

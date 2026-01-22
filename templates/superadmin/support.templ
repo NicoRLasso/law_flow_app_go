@@ -1,0 +1,82 @@
+package superadmin
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ Support(ctx context.Context, title string, csrfToken string, user *models.User, tickets []models.SupportTicket) {
+	@Layout(ctx, title, csrfToken, user, "/superadmin/support") {
+		<div class="flex items-center justify-between mb-8">
+			<div>
+				<h1 class="text-3xl font-bold mb-2">{ i18n.T(ctx, "superadmin.support.title") }</h1>
+				<p class="text-muted-foreground">{ i18n.T(ctx, "superadmin.support.subtitle") }</p>
+			</div>
+		</div>
+		<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+			<div class="overflow-x-auto">
+				<table class="w-full">
+					<thead>
+						<tr class="border-b border-white/10 bg-white/5">
+							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.status") }</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.subject") }</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.user") }</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.date") }</th>
+							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.message") }</th>
+							<th class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "common.actions") }</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-white/10">
+						if len(tickets) == 0 {
+							<tr>
+								<td colspan="6" class="px-6 py-8 text-center text-muted-foreground">
+									{ i18n.T(ctx, "support.table.empty") }
+								</td>
+							</tr>
+						} else {
+							for _, ticket := range tickets {
+								<tr class="hover:bg-white/5 transition-colors">
+									<td class="px-6 py-4 whitespace-nowrap">
+										if ticket.Status == "resolved" {
+											<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-500">
+												{ i18n.T(ctx, "status.resolved") }
+											</span>
+										} else {
+											<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-500">
+												{ i18n.T(ctx, "status.open") }
+											</span>
+										}
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap font-medium">{ ticket.Subject }</td>
+									<td class="px-6 py-4 whitespace-nowrap">
+										<div class="flex flex-col">
+											<span class="text-sm font-medium">{ ticket.User.Name }</span>
+											<span class="text-xs text-muted-foreground">{ ticket.User.Email }</span>
+										</div>
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+										{ ticket.CreatedAt.Format("02 Jan 2006 15:04") }
+									</td>
+									<td class="px-6 py-4">
+										<p class="text-sm text-muted-foreground line-clamp-2 max-w-xs" title={ ticket.Message }>{ ticket.Message }</p>
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+										if ticket.Status != "resolved" {
+											<form method="POST" action={ templ.SafeURL("/superadmin/support/" + ticket.ID + "/resolve") }>
+												<input type="hidden" name="_csrf" value={ csrfToken }/>
+												<button type="submit" class="text-accent hover:text-accent/80 transition-colors">
+													{ i18n.T(ctx, "action.mark_resolved") }
+												</button>
+											</form>
+										}
+									</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
+}

@@ -184,12 +184,10 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 								<p class="text-xs text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.pdf_only") }</p>
 							</div>
 						</div>
-						
 						<!-- Turnstile CAPTCHA -->
 						if turnstileSiteKey != "" {
 							<div class="cf-turnstile" data-sitekey={ turnstileSiteKey }></div>
 						}
-
 						<!-- Submit Button -->
 						<button
 							type="submit"

@@ -164,26 +164,41 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 										<div>
 											<label class="block text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "templates.orientation") }</label>
 											<select name="page_orientation" class="input-field w-full text-sm">
-												<option value="portrait" if template.PageOrientation == "portrait" || template.PageOrientation == "" {
-	selected
-}>Portrait</option>
-												<option value="landscape" if template.PageOrientation == "landscape" {
-	selected
-}>Landscape</option>
+												<option
+													value="portrait"
+													if template.PageOrientation == "portrait" || template.PageOrientation == "" {
+														selected
+													}
+												>Portrait</option>
+												<option
+													value="landscape"
+													if template.PageOrientation == "landscape" {
+														selected
+													}
+												>Landscape</option>
 											</select>
 										</div>
 										<div>
 											<label class="block text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "templates.page_size") }</label>
 											<select name="page_size" class="input-field w-full text-sm">
-												<option value="letter" if template.PageSize == "letter" || template.PageSize == "" {
-	selected
-}>Letter</option>
-												<option value="legal" if template.PageSize == "legal" {
-	selected
-}>Legal</option>
-												<option value="A4" if template.PageSize == "A4" {
-	selected
-}>A4</option>
+												<option
+													value="letter"
+													if template.PageSize == "letter" || template.PageSize == "" {
+														selected
+													}
+												>Letter</option>
+												<option
+													value="legal"
+													if template.PageSize == "legal" {
+														selected
+													}
+												>Legal</option>
+												<option
+													value="A4"
+													if template.PageSize == "A4" {
+														selected
+													}
+												>A4</option>
 											</select>
 										</div>
 									</div>

@@ -436,3 +436,34 @@ func BuildNewUserWelcomeEmail(userEmail, userName, password, loginURL, lang stri
 	email.Subject = i18n.Translate(lang, "email.subject.new_user_welcome")
 	return email
 }
+
+// SupportTicketNotificationEmailData contains data for support ticket notification
+type SupportTicketNotificationEmailData struct {
+	AdminName   string
+	UserName    string
+	UserEmail   string
+	TicketID    string
+	Subject     string
+	MessageBody string
+}
+
+// BuildSupportTicketNotificationEmail creates a notification email for superadmins about a new support ticket
+func BuildSupportTicketNotificationEmail(adminEmail, adminName, userName, userEmail, ticketID, subject, messageBody, lang string) *Email {
+	data := SupportTicketNotificationEmailData{
+		AdminName:   adminName,
+		UserName:    userName,
+		UserEmail:   userEmail,
+		TicketID:    ticketID,
+		Subject:     subject,
+		MessageBody: messageBody,
+	}
+
+	// For simplicity, we can use the same subject as the ticket or a prefixed one
+	emailSubject := fmt.Sprintf("[%s] %s", i18n.Translate(lang, "email.subject.support_ticket"), subject)
+
+	// Since we haven't created the template yet, let's create a basic fallback text if template fails
+	// Or relies on the template existing.
+	email := buildEmailWithFallback("support_notification", lang, data, adminEmail)
+	email.Subject = emailSubject
+	return email
+}

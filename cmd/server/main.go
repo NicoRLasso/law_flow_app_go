@@ -44,7 +44,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -298,7 +298,9 @@ func main() {
 		superadminRoutes.PUT("/firms/:id", handlers.SuperadminUpdateFirm)
 		superadminRoutes.PATCH("/firms/:id/toggle-active", handlers.SuperadminToggleFirmActive)
 		superadminRoutes.GET("/firms/:id/delete-confirm", handlers.SuperadminGetFirmDeleteConfirm)
-		superadminRoutes.DELETE("/firms/:id", handlers.SuperadminDeleteFirm)
+		// Support Ticket Management
+		superadminRoutes.GET("/support", handlers.SuperadminSupportPageHandler)
+		superadminRoutes.POST("/support/:id/resolve", handlers.SuperadminResolveTicketHandler)
 	}
 
 	// Protected routes (authentication + firm required)
@@ -315,6 +317,10 @@ func main() {
 		protected.GET("/profile", handlers.ProfileSettingsPageHandler)
 		protected.PUT("/api/profile", handlers.UpdateProfileHandler)
 		protected.POST("/api/profile/password", handlers.ChangePasswordHandler)
+
+		// Support Page
+		protected.GET("/support", handlers.SupportPageHandler)
+		protected.POST("/api/support/contact", handlers.SubmitSupportRequestHandler)
 
 		// User management page (all users can view)
 		protected.GET("/users", handlers.UsersPageHandler)
