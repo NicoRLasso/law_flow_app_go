@@ -73,7 +73,7 @@ function createMenuBehavior() {
         contextMenuX: 0,
         contextMenuY: 0,
 
-        get contextMenuStyle() {
+        getContextMenuStyle() {
             return `top: ${this.contextMenuY}px; left: ${this.contextMenuX}px`;
         },
 

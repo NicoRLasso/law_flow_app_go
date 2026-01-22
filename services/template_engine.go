@@ -6,14 +6,15 @@ import (
 )
 
 // variableRegex matches {{variable.path}} patterns
-var variableRegex = regexp.MustCompile(`\{\{([a-zA-Z0-9_.]+)\}\}`)
+// variableRegex matches {{variable.path}} patterns, allowing for whitespace
+var variableRegex = regexp.MustCompile(`\{\{\s*([a-zA-Z0-9_.]+)\s*\}\}`)
 
 // RenderTemplate replaces {{variable}} placeholders with actual values from TemplateData
 // If a variable has no value, it is replaced with an empty string (blank)
 func RenderTemplate(content string, data TemplateData) string {
 	return variableRegex.ReplaceAllStringFunc(content, func(match string) string {
 		// Extract variable key from {{key}}
-		key := strings.TrimPrefix(strings.TrimSuffix(match, "}}"), "{{")
+		key := strings.TrimSpace(strings.TrimPrefix(strings.TrimSuffix(match, "}}"), "{{"))
 
 		// Look up the value - returns empty string if not found (shows as blank)
 		return getValueByKey(key, data)
