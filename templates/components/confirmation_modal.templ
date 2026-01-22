@@ -97,6 +97,17 @@ templ ConfirmationModal(ctx context.Context) {
 			modal.classList.remove('hidden');
 		}
 
+		function openConfirmationModalFromData(el) {
+			openConfirmationModal({
+				title: el.getAttribute('data-confirm-title'),
+				message: el.getAttribute('data-confirm-message'),
+				confirmUrl: el.getAttribute('data-confirm-url'),
+				confirmMethod: el.getAttribute('data-confirm-method') || 'DELETE',
+				target: el.getAttribute('data-confirm-target'),
+				swap: el.getAttribute('data-confirm-swap')
+			}, el);
+		}
+
 		function closeConfirmationModal() {
 			document.getElementById('confirmation-modal').classList.add('hidden');
 			confirmationModalTriggerElement = null;

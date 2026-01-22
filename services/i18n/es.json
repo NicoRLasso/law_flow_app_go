@@ -676,6 +676,12 @@
       "details": "Detalles",
       "empty": "No se encontraron casos"
     },
+    "document": {
+      "delete": {
+        "title": "Eliminar Documento",
+        "message": "¿Está seguro de que desea eliminar este documento? Esta acción no se puede deshacer."
+      }
+    },
     "history": {
       "page_title": "Casos Históricos",
       "page_description": "Ver y gestionar casos migrados de papel",

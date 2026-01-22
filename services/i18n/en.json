@@ -678,6 +678,12 @@
       "details": "Details",
       "empty": "No cases found"
     },
+    "document": {
+      "delete": {
+        "title": "Delete Document",
+        "message": "Are you sure you want to delete this document? This action cannot be undone."
+      }
+    },
     "history": {
       "page_title": "Historical Cases",
       "page_description": "View and manage migrated paper cases",

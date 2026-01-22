@@ -443,6 +443,7 @@ func main() {
 			caseRoutes.GET("/:id/edit", handlers.GetCaseEditFormHandler)
 			caseRoutes.PUT("/:id", handlers.UpdateCaseHandler)
 			caseRoutes.PATCH("/:id/documents/:docId/visibility", handlers.ToggleDocumentVisibilityHandler)
+			caseRoutes.DELETE("/:id/documents/:docId", handlers.DeleteCaseDocumentHandler)
 			// Collaborator routes
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)

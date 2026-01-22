@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"law_flow_app_go/db"
@@ -109,15 +110,31 @@ func GetDocumentPath(document *models.CaseDocument) string {
 	return document.FilePath // Use stored path as fallback
 }
 
-// DeleteCaseDocument soft deletes a case document
-func DeleteCaseDocument(documentID string, userID string) error {
-	result := db.DB.Where("id = ?", documentID).Delete(&models.CaseDocument{})
+// DeleteCaseDocument soft deletes a case document and removes the physical file
+func DeleteCaseDocument(documentID string, userID string, firmID string) error {
+	// First find the document to get the file path
+	var document models.CaseDocument
+	if err := db.DB.Where("id = ? AND firm_id = ?", documentID, firmID).First(&document).Error; err != nil {
+		return fmt.Errorf("document not found: %w", err)
+	}
+
+	// Delete physical file from storage
+	if document.FilePath != "" {
+		// Use background context for deletion as this is a cleanup task
+		if err := Storage.Delete(context.Background(), document.FilePath); err != nil {
+			log.Printf("Warning: failed to delete file document %s: %v", document.FilePath, err)
+			// We continue with DB deletion even if file deletion fails,
+			// though ideally we might want to schedule a retry
+		}
+	}
+
+	// Delete from database
+	result := db.DB.Delete(&document)
 	if result.Error != nil {
 		return fmt.Errorf("failed to delete document: %w", result.Error)
 	}
-	if result.RowsAffected == 0 {
-		return fmt.Errorf("document not found")
-	}
+
+	// Audit log handled by handler or caller
 	log.Printf("Document %s deleted by user %s", documentID, userID)
 	return nil
 }
