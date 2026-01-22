@@ -12,21 +12,29 @@ templ ContextMenu(ctx context.Context) {
 		x-transition.opacity.duration.100ms
 		@click.away="showContextMenu = false"
 		:style="contextMenuStyle"
-		class="fixed z-50 w-64 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80"
+		class="fixed z-50 w-64 bg-zinc-900/95 backdrop-blur-md border border-white/5 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-80"
 		style="display: none;"
 		x-ref="contextMenu"
 	>
-		<div class="p-3 border-b border-white/10 bg-white/5">
+		<!-- Variables Header -->
+		<div class="px-3 py-2 border-b border-white/5 bg-white/5 text-center">
 			<h3 class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{ i18n.T(ctx, "templates.insert_variable_title") }</h3>
 		</div>
-		<div class="overflow-y-auto p-1">
+		
+		<!-- Variables List -->
+		<div class="overflow-y-auto p-2">
+			<template x-show="variables.length === 0">
+				<div class="p-2 text-xs text-muted-foreground text-center italic">
+					{ i18n.T(ctx, "templates.no_variables") }
+				</div>
+			</template>
 			<template x-for="category in variables" :key="category.name">
-				<div class="mb-1">
-					<div class="px-2 py-1 text-xs font-medium text-accent opacity-80" x-text="category.name"></div>
+				<div class="mb-2">
+					<div class="px-3 py-1.5 text-xs font-medium text-accent opacity-80" x-text="category.name"></div>
 					<template x-for="variable in category.variables" :key="variable.key">
 						<button
 							@click="insertVariable(variable.key)"
-							class="w-full text-left px-2 py-1.5 text-sm hover:bg-white/10 rounded-lg transition-colors flex items-center justify-between group"
+							class="w-full text-left px-3 py-2 text-sm hover:bg-white/10 rounded-lg transition-colors flex items-center justify-between group"
 						>
 							<span x-text="variable.label" class="text-foreground"></span>
 							<span x-text="variable.key" class="text-xs text-muted-foreground opacity-50 font-mono group-hover:opacity-100"></span>

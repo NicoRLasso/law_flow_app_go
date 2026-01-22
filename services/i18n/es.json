@@ -96,6 +96,7 @@
     "view_paginated": "Paginado",
     "page": "Página",
     "insert_page_break": "Insertar Salto de Página (Ctrl+Enter)",
+    "no_variables": "No se encontraron variables",
     "variables": {
       "client": "Cliente",
       "client_name": "Nombre del Cliente",
