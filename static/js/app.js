@@ -218,4 +218,38 @@ document.addEventListener('DOMContentLoaded', () => {
     initStickyCTA();
     initSmoothScroll();
     initAccordions();
+
+    // Toast Notification Handler
+    document.body.addEventListener('show-toast', function(evt) {
+        const message = evt.detail.message || evt.detail.value || evt.detail;
+        const type = evt.detail.type || 'success'; // success, error
+        
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-[100] p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-y-[-20px] opacity-0 ${
+            type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+        }`;
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+        });
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-y-[-20px]', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    });
+
+    // Modal Close Handler
+    document.body.addEventListener('close-modal', function(evt) {
+        const modalId = evt.detail.id || evt.detail.value || evt.detail;
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.remove();
+        }
+    });
 });

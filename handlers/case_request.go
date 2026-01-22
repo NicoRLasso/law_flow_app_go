@@ -7,6 +7,7 @@ import (
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
 	"net/http"
@@ -613,8 +614,34 @@ func ClientSubmitCaseRequestHandler(c echo.Context) error {
 
 	// Return success message
 	if c.Request().Header.Get("HX-Request") == "true" {
-		return c.HTML(http.StatusOK, "<div class=\"p-4 bg-green-500/20 text-green-400 rounded-lg\">Request submitted successfully! We will contact you soon.</div>")
+		msg := i18n.T(c.Request().Context(), "case.request.success_message")
+		c.Response().Header().Set("HX-Trigger", `{"close-modal": "client-case-request-modal", "show-toast": "`+msg+`", "reload-requests": true}`)
+		return c.NoContent(http.StatusOK)
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"message": "Request submitted successfully"})
+}
+
+// ClientRequestsPageHandler pages.ClientRequests page
+func ClientRequestsPageHandler(c echo.Context) error {
+	user := middleware.GetCurrentUser(c)
+	firm := middleware.GetCurrentFirm(c)
+	csrfToken := middleware.GetCSRFToken(c)
+
+	var requests []models.CaseRequest
+	// Find requests by email inside the current firm
+	if err := db.DB.Where("firm_id = ? AND email = ?", firm.ID, user.Email).
+		Order("created_at DESC").
+		Find(&requests).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch requests")
+	}
+
+	// If HTMX request for partial reload (e.g. after submission), render only the list partial
+	if c.Request().Header.Get("HX-Request") == "true" && c.Request().Header.Get("HX-Target") == "client-case-requests-list" {
+		component := partials.ClientCaseRequestList(c.Request().Context(), requests)
+		return component.Render(c.Request().Context(), c.Response().Writer)
+	}
+
+	component := pages.ClientRequests(c.Request().Context(), "My Requests | LexLegal Cloud", csrfToken, user, firm, requests)
+	return component.Render(c.Request().Context(), c.Response().Writer)
 }

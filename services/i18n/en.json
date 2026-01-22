@@ -641,6 +641,7 @@
     },
     "mobile_cta": "Start Free Trial"
   },
+
   "cases": {
     "detail": {
       "title": "Case Details"
@@ -1043,6 +1044,13 @@
     }
   },
   "case": {
+    "request": {
+      "new_btn": "Request New Case",
+      "title": "Request New Case",
+      "success_message": "Request submitted successfully! We will contact you soon.",
+      "my_requests": "My Requests",
+      "no_requests": "You haven't made any requests yet."
+    },
     "title": "Case",
     "detail": {
       "title": "Case Details",
@@ -1515,7 +1523,7 @@
   ,
   "email": {
     "subject": {
-      "welcome": "Welcome to lexlegalcloud App!",
+      "welcome": "Welcome to LexLegalCloud App!",
       "firm_setup": "Firm Setup Complete - lexlegalcloud App",
       "password_reset": "Password Reset Request - lexlegalcloud App",
       "case_request_rejection": "Case Request Update - {firmName}",

@@ -639,6 +639,7 @@
     },
     "mobile_cta": "Iniciar Prueba Gratis"
   },
+
   "cases": {
     "detail": {
       "title": "Detalles del Caso"
@@ -1042,6 +1043,13 @@
     }
   },
   "case": {
+    "request": {
+      "new_btn": "Solicitar Nuevo Caso",
+      "title": "Solicitar Nuevo Caso",
+      "success_message": "¡Solicitud enviada exitosamente! Nos pondremos en contacto pronto.",
+      "my_requests": "Mis Solicitudes",
+      "no_requests": "Aún no has realizado ninguna solicitud."
+    },
     "title": "Caso",
     "detail": {
       "title": "Detalles del Caso",

@@ -72,6 +72,20 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 									>
 										{ i18n.T(ctx, "nav.cases") }
 									</a>
+									if user.Role == "client" {
+										<a
+											href="/api/client/requests"
+											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+											func() string {
+												if currentPath == "/api/client/requests" {
+													return "text-foreground bg-white/10"
+												}
+												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+											}() }
+										>
+											{ i18n.T(ctx, "case.request.my_requests") }
+										</a>
+									}
 									if user.Role == "admin" || user.Role == "lawyer" {
 										<a
 											href="/case-requests"
@@ -262,6 +276,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.firm_settings") }</span>
 									</a>
 								}
+
 								if user.Role == "admin" {
 									<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
 										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>

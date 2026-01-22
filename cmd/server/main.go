@@ -445,6 +445,7 @@ func main() {
 		{
 			clientRequestRoutes.GET("/case-request", handlers.ClientCaseRequestHandler)
 			clientRequestRoutes.POST("/case-request", handlers.ClientSubmitCaseRequestHandler)
+			clientRequestRoutes.GET("/requests", handlers.ClientRequestsPageHandler)
 		}
 
 		// 2. Restricted Case Routes (Admin, Lawyer ONLY) - Management and editing
