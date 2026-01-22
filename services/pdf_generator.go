@@ -3,10 +3,16 @@ package services
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 )
+
+// getChromePath returns the Chrome executable path from environment variable
+func getChromePath() string {
+	return os.Getenv("CHROME_PATH")
+}
 
 // PDFOptions contains options for PDF generation
 type PDFOptions struct {
@@ -32,8 +38,22 @@ func DefaultPDFOptions() PDFOptions {
 
 // GeneratePDF renders HTML content to PDF using headless Chrome
 func GeneratePDF(htmlContent string, options PDFOptions) ([]byte, error) {
+	// Configure Chrome executable path from environment or default
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.NoSandbox,
+		chromedp.DisableGPU,
+	)
+
+	// Check for custom Chrome path (for headless-shell in Docker)
+	if chromePath := getChromePath(); chromePath != "" {
+		opts = append(opts, chromedp.ExecPath(chromePath))
+	}
+
+	allocCtx, allocCancel := chromedp.NewExecAllocator(context.Background(), opts...)
+	defer allocCancel()
+
 	// Create a new browser context
-	ctx, cancel := chromedp.NewContext(context.Background())
+	ctx, cancel := chromedp.NewContext(allocCtx)
 	defer cancel()
 
 	// Set up page dimensions based on options

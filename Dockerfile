@@ -7,7 +7,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Copy files needed for Tailwind to scan classes
-COPY static/css/input.css static/css/kinetic.css static/css/style.css ./static/css/
+COPY static/css/input.css static/css/kinetic.css ./static/css/
 COPY templates ./templates
 COPY postcss.config.js ./
 RUN npm run build:css
@@ -15,7 +15,7 @@ RUN npm run build:css
 # Go build stage
 FROM golang:1.24-alpine AS builder
 
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc musl-dev upx
 
 # Install templ CLI
 RUN go install github.com/a-h/templ/cmd/templ@latest
@@ -37,25 +37,30 @@ COPY --from=css-builder /app/static/css/bundle.min.css ./static/css/bundle.min.c
 RUN templ generate
 
 # Build with CGO for SQLite (uses cached dependencies)
-RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go
+RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go && \
+    upx --best --lzma server
+
+# Headless shell stage - get Chrome headless binary
+FROM chromedp/headless-shell:latest AS headless
 
 # Runtime stage - minimal image
 FROM alpine:3.21
 
-# Install runtime dependencies including Chromium for PDF generation
+# Install minimal runtime dependencies
 RUN apk add --no-cache \
     ca-certificates \
     tzdata \
-    chromium \
     nss \
     freetype \
     harfbuzz \
-    ttf-freefont \
-    font-noto-emoji
+    ttf-dejavu \
+    && rm -rf /usr/share/man /tmp/* /var/tmp/*
 
-# Set Chromium flags for headless operation
-ENV CHROME_BIN=/usr/bin/chromium-browser
-ENV CHROME_PATH=/usr/lib/chromium/
+# Copy headless-shell from chromedp image
+COPY --from=headless /headless-shell /headless-shell
+
+# Set Chrome path for chromedp
+ENV CHROME_PATH=/headless-shell/headless-shell
 
 WORKDIR /app
 
