@@ -9,7 +9,7 @@ import (
 
 templ FirmSetup(ctx context.Context, title string, csrfToken string, user *models.User) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+		<main class="min-h-screen flex items-center justify-center relative overflow-hidden">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">
 				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
@@ -158,6 +158,6 @@ templ FirmSetup(ctx context.Context, title string, csrfToken string, user *model
 					</form>
 				</div>
 			</div>
-		</div>
+		</main>
 	}
 }

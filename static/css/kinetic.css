@@ -17,8 +17,8 @@
   --color-foreground: #EDEDEF;                       /* Primary text */
   --color-foreground-muted: #8A8F98;                 /* Body text */
   --color-foreground-subtle: rgba(255, 255, 255, 0.60); /* Tertiary text */
-  --color-accent: #5E6AD2;                           /* Primary interactive */
-  --color-accent-bright: #6872D9;                    /* Hover state */
+  --color-accent: #818cf8;                           /* Primary interactive */
+  --color-accent-bright: #9da5f2;                    /* Hover state */
   --color-accent-glow: rgba(94, 106, 210, 0.3);      /* Glow effects */
   --color-border-default: rgba(255, 255, 255, 0.06); /* Subtle borders */
   --color-border-hover: rgba(255, 255, 255, 0.10);   /* Border on hover */

@@ -57,7 +57,9 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 				</div>
 			</div>
 		</nav>
-		{ children... }
+		<main>
+			{ children... }
+		</main>
 		<!-- Footer -->
 		<footer class="border-t border-white/[0.06] bg-background-deep text-center">
 			<div class="container mx-auto px-6 py-16">

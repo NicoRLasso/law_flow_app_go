@@ -12,18 +12,31 @@ function initHeroParallax() {
 
     if (prefersReducedMotion) return;
 
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const heroHeight = hero.offsetHeight;
-        const scrollPercent = scrolled / heroHeight;
+    let heroHeight = hero.offsetHeight;
+    let ticking = false;
 
-        // Scale from 1.0 to 1.2 and fade out
-        const scale = 1 + (scrollPercent * 0.2);
-        const opacity = Math.max(0, 1 - (scrollPercent * 2));
-
-        hero.style.transform = `scale(${scale})`;
-        hero.style.opacity = opacity;
+    window.addEventListener('resize', () => {
+        heroHeight = hero.offsetHeight;
     });
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrolled = window.window.pageYOffset || document.documentElement.scrollTop;
+                const scrollPercent = Math.min(1, Math.max(0, scrolled / heroHeight));
+
+                // Scale from 1.0 to 1.2 and fade out
+                const scale = 1 + (scrollPercent * 0.2);
+                const opacity = Math.max(0, 1 - (scrollPercent * 2));
+
+                hero.style.transform = `scale(${scale})`;
+                hero.style.opacity = opacity;
+                
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
 }
 
 // Intersection Observer for fade-in animations
@@ -87,19 +100,23 @@ function initStickyCTA() {
     const stickyCTA = document.querySelector('.sticky-cta-mobile');
     if (!stickyCTA) return;
 
-    let lastScrollY = window.scrollY;
     const showThreshold = 600; // Show after scrolling 600px
+    let ticking = false;
 
     window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const currentScrollY = window.scrollY || document.documentElement.scrollTop;
 
-        if (currentScrollY > showThreshold) {
-            stickyCTA.classList.add('visible');
-        } else {
-            stickyCTA.classList.remove('visible');
+                if (currentScrollY > showThreshold) {
+                    stickyCTA.classList.add('visible');
+                } else {
+                    stickyCTA.classList.remove('visible');
+                }
+                ticking = false;
+            });
+            ticking = true;
         }
-
-        lastScrollY = currentScrollY;
     }, { passive: true });
 }
 

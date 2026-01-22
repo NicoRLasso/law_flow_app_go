@@ -30,7 +30,7 @@ dev: css-build ## Run with live-reload (requires air and npm)
 run: generate ## Run the application
 	go run cmd/server/main.go
 
-build: generate ## Build the application
+build: generate css-build ## Build the application
 	go build -trimpath -o bin/server cmd/server/main.go
 
 clean: ## Clean build artifacts

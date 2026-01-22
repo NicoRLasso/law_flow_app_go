@@ -7,7 +7,7 @@ COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Copy files needed for Tailwind to scan classes
-COPY static/css/input.css ./static/css/
+COPY static/css/input.css static/css/kinetic.css static/css/style.css ./static/css/
 COPY templates ./templates
 COPY postcss.config.js ./
 RUN npm run build:css
@@ -31,7 +31,7 @@ RUN CGO_ENABLED=1 go build -v std
 COPY . .
 
 # Copy built CSS from css-builder stage
-COPY --from=css-builder /app/static/css/output.css ./static/css/output.css
+COPY --from=css-builder /app/static/css/bundle.min.css ./static/css/bundle.min.css
 
 # Generate templ files
 RUN templ generate

@@ -58,15 +58,25 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						<!-- Main screenshot with 3D tilt -->
 						<div class="relative perspective-container">
 							<div class="hero-tilt-wrapper">
-								<img
-									src="/static/images/hero_dashboard_mockup.png"
-									alt="LexLegal Cloud Dashboard"
-									class="hero-tilt rounded-xl border border-white/20 shadow-2xl w-full"
-									fetchpriority="high"
-									decoding="async"
-									width="1200"
-									height="800"
-								/>
+								<picture>
+									<source
+										srcset="/static/images/hero_dashboard_mockup_590.avif 1x, /static/images/hero_dashboard_mockup_1024.avif 2x"
+										type="image/avif"
+									/>
+									<source
+										srcset="/static/images/hero_dashboard_mockup_590.webp 1x, /static/images/hero_dashboard_mockup_1024.webp 2x"
+										type="image/webp"
+									/>
+									<img
+										src="/static/images/hero_dashboard_mockup_590.webp"
+										alt="LexLegal Cloud Dashboard"
+										class="hero-tilt rounded-xl border border-white/20 shadow-2xl w-full"
+										fetchpriority="high"
+										decoding="async"
+										width="590"
+										height="590"
+									/>
+								</picture>
 								<!-- Floating feature callouts -->
 								<div class="absolute -left-4 lg:-left-8 top-1/4 card card-glass p-3 animate-float hidden md:flex">
 									<div class="flex items-center gap-2">

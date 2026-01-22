@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./kinetic.css";
 
 @source "../**/*.html";
 @source "../../templates/**/*.templ";
@@ -12,8 +13,8 @@
   --color-foreground: #EDEDEF;
   --color-muted: #8A8F98;
   --color-muted-foreground: #8A8F98;
-  --color-accent: #5E6AD2;
-  --color-accent-bright: #6872D9;
+  --color-accent: #818cf8;
+  --color-accent-bright: #9da5f2;
   --color-accent-foreground: #FFFFFF;
   --color-border: rgba(255, 255, 255, 0.06);
   --color-border-hover: rgba(255, 255, 255, 0.10);

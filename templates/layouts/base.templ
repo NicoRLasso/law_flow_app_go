@@ -77,14 +77,12 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
 			<link rel="dns-prefetch" href="https://unpkg.com"/>
 			<!-- Preload critical CSS -->
-			<link rel="preload" href="/static/css/output.css" as="style"/>
-			<link rel="preload" href="/static/css/kinetic.css" as="style"/>
+			<link rel="preload" href="/static/css/bundle.min.css" as="style"/>
 			<!-- Google Fonts - Inter (with font-display swap) -->
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
 			<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/></noscript>
-			<!-- Critical CSS -->
-			<link rel="stylesheet" href="/static/css/kinetic.css"/>
-			<link rel="stylesheet" href="/static/css/output.css"/>
+			<!-- CSS Bundle (Tailwind + Kinetic + Custom) -->
+			<link rel="stylesheet" href="/static/css/bundle.min.css"/>
 			<!-- HTMX - defer loading -->
 			<script src="https://unpkg.com/htmx.org@2.0.0" defer></script>
 			<!-- Alpine.js Plugins (must load before Alpine) -->

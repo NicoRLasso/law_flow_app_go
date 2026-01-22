@@ -189,18 +189,18 @@ func main() {
 	// Static files
 	// Use a group to apply middleware specifically for static files
 	staticGroup := e.Group("/static")
-	if cfg.Environment == "production" {
-		staticGroup.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-			return func(c echo.Context) error {
-				err := next(c)
-				// Only cache successful responses
-				if c.Response().Status >= 200 && c.Response().Status < 300 {
-					c.Response().Header().Set("Cache-Control", "public, max-age=31536000")
-				}
-				return err
+	staticGroup.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			// Set Cache-Control headers before calling the next handler
+			if cfg.Environment == "production" {
+				c.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+			} else {
+				// 1 hour for development to help with testing but not be too sticky
+				c.Response().Header().Set("Cache-Control", "public, max-age=3600")
 			}
-		})
-	}
+			return next(c)
+		}
+	})
 	staticGroup.Static("/", "static")
 
 	// Health check endpoint for load balancers
@@ -208,9 +208,18 @@ func main() {
 		return c.JSON(http.StatusOK, map[string]string{"status": "healthy"})
 	})
 
-	// SEO Files
-	e.File("/robots.txt", "static/robots.txt")
-	e.File("/sitemap.xml", "static/sitemap.xml")
+	// SEO Files with caching
+	seoCacheMiddleware := func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if cfg.Environment == "production" {
+				// SEO files can change, so we use a shorter cache (1 day)
+				c.Response().Header().Set("Cache-Control", "public, max-age=86400")
+			}
+			return next(c)
+		}
+	}
+	e.File("/robots.txt", "static/robots.txt", seoCacheMiddleware)
+	e.File("/sitemap.xml", "static/sitemap.xml", seoCacheMiddleware)
 
 	// Public routes (no authentication required)
 	e.GET("/", handlers.LandingHandler)

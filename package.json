@@ -9,8 +9,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "postcss ./static/css/input.css -o ./static/css/output.css --verbose",
-    "watch:css": "postcss ./static/css/input.css -o ./static/css/output.css --watch"
+    "build:css": "NODE_ENV=production postcss ./static/css/input.css -o ./static/css/bundle.min.css --verbose",
+    "build:css:dev": "postcss ./static/css/input.css -o ./static/css/bundle.min.css --verbose",
+    "watch:css": "postcss ./static/css/input.css -o ./static/css/bundle.min.css --watch"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,8 @@
   "homepage": "https://github.com/NicoRLasso/law_flow_app_go#readme",
   "devDependencies": {
     "autoprefixer": "^10.4.23",
+    "cssnano": "^7.1.2",
+    "cssnano-preset-default": "^7.0.10",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.1.18"

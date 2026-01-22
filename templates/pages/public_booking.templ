@@ -12,13 +12,12 @@ templ PublicBooking(ctx context.Context, firm models.Firm, lawyers []models.User
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Book Appointment - { firm.Name }</title>
-			<link rel="stylesheet" href="/static/css/style.css"/>
-			<link rel="stylesheet" href="/static/css/kinetic.css"/>
+			<link rel="stylesheet" href="/static/css/bundle.min.css"/>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		</head>
 		<body class="min-h-screen bg-background">
-			<div x-data="bookingWizard()" class="min-h-screen flex items-center justify-center p-4">
+			<main x-data="bookingWizard()" class="min-h-screen flex items-center justify-center p-4">
 				<div class="glass-panel w-full max-w-2xl rounded-3xl p-8 border border-white/10">
 					<!-- Header -->
 					<div class="text-center mb-8">
@@ -194,7 +193,7 @@ templ PublicBooking(ctx context.Context, firm models.Firm, lawyers []models.User
 						<p class="text-sm text-muted-foreground">You can manage your appointment using the link in the email.</p>
 					</div>
 				</div>
-			</div>
+			</main>
 			<script>
 			function bookingWizard() {
 				return {
@@ -293,13 +292,12 @@ templ PublicAppointmentDetail(ctx context.Context, apt models.Appointment) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Your Appointment - { apt.Firm.Name }</title>
-			<link rel="stylesheet" href="/static/css/style.css"/>
-			<link rel="stylesheet" href="/static/css/kinetic.css"/>
+			<link rel="stylesheet" href="/static/css/bundle.min.css"/>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		</head>
 		<body class="min-h-screen bg-background">
-			<div class="min-h-screen flex items-center justify-center p-4" x-data="{ showCancel: false, cancelling: false }">
+			<main class="min-h-screen flex items-center justify-center p-4" x-data="{ showCancel: false, cancelling: false }">
 				<div class="glass-panel w-full max-w-md rounded-3xl p-8 border border-white/10">
 					<div class="text-center mb-6">
 						<h1 class="text-2xl font-bold text-gradient">{ apt.Firm.Name }</h1>
@@ -366,7 +364,7 @@ templ PublicAppointmentDetail(ctx context.Context, apt models.Appointment) {
 						</div>
 					}
 				</div>
-			</div>
+			</main>
 		</body>
 	</html>
 }
