@@ -3,12 +3,12 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/partials"
 	"net/http"
 	"strings"
@@ -26,12 +26,12 @@ func StartCaseAcceptanceHandler(c echo.Context) error {
 	var request models.CaseRequest
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 	if err := query.Preload("DocumentTypeOption").First(&request, "id = ?", id).Error; err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
+		return echo.NewHTTPError(http.StatusNotFound, i18n.T(c.Request().Context(), "errors.case_acceptance.request_not_found"))
 	}
 
 	// Verify status is pending
 	if request.Status != models.StatusPending {
-		return echo.NewHTTPError(http.StatusBadRequest, "Only pending requests can be accepted")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.pending_only"))
 	}
 
 	// Render the acceptance modal
@@ -47,17 +47,17 @@ func ProcessClientStepHandler(c echo.Context) error {
 	// Parse client role from form (required)
 	clientRole := strings.TrimSpace(c.FormValue("client_role"))
 	if clientRole == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Client role selection is required")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.client_role_required"))
 	}
 	if !models.IsValidClientRole(clientRole) {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid client role selection")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.invalid_client_role"))
 	}
 
 	// Fetch request
 	var request models.CaseRequest
 	query := middleware.GetFirmScopedQuery(c, db.DB)
 	if err := query.First(&request, "id = ?", id).Error; err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
+		return echo.NewHTTPError(http.StatusNotFound, i18n.T(c.Request().Context(), "errors.case_acceptance.request_not_found"))
 	}
 
 	// Check if client email exists
@@ -76,7 +76,7 @@ func ProcessClientStepHandler(c echo.Context) error {
 		Order("name ASC").
 		Find(&lawyers).Error; err != nil {
 		c.Logger().Errorf("Error fetching lawyers: %v", err)
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch lawyers")
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.fetch_lawyers_failed"))
 	}
 	c.Logger().Infof("Found %d lawyers", len(lawyers))
 
@@ -94,7 +94,7 @@ func GetLawyerListHandler(c echo.Context) error {
 		Select("id", "name", "email", "role").
 		Order("name ASC").
 		Find(&lawyers).Error; err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch lawyers")
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.fetch_lawyers_failed"))
 	}
 
 	return c.JSON(http.StatusOK, lawyers)
@@ -108,13 +108,13 @@ func AssignLawyerStepHandler(c echo.Context) error {
 	// Parse lawyer ID from form
 	lawyerID := strings.TrimSpace(c.FormValue("lawyer_id"))
 	if lawyerID == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Lawyer selection is required")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.lawyer_required"))
 	}
 
 	// Parse client role from form (passed from previous step)
 	clientRole := strings.TrimSpace(c.FormValue("client_role"))
 	if clientRole == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Client role is required")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.client_role_required"))
 	}
 
 	// Validate lawyer exists and is active
@@ -122,7 +122,7 @@ func AssignLawyerStepHandler(c echo.Context) error {
 	if err := db.DB.Where("id = ? AND firm_id = ? AND is_active = ? AND role IN ?",
 		lawyerID, firm.ID, true, []string{"lawyer", "admin"}).
 		First(&lawyer).Error; err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid lawyer selection")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.invalid_lawyer"))
 	}
 
 	// Fetch request
@@ -159,7 +159,7 @@ func GetClassificationOptionsHandler(c echo.Context) error {
 		if err := db.DB.Where("firm_id = ? AND is_active = ?", firm.ID, true).
 			Order("`order` ASC, name ASC").
 			Find(&domains).Error; err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch domains")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.fetch_domains_failed"))
 		}
 		response["domains"] = domains
 		return c.JSON(http.StatusOK, response)
@@ -171,7 +171,7 @@ func GetClassificationOptionsHandler(c echo.Context) error {
 		if err := db.DB.Where("domain_id = ? AND is_active = ?", domainID, true).
 			Order("`order` ASC, name ASC").
 			Find(&branches).Error; err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch branches")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.fetch_branches_failed"))
 		}
 		response["branches"] = branches
 		return c.JSON(http.StatusOK, response)
@@ -182,7 +182,7 @@ func GetClassificationOptionsHandler(c echo.Context) error {
 	if err := db.DB.Where("branch_id = ? AND is_active = ?", branchID, true).
 		Order("`order` ASC, name ASC").
 		Find(&subtypes).Error; err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch subtypes")
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.fetch_subtypes_failed"))
 	}
 	response["subtypes"] = subtypes
 
@@ -203,14 +203,14 @@ func SaveClassificationStepHandler(c echo.Context) error {
 
 	// Validate client role
 	if clientRole == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Client role is required")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.client_role_required"))
 	}
 
 	// Validate classification IDs if provided
 	if domainID != "" {
 		var domain models.CaseDomain
 		if err := db.DB.Where("id = ? AND firm_id = ?", domainID, firm.ID).First(&domain).Error; err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "Invalid domain selection")
+			return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.invalid_domain"))
 		}
 	}
 
@@ -219,7 +219,7 @@ func SaveClassificationStepHandler(c echo.Context) error {
 		if err := db.DB.Joins("JOIN case_domains ON case_domains.id = case_branches.domain_id").
 			Where("case_branches.id = ? AND case_domains.firm_id = ?", branchID, firm.ID).
 			First(&branch).Error; err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "Invalid branch selection")
+			return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.invalid_branch"))
 		}
 	}
 
@@ -233,7 +233,7 @@ func SaveClassificationStepHandler(c echo.Context) error {
 	// Fetch lawyer
 	var lawyer models.User
 	if err := db.DB.Where("id = ? AND firm_id = ?", lawyerID, firm.ID).First(&lawyer).Error; err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "Invalid lawyer")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.invalid_lawyer"))
 	}
 
 	// Check if client exists
@@ -284,11 +284,11 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 	subtypeIDs := c.Request().Form["subtype_ids[]"]
 
 	if lawyerID == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Lawyer assignment is required")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.lawyer_required"))
 	}
 
 	if clientRole == "" || !models.IsValidClientRole(clientRole) {
-		return echo.NewHTTPError(http.StatusBadRequest, "Valid client role is required")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.client_role_required"))
 	}
 
 	// Begin transaction
@@ -303,13 +303,13 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 	var request models.CaseRequest
 	if err := tx.Where("id = ? AND firm_id = ?", id, firm.ID).First(&request).Error; err != nil {
 		tx.Rollback()
-		return echo.NewHTTPError(http.StatusNotFound, "Request not found")
+		return echo.NewHTTPError(http.StatusNotFound, i18n.T(c.Request().Context(), "errors.case_acceptance.request_not_found"))
 	}
 
 	// Verify still pending
 	if request.Status != models.StatusPending {
 		tx.Rollback()
-		return echo.NewHTTPError(http.StatusBadRequest, "Request has already been processed")
+		return echo.NewHTTPError(http.StatusBadRequest, i18n.T(c.Request().Context(), "errors.case_acceptance.processed_already"))
 	}
 
 	// Check if client exists or create new one
@@ -326,14 +326,14 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 		randomBytes := make([]byte, 32)
 		if _, err := rand.Read(randomBytes); err != nil {
 			tx.Rollback()
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to generate password")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.gen_password_failed"))
 		}
 		randomPassword := base64.URLEncoding.EncodeToString(randomBytes)
 
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomPassword), bcrypt.DefaultCost)
 		if err != nil {
 			tx.Rollback()
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to hash password")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.hash_password_failed"))
 		}
 
 		client = models.User{
@@ -358,7 +358,7 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 
 		if err := tx.Create(&client).Error; err != nil {
 			tx.Rollback()
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create client user")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.create_client_failed"))
 		}
 	}
 
@@ -366,7 +366,7 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 	caseNumber, err := services.EnsureUniqueCaseNumber(tx, firm.ID)
 	if err != nil {
 		tx.Rollback()
-		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to generate case number: %v", err))
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.gen_case_number_failed"))
 	}
 
 	// Create case
@@ -392,7 +392,7 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 
 	if err := tx.Create(&newCase).Error; err != nil {
 		tx.Rollback()
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create case")
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.create_case_failed"))
 	}
 
 	// Link subtypes if provided
@@ -400,12 +400,12 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 		var subtypes []models.CaseSubtype
 		if err := tx.Where("id IN ?", subtypeIDs).Find(&subtypes).Error; err != nil {
 			tx.Rollback()
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch subtypes")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.fetch_subtypes_failed"))
 		}
 
 		if err := tx.Model(&newCase).Association("Subtypes").Append(subtypes); err != nil {
 			tx.Rollback()
-			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to link subtypes")
+			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.link_subtypes_failed"))
 		}
 	}
 
@@ -417,12 +417,12 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 
 	if err := tx.Save(&request).Error; err != nil {
 		tx.Rollback()
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update request status")
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.update_request_failed"))
 	}
 
 	// Commit transaction
 	if err := tx.Commit().Error; err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to commit transaction")
+		return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.commit_failed"))
 	}
 
 	// Transfer document from request to case (outside transaction, non-critical)

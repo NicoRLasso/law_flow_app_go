@@ -42,7 +42,7 @@ func Load() *Config {
 		ServerPort:        getEnv("SERVER_PORT", "8080"),
 		DBPath:            getEnv("DB_PATH", "db/app.db"),
 		Environment:       getEnv("ENVIRONMENT", "development"),
-		UploadDir:         getEnv("UPLOAD_DIR", "uploads"),
+		UploadDir:         getEnv("UPLOAD_DIR", "static/uploads"),
 		ResendAPIKey:      getEnv("RESEND_API_KEY", ""),
 		EmailFrom:         getEnv("EMAIL_FROM", "noreply@lexlegalcloud.org"),
 		EmailFromName:     getEnv("EMAIL_FROM_NAME", "lexlegalcloud App"),

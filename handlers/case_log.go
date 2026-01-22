@@ -51,6 +51,11 @@ func GetCaseLogsHandler(c echo.Context) error {
 	// Actually, for the table we might want to preload CreatedBy if we display the user name
 	// But let's keep it simple for now, maybe preload later if needed.
 
+	// If targeting the container directly (e.g. from filter/search), return just the list
+	if c.Request().Header.Get("HX-Target") == "case-logs-container" {
+		return render(c, partials.CaseLogList(context.Background(), logs, caseID))
+	}
+
 	return render(c, partials.CaseLogTable(context.Background(), logs, caseID))
 }
 
@@ -185,7 +190,8 @@ func fetchAndRenderLogs(c echo.Context, caseID string) error {
 	if err := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC").Find(&logs).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching logs")
 	}
-	return render(c, partials.CaseLogTable(context.Background(), logs, caseID))
+	// Always return list for updates/creations/deletions as they target the container
+	return render(c, partials.CaseLogList(context.Background(), logs, caseID))
 }
 
 // UpdateCaseLogHandler updates an existing log entry

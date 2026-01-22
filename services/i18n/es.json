@@ -640,6 +640,9 @@
     "mobile_cta": "Iniciar Prueba Gratis"
   },
   "cases": {
+    "detail": {
+      "title": "Detalles del Caso"
+    },
     "title": "Casos",
     "description": {
       "admin": "Gestione todos los casos en su firma",
@@ -856,8 +859,61 @@
       "role_demandante_desc": "El cliente inicia la acción legal",
       "role_demandado": "Demandado",
       "role_demandado_desc": "El cliente responde a la acción legal",
-      "client_role_required": "Debe seleccionar el rol del cliente"
+      "client_role_required": "Debe seleccionar el rol del cliente",
+      "review_client_title": "Revisar Información del Cliente",
+      "client_info": {
+          "name": "Nombre",
+          "email": "Email",
+          "phone": "Teléfono",
+          "document": "Documento",
+          "description": "Descripción"
+      },
+      "assign_lawyer_title": "Asignar Abogado",
+      "client_status": {
+          "new": "Cliente Nuevo",
+          "existing": "Cliente Existente"
+      },
+      "no_lawyers": "No se encontraron abogados activos. Por favor cree un usuario abogado primero.",
+      "go_to_users": "Ir a Usuarios",
+      "classification_title": "Clasificación del Caso (Opcional)",
+      "classification": {
+        "domain": "Dominio",
+        "skip_domain": "-- Saltar Clasificación --",
+        "branch": "Rama",
+        "select_branch": "-- Seleccionar Rama --",
+        "subtypes": "Subtipos (Selección múltiple)"
+      },
+      "review_confirm_title": "Revisar y Confirmar",
+      "client_label": "Cliente",
+      "assigned_lawyer_label": "Abogado Asignado",
+      "classification_label": "Clasificación",
+      "no_classification": "Sin clasificación seleccionada"
     }
+  },
+  "errors": {
+      "case_acceptance": {
+          "request_not_found": "Solicitud no encontrada",
+          "pending_only": "Solo se pueden aceptar solicitudes pendientes",
+          "client_role_required": "Se requiere seleccionar el rol del cliente",
+          "invalid_client_role": "Selección de rol de cliente inválida",
+          "fetch_lawyers_failed": "Error al obtener abogados",
+          "lawyer_required": "Se requiere seleccionar un abogado",
+          "invalid_lawyer": "Selección de abogado inválida",
+          "fetch_domains_failed": "Error al obtener dominios",
+          "fetch_branches_failed": "Error al obtener ramas",
+          "fetch_subtypes_failed": "Error al obtener subtipos",
+          "invalid_domain": "Selección de dominio inválida",
+          "invalid_branch": "Selección de rama inválida",
+          "create_client_failed": "Error al crear usuario cliente",
+          "gen_password_failed": "Error al generar contraseña",
+          "hash_password_failed": "Error al hashear contraseña",
+          "gen_case_number_failed": "Error al generar número de caso",
+          "create_case_failed": "Error al crear caso",
+          "link_subtypes_failed": "Error al vincular subtipos",
+          "update_request_failed": "Error al actualizar estado de solicitud",
+          "commit_failed": "Error al confirmar transacción",
+          "processed_already": "La solicitud ya ha sido procesada"
+      }
   },
   "settings": {
     "profile": {
