@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"law_flow_app_go/config"
+	"law_flow_app_go/services/i18n"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,17 +15,35 @@ import (
 )
 
 // buildEmailWithFallback handles the common logic of loading a template or falling back to a plain text string
-func buildEmailWithFallback(templateName string, tmplData interface{}, toEmail, subject, fallbackHTML, fallbackText string) *Email {
-	htmlBody, textBody, err := loadTemplate(templateName, tmplData)
+func buildEmailWithFallback(templateName string, lang string, tmplData interface{}, toEmail string) *Email {
+	htmlBody, textBody, err := loadTemplate(templateName, lang, tmplData)
 	if err != nil {
-		log.Printf("Error loading %s email template: %v", templateName, err)
-		htmlBody = fallbackHTML
-		textBody = fallbackText
+		log.Printf("Error loading %s email template for lang %s: %v", templateName, lang, err)
+		// Fallback logic handled within specific builders now, or we return empty and let caller handle
+		// But better: we return empty strings here and let the specific builder fill in the fallback
+		// Actually, let's keep the fallback logic in the caller or pass it in?
+		// To follow the previous pattern, we should pass the fallbackHTML/Text.
+		// However, with i18n, the fallbacks are also dynamic.
+		// Let's change the signature to NOT take fallbacks, but rely on the template.
+		// If template fails, we try the default language template.
+		// If that fails, we return an empty body which will cause an error in SendEmail?
+		// No, for robustnes, let's try default lang.
+	}
+
+	// Double check if we failed to load both
+	if htmlBody == "" && textBody == "" {
+		// Try default language "en"
+		if lang != "en" {
+			htmlBody, textBody, err = loadTemplate(templateName, "en", tmplData)
+			if err != nil {
+				log.Printf("Error loading default 'en' template for %s: %v", templateName, err)
+			}
+		}
 	}
 
 	return &Email{
-		To:       []string{toEmail},
-		Subject:  subject,
+		To: []string{toEmail},
+		// Subject is set by caller
 		HTMLBody: htmlBody,
 		TextBody: textBody,
 	}
@@ -39,45 +58,48 @@ type Email struct {
 }
 
 // loadTemplate loads an email template from the templates/emails directory
-func loadTemplate(templateName string, data interface{}) (html string, text string, err error) {
-	// Get the base path for templates
+// It attempts to load templateName + "_" + lang + ".html/.txt"
+// If not found, it falls back to templateName + ".html/.txt" (which is assumed to be English/Base)
+func loadTemplate(templateName string, lang string, data interface{}) (html string, text string, err error) {
 	basePath := "templates/emails"
 
-	// Load HTML template
-	htmlPath := filepath.Join(basePath, templateName+".html")
-	htmlContent, err := os.ReadFile(htmlPath)
+	// Helper to load and execute a single file
+	loadAndExec := func(ext string) (string, error) {
+		// Try localized first
+		path := filepath.Join(basePath, fmt.Sprintf("%s_%s%s", templateName, lang, ext))
+		content, err := os.ReadFile(path)
+		if err != nil {
+			// Fallback to base template
+			path = filepath.Join(basePath, templateName+ext)
+			content, err = os.ReadFile(path)
+			if err != nil {
+				return "", fmt.Errorf("failed to read template %s: %v", path, err)
+			}
+		}
+
+		tmpl, err := template.New(filepath.Base(path)).Parse(string(content))
+		if err != nil {
+			return "", fmt.Errorf("failed to parse template %s: %v", path, err)
+		}
+
+		var buf bytes.Buffer
+		if err := tmpl.Execute(&buf, data); err != nil {
+			return "", fmt.Errorf("failed to execute template %s: %v", path, err)
+		}
+		return buf.String(), nil
+	}
+
+	htmlContent, err := loadAndExec(".html")
 	if err != nil {
-		return "", "", fmt.Errorf("failed to read HTML template %s: %v", htmlPath, err)
+		return "", "", err
 	}
 
-	htmlTmpl, err := template.New(templateName + ".html").Parse(string(htmlContent))
+	textContent, err := loadAndExec(".txt")
 	if err != nil {
-		return "", "", fmt.Errorf("failed to parse HTML template: %v", err)
+		return "", "", err
 	}
 
-	var htmlBuf bytes.Buffer
-	if err := htmlTmpl.Execute(&htmlBuf, data); err != nil {
-		return "", "", fmt.Errorf("failed to execute HTML template: %v", err)
-	}
-
-	// Load text template
-	textPath := filepath.Join(basePath, templateName+".txt")
-	textContent, err := os.ReadFile(textPath)
-	if err != nil {
-		return "", "", fmt.Errorf("failed to read text template %s: %v", textPath, err)
-	}
-
-	textTmpl, err := template.New(templateName + ".txt").Parse(string(textContent))
-	if err != nil {
-		return "", "", fmt.Errorf("failed to parse text template: %v", err)
-	}
-
-	var textBuf bytes.Buffer
-	if err := textTmpl.Execute(&textBuf, data); err != nil {
-		return "", "", fmt.Errorf("failed to execute text template: %v", err)
-	}
-
-	return htmlBuf.String(), textBuf.String(), nil
+	return htmlContent, textContent, nil
 }
 
 // SendEmail sends an email using Resend API
@@ -174,16 +196,14 @@ type WelcomeEmailData struct {
 }
 
 // BuildWelcomeEmail creates a welcome email for new users
-func BuildWelcomeEmail(userEmail, userName string) *Email {
+func BuildWelcomeEmail(userEmail, userName, lang string) *Email {
 	data := WelcomeEmailData{
 		UserName: userName,
 	}
 
-	fallbackText := fmt.Sprintf("Welcome to lexlegalcloud App, %s!", userName)
-	fallbackHTML := fmt.Sprintf("<p>Welcome to lexlegalcloud App, %s!</p>", userName)
-	subject := "Welcome to lexlegalcloud App!"
-
-	return buildEmailWithFallback("welcome", data, userEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("welcome", lang, data, userEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.welcome")
+	return email
 }
 
 // FirmSetupEmailData contains data for the firm setup email template
@@ -193,17 +213,15 @@ type FirmSetupEmailData struct {
 }
 
 // BuildFirmSetupEmail creates a confirmation email for firm setup completion
-func BuildFirmSetupEmail(userEmail, userName, firmName string) *Email {
+func BuildFirmSetupEmail(userEmail, userName, firmName, lang string) *Email {
 	data := FirmSetupEmailData{
 		UserName: userName,
 		FirmName: firmName,
 	}
 
-	fallbackText := fmt.Sprintf("Congratulations %s! Your firm %s has been set up successfully.", userName, firmName)
-	fallbackHTML := fmt.Sprintf("<p>Congratulations %s! Your firm %s has been set up successfully.</p>", userName, firmName)
-	subject := "Firm Setup Complete - lexlegalcloud App"
-
-	return buildEmailWithFallback("firm_setup", data, userEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("firm_setup", lang, data, userEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.firm_setup")
+	return email
 }
 
 // PasswordResetEmailData contains data for the password reset email template
@@ -214,18 +232,16 @@ type PasswordResetEmailData struct {
 }
 
 // BuildPasswordResetEmail creates a password reset email with reset link
-func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt string) *Email {
+func BuildPasswordResetEmail(userEmail, userName, resetLink, expiresAt, lang string) *Email {
 	data := PasswordResetEmailData{
 		UserName:  userName,
 		ResetLink: resetLink,
 		ExpiresAt: expiresAt,
 	}
 
-	fallbackText := fmt.Sprintf("Password reset requested for %s. Reset link: %s (expires: %s)", userName, resetLink, expiresAt)
-	fallbackHTML := fmt.Sprintf("<p>Password reset requested for %s.</p><p>Reset link: <a href=\"%s\">%s</a></p><p>Expires: %s</p>", userName, resetLink, resetLink, expiresAt)
-	subject := "Password Reset Request - lexlegalcloud App"
-
-	return buildEmailWithFallback("password_reset", data, userEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("password_reset", lang, data, userEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.password_reset")
+	return email
 }
 
 // CaseRequestRejectionEmailData contains data for the case request rejection email template
@@ -238,7 +254,7 @@ type CaseRequestRejectionEmailData struct {
 }
 
 // BuildCaseRequestRejectionEmail creates a rejection email for case requests
-func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejectionNote, firmEmail, firmPhone string) *Email {
+func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejectionNote, firmEmail, firmPhone, lang string) *Email {
 	data := CaseRequestRejectionEmailData{
 		ClientName:    clientName,
 		FirmName:      firmName,
@@ -247,11 +263,9 @@ func BuildCaseRequestRejectionEmail(clientEmail, clientName, firmName, rejection
 		FirmPhone:     firmPhone,
 	}
 
-	fallbackText := fmt.Sprintf("Dear %s,\n\nThank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.\n\nReason:\n%s\n\nIf you have any questions, please contact us at %s or %s.\n\nBest regards,\n%s", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Thank you for your interest in %s. Unfortunately, we are unable to proceed with your case request at this time.</p><p><strong>Reason:</strong><br>%s</p><p>If you have any questions, please contact us at %s or %s.</p><p>Best regards,<br>%s</p>", clientName, firmName, rejectionNote, firmEmail, firmPhone, firmName)
-	subject := fmt.Sprintf("Case Request Update - %s", firmName)
-
-	return buildEmailWithFallback("case_request_rejection", data, clientEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("case_request_rejection", lang, data, clientEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.case_request_rejection", map[string]interface{}{"firmName": firmName})
+	return email
 }
 
 // CaseAcceptanceEmailData contains data for the case acceptance email template
@@ -264,7 +278,7 @@ type CaseAcceptanceEmailData struct {
 }
 
 // BuildCaseAcceptanceEmail creates a welcome email for clients when their case is accepted
-func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber, password, loginURL string) *Email {
+func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber, password, loginURL, lang string) *Email {
 	data := CaseAcceptanceEmailData{
 		ClientName: clientName,
 		FirmName:   firmName,
@@ -273,20 +287,9 @@ func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber, pas
 		LoginURL:   loginURL,
 	}
 
-	fallbackText := fmt.Sprintf("Dear %s,\n\nWe are pleased to inform you that %s has accepted your case request.\n\nCase Number: %s\n\nYour assigned lawyer will contact you shortly.\n\nBest regards,\n%s", clientName, firmName, caseNumber, firmName)
-	if password != "" {
-		fallbackText += fmt.Sprintf("\n\nA new account has been created for you.\nUsername: %s\nPassword: %s\n\nPlease log in at: %s", clientEmail, password, loginURL)
-	}
-
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>We are pleased to inform you that %s has accepted your case request.</p><p><strong>Case Number: %s</strong></p><p>Your assigned lawyer will contact you shortly.</p>", clientName, firmName, caseNumber)
-	if password != "" {
-		fallbackHTML += fmt.Sprintf("<p><strong>New Account Created</strong><br>Username: %s<br>Password: %s</p><p>Please log in at: <a href=\"%s\">%s</a></p>", clientEmail, password, loginURL, loginURL)
-	}
-	fallbackHTML += fmt.Sprintf("<p>Best regards,<br>%s</p>", firmName)
-
-	subject := fmt.Sprintf("Case Accepted - %s", firmName)
-
-	return buildEmailWithFallback("case_acceptance", data, clientEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("case_acceptance", lang, data, clientEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.case_acceptance", map[string]interface{}{"firmName": firmName})
+	return email
 }
 
 // LawyerAssignmentEmailData contains data for the lawyer assignment email template
@@ -297,18 +300,16 @@ type LawyerAssignmentEmailData struct {
 }
 
 // BuildLawyerAssignmentEmail creates an assignment notification email for lawyers
-func BuildLawyerAssignmentEmail(lawyerEmail, lawyerName, caseNumber, clientName string) *Email {
+func BuildLawyerAssignmentEmail(lawyerEmail, lawyerName, caseNumber, clientName, lang string) *Email {
 	data := LawyerAssignmentEmailData{
 		LawyerName: lawyerName,
 		CaseNumber: caseNumber,
 		ClientName: clientName,
 	}
 
-	fallbackText := fmt.Sprintf("Dear %s,\n\nA new case has been assigned to you.\n\nCase Number: %s\nClient Name: %s\n\nPlease log in to the dashboard to view the complete case information.\n\nBest regards", lawyerName, caseNumber, clientName)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>A new case has been assigned to you.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s</p><p>Please log in to the dashboard to view the complete case information.</p>", lawyerName, caseNumber, clientName)
-	subject := fmt.Sprintf("New Case Assigned - %s", caseNumber)
-
-	return buildEmailWithFallback("lawyer_assignment", data, lawyerEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("lawyer_assignment", lang, data, lawyerEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.lawyer_assignment", map[string]interface{}{"caseNumber": caseNumber})
+	return email
 }
 
 // CollaboratorAddedEmailData contains data for the collaborator added email template
@@ -320,7 +321,7 @@ type CollaboratorAddedEmailData struct {
 }
 
 // BuildCollaboratorAddedEmail creates a notification email when a user is added as a case collaborator
-func BuildCollaboratorAddedEmail(collaboratorEmail, collaboratorName, caseNumber, clientName, assignedLawyer string) *Email {
+func BuildCollaboratorAddedEmail(collaboratorEmail, collaboratorName, caseNumber, clientName, assignedLawyer, lang string) *Email {
 	data := CollaboratorAddedEmailData{
 		CollaboratorName: collaboratorName,
 		CaseNumber:       caseNumber,
@@ -328,11 +329,9 @@ func BuildCollaboratorAddedEmail(collaboratorEmail, collaboratorName, caseNumber
 		AssignedLawyer:   assignedLawyer,
 	}
 
-	fallbackText := fmt.Sprintf("Dear %s,\n\nYou have been added as a collaborator on a case.\n\nCase Number: %s\nClient Name: %s\nPrimary Lawyer: %s\n\nPlease log in to the dashboard to view the case details.\n\nBest regards", collaboratorName, caseNumber, clientName, assignedLawyer)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>You have been added as a collaborator on a case.</p><p><strong>Case Number:</strong> %s<br><strong>Client Name:</strong> %s<br><strong>Primary Lawyer:</strong> %s</p><p>Please log in to the dashboard to view the case details.</p>", collaboratorName, caseNumber, clientName, assignedLawyer)
-	subject := fmt.Sprintf("Added as Collaborator - Case %s", caseNumber)
-
-	return buildEmailWithFallback("collaborator_added", data, collaboratorEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("collaborator_added", lang, data, collaboratorEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.collaborator_added", map[string]interface{}{"caseNumber": caseNumber})
+	return email
 }
 
 // AppointmentConfirmationEmailData contains data for appointment confirmation email
@@ -349,12 +348,10 @@ type AppointmentConfirmationEmailData struct {
 }
 
 // BuildAppointmentConfirmationEmail creates a confirmation email for new appointments
-func BuildAppointmentConfirmationEmail(clientEmail string, data AppointmentConfirmationEmailData) *Email {
-	fallbackText := fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been confirmed.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been confirmed.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-	subject := fmt.Sprintf("Appointment Confirmed - %s", data.FirmName)
-
-	return buildEmailWithFallback("appointment_confirmation", data, clientEmail, subject, fallbackHTML, fallbackText)
+func BuildAppointmentConfirmationEmail(clientEmail string, data AppointmentConfirmationEmailData, lang string) *Email {
+	email := buildEmailWithFallback("appointment_confirmation", lang, data, clientEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.appointment_confirmation", map[string]interface{}{"firmName": data.FirmName})
+	return email
 }
 
 // AppointmentReminderEmailData contains data for appointment reminder email
@@ -370,12 +367,10 @@ type AppointmentReminderEmailData struct {
 }
 
 // BuildAppointmentReminderEmail creates a reminder email for upcoming appointments
-func BuildAppointmentReminderEmail(clientEmail string, data AppointmentReminderEmailData) *Email {
-	fallbackText := fmt.Sprintf("Dear %s,\n\nReminder: You have an appointment tomorrow with %s.\n\nDate: %s\nTime: %s\nLawyer: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Reminder: You have an appointment tomorrow with %s.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s<br><strong>Lawyer:</strong> %s</p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.LawyerName, data.FirmName)
-	subject := fmt.Sprintf("Appointment Reminder - Tomorrow @ %s", data.Time)
-
-	return buildEmailWithFallback("appointment_reminder", data, clientEmail, subject, fallbackHTML, fallbackText)
+func BuildAppointmentReminderEmail(clientEmail string, data AppointmentReminderEmailData, lang string) *Email {
+	email := buildEmailWithFallback("appointment_reminder", lang, data, clientEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.appointment_reminder", map[string]interface{}{"time": data.Time})
+	return email
 }
 
 // AppointmentCancelledEmailData contains data for appointment cancellation email
@@ -390,12 +385,10 @@ type AppointmentCancelledEmailData struct {
 }
 
 // BuildAppointmentCancelledEmail creates a cancellation notification email
-func BuildAppointmentCancelledEmail(clientEmail string, data AppointmentCancelledEmailData) *Email {
-	fallbackText := fmt.Sprintf("Dear %s,\n\nYour appointment with %s has been cancelled.\n\nDate: %s\nTime: %s\n\nTo book a new appointment: %s\n\nBest regards,\n%s", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>Your appointment with %s has been cancelled.</p><p><strong>Date:</strong> %s<br><strong>Time:</strong> %s</p><p><a href=\"%s\">Book a new appointment</a></p><p>Best regards,<br>%s</p>", data.ClientName, data.FirmName, data.Date, data.Time, data.BookingLink, data.FirmName)
-	subject := fmt.Sprintf("Appointment Cancelled - %s", data.FirmName)
-
-	return buildEmailWithFallback("appointment_cancelled", data, clientEmail, subject, fallbackHTML, fallbackText)
+func BuildAppointmentCancelledEmail(clientEmail string, data AppointmentCancelledEmailData, lang string) *Email {
+	email := buildEmailWithFallback("appointment_cancelled", lang, data, clientEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.appointment_cancelled", map[string]interface{}{"firmName": data.FirmName})
+	return email
 }
 
 // LawyerAppointmentNotificationEmailData contains data for lawyer notification email
@@ -412,32 +405,14 @@ type LawyerAppointmentNotificationEmailData struct {
 }
 
 // BuildLawyerAppointmentNotificationEmail notifies lawyer of new appointment
-func BuildLawyerAppointmentNotificationEmail(lawyerEmail string, data LawyerAppointmentNotificationEmailData) *Email {
-	textBody := fmt.Sprintf("New Appointment Scheduled\n\nDear %s,\n\nA new appointment has been booked:\n\nClient: %s\nEmail: %s\nPhone: %s\nDate: %s\nTime: %s\nDuration: %d minutes\nType: %s\nNotes: %s\n\nPlease log in to view more details.",
-		data.LawyerName, data.ClientName, data.ClientEmail, data.ClientPhone, data.Date, data.Time, data.Duration, data.AppointmentType, data.Notes)
-
-	htmlBody := fmt.Sprintf(`<h2>New Appointment Scheduled</h2>
-		<p>Dear %s,</p>
-		<p>A new appointment has been booked:</p>
-		<ul>
-			<li><strong>Client:</strong> %s</li>
-			<li><strong>Email:</strong> %s</li>
-			<li><strong>Phone:</strong> %s</li>
-			<li><strong>Date:</strong> %s</li>
-			<li><strong>Time:</strong> %s</li>
-			<li><strong>Duration:</strong> %d minutes</li>
-			<li><strong>Type:</strong> %s</li>
-			<li><strong>Notes:</strong> %s</li>
-		</ul>
-		<p>Please log in to view more details.</p>`,
-		data.LawyerName, data.ClientName, data.ClientEmail, data.ClientPhone, data.Date, data.Time, data.Duration, data.AppointmentType, data.Notes)
-
-	return &Email{
-		To:       []string{lawyerEmail},
-		Subject:  fmt.Sprintf("New Appointment: %s - %s @ %s", data.ClientName, data.Date, data.Time),
-		HTMLBody: htmlBody,
-		TextBody: textBody,
-	}
+func BuildLawyerAppointmentNotificationEmail(lawyerEmail string, data LawyerAppointmentNotificationEmailData, lang string) *Email {
+	email := buildEmailWithFallback("lawyer_notification", lang, data, lawyerEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.lawyer_appointment_notification", map[string]interface{}{
+		"clientName": data.ClientName,
+		"date":       data.Date,
+		"time":       data.Time,
+	})
+	return email
 }
 
 // NewUserWelcomeEmailData contains data for the new user welcome email
@@ -449,7 +424,7 @@ type NewUserWelcomeEmailData struct {
 }
 
 // BuildNewUserWelcomeEmail creates a welcome email for new users created by superadmin
-func BuildNewUserWelcomeEmail(userEmail, userName, password, loginURL string) *Email {
+func BuildNewUserWelcomeEmail(userEmail, userName, password, loginURL, lang string) *Email {
 	data := NewUserWelcomeEmailData{
 		UserName:  userName,
 		UserEmail: userEmail,
@@ -457,9 +432,7 @@ func BuildNewUserWelcomeEmail(userEmail, userName, password, loginURL string) *E
 		LoginURL:  loginURL,
 	}
 
-	fallbackText := fmt.Sprintf("Welcome to lexlegalcloud!\n\nHello %s,\n\nA new account has been created for you.\nUsername: %s\nPassword: %s\n\nPlease log in at: %s", userName, userEmail, password, loginURL)
-	fallbackHTML := fmt.Sprintf("<p>Welcome to lexlegalcloud!</p><p>Hello %s,</p><p>A new account has been created for you.</p><p>Username: %s<br>Password: %s</p><p>Please log in at: <a href=\"%s\">%s</a></p>", userName, userEmail, password, loginURL, loginURL)
-	subject := "Welcome to lexlegalcloud - Your Account Credentials"
-
-	return buildEmailWithFallback("new_user_welcome", data, userEmail, subject, fallbackHTML, fallbackText)
+	email := buildEmailWithFallback("new_user_welcome", lang, data, userEmail)
+	email.Subject = i18n.Translate(lang, "email.subject.new_user_welcome")
+	return email
 }

@@ -233,7 +233,11 @@ func CreateAppointmentHandler(c echo.Context) error {
 		Duration:   int(apt.EndTime.Sub(apt.StartTime).Minutes()),
 		LawyerName: lawyer.Name,
 	}
-	clientEmail := services.BuildAppointmentConfirmationEmail(client.Email, clientEmailData)
+	clientLang := client.Language
+	if clientLang == "" {
+		clientLang = "es"
+	}
+	clientEmail := services.BuildAppointmentConfirmationEmail(client.Email, clientEmailData, clientLang)
 	services.SendEmailAsync(cfg, clientEmail)
 
 	// Notify lawyer about new appointment
@@ -252,7 +256,11 @@ func CreateAppointmentHandler(c echo.Context) error {
 	if apt.Notes != nil {
 		lawyerEmailData.Notes = *apt.Notes
 	}
-	lawyerEmail := services.BuildLawyerAppointmentNotificationEmail(lawyer.Email, lawyerEmailData)
+	lawyerLang := lawyer.Language
+	if lawyerLang == "" {
+		lawyerLang = "es"
+	}
+	lawyerEmail := services.BuildLawyerAppointmentNotificationEmail(lawyer.Email, lawyerEmailData, lawyerLang)
 	services.SendEmailAsync(cfg, lawyerEmail)
 
 	// For HTMX requests, return success with trigger to reload table

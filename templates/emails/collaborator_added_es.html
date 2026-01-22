@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadido como Colaborador</title>
+</head>
+<body>
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Ha sido añadido como colaborador</h2>
+        <p>Estimado/a {{.CollaboratorName}},</p>
+        <p>Usted ha sido añadido como colaborador al siguiente caso:</p>
+        <ul>
+            <li><strong>Número de Caso:</strong> {{.CaseNumber}}</li>
+            <li><strong>Cliente:</strong> {{.ClientName}}</li>
+            <li><strong>Abogado Asignado:</strong> {{.AssignedLawyer}}</li>
+        </ul>
+        <p>Ahora puede acceder a este caso en su panel de control.</p>
+        <p>Saludos cordiales,<br>El Equipo de LexLegalCloud</p>
+    </div>
+</body>
+</html>

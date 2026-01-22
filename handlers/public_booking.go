@@ -192,6 +192,9 @@ func PublicSubmitBookingHandler(c echo.Context) error {
 			meetingURL = *apt.MeetingURL
 		}
 
+		// Default to "es" for public booking
+		clientLang := "es"
+
 		email := services.BuildAppointmentConfirmationEmail(apt.ClientEmail, services.AppointmentConfirmationEmailData{
 			ClientName:      apt.ClientName,
 			FirmName:        firm.Name,
@@ -202,7 +205,7 @@ func PublicSubmitBookingHandler(c echo.Context) error {
 			AppointmentType: typeName,
 			MeetingURL:      meetingURL,
 			ManageLink:      cfg.AppURL + "/appointment/" + apt.BookingToken,
-		})
+		}, clientLang)
 		if err := services.SendEmail(cfg, email); err != nil {
 			// Log error but don't fail
 		}
@@ -223,6 +226,12 @@ func PublicSubmitBookingHandler(c echo.Context) error {
 			notes = *apt.Notes
 		}
 
+		// Load lawyer language
+		lawyerLang := apt.Lawyer.Language
+		if lawyerLang == "" {
+			lawyerLang = "es"
+		}
+
 		email := services.BuildLawyerAppointmentNotificationEmail(apt.Lawyer.Email, services.LawyerAppointmentNotificationEmailData{
 			LawyerName:      apt.Lawyer.Name,
 			ClientName:      apt.ClientName,
@@ -233,7 +242,7 @@ func PublicSubmitBookingHandler(c echo.Context) error {
 			Duration:        apt.Duration(),
 			AppointmentType: typeName,
 			Notes:           notes,
-		})
+		}, lawyerLang)
 		if err := services.SendEmail(cfg, email); err != nil {
 			// Log error but don't fail
 		}
@@ -300,6 +309,7 @@ func PublicCancelAppointmentHandler(c echo.Context) error {
 		var firm models.Firm
 		db.DB.First(&firm, "id = ?", apt.FirmID)
 
+		// Default to "es" for public cancellation
 		email := services.BuildAppointmentCancelledEmail(apt.ClientEmail, services.AppointmentCancelledEmailData{
 			ClientName:         apt.ClientName,
 			FirmName:           firm.Name,
@@ -308,7 +318,7 @@ func PublicCancelAppointmentHandler(c echo.Context) error {
 			LawyerName:         apt.Lawyer.Name,
 			CancellationReason: req.Reason,
 			BookingLink:        cfg.AppURL + "/firm/" + firm.Slug + "/book",
-		})
+		}, "es")
 		services.SendEmail(cfg, email)
 	}()
 

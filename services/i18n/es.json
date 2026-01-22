@@ -1510,5 +1510,21 @@
         "old": "Valor Anterior",
         "new": "Nuevo Valor"
     }
+  },
+  "email": {
+    "subject": {
+      "welcome": "¡Bienvenido a la App LexLegalCloud!",
+      "firm_setup": "Configuración de Firma Completa - App LexLegalCloud",
+      "password_reset": "Solicitud de Restablecimiento de Contraseña - App LexLegalCloud",
+      "case_request_rejection": "Actualización de Solicitud de Caso - {firmName}",
+      "case_acceptance": "Caso Aceptado - {firmName}",
+      "lawyer_assignment": "Nuevo Caso Asignado - {caseNumber}",
+      "collaborator_added": "Añadido como Colaborador - Caso {caseNumber}",
+      "appointment_confirmation": "Cita Confirmada - {firmName}",
+      "appointment_reminder": "Recordatorio de Cita - Mañana @ {time}",
+      "appointment_cancelled": "Cita Cancelada - {firmName}",
+      "lawyer_appointment_notification": "Nueva Cita: {clientName} - {date} @ {time}",
+      "new_user_welcome": "Bienvenido a LexLegalCloud - Credenciales de su Cuenta"
+    }
   }
 }

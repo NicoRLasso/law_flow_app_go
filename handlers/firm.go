@@ -124,7 +124,11 @@ func FirmSetupPostHandler(c echo.Context) error {
 		if userName == "" {
 			userName = user.Email
 		}
-		email := services.BuildFirmSetupEmail(user.Email, userName, firm.Name)
+		userLang := user.Language
+		if userLang == "" {
+			userLang = "es"
+		}
+		email := services.BuildFirmSetupEmail(user.Email, userName, firm.Name, userLang)
 		services.SendEmailAsync(cfg, email)
 	}
 

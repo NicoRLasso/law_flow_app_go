@@ -156,7 +156,11 @@ func CreateUser(c echo.Context) error {
 		if userName == "" {
 			userName = user.Email
 		}
-		email := services.BuildWelcomeEmail(user.Email, userName)
+		userLang := user.Language
+		if userLang == "" {
+			userLang = "es"
+		}
+		email := services.BuildWelcomeEmail(user.Email, userName, userLang)
 		services.SendEmailAsync(cfg, email)
 	}
 

@@ -204,7 +204,11 @@ func SuperadminCreateUserHandler(c echo.Context) error {
 	// Send welcome email asynchronously
 	cfg := c.Get("config").(*config.Config)
 	loginURL := fmt.Sprintf("%s/login", cfg.AppURL)
-	emailMsg := services.BuildNewUserWelcomeEmail(user.Email, user.Name, password, loginURL) // Use raw password here
+	userLang := user.Language
+	if userLang == "" {
+		userLang = "es"
+	}
+	emailMsg := services.BuildNewUserWelcomeEmail(user.Email, user.Name, password, loginURL, userLang) // Use raw password here
 	services.SendEmailAsync(cfg, emailMsg)
 
 	// Return updated list

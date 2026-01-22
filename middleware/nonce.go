@@ -42,7 +42,7 @@ func CSPNonce() echo.MiddlewareFunc {
 			// Construct CSP with Nonce
 			// Note: 'unsafe-eval' is currently preserved for Alpine.js support.
 			// We remove 'unsafe-inline' and replace it with 'nonce-{nonce}'.
-			csp := fmt.Sprintf("default-src 'self'; script-src 'self' 'nonce-%s' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://cloudflareinsights.com", nonce)
+			csp := fmt.Sprintf("default-src 'self'; script-src 'self' 'nonce-%s' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com", nonce)
 
 			c.Response().Header().Set("Content-Security-Policy", csp)
 

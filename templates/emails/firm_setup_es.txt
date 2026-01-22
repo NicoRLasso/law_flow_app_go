@@ -1,0 +1,21 @@
+Firm Setup Complete!
+
+Congratulations, {{.UserName}}!
+
+Your firm {{.FirmName}} has been successfully set up on lexlegalcloud App!
+
+You're now ready to start managing your legal practice with our comprehensive suite of tools.
+
+Next Steps:
+1. Invite team members to join your firm
+2. Set up your first case
+3. Configure your billing preferences
+4. Explore the dashboard and features
+
+If you need any help getting started, our documentation and support team are here to assist you.
+
+Best regards,
+The lexlegalcloud Team
+
+---
+© 2026 lexlegalcloud App. All rights reserved.

@@ -1,0 +1,18 @@
+Welcome to lexlegalcloud!
+
+Hello {{.UserName}},
+
+A new account has been created for you. You can now access the lexlegalcloud platform using the credentials below.
+
+---
+Username: {{.UserEmail}}
+Temporary Password: {{.Password}}
+---
+
+SECURITY NOTICE: Please log in and change your password immediately.
+
+Log in here: {{.LoginURL}}
+
+If you have any questions, please contact your administrator.
+
+(c) 2026 lexlegalcloud App. All rights reserved.

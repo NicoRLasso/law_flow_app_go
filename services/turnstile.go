@@ -36,5 +36,10 @@ func VerifyTurnstileToken(token, secretKey, ip string) (bool, error) {
 		return false, fmt.Errorf("failed to decode turnstile response: %w", err)
 	}
 
-	return result.Success, nil
+	// If success is false, return an error with the error codes
+	if !result.Success {
+		return false, fmt.Errorf("turnstile verification failed, error codes: %v", result.ErrorCodes)
+	}
+
+	return true, nil
 }

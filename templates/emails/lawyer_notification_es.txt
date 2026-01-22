@@ -1,0 +1,16 @@
+New Appointment Scheduled
+
+Dear {{.LawyerName}},
+
+A new appointment has been booked:
+
+Client: {{.ClientName}}
+Email: {{.ClientEmail}}
+Phone: {{.ClientPhone}}
+Date: {{.Date}}
+Time: {{.Time}}
+Duration: {{.Duration}} minutes
+Type: {{.AppointmentType}}
+Notes: {{.Notes}}
+
+Please log in to view more details.

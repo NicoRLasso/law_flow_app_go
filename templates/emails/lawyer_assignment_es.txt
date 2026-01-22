@@ -1,0 +1,19 @@
+Dear {{.LawyerName}},
+
+A new case has been assigned to you. Please review the details below:
+
+CASE DETAILS
+------------
+Case Number: {{.CaseNumber}}
+Client Name: {{.ClientName}}
+
+ACTION REQUIRED:
+- Review the case details in the dashboard
+- Contact the client within 1-2 business days
+- Schedule an initial consultation
+- Request any additional documentation needed
+
+Please log in to the dashboard to view the complete case information and client contact details.
+
+---
+This is an automated notification from your case management system.

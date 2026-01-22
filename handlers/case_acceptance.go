@@ -445,13 +445,23 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 		// Determine login URL (assuming standard /login path)
 		loginURL := fmt.Sprintf("%s/login", cfg.AppURL)
 
-		welcomeEmail := services.BuildCaseAcceptanceEmail(client.Email, client.Name, firm.Name, caseNumber, passwordToSend, loginURL)
+		// Use client's language preference, default to "es" if not set or empty
+		clientLang := client.Language
+		if clientLang == "" {
+			clientLang = "es"
+		}
+
+		welcomeEmail := services.BuildCaseAcceptanceEmail(client.Email, client.Name, firm.Name, caseNumber, passwordToSend, loginURL, clientLang)
 		services.SendEmailAsync(cfg, welcomeEmail)
 
 		// Send assignment email to lawyer
 		var lawyer models.User
 		if err := db.DB.First(&lawyer, "id = ?", lawyerID).Error; err == nil {
-			assignmentEmail := services.BuildLawyerAssignmentEmail(lawyer.Email, lawyer.Name, caseNumber, client.Name)
+			lawyerLang := lawyer.Language
+			if lawyerLang == "" {
+				lawyerLang = "es"
+			}
+			assignmentEmail := services.BuildLawyerAssignmentEmail(lawyer.Email, lawyer.Name, caseNumber, client.Name, lawyerLang)
 			services.SendEmailAsync(cfg, assignmentEmail)
 		}
 	}()

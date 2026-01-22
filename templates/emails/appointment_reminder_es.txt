@@ -1,0 +1,17 @@
+Appointment Reminder
+
+Dear {{.ClientName}},
+
+This is a friendly reminder that you have an upcoming appointment TOMORROW with {{.FirmName}}.
+
+APPOINTMENT DETAILS:
+- Date: {{.Date}}
+- Time: {{.Time}}
+- Duration: {{.Duration}} minutes
+- Lawyer: {{.LawyerName}}
+{{if .MeetingURL}}- Meeting Link: {{.MeetingURL}}{{end}}
+
+Can't make it? Reschedule or cancel: {{.ManageLink}}
+
+Best regards,
+{{.FirmName}}

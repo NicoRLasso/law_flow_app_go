@@ -1512,4 +1512,21 @@
         "new": "New Value"
     }
   }
+  ,
+  "email": {
+    "subject": {
+      "welcome": "Welcome to lexlegalcloud App!",
+      "firm_setup": "Firm Setup Complete - lexlegalcloud App",
+      "password_reset": "Password Reset Request - lexlegalcloud App",
+      "case_request_rejection": "Case Request Update - {firmName}",
+      "case_acceptance": "Case Accepted - {firmName}",
+      "lawyer_assignment": "New Case Assigned - {caseNumber}",
+      "collaborator_added": "Added as Collaborator - Case {caseNumber}",
+      "appointment_confirmation": "Appointment Confirmed - {firmName}",
+      "appointment_reminder": "Appointment Reminder - Tomorrow @ {time}",
+      "appointment_cancelled": "Appointment Cancelled - {firmName}",
+      "lawyer_appointment_notification": "New Appointment: {clientName} - {date} @ {time}",
+      "new_user_welcome": "Welcome to lexlegalcloud - Your Account Credentials"
+    }
+  }
 }

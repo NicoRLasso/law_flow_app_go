@@ -1,0 +1,21 @@
+Welcome to lexlegalcloud App!
+
+Hello {{.UserName}}!
+
+Thank you for joining lexlegalcloud App. We're excited to have you on board!
+
+lexlegalcloud App is your comprehensive legal practice management solution, designed to streamline your workflow and help you focus on what matters most - serving your clients.
+
+What you can do with lexlegalcloud App:
+- Manage cases and clients efficiently
+- Track time and billing
+- Collaborate with your team
+- Generate reports and insights
+
+If you have any questions or need assistance, please don't hesitate to reach out to our support team.
+
+Best regards,
+The lexlegalcloud Team
+
+---
+© 2026 lexlegalcloud App. All rights reserved.

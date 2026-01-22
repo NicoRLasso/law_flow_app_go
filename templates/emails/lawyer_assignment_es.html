@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Case Assignment</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #059669;
+            margin: 0;
+            font-size: 28px;
+        }
+        .case-info {
+            background-color: #f0fdf4;
+            border-left: 4px solid #059669;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .case-info h2 {
+            color: #059669;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .info-row {
+            margin: 10px 0;
+        }
+        .info-label {
+            color: #6b7280;
+            font-weight: 600;
+            display: inline-block;
+            width: 120px;
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .action-items {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Nuevo Caso Asignado</h1>
+        </div>
+        
+        <div class="content">
+            <p>Estimado/a {{.LawyerName}},</p>
+            
+            <p>Se le ha asignado un nuevo caso. Por favor revise los detalles a continuación:</p>
+            
+            <div class="case-info">
+                <h2>Detalles del Caso</h2>
+                <div class="info-row">
+                    <span class="info-label">Número de Caso:</span>
+                    <strong>{{.CaseNumber}}</strong>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Nombre del Cliente:</span>
+                    <strong>{{.ClientName}}</strong>
+                </div>
+            </div>
+            
+            <div class="action-items">
+                <p><strong>⚡ Acción Requerida:</strong></p>
+                <ul style="margin: 10px 0;">
+                    <li>Revise los detalles del caso en el panel</li>
+                    <li>Contacte al cliente dentro de 1-2 días hábiles</li>
+                    <li>Programe una consulta inicial</li>
+                    <li>Solicite cualquier documentación adicional necesaria</li>
+                </ul>
+            </div>
+            
+            <p>Por favor inicie sesión en el panel para ver la información completa del caso y los detalles de contacto del cliente.</p>
+        </div>
+        
+        <div class="footer">
+            <p style="font-size: 12px; color: #9ca3af;">Esta es una notificación automática de su sistema de gestión de casos.</p>
+        </div>
+    </div>
+</body>
+</html>

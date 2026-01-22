@@ -1,0 +1,18 @@
+Appointment Cancelled
+
+Dear {{.ClientName}},
+
+Your appointment with {{.FirmName}} has been cancelled.
+
+CANCELLED APPOINTMENT:
+- Date: {{.Date}}
+- Time: {{.Time}}
+- Lawyer: {{.LawyerName}}
+{{if .CancellationReason}}- Reason: {{.CancellationReason}}{{end}}
+
+To book a new appointment: {{.BookingLink}}
+
+If you have any questions, please contact us directly.
+
+Best regards,
+{{.FirmName}}

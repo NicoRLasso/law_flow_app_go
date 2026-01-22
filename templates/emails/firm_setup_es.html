@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; }
+		.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+		.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+		.content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+		.footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 8px 8px; }
+		.success-badge { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; margin: 10px 0; }
+		h1 { margin: 0; font-size: 28px; }
+		h2 { color: #667eea; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<h1>🎉 ¡Configuración de Firma Completa!</h1>
+		</div>
+		<div class="content">
+			<h2>¡Felicidades, {{.UserName}}!</h2>
+			<div class="success-badge">✓ Configuración Exitosa</div>
+			<p>¡Su firma <strong>{{.FirmName}}</strong> ha sido configurada exitosamente en la App LexLegalCloud!</p>
+			<p>Ahora está listo para comenzar a gestionar su práctica legal con nuestra suite integral de herramientas.</p>
+			<p><strong>Próximos Pasos:</strong></p>
+			<ol>
+				<li>Invite a miembros del equipo a unirse a su firma</li>
+				<li>Configure su primer caso</li>
+				<li>Configure sus preferencias de facturación</li>
+				<li>Explore el panel de control y las características</li>
+			</ol>
+			<p>Si necesita ayuda para comenzar, nuestra documentación y equipo de soporte están aquí para ayudarle.</p>
+			<p>Saludos cordiales,<br>El Equipo de LexLegalCloud</p>
+		</div>
+		<div class="footer">
+			<p>&copy; 2026 App LexLegalCloud. Todos los derechos reservados.</p>
+		</div>
+	</div>
+</body>
+</html>

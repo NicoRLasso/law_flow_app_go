@@ -89,7 +89,12 @@ func AddCaseCollaboratorHandler(c echo.Context) error {
 	if caseRecord.AssignedTo != nil {
 		assignedLawyer = caseRecord.AssignedTo.Name
 	}
-	email := services.BuildCollaboratorAddedEmail(user.Email, user.Name, caseRecord.CaseNumber, clientName, assignedLawyer)
+	// Use collaborator's language
+	collabLang := user.Language
+	if collabLang == "" {
+		collabLang = "es"
+	}
+	email := services.BuildCollaboratorAddedEmail(user.Email, user.Name, caseRecord.CaseNumber, clientName, assignedLawyer, collabLang)
 	services.SendEmailAsync(cfg, email)
 
 	// Return success and trigger page reload

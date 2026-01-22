@@ -55,12 +55,18 @@ func ForgotPasswordPostHandler(c echo.Context) error {
 
 		// Get user name from token
 		userName := email
-		if resetToken.User != nil && resetToken.User.Name != "" {
-			userName = resetToken.User.Name
+		userLang := "es"
+		if resetToken.User != nil {
+			if resetToken.User.Name != "" {
+				userName = resetToken.User.Name
+			}
+			if resetToken.User.Language != "" {
+				userLang = resetToken.User.Language
+			}
 		}
 
 		// Build and send email
-		emailMsg := services.BuildPasswordResetEmail(email, userName, resetLink, expiresAt)
+		emailMsg := services.BuildPasswordResetEmail(email, userName, resetLink, expiresAt, userLang)
 		services.SendEmailAsync(cfg, emailMsg)
 	}
 

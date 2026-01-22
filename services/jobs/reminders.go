@@ -24,7 +24,7 @@ func SendAppointmentReminders(cfg *config.Config) {
 	// 1. Scheduled or Confirmed
 	// 2. StartTime between tomorrowStart and tomorrowEnd
 	// 3. ReminderSentAt is NULL
-	err := db.DB.Preload("Lawyer").Preload("Firm").Preload("AppointmentType").
+	err := db.DB.Preload("Lawyer").Preload("Firm").Preload("AppointmentType").Preload("Client").
 		Where("status IN (?)", []string{models.AppointmentStatusScheduled, models.AppointmentStatusConfirmed}).
 		Where("start_time >= ? AND start_time <= ?", tomorrowStart, tomorrowEnd).
 		Where("reminder_sent_at IS NULL").
@@ -47,6 +47,12 @@ func SendAppointmentReminders(cfg *config.Config) {
 		// Use booking token link for management
 		manageLink := cfg.AppURL + "/appointment/" + apt.BookingToken
 
+		// Determine language
+		lang := "es"
+		if apt.ClientID != nil && apt.Client != nil && apt.Client.Language != "" {
+			lang = apt.Client.Language
+		}
+
 		email := services.BuildAppointmentReminderEmail(apt.ClientEmail, services.AppointmentReminderEmailData{
 			ClientName: apt.ClientName,
 			FirmName:   apt.Firm.Name,
@@ -56,7 +62,7 @@ func SendAppointmentReminders(cfg *config.Config) {
 			LawyerName: apt.Lawyer.Name,
 			MeetingURL: meetingURL,
 			ManageLink: manageLink,
-		})
+		}, lang)
 
 		if err := services.SendEmail(cfg, email); err != nil {
 			log.Printf("Failed to send reminder for appointment %s: %v", apt.ID, err)

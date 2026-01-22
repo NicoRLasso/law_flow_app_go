@@ -440,6 +440,7 @@ func UpdateCaseRequestStatusHandler(c echo.Context) error {
 			request.RejectionNote,
 			firmEmail,
 			request.Firm.Phone,
+			"es", // Default to Spanish for public requests
 		)
 
 		// Send email asynchronously
