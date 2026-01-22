@@ -259,18 +259,31 @@ type CaseAcceptanceEmailData struct {
 	ClientName string
 	FirmName   string
 	CaseNumber string
+	Password   string
+	LoginURL   string
 }
 
 // BuildCaseAcceptanceEmail creates a welcome email for clients when their case is accepted
-func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber string) *Email {
+func BuildCaseAcceptanceEmail(clientEmail, clientName, firmName, caseNumber, password, loginURL string) *Email {
 	data := CaseAcceptanceEmailData{
 		ClientName: clientName,
 		FirmName:   firmName,
 		CaseNumber: caseNumber,
+		Password:   password,
+		LoginURL:   loginURL,
 	}
 
 	fallbackText := fmt.Sprintf("Dear %s,\n\nWe are pleased to inform you that %s has accepted your case request.\n\nCase Number: %s\n\nYour assigned lawyer will contact you shortly.\n\nBest regards,\n%s", clientName, firmName, caseNumber, firmName)
-	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>We are pleased to inform you that %s has accepted your case request.</p><p><strong>Case Number: %s</strong></p><p>Your assigned lawyer will contact you shortly.</p><p>Best regards,<br>%s</p>", clientName, firmName, caseNumber, firmName)
+	if password != "" {
+		fallbackText += fmt.Sprintf("\n\nA new account has been created for you.\nUsername: %s\nPassword: %s\n\nPlease log in at: %s", clientEmail, password, loginURL)
+	}
+
+	fallbackHTML := fmt.Sprintf("<p>Dear %s,</p><p>We are pleased to inform you that %s has accepted your case request.</p><p><strong>Case Number: %s</strong></p><p>Your assigned lawyer will contact you shortly.</p>", clientName, firmName, caseNumber)
+	if password != "" {
+		fallbackHTML += fmt.Sprintf("<p><strong>New Account Created</strong><br>Username: %s<br>Password: %s</p><p>Please log in at: <a href=\"%s\">%s</a></p>", clientEmail, password, loginURL, loginURL)
+	}
+	fallbackHTML += fmt.Sprintf("<p>Best regards,<br>%s</p>", firmName)
+
 	subject := fmt.Sprintf("Case Accepted - %s", firmName)
 
 	return buildEmailWithFallback("case_acceptance", data, clientEmail, subject, fallbackHTML, fallbackText)

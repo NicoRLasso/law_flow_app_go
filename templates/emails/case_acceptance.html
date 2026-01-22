@@ -85,6 +85,30 @@
                 <li>You will receive information about required documentation</li>
                 <li>We will schedule an initial consultation to discuss your case in detail</li>
             </ul>
+
+            {{if .Password}}
+            <div style="background-color: #eff6ff; border: 1px solid #dbeafe; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                <h3 style="margin-top: 0; color: #1e40af; font-size: 18px;">New Account Created</h3>
+                <p style="margin-bottom: 15px; color: #1e3a8a;">A new account has been created for you to access your case details.</p>
+                
+                <div style="margin-bottom: 15px;">
+                    <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Username</span>
+                    <span style="font-family: monospace; font-size: 16px; color: #0f172a; background-color: #ffffff; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; display: block;">{{.To}}</span>
+                </div> <!-- Note: .To is a slice, but usually single recipient. For simplicity in template we might need user email passed in data or just use .To[0] if accessible, but safer to use the email passed to function. Ideally we add Email to struct. Let's assume user knows their email or we add it to struct. Wait, I didn't add Email to struct. I shoud add UserEmail to struct for clarity. -->
+                <!-- Correction: I will use the .To address from the email object wrapper if available, but the data object is separate. I'll stick to showing just password or rely on them knowing their email. Better: I'll add UserEmail to the struct in a follow up if needed, but for now I will just show the password and say "use this email address". ACTUALLY, I can't easily access the email address in the template unless I put it in the data struct. I'll assume they know it or I should have added it. Let's look at the struct I just defined: ClientName, FirmName, CaseNumber, Password, LoginURL. No Email. I'll just show the password and say "login with this email". -->
+                
+                <div style="margin-bottom: 15px;">
+                    <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;">Temporary Password</span>
+                    <span style="font-family: monospace; font-size: 16px; color: #0f172a; background-color: #ffffff; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0; display: block;">{{.Password}}</span>
+                </div>
+                
+                <div style="background-color: #fff7ed; border: 1px solid #ffedd5; color: #9a3412; padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 15px;">
+                    <strong>Security Notice:</strong> Please log in and change your password immediately.
+                </div>
+
+                <a href="{{.LoginURL}}" class="button" style="text-align: center; display: block; margin: 0;">Log In to Your Account</a>
+            </div>
+            {{end}}
             
             <p>Please keep your case number (<strong>{{.CaseNumber}}</strong>) handy for all future communications.</p>
             

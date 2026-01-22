@@ -13,6 +13,18 @@ WHAT HAPPENS NEXT:
 
 Please keep your case number ({{.CaseNumber}}) handy for all future communications.
 
+{{if .Password}}
+NEW ACCOUNT CREATED
+-------------------
+A new account has been created for you to access your case details.
+
+Password: {{.Password}}
+
+Please log in at: {{.LoginURL}}
+
+Security Notice: Please log in and change your password immediately.
+{{end}}
+
 If you have any immediate questions, please don't hesitate to contact us.
 
 Best regards,

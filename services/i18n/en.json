@@ -198,21 +198,21 @@
       "cta_desc": "Join hundreds of law firms trusting LexLegal Cloud with their data."
     },
     "privacy": {
-      "title": "Privacy Policy",
+      "title": "Data Processing Policy",
       "updated": "Last updated: January 2026",
-      "intro": "At LexLegal Cloud, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclosure, and safeguard your information when you visit our website or use our application.",
-      "section1_title": "1. Information We Collect",
-      "section1_content": "We collect information that you provide directly to us when you register for an account, create or modify your profile, set preferences, sign up for our newsletter, or contact customer support. This information may include your name, email address, phone number, payment information, and any other information you choose to provide.",
-      "section2_title": "2. How We Use Your Information",
-      "section2_content": "We use the information we collect to operate, maintain, and provide to you the features and functionality of the Service, to communicate with you, to monitor and analyze trends and usage, and to improve our Service and develop new products, services, features, and functionality.",
-      "section3_title": "3. Data Security",
-      "section3_content": "We implement appropriate technical and organizational measures to protect the security of your personal information. However, please be aware that no method of transmission over the internet or method of electronic storage is 100% secure.",
-      "section4_title": "4. Data Retention",
-      "section4_content": "We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law.",
-      "section5_title": "5. Your Rights",
-      "section5_content": "Depending on your location, you may have certain rights regarding your personal information, including the right to access, correct, delete, or port your data. Contact us to exercise these rights.",
-      "section6_title": "6. Contact Us",
-      "section6_content": "If you have any questions about this Privacy Policy, please contact us at"
+      "intro": "LexLegal Cloud respects the personal data and information provided by its current, past, and potential clients. This Personal Data Protection Policy establishes the purposes, measures, and procedures for our databases, as well as the mechanisms available to data holders to know, update, rectify, delete provided data, or revoke the authorization granted with the acceptance of this policy, in accordance with Statutory Law 1581 of 2012 and Decree 1377 of 2013.",
+      "section1_title": "1. Data Controller",
+      "section1_content": "LexLegal Cloud, as the entity responsible for processing personal data, informs that collected data will be processed legally, lawfully, confidentially, and securely.",
+      "section2_title": "2. Purpose of Processing",
+      "section2_content": "The processing of personal data has the following purposes: a) To carry out relevant management for the development of the company's social object. b) To send invitations to events, manage processes (requests, complaints, claims). c) To manage the contractual relationship with the client. d) Billing and accounting management. e) To conduct satisfaction surveys.",
+      "section3_title": "3. Rights of Data Holders",
+      "section3_content": "As the holder of your personal data, you have the right to: (i) Access your data free of charge. (ii) Know, update, and rectify your information regarding partial, inaccurate, incomplete, fractionated, misleading data, or data whose processing is prohibited. (iii) Request proof of the authorization granted. (iv) File complaints with the Superintendence of Industry and Commerce (SIC). (v) Revoke authorization and/or request data deletion.",
+      "section4_title": "4. Authorization",
+      "section4_content": "The processing of personal data carried out by the company requires the free, prior, express, and informed consent of the data holder. By accepting this policy, you state that the data provided is truthful and that you have the authority to authorize its processing.",
+      "section5_title": "5. Information Security",
+      "section5_content": "We have implemented the necessary technical, administrative, and human security measures to protect your information and prevent its adulteration, loss, lateral consultation, use, or unauthorized or fraudulent access, complying with the standards required by the Superintendence of Industry and Commerce.",
+      "section6_title": "6. Attention Channel (Habeas Data)",
+      "section6_content": "To exercise your rights as a data holder, you can contact us at any time at the email address:"
     },
     "terms": {
       "title": "Terms of Service",
@@ -231,7 +231,7 @@
       "section6_title": "6. Limitation of Liability",
       "section6_content": "In no event shall LexLegal Cloud Inc, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.",
       "section7_title": "7. Governing Law",
-      "section7_content": "These Terms shall be governed and construed in accordance with the laws of Delaware, United States, without regard to its conflict of law provisions."
+      "section7_content": "These Terms shall be governed and construed in accordance with the laws of the Republic of Colombia. Any dispute related to these terms shall be submitted to the competent judges of the Republic of Colombia."
     },
     "cookies": {
       "title": "Cookie Policy",

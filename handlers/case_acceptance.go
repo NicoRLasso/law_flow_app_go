@@ -3,6 +3,7 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
@@ -315,6 +316,7 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 	// Check if client exists or create new one
 	var client models.User
 	isNewClient := false
+	var randomPassword string
 	err := tx.Where("firm_id = ? AND email = ? AND role = ?", firm.ID, request.Email, "client").
 		First(&client).Error
 
@@ -328,7 +330,7 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 			tx.Rollback()
 			return echo.NewHTTPError(http.StatusInternalServerError, i18n.T(c.Request().Context(), "errors.case_acceptance.gen_password_failed"))
 		}
-		randomPassword := base64.URLEncoding.EncodeToString(randomBytes)
+		randomPassword = base64.URLEncoding.EncodeToString(randomBytes)
 
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(randomPassword), bcrypt.DefaultCost)
 		if err != nil {
@@ -434,10 +436,17 @@ func FinalizeCaseCreationHandler(c echo.Context) error {
 	// Send emails asynchronously (don't block on errors)
 	go func() {
 		// Send welcome email to new clients
+		// Send case acceptance email to client
+		passwordToSend := ""
 		if isNewClient {
-			welcomeEmail := services.BuildCaseAcceptanceEmail(client.Email, client.Name, firm.Name, caseNumber)
-			services.SendEmailAsync(cfg, welcomeEmail)
+			passwordToSend = randomPassword
 		}
+
+		// Determine login URL (assuming standard /login path)
+		loginURL := fmt.Sprintf("%s/login", cfg.AppURL)
+
+		welcomeEmail := services.BuildCaseAcceptanceEmail(client.Email, client.Name, firm.Name, caseNumber, passwordToSend, loginURL)
+		services.SendEmailAsync(cfg, welcomeEmail)
 
 		// Send assignment email to lawyer
 		var lawyer models.User

@@ -197,21 +197,21 @@
       "cta_desc": "Únase a cientos de firmas de abogados que confían en LexLegal Cloud con sus datos."
     },
     "privacy": {
-      "title": "Política de Privacidad",
+      "title": "Política de Tratamiento de Datos",
       "updated": "Última actualización: Enero 2026",
-      "intro": "En LexLegal Cloud, tomamos su privacidad en serio. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos su información cuando visita nuestro sitio web o utiliza nuestra aplicación.",
-      "section1_title": "1. Información que Recopilamos",
-      "section1_content": "Recopilamos información que usted nos proporciona directamente cuando se registra para una cuenta, crea o modifica su perfil, establece preferencias, se suscribe a nuestro boletín o contacta al soporte al cliente. Esta información puede incluir su nombre, dirección de email, número de teléfono, información de pago y cualquier otra información que elija proporcionar.",
-      "section2_title": "2. Cómo Usamos Su Información",
-      "section2_content": "Usamos la información que recopilamos para operar, mantener y proporcionarle las características y funcionalidad del Servicio, para comunicarnos con usted, para monitorear y analizar tendencias y uso, y para mejorar nuestro Servicio y desarrollar nuevos productos, servicios, características y funcionalidades.",
-      "section3_title": "3. Seguridad de Datos",
-      "section3_content": "Implementamos medidas técnicas y organizativas apropiadas para proteger la seguridad de su información personal. Sin embargo, tenga en cuenta que ningún método de transmisión por internet o método de almacenamiento electrónico es 100% seguro.",
-      "section4_title": "4. Retención de Datos",
-      "section4_content": "Retenemos su información personal durante el tiempo necesario para cumplir con los propósitos descritos en esta Política de Privacidad, a menos que la ley requiera o permita un período de retención más largo.",
-      "section5_title": "5. Sus Derechos",
-      "section5_content": "Dependiendo de su ubicación, puede tener ciertos derechos respecto a su información personal, incluyendo el derecho a acceder, corregir, eliminar o portar sus datos. Contáctenos para ejercer estos derechos.",
-      "section6_title": "6. Contáctenos",
-      "section6_content": "Si tiene alguna pregunta sobre esta Política de Privacidad, contáctenos en"
+      "intro": "LexLegal Cloud es respetuoso de los datos personales e información que le suministran sus clientes actuales, pasados y potenciales. En la presente Política de Protección de Datos Personales se establecen las finalidades, medidas y procedimientos de nuestras bases de datos, así como los mecanismos con que cuentan los titulares para conocer, actualizar, rectificar, suprimir los datos suministrados o revocar la autorización que se otorga con la aceptación de la presente política, de acuerdo con la Ley Estatutaria 1581 de 2012 y el Decreto 1377 de 2013.",
+      "section1_title": "1. Responsable del Tratamiento",
+      "section1_content": "LexLegal Cloud, en calidad de responsable del tratamiento de datos personales, informa que los datos recolectados serán tratados de manera legal, lícita, confidencial y segura.",
+      "section2_title": "2. Finalidad del Tratamiento",
+      "section2_content": "El Tratamiento de los datos personales tiene las siguientes finalidades: a) Efectuar las gestiones pertinentes para el desarrollo del objeto social de la compañía. b) Realizar invitaciones a eventos, gestionar trámites (solicitudes, quejas, reclamos). c) Gestionar la relación contractual con el cliente. d) Facturación y gestión contable. e) Efectuar encuestas de satisfacción.",
+      "section3_title": "3. Derechos de los Titulares",
+      "section3_content": "Como titular de sus datos personales usted tiene derecho a: (i) Acceder de forma gratuita a sus datos. (ii) Conocer, actualizar y rectificar su información frente a datos parciales, inexactos, incompletos, fraccionados, que induzcan a error, o a aquellos cuyo tratamiento esté prohibido. (iii) Solicitar prueba de la autorización otorgada. (iv) Presentar quejas ante la Superintendencia de Industria y Comercio (SIC). (v) Revocar la autorización y/o solicitar la supresión del dato.",
+      "section4_title": "4. Autorización",
+      "section4_content": "El tratamiento de datos personales realizado por la empresa requiere del consentimiento libre, previo, expreso e informado del titular de dichos datos. Con la aceptación de esta política, usted manifiesta que los datos suministrados son veraces y que cuenta con las facultades para autorizar su tratamiento.",
+      "section5_title": "5. Seguridad de la Información",
+      "section5_content": "Hemos implementado las medidas de seguridad técnicas, administrativas y humanas necesarias para proteger su información y evitar su adulteración, pérdida, consulta, uso o acceso no autorizado o fraudulento, cumpliendo con los estándares exigidos por la Superintendencia de Industria y Comercio.",
+      "section6_title": "6. Canal de Atención (Habeas Data)",
+      "section6_content": "Para el ejercicio de sus derechos como titular de datos, puede contactarnos en cualquier momento al correo electrónico:"
     },
     "terms": {
       "title": "Términos de Servicio",
@@ -230,7 +230,7 @@
       "section6_title": "6. Limitación de Responsabilidad",
       "section6_content": "En ningún caso LexLegal Cloud Inc, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos.",
       "section7_title": "7. Ley Aplicable",
-      "section7_content": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de Delaware, Estados Unidos, sin tener en cuenta sus disposiciones sobre conflictos de leyes."
+      "section7_content": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de la República de Colombia. Cualquier disputa relacionada con estos términos será sometida a los jueces competentes de la República de Colombia."
     },
     "cookies": {
       "title": "Política de Cookies",
