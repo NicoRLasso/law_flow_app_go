@@ -12,6 +12,7 @@ import (
 	"law_flow_app_go/templates/partials"
 
 	"github.com/labstack/echo/v4"
+	"github.com/microcosm-cc/bluemonday"
 )
 
 // TemplatesPageHandler renders the templates management page
@@ -125,6 +126,10 @@ func CreateTemplateHandler(c echo.Context) error {
 		content = "<p></p>" // Default empty content
 	}
 
+	// Sanitize content (XSS protection)
+	p := bluemonday.UGCPolicy()
+	content = p.Sanitize(content)
+
 	if pageOrientation == "" {
 		pageOrientation = models.OrientationPortrait
 	}
@@ -218,6 +223,10 @@ func UpdateTemplateHandler(c echo.Context) error {
 	} else {
 		// Content update (from Editor): Update Content and Version
 		// Preserve Metadata (IsActive, Description, Category, etc.)
+
+		// Sanitize content (XSS protection)
+		p := bluemonday.UGCPolicy()
+		content = p.Sanitize(content)
 
 		// Increment version if content changed
 		if template.Content != content {

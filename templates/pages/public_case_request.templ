@@ -7,8 +7,9 @@ import (
 	"law_flow_app_go/templates/layouts"
 )
 
-templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption) {
+templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption, turnstileSiteKey string) {
 	@layouts.Base(ctx, i18n.T(ctx, "public.request.title")+" - "+firm.Name, csrfToken, nil) {
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 		<main class="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0">
@@ -183,6 +184,12 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 								<p class="text-xs text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.pdf_only") }</p>
 							</div>
 						</div>
+						
+						<!-- Turnstile CAPTCHA -->
+						if turnstileSiteKey != "" {
+							<div class="cf-turnstile" data-sitekey={ turnstileSiteKey }></div>
+						}
+
 						<!-- Submit Button -->
 						<button
 							type="submit"

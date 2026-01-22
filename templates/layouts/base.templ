@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/middleware"
 )
 
 templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
@@ -66,7 +67,7 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 					<link rel="alternate" hreflang="x-default" href={ seo.Canonical }/>
 				}
 				<!-- JSON-LD Structured Data -->
-				@templ.Raw(generateJSONLD(seo))
+				@templ.Raw(generateJSONLD(seo, middleware.GetNonce(ctx)))
 			}
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
@@ -84,14 +85,14 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<!-- CSS Bundle (Tailwind + Kinetic + Custom) -->
 			<link rel="stylesheet" href="/static/css/bundle.min.css"/>
 			<!-- HTMX - defer loading -->
-			<script src="https://unpkg.com/htmx.org@2.0.0" defer></script>
+			<script src="https://unpkg.com/htmx.org@2.0.0" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- Alpine.js Plugins (must load before Alpine) -->
-			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer></script>
-			<script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
+			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			<script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- Alpine.js -->
-			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- CSRF Configuration for HTMX -->
-			<script>
+			<script nonce={ middleware.GetNonce(ctx) }>
 				// Configure HTMX to include CSRF token in all requests
 				document.addEventListener('DOMContentLoaded', function() {
 					document.body.addEventListener('htmx:configRequest', function(event) {
@@ -101,8 +102,8 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				});
 			</script>
 			<!-- Custom JavaScript -->
-			<script src="/static/js/marquee.js" defer></script>
-			<script src="/static/js/app.js" defer></script>
+			<script src="/static/js/marquee.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			<script src="/static/js/app.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 		</head>
 		<body class="bg-background text-foreground">
 			<!-- Noise Texture Overlay -->
@@ -144,7 +145,7 @@ func getAltURL(canonical string, locale string) string {
 }
 
 // generateJSONLD creates JSON-LD structured data for SEO
-func generateJSONLD(seo *models.SEO) string {
+func generateJSONLD(seo *models.SEO, nonce string) string {
 	if seo == nil || seo.Canonical == "" {
 		return ""
 	}
@@ -192,5 +193,5 @@ func generateJSONLD(seo *models.SEO) string {
 		return ""
 	}
 
-	return `<script type="application/ld+json">` + string(jsonBytes) + `</script>`
+	return `<script type="application/ld+json" nonce="` + nonce + `">` + string(jsonBytes) + `</script>`
 }

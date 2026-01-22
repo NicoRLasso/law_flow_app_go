@@ -52,15 +52,41 @@ func PublicCaseRequestHandler(c echo.Context) error {
 		// Continue with empty slice - form will show no options
 	}
 
+	// Get Turnstile Site Key from config
+	cfg := c.Get("config").(*config.Config)
+	turnstileSiteKey := cfg.TurnstileSiteKey
+
 	// Render public form template
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.PublicCaseRequest(c.Request().Context(), csrfToken, firm, documentTypes, priorities)
+	component := pages.PublicCaseRequest(c.Request().Context(), csrfToken, firm, documentTypes, priorities, turnstileSiteKey)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
 // PublicCaseRequestPostHandler handles public case request form submission
 func PublicCaseRequestPostHandler(c echo.Context) error {
 	slug := c.Param("slug")
+	cfg := c.Get("config").(*config.Config)
+
+	// Validate Turnstile CAPTCHA (if configured)
+	if cfg.TurnstileSecretKey != "" {
+		turnstileResponse := c.FormValue("cf-turnstile-response")
+		if turnstileResponse == "" {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusBadRequest, `<div class="error-message">Please complete the CAPTCHA</div>`)
+			}
+			return echo.NewHTTPError(http.StatusBadRequest, "Please complete the CAPTCHA")
+		}
+
+		// Verify token with Cloudflare
+		isValid, err := services.VerifyTurnstileToken(turnstileResponse, cfg.TurnstileSecretKey, c.RealIP())
+		if err != nil || !isValid {
+			c.Logger().Warnf("Turnstile verification failed: %v", err)
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusBadRequest, `<div class="error-message">CAPTCHA verification failed</div>`)
+			}
+			return echo.NewHTTPError(http.StatusBadRequest, "CAPTCHA verification failed")
+		}
+	}
 
 	// Find firm by slug
 	var firm models.Firm

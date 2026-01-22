@@ -24,6 +24,9 @@ type Config struct {
 	SessionSecret    string
 	TursoDatabaseURL string
 	TursoAuthToken   string
+	// Cloudflare Turnstile
+	TurnstileSiteKey   string
+	TurnstileSecretKey string
 	// Cloudflare R2 Storage
 	R2AccountID       string
 	R2AccessKeyID     string
@@ -39,24 +42,26 @@ func Load() *Config {
 	}
 
 	return &Config{
-		ServerPort:        getEnv("SERVER_PORT", "8080"),
-		DBPath:            getEnv("DB_PATH", "db/app.db"),
-		Environment:       getEnv("ENVIRONMENT", "development"),
-		UploadDir:         getEnv("UPLOAD_DIR", "static/uploads"),
-		ResendAPIKey:      getEnv("RESEND_API_KEY", ""),
-		EmailFrom:         getEnv("EMAIL_FROM", "noreply@lexlegalcloud.org"),
-		EmailFromName:     getEnv("EMAIL_FROM_NAME", "lexlegalcloud App"),
-		EmailTestMode:     getEnvBool("EMAIL_TEST_MODE", true), // Default true for safety
-		AllowedOrigins:    strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
-		AppURL:            getEnv("APP_URL", "http://localhost:8080"),
-		SessionSecret:     getEnv("SESSION_SECRET", ""),
-		TursoDatabaseURL:  getEnv("TURSO_DATABASE_URL", ""),
-		TursoAuthToken:    getEnv("TURSO_AUTH_TOKEN", ""),
-		R2AccountID:       getEnv("R2_ACCOUNT_ID", ""),
-		R2AccessKeyID:     getEnv("R2_ACCESS_KEY_ID", ""),
-		R2SecretAccessKey: getEnv("R2_SECRET_ACCESS_KEY", ""),
-		R2BucketName:      getEnv("R2_BUCKET_NAME", ""),
-		R2PublicURL:       getEnv("R2_PUBLIC_URL", ""),
+		ServerPort:         getEnv("SERVER_PORT", "8080"),
+		DBPath:             getEnv("DB_PATH", "db/app.db"),
+		Environment:        getEnv("ENVIRONMENT", "development"),
+		UploadDir:          getEnv("UPLOAD_DIR", "static/uploads"),
+		ResendAPIKey:       getEnv("RESEND_API_KEY", ""),
+		EmailFrom:          getEnv("EMAIL_FROM", "noreply@lexlegalcloud.org"),
+		EmailFromName:      getEnv("EMAIL_FROM_NAME", "lexlegalcloud App"),
+		EmailTestMode:      getEnvBool("EMAIL_TEST_MODE", true), // Default true for safety
+		AllowedOrigins:     strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
+		AppURL:             getEnv("APP_URL", "http://localhost:8080"),
+		SessionSecret:      getEnv("SESSION_SECRET", ""),
+		TursoDatabaseURL:   getEnv("TURSO_DATABASE_URL", ""),
+		TursoAuthToken:     getEnv("TURSO_AUTH_TOKEN", ""),
+		TurnstileSiteKey:   getEnv("TURNSTILE_SITE_KEY", ""),
+		TurnstileSecretKey: getEnv("TURNSTILE_SECRET_KEY", ""),
+		R2AccountID:        getEnv("R2_ACCOUNT_ID", ""),
+		R2AccessKeyID:      getEnv("R2_ACCESS_KEY_ID", ""),
+		R2SecretAccessKey:  getEnv("R2_SECRET_ACCESS_KEY", ""),
+		R2BucketName:       getEnv("R2_BUCKET_NAME", ""),
+		R2PublicURL:        getEnv("R2_PUBLIC_URL", ""),
 	}
 }
 

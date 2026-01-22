@@ -67,12 +67,15 @@ func ValidateDocumentUpload(file *multipart.FileHeader) error {
 
 	contentType := http.DetectContentType(buffer)
 
-	// Note: http.DetectContentType isn't perfect for all formats (especially DOC/DOCX which might show as application/zip or application/octet-stream)
-	// For stricter checking we might need specific magic number checks, but this is a good baseline.
-	// We'll be lenient with DOCX/DOC if the extension matches, as they are often complex composite formats.
-
 	isImage := strings.HasPrefix(contentType, "image/")
 	isPDF := contentType == "application/pdf"
+
+	// Magic bytes check for Office documents
+	// DOCX (Zip): PK\x03\x04
+	isDOCX := len(buffer) > 4 && string(buffer[:4]) == "PK\x03\x04"
+
+	// DOC (OLECF): \xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1
+	isDOC := len(buffer) > 8 && string(buffer[:8]) == "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
 
 	if (ext == ".jpg" || ext == ".jpeg" || ext == ".png") && !isImage {
 		return fmt.Errorf("invalid image file content")
@@ -80,6 +83,14 @@ func ValidateDocumentUpload(file *multipart.FileHeader) error {
 
 	if ext == ".pdf" && !isPDF {
 		return fmt.Errorf("invalid PDF file content")
+	}
+
+	if ext == ".docx" && !isDOCX {
+		return fmt.Errorf("invalid DOCX file content (signature mismatch)")
+	}
+
+	if ext == ".doc" && !isDOC {
+		return fmt.Errorf("invalid DOC file content (signature mismatch)")
 	}
 
 	return nil

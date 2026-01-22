@@ -113,14 +113,17 @@ func main() {
 				return nil
 			},
 		}))
-		// Security Headers
+
+		// CSP Nonce Generation (Must be before Secure middleware if Secure sets CSP, but here we set it manually)
+		e.Use(middleware.CSPNonce())
+
+		// Security Headers (CSP handled by middleware.CSPNonce)
 		e.Use(echomiddleware.SecureWithConfig(echomiddleware.SecureConfig{
 			XSSProtection:         "1; mode=block",
 			ContentTypeNosniff:    "nosniff",
 			XFrameOptions:         "SAMEORIGIN",
 			HSTSMaxAge:            31536000,
 			HSTSExcludeSubdomains: true,
-			ContentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://cloudflareinsights.com",
 		}))
 	} else {
 		// Development logging (Structured Text)
@@ -219,7 +222,8 @@ func main() {
 		}
 	}
 	e.File("/robots.txt", "static/robots.txt", seoCacheMiddleware)
-	e.File("/sitemap.xml", "static/sitemap.xml", seoCacheMiddleware)
+	// Dynamic sitemap
+	e.GET("/sitemap.xml", handlers.GetSitemapHandler)
 
 	// Public routes (no authentication required)
 	e.GET("/", handlers.LandingHandler)
