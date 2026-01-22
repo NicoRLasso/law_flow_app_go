@@ -23,6 +23,8 @@ function templateEditor(configuredPageHeight = 1056) {
             this.$nextTick(() => {
                 this.updatePageCount();
                 this.updatePageBreaks();
+                // Run initial auto-paging check to render breaks for loaded content
+                this.checkAutoPageBreaks();
             });
         },
 

@@ -1,7 +1,9 @@
 package services
 
 import (
+	"context"
 	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
 	"strings"
 	"time"
 )
@@ -78,62 +80,62 @@ type DateData struct {
 }
 
 // GetVariableDictionary returns all available template variables organized by category
-func GetVariableDictionary() []VariableCategory {
+func GetVariableDictionary(ctx context.Context) []VariableCategory {
 	return []VariableCategory{
 		{
-			Name:    "Client",
+			Name:    i18n.T(ctx, "templates.variables.client"),
 			NameKey: "templates.variables.client",
 			Variables: []Variable{
-				{Key: "client.name", Label: "Client Name", LabelKey: "templates.variables.client_name", Example: "John Doe"},
-				{Key: "client.email", Label: "Client Email", LabelKey: "templates.variables.client_email", Example: "john@example.com"},
-				{Key: "client.phone", Label: "Client Phone", LabelKey: "templates.variables.client_phone", Example: "+1 555-123-4567"},
-				{Key: "client.document_type", Label: "Document Type", LabelKey: "templates.variables.client_doc_type", Example: "DNI"},
-				{Key: "client.document_number", Label: "Document Number", LabelKey: "templates.variables.client_doc_number", Example: "12345678"},
-				{Key: "client.address", Label: "Client Address", LabelKey: "templates.variables.client_address", Example: "123 Main St, City"},
+				{Key: "client.name", Label: i18n.T(ctx, "templates.variables.client_name"), LabelKey: "templates.variables.client_name", Example: "John Doe"},
+				{Key: "client.email", Label: i18n.T(ctx, "templates.variables.client_email"), LabelKey: "templates.variables.client_email", Example: "john@example.com"},
+				{Key: "client.phone", Label: i18n.T(ctx, "templates.variables.client_phone"), LabelKey: "templates.variables.client_phone", Example: "+1 555-123-4567"},
+				{Key: "client.document_type", Label: i18n.T(ctx, "templates.variables.client_doc_type"), LabelKey: "templates.variables.client_doc_type", Example: "DNI"},
+				{Key: "client.document_number", Label: i18n.T(ctx, "templates.variables.client_doc_number"), LabelKey: "templates.variables.client_doc_number", Example: "12345678"},
+				{Key: "client.address", Label: i18n.T(ctx, "templates.variables.client_address"), LabelKey: "templates.variables.client_address", Example: "123 Main St, City"},
 			},
 		},
 		{
-			Name:    "Case",
+			Name:    i18n.T(ctx, "templates.variables.case"),
 			NameKey: "templates.variables.case",
 			Variables: []Variable{
-				{Key: "case.number", Label: "Case Number", LabelKey: "templates.variables.case_number", Example: "2026-001"},
-				{Key: "case.title", Label: "Case Title", LabelKey: "templates.variables.case_title", Example: "Smith vs. Jones"},
-				{Key: "case.description", Label: "Case Description", LabelKey: "templates.variables.case_description", Example: "Contract dispute..."},
-				{Key: "case.status", Label: "Case Status", LabelKey: "templates.variables.case_status", Example: "Open"},
-				{Key: "case.domain", Label: "Legal Domain", LabelKey: "templates.variables.case_domain", Example: "Civil"},
-				{Key: "case.branch", Label: "Legal Branch", LabelKey: "templates.variables.case_branch", Example: "Family Law"},
-				{Key: "case.subtypes", Label: "Case Subtypes", LabelKey: "templates.variables.case_subtypes", Example: "Divorce, Custody"},
-				{Key: "case.opened_at", Label: "Opened Date", LabelKey: "templates.variables.case_opened_at", Example: "January 15, 2026"},
+				{Key: "case.number", Label: i18n.T(ctx, "templates.variables.case_number"), LabelKey: "templates.variables.case_number", Example: "2026-001"},
+				{Key: "case.title", Label: i18n.T(ctx, "templates.variables.case_title"), LabelKey: "templates.variables.case_title", Example: "Smith vs. Jones"},
+				{Key: "case.description", Label: i18n.T(ctx, "templates.variables.case_description"), LabelKey: "templates.variables.case_description", Example: "Contract dispute..."},
+				{Key: "case.status", Label: i18n.T(ctx, "templates.variables.case_status"), LabelKey: "templates.variables.case_status", Example: "Open"},
+				{Key: "case.domain", Label: i18n.T(ctx, "templates.variables.case_domain"), LabelKey: "templates.variables.case_domain", Example: "Civil"},
+				{Key: "case.branch", Label: i18n.T(ctx, "templates.variables.case_branch"), LabelKey: "templates.variables.case_branch", Example: "Family Law"},
+				{Key: "case.subtypes", Label: i18n.T(ctx, "templates.variables.case_subtypes"), LabelKey: "templates.variables.case_subtypes", Example: "Divorce, Custody"},
+				{Key: "case.opened_at", Label: i18n.T(ctx, "templates.variables.case_opened_at"), LabelKey: "templates.variables.case_opened_at", Example: "January 15, 2026"},
 			},
 		},
 		{
-			Name:    "Firm",
+			Name:    i18n.T(ctx, "templates.variables.firm"),
 			NameKey: "templates.variables.firm",
 			Variables: []Variable{
-				{Key: "firm.name", Label: "Firm Name", LabelKey: "templates.variables.firm_name", Example: "Smith & Associates"},
-				{Key: "firm.address", Label: "Firm Address", LabelKey: "templates.variables.firm_address", Example: "456 Law St"},
-				{Key: "firm.city", Label: "Firm City", LabelKey: "templates.variables.firm_city", Example: "New York"},
-				{Key: "firm.phone", Label: "Firm Phone", LabelKey: "templates.variables.firm_phone", Example: "+1 555-987-6543"},
-				{Key: "firm.billing_email", Label: "Billing Email", LabelKey: "templates.variables.firm_billing_email", Example: "billing@firm.com"},
-				{Key: "firm.info_email", Label: "Info Email", LabelKey: "templates.variables.firm_info_email", Example: "info@firm.com"},
+				{Key: "firm.name", Label: i18n.T(ctx, "templates.variables.firm_name"), LabelKey: "templates.variables.firm_name", Example: "Smith & Associates"},
+				{Key: "firm.address", Label: i18n.T(ctx, "templates.variables.firm_address"), LabelKey: "templates.variables.firm_address", Example: "456 Law St"},
+				{Key: "firm.city", Label: i18n.T(ctx, "templates.variables.firm_city"), LabelKey: "templates.variables.firm_city", Example: "New York"},
+				{Key: "firm.phone", Label: i18n.T(ctx, "templates.variables.firm_phone"), LabelKey: "templates.variables.firm_phone", Example: "+1 555-987-6543"},
+				{Key: "firm.billing_email", Label: i18n.T(ctx, "templates.variables.firm_billing_email"), LabelKey: "templates.variables.firm_billing_email", Example: "billing@firm.com"},
+				{Key: "firm.info_email", Label: i18n.T(ctx, "templates.variables.firm_info_email"), LabelKey: "templates.variables.firm_info_email", Example: "info@firm.com"},
 			},
 		},
 		{
-			Name:    "Lawyer",
+			Name:    i18n.T(ctx, "templates.variables.lawyer"),
 			NameKey: "templates.variables.lawyer",
 			Variables: []Variable{
-				{Key: "lawyer.name", Label: "Lawyer Name", LabelKey: "templates.variables.lawyer_name", Example: "Jane Smith, Esq."},
-				{Key: "lawyer.email", Label: "Lawyer Email", LabelKey: "templates.variables.lawyer_email", Example: "jane@firm.com"},
-				{Key: "lawyer.phone", Label: "Lawyer Phone", LabelKey: "templates.variables.lawyer_phone", Example: "+1 555-111-2222"},
+				{Key: "lawyer.name", Label: i18n.T(ctx, "templates.variables.lawyer_name"), LabelKey: "templates.variables.lawyer_name", Example: "Jane Smith, Esq."},
+				{Key: "lawyer.email", Label: i18n.T(ctx, "templates.variables.lawyer_email"), LabelKey: "templates.variables.lawyer_email", Example: "jane@firm.com"},
+				{Key: "lawyer.phone", Label: i18n.T(ctx, "templates.variables.lawyer_phone"), LabelKey: "templates.variables.lawyer_phone", Example: "+1 555-111-2222"},
 			},
 		},
 		{
-			Name:    "Dates",
+			Name:    i18n.T(ctx, "templates.variables.dates"),
 			NameKey: "templates.variables.dates",
 			Variables: []Variable{
-				{Key: "today.date", Label: "Today's Date", LabelKey: "templates.variables.today_date", Example: "2026-01-19"},
-				{Key: "today.date_long", Label: "Today (Long)", LabelKey: "templates.variables.today_date_long", Example: "January 19, 2026"},
-				{Key: "today.year", Label: "Current Year", LabelKey: "templates.variables.today_year", Example: "2026"},
+				{Key: "today.date", Label: i18n.T(ctx, "templates.variables.today_date"), LabelKey: "templates.variables.today_date", Example: "2026-01-19"},
+				{Key: "today.date_long", Label: i18n.T(ctx, "templates.variables.today_date_long"), LabelKey: "templates.variables.today_date_long", Example: "January 19, 2026"},
+				{Key: "today.year", Label: i18n.T(ctx, "templates.variables.today_year"), LabelKey: "templates.variables.today_year", Example: "2026"},
 			},
 		},
 	}

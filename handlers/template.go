@@ -260,7 +260,7 @@ func DeleteTemplateHandler(c echo.Context) error {
 
 // GetTemplateVariablesHandler returns the variable dictionary for the editor
 func GetTemplateVariablesHandler(c echo.Context) error {
-	variables := services.GetVariableDictionary()
+	variables := services.GetVariableDictionary(c.Request().Context())
 	return c.JSON(http.StatusOK, variables)
 }
 
