@@ -27,75 +27,71 @@ templ Compliance(ctx context.Context, title string, csrfToken string, seo *model
 				</div>
 			</div>
 		</section>
-		<!-- Compliance Cards -->
+		<!-- Security Practices Section -->
 		<section class="section border-t border-white/[0.06]">
 			<div class="container mx-auto px-6">
 				<div class="grid md:grid-cols-2 gap-8 mx-auto">
-					<!-- SOC 2 -->
+					<!-- HTTPS Encryption -->
 					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal group">
 						<div class="flex gap-6 items-start">
 							<div class="icon-container-lg shrink-0">
-								<span class="text-xl font-bold text-foreground">SOC2</span>
+								<svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+								</svg>
 							</div>
 							<div>
-								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.soc2_title") }</h3>
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.encryption_title") }</h3>
 								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.compliance.soc2_desc") }
+									{ i18n.T(ctx, "pages.compliance.encryption_desc") }
 								</p>
-								<div class="mt-4">
-									<span class="badge badge-success">Certified</span>
-								</div>
 							</div>
 						</div>
 					</div>
-					<!-- GDPR -->
+					<!-- Secure Authentication -->
 					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-1 group">
 						<div class="flex gap-6 items-start">
 							<div class="icon-container-lg shrink-0">
-								<span class="text-xl font-bold text-foreground">GDPR</span>
+								<svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+								</svg>
 							</div>
 							<div>
-								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.gdpr_title") }</h3>
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.auth_title") }</h3>
 								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.compliance.gdpr_desc") }
+									{ i18n.T(ctx, "pages.compliance.auth_desc") }
 								</p>
-								<div class="mt-4">
-									<span class="badge badge-success">Compliant</span>
-								</div>
 							</div>
 						</div>
 					</div>
-					<!-- HIPAA Ready -->
+					<!-- Data Privacy -->
 					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-2 group">
 						<div class="flex gap-6 items-start">
 							<div class="icon-container-lg shrink-0">
-								<span class="text-2xl">🏥</span>
+								<svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+								</svg>
 							</div>
 							<div>
-								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.hipaa_title") }</h3>
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.privacy_title") }</h3>
 								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.compliance.hipaa_desc") }
+									{ i18n.T(ctx, "pages.compliance.privacy_desc") }
 								</p>
-								<div class="mt-4">
-									<span class="badge badge-accent">Ready</span>
-								</div>
 							</div>
 						</div>
 					</div>
-					<!-- ISO 27001 -->
+					<!-- Role-Based Access -->
 					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-3 group">
 						<div class="flex gap-6 items-start">
 							<div class="icon-container-lg shrink-0">
-								<span class="text-2xl">🌐</span>
+								<svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+								</svg>
 							</div>
 							<div>
-								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.iso_title") }</h3>
+								<h3 class="text-h3 mb-3">{ i18n.T(ctx, "pages.compliance.access_title") }</h3>
 								<p class="text-body text-muted leading-relaxed">
-									{ i18n.T(ctx, "pages.compliance.iso_desc") }
+									{ i18n.T(ctx, "pages.compliance.access_desc") }
 								</p>
-								<div class="mt-4">
-									<span class="badge badge-success">Certified</span>
-								</div>
 							</div>
 						</div>
 					</div>

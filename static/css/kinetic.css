@@ -516,8 +516,6 @@ body::before {
   opacity: 0.4;
 }
 
-.blob-2 {
-}
 /* ============================================
    ANIMATION UTILITIES
    ============================================ */
@@ -584,12 +582,6 @@ body::before {
 .hero-tilt-wrapper:hover .hero-tilt {
   transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.02);
 }
-
-/* Enhanced Bento Card Hover */
-.card-hover {
-}
-
-
 
 /* ============================================
    UTILITY CLASSES
@@ -1304,6 +1296,27 @@ body::before {
   .sticky-cta-mobile {
     display: none;
   }
+}
+
+/* ============================================
+   SECTION DIVIDERS
+   ============================================ */
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, 
+    transparent, 
+    rgba(94, 106, 210, 0.3), 
+    rgba(139, 92, 246, 0.2),
+    rgba(94, 106, 210, 0.3),
+    transparent
+  );
+  margin: var(--space-8) 0;
+}
+
+.section-divider-lg {
+  height: 2px;
+  margin: var(--space-16) 0;
 }
 
 /* ============================================

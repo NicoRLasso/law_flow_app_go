@@ -32,21 +32,29 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						</p>
 						<!-- Dual CTA -->
 						<div class="flex flex-col sm:flex-row gap-4 mb-8">
-							<a href="/register" class="btn btn-cta btn-lg animate-pulse-glow">
-								{ i18n.T(ctx, "landing.hero.cta_primary") }
+							<a href="/contact" class="btn btn-cta btn-lg animate-pulse-glow">
+								{ i18n.T(ctx, "landing.pricing.book_demo") }
 								<span class="ml-2">→</span>
 							</a>
-							<a href="#demo" class="btn btn-cta-secondary btn-lg group">
-								<span class="mr-2">▶</span>
+							<a href="#features" class="btn btn-cta-secondary btn-lg group">
+								<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+								</svg>
 								{ i18n.T(ctx, "landing.hero.cta_secondary") }
 							</a>
 						</div>
-						<!-- Social proof mini-bar -->
+						<!-- Social proof mini-bar with proper icons -->
 						<div class="flex items-center gap-4 text-body text-muted">
-							<div class="avatar-stack">
-								<div class="w-8 h-8 rounded-full bg-accent/30 border-2 border-background"></div>
-								<div class="w-8 h-8 rounded-full bg-accent/40 border-2 border-background"></div>
-								<div class="w-8 h-8 rounded-full bg-accent/50 border-2 border-background"></div>
+							<div class="flex -space-x-2">
+								<div class="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-purple-500 border-2 border-background flex items-center justify-center">
+									<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+								</div>
+								<div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-2 border-background flex items-center justify-center">
+									<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+								</div>
+								<div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-accent border-2 border-background flex items-center justify-center">
+									<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+								</div>
 							</div>
 							<span>{ i18n.T(ctx, "landing.hero.social_proof") }</span>
 						</div>
@@ -77,83 +85,39 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 										height="590"
 									/>
 								</picture>
-								<!-- Floating feature callouts -->
-								<div class="absolute -left-4 lg:-left-8 top-1/4 card card-glass p-3 animate-float hidden md:flex">
-									<div class="flex items-center gap-2">
-										<span class="text-xl">⚡</span>
-										<span class="text-body font-semibold">60% faster</span>
-									</div>
-								</div>
-								<div class="absolute -right-4 lg:-right-8 bottom-1/3 card card-glass p-3 animate-float-delayed hidden md:flex">
-									<div class="flex items-center gap-2">
-										<span class="text-xl">📈</span>
-										<span class="text-body font-semibold">+25% revenue</span>
-									</div>
-								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
-		<!-- Logo Carousel Section -->
+		<!-- Feature Highlights Bar (replaces logo carousel) -->
 		<section class="py-12 border-y border-white/[0.06] overflow-hidden">
 			<div class="container mx-auto px-6">
-				<p class="text-label text-muted text-center mb-8">
-					{ i18n.T(ctx, "landing.logos.title") }
-				</p>
-				<div class="marquee marquee-slow">
-					<div class="marquee-content flex gap-16 items-center">
-						<!-- Partner logos (duplicated for seamless loop) -->
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">⚖️</span>
-							<span class="text-body font-semibold text-muted">Wilson & Partners</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🏛️</span>
-							<span class="text-body font-semibold text-muted">Sterling Law Group</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">📜</span>
-							<span class="text-body font-semibold text-muted">Atlas Legal</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🔱</span>
-							<span class="text-body font-semibold text-muted">Trident Associates</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🦁</span>
-							<span class="text-body font-semibold text-muted">Lionheart Law</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🌟</span>
-							<span class="text-body font-semibold text-muted">Polaris Legal</span>
-						</div>
-						<!-- Duplicate for seamless loop -->
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">⚖️</span>
-							<span class="text-body font-semibold text-muted">Wilson & Partners</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🏛️</span>
-							<span class="text-body font-semibold text-muted">Sterling Law Group</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">📜</span>
-							<span class="text-body font-semibold text-muted">Atlas Legal</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🔱</span>
-							<span class="text-body font-semibold text-muted">Trident Associates</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🦁</span>
-							<span class="text-body font-semibold text-muted">Lionheart Law</span>
-						</div>
-						<div class="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-							<span class="text-2xl">🌟</span>
-							<span class="text-body font-semibold text-muted">Polaris Legal</span>
-						</div>
+				<div class="flex flex-wrap justify-center gap-6 md:gap-12">
+					<div class="flex items-center gap-3 px-4 py-2">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+						</svg>
+						<span class="text-body font-medium text-muted">{ i18n.T(ctx, "landing.highlights.secure") }</span>
+					</div>
+					<div class="flex items-center gap-3 px-4 py-2">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+						</svg>
+						<span class="text-body font-medium text-muted">{ i18n.T(ctx, "landing.highlights.fast") }</span>
+					</div>
+					<div class="flex items-center gap-3 px-4 py-2">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+						</svg>
+						<span class="text-body font-medium text-muted">{ i18n.T(ctx, "landing.highlights.responsive") }</span>
+					</div>
+					<div class="flex items-center gap-3 px-4 py-2">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+						</svg>
+						<span class="text-body font-medium text-muted">{ i18n.T(ctx, "landing.highlights.multilingual") }</span>
 					</div>
 				</div>
 			</div>
@@ -167,12 +131,7 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					x-intersect.once="shown = true"
 				>
 					<div class="text-center reveal reveal-stagger-1" :class="shown && 'visible'">
-						<div
-							class="text-5xl font-semibold text-gradient mb-2 counter-value"
-							x-data="{ count: 0 }"
-							x-init="$watch('shown', (value) => { if(value) animateCounter($el, 10000, 2000) })"
-							x-text="count.toLocaleString()"
-						>0</div>
+						<div class="text-5xl font-semibold text-gradient mb-2">✓</div>
 						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.cases") }</div>
 					</div>
 					<div class="text-center reveal reveal-stagger-2" :class="shown && 'visible'">
@@ -180,12 +139,7 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.uptime") }</div>
 					</div>
 					<div class="text-center reveal reveal-stagger-3" :class="shown && 'visible'">
-						<div
-							class="text-5xl font-semibold text-gradient mb-2 counter-value"
-							x-data="{ count: 0 }"
-							x-init="$watch('shown', (value) => { if(value) animateCounter($el, 500, 2000) })"
-							x-text="count.toLocaleString()"
-						>0</div>
+						<div class="text-5xl font-semibold text-gradient mb-2">∞</div>
 						<div class="text-body text-muted">{ i18n.T(ctx, "landing.stats.firms") }</div>
 					</div>
 					<div class="text-center reveal reveal-stagger-4" :class="shown && 'visible'">
@@ -212,24 +166,23 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						<div class="flex flex-col h-full items-center w-full">
 							<div class="mb-6 w-full flex flex-col items-center">
 								<div class="icon-container-lg mb-6">
-									<span class="text-3xl">📁</span>
+									<svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+									</svg>
 								</div>
 								<h3 class="text-h2 mb-4">{ i18n.T(ctx, "landing.features.case_management.title") }</h3>
 								<p class="text-body text-muted leading-relaxed max-w-2xl mx-auto">
 									{ i18n.T(ctx, "landing.features.case_management.description") }
 								</p>
 							</div>
-							<div class="mt-auto">
-								<a href="#" class="text-body text-accent hover:text-accent-bright inline-flex items-center gap-2 transition-colors">
-									{ i18n.T(ctx, "common.learn_more") } <span>→</span>
-								</a>
-							</div>
 						</div>
 					</div>
 					<!-- Small Card 1 - Workflow Automation -->
 					<div class="md:col-span-4 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-1 flex flex-col items-center text-center group">
 						<div class="icon-container mb-4">
-							<span class="text-2xl">⚡</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.automation.title") }</h3>
 						<p class="text-body text-muted">
@@ -239,7 +192,9 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<!-- Small Card 2 - Client Portal -->
 					<div class="md:col-span-2 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-2 flex flex-col items-center text-center group">
 						<div class="icon-container mb-4">
-							<span class="text-2xl">👥</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.portal.title") }</h3>
 						<p class="text-body text-muted">
@@ -249,7 +204,9 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<!-- small Card 3 - Time Tracking -->
 					<div class="md:col-span-2 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-3 flex flex-col items-center text-center group">
 						<div class="icon-container mb-4">
-							<span class="text-2xl">⏱️</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.time.title") }</h3>
 						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
@@ -259,7 +216,9 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<!-- small Card 4 - Document Management -->
 					<div class="md:col-span-4 card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-4 flex flex-col items-center text-center group">
 						<div class="icon-container mb-4">
-							<span class="text-2xl">📄</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-3">{ i18n.T(ctx, "landing.features.documents.title") }</h3>
 						<p class="text-body text-muted mb-4 max-w-lg mx-auto">
@@ -267,14 +226,10 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						</p>
 					</div>
 				</div>
-				<!-- Features CTA -->
-				<div class="text-center mt-12 reveal">
-					<a href="#" class="btn btn-secondary btn-md">
-						{ i18n.T(ctx, "landing.features.cta") } →
-					</a>
-				</div>
 			</div>
 		</section>
+		<!-- Gradient Divider -->
+		<div class="section-divider"></div>
 		<!-- Benefits Section -->
 		<section class="section relative" id="benefits">
 			<div class="container mx-auto px-6">
@@ -286,53 +241,61 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<!-- Benefit 1 -->
 					<div class="p-12 border-b border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center reveal">
 						<div class="icon-container mx-auto mb-6">
-							<span class="text-2xl">🚀</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.time.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
 							{ i18n.T(ctx, "landing.benefits.time.description") }
 						</p>
 						<div class="mt-4">
-							<span class="badge badge-success">-60% { i18n.T(ctx, "landing.benefits.time.metric") }</span>
+							<span class="badge badge-success">{ i18n.T(ctx, "landing.benefits.time.metric") }</span>
 						</div>
 					</div>
 					<!-- Benefit 2 -->
 					<div class="p-12 border-b border-white/[0.06] card-hover transition-all duration-300 group text-center reveal reveal-stagger-1">
 						<div class="icon-container mx-auto mb-6">
-							<span class="text-2xl">💰</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.revenue.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
 							{ i18n.T(ctx, "landing.benefits.revenue.description") }
 						</p>
 						<div class="mt-4">
-							<span class="badge badge-success">+25% { i18n.T(ctx, "landing.benefits.revenue.metric") }</span>
+							<span class="badge badge-success">{ i18n.T(ctx, "landing.benefits.revenue.metric") }</span>
 						</div>
 					</div>
 					<!-- Benefit 3 -->
 					<div class="p-12 border-b md:border-b-0 border-r-0 md:border-r border-white/[0.06] card-hover transition-all duration-300 group text-center reveal reveal-stagger-2">
 						<div class="icon-container mx-auto mb-6">
-							<span class="text-2xl">🤝</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.collaboration.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
 							{ i18n.T(ctx, "landing.benefits.collaboration.description") }
 						</p>
 						<div class="mt-4">
-							<span class="badge badge-success">3x { i18n.T(ctx, "landing.benefits.collaboration.metric") }</span>
+							<span class="badge badge-success">{ i18n.T(ctx, "landing.benefits.collaboration.metric") }</span>
 						</div>
 					</div>
 					<!-- Benefit 4 -->
 					<div class="p-12 card-hover transition-all duration-300 group text-center reveal reveal-stagger-3">
 						<div class="icon-container mx-auto mb-6">
-							<span class="text-2xl">🔒</span>
+							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+							</svg>
 						</div>
 						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "landing.benefits.security.title") }</h3>
 						<p class="text-body text-muted leading-relaxed">
 							{ i18n.T(ctx, "landing.benefits.security.description") }
 						</p>
 						<div class="mt-4">
-							<span class="badge badge-success">SOC 2 Type II</span>
+							<span class="badge badge-success">HTTPS</span>
 						</div>
 					</div>
 				</div>
@@ -379,82 +342,24 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-		<!-- Testimonials Section -->
+		<!-- Community Section (replaces testimonials) -->
 		<section class="section">
 			<div class="container mx-auto px-6">
-				<div class="text-center mb-16 reveal">
-					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.testimonials.label") }</span>
-					<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "landing.testimonials.title") }</h2>
-				</div>
-				<div class="grid md:grid-cols-3 gap-6 w-full mx-auto items-stretch">
-					<div class="card card-glass card-hover p-8 reveal h-full text-center">
-						<div class="mb-6">
-							<div class="flex gap-1 mb-4 justify-center">
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-							</div>
-							<p class="text-body text-muted leading-relaxed mb-6">
-								"{ i18n.T(ctx, "landing.testimonials.testimonial1.quote") }"
-							</p>
+				<div class="w-full mx-auto">
+					<div class="card card-gradient p-12 text-center reveal">
+						<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
+							<svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+							</svg>
 						</div>
-						<div class="flex items-center gap-4 justify-center">
-							<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-								<span class="text-xl">👩‍💼</span>
-							</div>
-							<div>
-								<div class="text-body font-semibold">{ i18n.T(ctx, "landing.testimonials.testimonial1.name") }</div>
-								<div class="text-body text-subtle">{ i18n.T(ctx, "landing.testimonials.testimonial1.title") }</div>
-							</div>
-						</div>
-					</div>
-					<div class="card card-glass card-hover p-8 reveal reveal-stagger-1 h-full text-center">
-						<div class="mb-6">
-							<div class="flex gap-1 mb-4 justify-center">
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-							</div>
-							<p class="text-body text-muted leading-relaxed mb-6">
-								"{ i18n.T(ctx, "landing.testimonials.testimonial2.quote") }"
-							</p>
-						</div>
-						<div class="flex items-center gap-4 justify-center">
-							<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-								<span class="text-xl">👨‍💼</span>
-							</div>
-							<div>
-								<div class="text-body font-semibold">{ i18n.T(ctx, "landing.testimonials.testimonial2.name") }</div>
-								<div class="text-body text-subtle">{ i18n.T(ctx, "landing.testimonials.testimonial2.title") }</div>
-							</div>
-						</div>
-					</div>
-					<div class="card card-glass card-hover p-8 reveal reveal-stagger-2 h-full text-center">
-						<div class="mb-6">
-							<div class="flex gap-1 mb-4 justify-center">
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-								<span class="text-accent">★</span>
-							</div>
-							<p class="text-body text-muted leading-relaxed mb-6">
-								"{ i18n.T(ctx, "landing.testimonials.testimonial3.quote") }"
-							</p>
-						</div>
-						<div class="flex items-center gap-4 justify-center">
-							<div class="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-								<span class="text-xl">👩‍⚖️</span>
-							</div>
-							<div>
-								<div class="text-body font-semibold">{ i18n.T(ctx, "landing.testimonials.testimonial3.name") }</div>
-								<div class="text-body text-subtle">{ i18n.T(ctx, "landing.testimonials.testimonial3.title") }</div>
-							</div>
-						</div>
+						<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "landing.community.label") }</span>
+						<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "landing.community.title") }</h2>
+						<p class="text-body-lg text-muted mb-8 max-w-2xl mx-auto">
+							{ i18n.T(ctx, "landing.community.description") }
+						</p>
+						<a href="/contact" class="btn btn-cta btn-lg">
+							{ i18n.T(ctx, "landing.community.cta") }
+						</a>
 					</div>
 				</div>
 			</div>
@@ -467,119 +372,20 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<h2 class="text-h1 text-gradient mb-6">{ i18n.T(ctx, "landing.pricing.title") }</h2>
 					<p class="text-body-lg text-muted">{ i18n.T(ctx, "landing.pricing.subtitle") }</p>
 				</div>
-				<div class="grid lg:grid-cols-3 gap-6 w-full mx-auto items-stretch mt-4">
-					<!-- Starter Plan -->
-					<div class="card card-hover p-8 reveal h-full flex flex-col text-center">
-						<div class="mb-8">
-							<div class="text-label text-muted mb-2">{ i18n.T(ctx, "landing.pricing.starter.name") }</div>
-							<div class="flex items-baseline gap-2 mb-4 justify-center">
-								<span class="text-5xl font-semibold text-gradient">$99</span>
-								<span class="text-body text-muted">/{ i18n.T(ctx, "landing.pricing.per_month") }</span>
-							</div>
-							<p class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.description") }</p>
+				<div class="w-full mx-auto mt-8 reveal">
+					<div class="card card-gradient p-12 text-center border border-white/[0.06]">
+						<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
+							<svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+							</svg>
 						</div>
-						<ul class="space-y-4 mb-8">
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature1") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature2") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature3") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature4") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.starter.feature5") }</span>
-							</li>
-						</ul>
-						<a href="/register" class="btn btn-secondary btn-md w-full mt-auto">{ i18n.T(ctx, "landing.pricing.get_started") }</a>
-					</div>
-					<!-- Professional Plan (Featured) -->
-					<div class="card card-gradient card-hover p-8 relative reveal reveal-stagger-1 border-2 border-accent/30 h-full flex flex-col text-center" style="overflow: visible;">
-						<div class="absolute -top-3 left-1/2 -translate-x-1/2">
-							<span class="badge badge-new">{ i18n.T(ctx, "landing.pricing.popular") }</span>
-						</div>
-						<div class="mb-8 mt-4">
-							<div class="text-label text-accent mb-2">{ i18n.T(ctx, "landing.pricing.professional.name") }</div>
-							<div class="flex items-baseline gap-2 mb-4 justify-center">
-								<span class="text-5xl font-semibold text-gradient">$299</span>
-								<span class="text-body text-muted">/{ i18n.T(ctx, "landing.pricing.per_month") }</span>
-							</div>
-							<p class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.description") }</p>
-						</div>
-						<ul class="space-y-4 mb-8">
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature1") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature2") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature3") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature4") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature5") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.professional.feature6") }</span>
-							</li>
-						</ul>
-						<a href="/register" class="btn btn-cta btn-md w-full mt-auto">{ i18n.T(ctx, "landing.pricing.get_started") }</a>
-					</div>
-					<!-- Enterprise Plan -->
-					<div class="card card-hover p-8 reveal reveal-stagger-2 h-full flex flex-col text-center">
-						<div class="mb-8">
-							<div class="text-label text-muted mb-2">{ i18n.T(ctx, "landing.pricing.enterprise.name") }</div>
-							<div class="flex items-baseline gap-2 mb-4 justify-center">
-								<span class="text-5xl font-semibold text-gradient">$999</span>
-								<span class="text-body text-muted">/{ i18n.T(ctx, "landing.pricing.per_month") }</span>
-							</div>
-							<p class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.description") }</p>
-						</div>
-						<ul class="space-y-4 mb-8">
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature1") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature2") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature3") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature4") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature5") }</span>
-							</li>
-							<li class="flex items-start justify-center gap-3">
-								<span class="text-accent mt-1">✓</span>
-								<span class="text-body text-muted">{ i18n.T(ctx, "landing.pricing.enterprise.feature6") }</span>
-							</li>
-						</ul>
-						<a href="/contact" class="btn btn-secondary btn-md w-full mt-auto">{ i18n.T(ctx, "landing.pricing.contact_sales") }</a>
+						<h3 class="text-h2 mb-4">{ i18n.T(ctx, "landing.pricing.coming_soon") }</h3>
+						<p class="text-body-lg text-muted mb-8">
+							{ i18n.T(ctx, "landing.pricing.coming_soon_desc") }
+						</p>
+						<a href="/contact" class="btn btn-cta btn-lg">
+							{ i18n.T(ctx, "landing.pricing.book_demo") }
+						</a>
 					</div>
 				</div>
 			</div>
@@ -594,38 +400,42 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				<div class="flex flex-wrap justify-center gap-6 reveal">
 					<div class="trust-badge-card">
 						<div class="icon-container">
-							<span class="text-xl">🔒</span>
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+							</svg>
 						</div>
 						<div>
-							<div class="text-body font-semibold">SOC 2 Type II</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.soc2") }</div>
+							<div class="text-body font-semibold">{ i18n.T(ctx, "landing.trust.soc2") }</div>
 						</div>
 					</div>
 					<div class="trust-badge-card">
 						<div class="icon-container">
-							<span class="text-xl">🇪🇺</span>
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+							</svg>
 						</div>
 						<div>
-							<div class="text-body font-semibold">GDPR</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.gdpr") }</div>
+							<div class="text-body font-semibold">{ i18n.T(ctx, "landing.trust.gdpr") }</div>
 						</div>
 					</div>
 					<div class="trust-badge-card">
 						<div class="icon-container">
-							<span class="text-xl">🛡️</span>
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+							</svg>
 						</div>
 						<div>
-							<div class="text-body font-semibold">256-bit SSL</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.encryption") }</div>
+							<div class="text-body font-semibold">{ i18n.T(ctx, "landing.trust.encryption") }</div>
 						</div>
 					</div>
 					<div class="trust-badge-card">
 						<div class="icon-container">
-							<span class="text-xl">⚖️</span>
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+							</svg>
 						</div>
 						<div>
-							<div class="text-body font-semibold">ABA Approved</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.aba") }</div>
+							<div class="text-body font-semibold">{ i18n.T(ctx, "landing.trust.aba") }</div>
 						</div>
 					</div>
 				</div>
@@ -711,24 +521,23 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						<p class="text-body-lg text-muted mb-8 mx-auto leading-relaxed">
 							{ i18n.T(ctx, "landing.final_cta.subtitle") }
 						</p>
-						<!-- Inline email form -->
-						<form class="flex flex-col sm:flex-row gap-4 mx-auto mb-6">
-							<input
-								type="email"
-								placeholder={ i18n.T(ctx, "landing.final_cta.email_placeholder") }
-								class="input input-lg flex-1"
-							/>
-							<button type="submit" class="btn btn-cta btn-lg whitespace-nowrap">
-								{ i18n.T(ctx, "landing.final_cta.button") }
-							</button>
-						</form>
+						<!-- Email Link -->
+						<div class="flex flex-col sm:flex-row gap-4 mx-auto mb-6 justify-center">
+						<a href="/contact" class="btn btn-cta btn-lg whitespace-nowrap">
+								{ i18n.T(ctx, "landing.pricing.book_demo") }
+							</a>
+						</div>
 						<div class="flex items-center justify-center gap-6 text-body text-subtle">
 							<span class="flex items-center gap-2">
-								<span class="text-accent">✓</span>
+								<svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+								</svg>
 								{ i18n.T(ctx, "landing.final_cta.no_credit_card") }
 							</span>
 							<span class="flex items-center gap-2">
-								<span class="text-accent">✓</span>
+								<svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+								</svg>
 								{ i18n.T(ctx, "landing.final_cta.cancel_anytime") }
 							</span>
 						</div>
@@ -738,8 +547,8 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 		</section>
 		<!-- Sticky Mobile CTA -->
 		<div class="sticky-cta-mobile md:hidden">
-			<a href="/register" class="btn btn-cta btn-md w-full justify-center">
-				{ i18n.T(ctx, "landing.mobile_cta") }
+			<a href="/contact" class="btn btn-cta btn-md w-full justify-center">
+				{ i18n.T(ctx, "landing.pricing.book_demo") }
 			</a>
 		</div>
 	}

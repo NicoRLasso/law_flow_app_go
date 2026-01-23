@@ -13,6 +13,19 @@
     "view_response": "Ver Respuesta",
     "take_ticket": "Tomar Ticket"
   },
+  "contact_modal": {
+    "title": "Agendar Demo",
+    "description": "Complete el formulario a continuación para programar una demostración personalizada de LexLegal Cloud.",
+    "name": "Nombre Completo",
+    "name_placeholder": "Ingrese su nombre completo",
+    "email": "Correo Electrónico",
+    "email_placeholder": "Ingrese su correo electrónico",
+    "message": "Mensaje (Opcional)",
+    "message_placeholder": "Cuéntenos sobre su firma y qué está buscando...",
+    "error": "Algo salió mal. Por favor intente de nuevo más tarde.",
+    "success_title": "¡Solicitud Enviada!",
+    "success_message": "¡Gracias! Nuestro equipo lo contactará en breve para programar su demostración."
+  },
   "nav": {
     "home": "Inicio",
     "dashboard": "Panel de Control",
@@ -267,21 +280,21 @@
       "section5_content": "Puede controlar y/o eliminar cookies como desee. Puede eliminar todas las cookies que ya están en su computadora y puede configurar la mayoría de los navegadores para evitar que se coloquen. Sin embargo, si hace esto, es posible que tenga que ajustar manualmente algunas preferencias cada vez que visite un sitio y algunos servicios y funcionalidades pueden no funcionar."
     },
     "compliance": {
-      "title": "Cumplimiento",
-      "label": "Cumplimiento",
-      "hero_title": "Cumpliendo Estándares",
-      "hero_highlight": "Globales",
-      "hero_desc": "Estamos dedicados a cumplir con los estándares de seguridad y privacidad más estrictos en la industria legal.",
-      "soc2_title": "SOC 2 Tipo II",
-      "soc2_desc": "Completamos con éxito la auditoría SOC 2 Tipo II de AICPA.",
-      "gdpr_title": "Cumplimiento GDPR",
-      "gdpr_desc": "Cumplimos totalmente con el Reglamento General de Protección de Datos (GDPR).",
-      "hipaa_title": "Listo para HIPAA",
-      "hipaa_desc": "Nuestra infraestructura cumple con los requisitos de HIPAA para firmas que manejan asuntos legales relacionados con la salud.",
-      "iso_title": "ISO 27001",
-      "iso_desc": "Sistema de gestión de seguridad de la información certificado según estándares internacionales.",
-      "cta_title": "¿Preguntas sobre cumplimiento?",
-      "cta_desc": "Nuestro equipo está listo para discutir sus requisitos específicos de cumplimiento."
+      "title": "Seguridad",
+      "label": "Seguridad",
+      "hero_title": "Seguridad",
+      "hero_highlight": "Primero",
+      "hero_desc": "Priorizamos la seguridad y privacidad de tus datos con las mejores prácticas de la industria.",
+      "encryption_title": "Encriptación HTTPS",
+      "encryption_desc": "Todos los datos transmitidos entre tu navegador y nuestros servidores están encriptados usando TLS/SSL, asegurando que tu información permanezca privada y segura.",
+      "auth_title": "Autenticación Segura",
+      "auth_desc": "Hash de contraseñas con bcrypt y gestión segura de sesiones protegen tu cuenta de accesos no autorizados.",
+      "privacy_title": "Privacidad de Datos",
+      "privacy_desc": "Tus datos te pertenecen. Seguimos prácticas estrictas de manejo de datos y nunca compartimos tu información con terceros.",
+      "access_title": "Control de Acceso por Roles",
+      "access_desc": "Permisos granulares aseguran que los usuarios solo accedan a la información que necesitan. Administradores, abogados, personal y clientes tienen niveles de acceso apropiados.",
+      "cta_title": "¿Preguntas sobre seguridad?",
+      "cta_desc": "Nuestro equipo está listo para discutir tus requisitos específicos de seguridad."
     },
     "about": {
       "title": "Sobre Nosotros",
@@ -467,22 +480,28 @@
   },
   "landing": {
     "hero": {
-      "label": "Ahora con Automatización con IA",
+      "label": "Gestión de Práctica Legal",
       "title_prefix": "Transforma Tu",
       "title_suffix": "Práctica Legal",
-      "description": "Optimiza las operaciones de tu firma con gestión inteligente de casos, flujos de trabajo automatizados y colaboración segura con clientes. Enfócate en ejercer el derecho, no en el papeleo.",
+      "description": "Optimiza las operaciones de tu firma con gestión de casos, plantillas de documentos, programación de citas y colaboración segura con clientes. Enfócate en ejercer el derecho, no en el papeleo.",
       "cta_primary": "Iniciar Prueba Gratis",
-      "cta_secondary": "Ver Demo",
+      "cta_secondary": "Explorar Características",
       "trial_note": "Prueba gratis de 14 días · Sin tarjeta de crédito",
-      "social_proof": "Únete a más de 500 firmas que ya usan LexLegal Cloud"
+      "social_proof": "Confiado por firmas de abogados en todo el mundo"
+    },
+    "highlights": {
+      "secure": "Seguridad Bancaria",
+      "fast": "Ultra Rápido",
+      "responsive": "Móvil Optimizado",
+      "multilingual": "Multilenguaje"
     },
     "logos": {
-      "title": "Confiado por más de 500 firmas de abogados en todo el mundo"
+      "title": "Confiado por firmas de abogados en todo el mundo"
     },
     "stats": {
-      "cases": "Casos Gestionados",
+      "cases": "Gestión de Casos",
       "uptime": "SLA de Disponibilidad",
-      "firms": "Firmas de Abogados",
+      "firms": "Escalable",
       "support": "Soporte"
     },
     "features": {
@@ -491,24 +510,24 @@
       "subtitle": "Herramientas poderosas diseñadas específicamente para prácticas legales modernas",
       "cta": "Ver Todas las Características",
       "case_management": {
-        "title": "Gestión Inteligente de Casos",
-        "description": "Centraliza toda la información de casos con organización impulsada por IA, búsqueda inteligente y flujos de trabajo automatizados. Rastrea plazos, gestiona documentos y colabora sin problemas con tu equipo."
+        "title": "Gestión de Casos",
+        "description": "Centraliza toda la información de casos con organización y búsqueda inteligente. Rastrea el estado de casos, gestiona documentos y colabora sin problemas con tu equipo."
       },
       "automation": {
-        "title": "Automatización de Flujos",
-        "description": "Automatiza tareas repetitivas y crea flujos de trabajo personalizados que ahorran horas cada semana."
+        "title": "Registros de Auditoría e Historial",
+        "description": "Mantén un registro de todos los cambios y actividades con registros de auditoría detallados e historial de casos."
       },
       "portal": {
         "title": "Portal de Clientes",
-        "description": "Acceso seguro del cliente a actualizaciones de casos, documentos y comunicación en tiempo real."
+        "description": "Acceso seguro del cliente a actualizaciones de casos y documentos."
       },
       "documents": {
-        "title": "Gestión de Documentos",
-        "description": "Almacena, organiza y comparte documentos con control de versiones, firmas electrónicas y capacidades de búsqueda avanzada."
+        "title": "Plantillas de Documentos",
+        "description": "Crea y gestiona plantillas de documentos reutilizables con sustitución de variables para generación rápida de documentos."
       },
       "time": {
-        "title": "Control de Tiempo y Facturación",
-        "description": "Rastrea horas facturables sin esfuerzo con temporizadores integrados, facturación automatizada e informes detallados."
+        "title": "Citas y Programación",
+        "description": "Gestiona citas con calendario integrado, configuración de disponibilidad y reservas de clientes."
       }
     },
     "showcase": {
@@ -525,22 +544,22 @@
       "title": "Por Qué Elegir LexLegal Cloud",
       "time": {
         "title": "Ahorra Tiempo",
-        "description": "Automatiza tareas rutinarias y reduce la carga administrativa. Enfócate en lo que más importa: servir a los clientes y ganar casos.",
-        "metric": "Tiempo Admin"
+        "description": "Optimiza la gestión de casos y reduce la carga administrativa. Enfócate en lo que más importa: servir a los clientes y ganar casos.",
+        "metric": "Eficiencia"
       },
       "revenue": {
-        "title": "Aumenta Ingresos",
-        "description": "Captura cada hora facturable con seguimiento preciso del tiempo. Las firmas que usan LexLegal Cloud reportan aumentos significativos en horas facturables.",
-        "metric": "Horas Facturables"
+        "title": "Mantente Organizado",
+        "description": "Mantén toda la información de tus casos, documentos y datos de clientes en una plataforma centralizada. Nunca pierdas de vista los detalles importantes.",
+        "metric": "Organización"
       },
       "collaboration": {
         "title": "Mejora la Colaboración",
-        "description": "Mantén a tu equipo alineado con actualizaciones en tiempo real, calendarios compartidos, gestión de tareas y herramientas de comunicación integradas.",
-        "metric": "Más Eficiente"
+        "description": "Mantén a tu equipo alineado con acceso compartido a casos, programación de citas y permisos basados en roles.",
+        "metric": "Trabajo en Equipo"
       },
       "security": {
-        "title": "Seguridad Empresarial",
-        "description": "Encriptación de nivel bancario, cumplimiento SOC 2 Tipo II y estándares de seguridad líderes en la industria mantienen tus datos sensibles protegidos."
+        "title": "Plataforma Segura",
+        "description": "Tus datos están protegidos con encriptación y autenticación segura. Los controles de acceso basados en roles mantienen la información sensible segura."
       }
     },
     "how_it_works": {
@@ -558,6 +577,12 @@
         "title": "Empieza a Gestionar",
         "description": "Comienza a optimizar tu práctica inmediatamente con nuestra interfaz intuitiva y configuración guiada."
       }
+    },
+    "community": {
+      "label": "Únete",
+      "title": "Sé Parte del Futuro de la Tecnología Legal",
+      "description": "Estamos construyendo la próxima generación de gestión de práctica legal. Únete a nuestra comunidad creciente de firmas de abogados innovadoras.",
+      "cta": "Obtener Acceso Anticipado"
     },
     "testimonials": {
       "label": "Testimonios",
@@ -586,43 +611,17 @@
       "get_started": "Comenzar",
       "contact_sales": "Contactar Ventas",
       "popular": "Más Popular",
-      "starter": {
-        "name": "Inicial",
-        "description": "Perfecto para profesionales independientes",
-        "feature1": "Hasta 50 casos activos",
-        "feature2": "2 miembros del equipo",
-        "feature3": "Flujos de automatización básicos",
-        "feature4": "Acceso al portal de clientes",
-        "feature5": "Soporte por email"
-      },
-      "professional": {
-        "name": "Profesional",
-        "description": "Para firmas en crecimiento",
-        "feature1": "Casos ilimitados",
-        "feature2": "10 miembros del equipo",
-        "feature3": "Automatización avanzada de flujos",
-        "feature4": "Integraciones personalizadas",
-        "feature5": "Soporte prioritario",
-        "feature6": "Analíticas avanzadas"
-      },
-      "enterprise": {
-        "name": "Empresarial",
-        "description": "Para grandes organizaciones",
-        "feature1": "Todo en Profesional",
-        "feature2": "Miembros del equipo ilimitados",
-        "feature3": "Opciones de marca blanca",
-        "feature4": "Gerente de cuenta dedicado",
-        "feature5": "Soporte telefónico 24/7",
-        "feature6": "Desarrollo personalizado"
-      }
+      "coming_soon": "Muy Pronto",
+      "coming_soon_desc": "Estamos finalizando nuestros planes de precios. ¡Manténgase al tanto!",
+      "book_demo": "Agendar Demo"
     },
     "trust": {
-      "label": "Seguridad Empresarial",
-      "title": "Tus Datos, Totalmente Protegidos",
-      "soc2": "Certificado",
-      "gdpr": "Cumplimiento",
-      "encryption": "Encriptación de grado bancario",
-      "aba": "Aprobado por Tecnología"
+      "label": "Seguridad",
+      "title": "Tus Datos, Protegidos",
+      "soc2": "Auth Seguro",
+      "gdpr": "Privacidad",
+      "encryption": "Encriptación HTTPS",
+      "aba": "Acceso por Roles"
     },
     "faq": {
       "label": "Preguntas Frecuentes",
@@ -650,9 +649,8 @@
     },
     "final_cta": {
       "title": "¿Listo para Transformar tu Práctica?",
-      "subtitle": "Únete a cientos de firmas de abogados que ya usan LexLegal Cloud para optimizar operaciones, aumentar ingresos y ofrecer experiencias excepcionales a los clientes.",
-      "email_placeholder": "Ingresa tu email",
-      "button": "Iniciar Prueba Gratis",
+      "subtitle": "Contacte a nuestro equipo de soporte para cualquier pregunta o asistencia.",
+      "button": "Contactar Soporte",
       "no_credit_card": "Sin tarjeta de crédito",
       "cancel_anytime": "Cancela cuando quieras"
     },

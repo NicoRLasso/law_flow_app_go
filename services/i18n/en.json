@@ -13,6 +13,19 @@
     "view_response": "View Response",
     "take_ticket": "Take Ticket"
   },
+  "contact_modal": {
+    "title": "Book a Demo",
+    "description": "Fill out the form below to schedule a personalized demo of LexLegal Cloud.",
+    "name": "Full Name",
+    "name_placeholder": "Enter your full name",
+    "email": "Email Address",
+    "email_placeholder": "Enter your email address",
+    "message": "Message (Optional)",
+    "message_placeholder": "Tell us about your firm and what you're looking for...",
+    "error": "Something went wrong. Please try again later.",
+    "success_title": "Request Sent!",
+    "success_message": "Thank you! Our team will contact you shortly to schedule your demo."
+  },
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
@@ -268,21 +281,21 @@
       "section5_content": "You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed. If you do this, however, you may have to manually adjust some preferences every time you visit a site and some services and functionalities may not work."
     },
     "compliance": {
-      "title": "Compliance",
-      "label": "Compliance",
-      "hero_title": "Meeting Global",
-      "hero_highlight": "Standards",
-      "hero_desc": "We are dedicated to adhering to the stricter security and privacy standards in the legal industry.",
-      "soc2_title": "SOC 2 Type II",
-      "soc2_desc": "We successfully completed the AICPA Service Organization Control (SOC) 2 Type II audit.",
-      "gdpr_title": "GDPR Compliant",
-      "gdpr_desc": "We are fully compliant with the General Data Protection Regulation (GDPR).",
-      "hipaa_title": "HIPAA Ready",
-      "hipaa_desc": "Our infrastructure meets HIPAA requirements for firms handling healthcare-related legal matters.",
-      "iso_title": "ISO 27001",
-      "iso_desc": "Information security management system certified to international standards.",
-      "cta_title": "Questions about compliance?",
-      "cta_desc": "Our team is ready to discuss your specific compliance requirements."
+      "title": "Security",
+      "label": "Security",
+      "hero_title": "Security",
+      "hero_highlight": "First",
+      "hero_desc": "We prioritize the security and privacy of your data with industry best practices.",
+      "encryption_title": "HTTPS Encryption",
+      "encryption_desc": "All data transmitted between your browser and our servers is encrypted using TLS/SSL, ensuring your information remains private and secure.",
+      "auth_title": "Secure Authentication",
+      "auth_desc": "Password hashing with bcrypt and secure session management protect your account from unauthorized access.",
+      "privacy_title": "Data Privacy",
+      "privacy_desc": "Your data belongs to you. We follow strict data handling practices and never share your information with third parties.",
+      "access_title": "Role-Based Access Control",
+      "access_desc": "Granular permissions ensure that users only access the information they need. Administrators, lawyers, staff, and clients each have appropriate access levels.",
+      "cta_title": "Questions about security?",
+      "cta_desc": "Our team is ready to discuss your specific security requirements."
     },
     "about": {
       "title": "About Us",
@@ -469,22 +482,28 @@
   },
   "landing": {
     "hero": {
-      "label": "Now with AI-Powered Automation",
+      "label": "Legal Practice Management",
       "title_prefix": "Transform Your",
       "title_suffix": "Legal Practice",
-      "description": "Streamline your law firm operations with intelligent case management, automated workflows, and secure client collaboration. Focus on practicing law, not paperwork.",
+      "description": "Streamline your law firm operations with case management, document templates, appointment scheduling, and secure client collaboration. Focus on practicing law, not paperwork.",
       "cta_primary": "Start Free Trial",
-      "cta_secondary": "Watch Demo",
+      "cta_secondary": "Explore Features",
       "trial_note": "14-day free trial · No credit card required",
-      "social_proof": "Join 500+ firms already using LexLegal Cloud"
+      "social_proof": "Trusted by law firms worldwide"
+    },
+    "highlights": {
+      "secure": "Bank-Level Security",
+      "fast": "Lightning Fast",
+      "responsive": "Mobile Ready",
+      "multilingual": "Multi-Language"
     },
     "logos": {
-      "title": "Trusted by 500+ law firms worldwide"
+      "title": "Trusted by law firms worldwide"
     },
     "stats": {
-      "cases": "Cases Managed",
+      "cases": "Case Management",
       "uptime": "Uptime SLA",
-      "firms": "Law Firms",
+      "firms": "Scalable",
       "support": "Support"
     },
     "features": {
@@ -493,24 +512,24 @@
       "subtitle": "Powerful tools designed specifically for modern law practices",
       "cta": "See All Features",
       "case_management": {
-        "title": "Intelligent Case Management",
-        "description": "Centralize all case information with AI-powered organization, smart search, and automated workflows. Track deadlines, manage documents, and collaborate seamlessly with your team."
+        "title": "Case Management",
+        "description": "Centralize all case information with smart organization and search. Track case status, manage documents, and collaborate seamlessly with your team."
       },
       "automation": {
-        "title": "Workflow Automation",
-        "description": "Automate repetitive tasks and create custom workflows that save hours every week."
+        "title": "Audit Logs & History",
+        "description": "Keep track of all changes and activities with detailed audit logs and case history."
       },
       "portal": {
         "title": "Client Portal",
-        "description": "Secure client access to case updates, documents, and real-time communication."
+        "description": "Secure client access to case updates and documents."
       },
       "documents": {
-        "title": "Document Management",
-        "description": "Store, organize, and share documents with version control, e-signatures, and advanced search capabilities."
+        "title": "Document Templates",
+        "description": "Create and manage reusable document templates with variable substitution for quick document generation."
       },
       "time": {
-        "title": "Time Tracking & Billing",
-        "description": "Track billable hours effortlessly with integrated timers, automated invoicing, and detailed reporting."
+        "title": "Appointments & Scheduling",
+        "description": "Manage appointments with integrated calendar, availability settings, and client booking."
       }
     },
     "showcase": {
@@ -527,22 +546,22 @@
       "title": "Why Choose LexLegal Cloud",
       "time": {
         "title": "Save Time",
-        "description": "Automate routine tasks and reduce administrative overhead. Focus on what matters most—serving clients and winning cases.",
-        "metric": "Admin Time"
+        "description": "Streamline case management and reduce administrative overhead. Focus on what matters most—serving clients and winning cases.",
+        "metric": "Efficiency"
       },
       "revenue": {
-        "title": "Increase Revenue",
-        "description": "Capture every billable hour with accurate time tracking. Firms using LexLegal Cloud report significant increases in billable hours.",
-        "metric": "Billable Hours"
+        "title": "Stay Organized",
+        "description": "Keep all your case information, documents, and client data in one centralized platform. Never lose track of important details.",
+        "metric": "Organization"
       },
       "collaboration": {
         "title": "Improve Collaboration",
-        "description": "Keep your team aligned with real-time updates, shared calendars, task management, and integrated communication tools.",
-        "metric": "More Efficient"
+        "description": "Keep your team aligned with shared case access, appointment scheduling, and role-based permissions.",
+        "metric": "Teamwork"
       },
       "security": {
-        "title": "Enterprise Security",
-        "description": "Bank-level encryption, SOC 2 Type II compliance, and industry-leading security standards keep your sensitive data protected."
+        "title": "Secure Platform",
+        "description": "Your data is protected with encryption and secure authentication. Role-based access controls keep sensitive information safe."
       }
     },
     "how_it_works": {
@@ -560,6 +579,12 @@
         "title": "Start Managing",
         "description": "Begin streamlining your practice immediately with our intuitive interface and guided setup."
       }
+    },
+    "community": {
+      "label": "Join Us",
+      "title": "Be Part of the Future of Legal Tech",
+      "description": "We're building the next generation of legal practice management. Join our growing community of forward-thinking law firms.",
+      "cta": "Get Early Access"
     },
     "testimonials": {
       "label": "Testimonials",
@@ -588,43 +613,17 @@
       "get_started": "Get Started",
       "contact_sales": "Contact Sales",
       "popular": "Most Popular",
-      "starter": {
-        "name": "Starter",
-        "description": "Perfect for solo practitioners",
-        "feature1": "Up to 50 active cases",
-        "feature2": "2 team members",
-        "feature3": "Basic automation workflows",
-        "feature4": "Client portal access",
-        "feature5": "Email support"
-      },
-      "professional": {
-        "name": "Professional",
-        "description": "For growing law firms",
-        "feature1": "Unlimited cases",
-        "feature2": "10 team members",
-        "feature3": "Advanced workflow automation",
-        "feature4": "Custom integrations",
-        "feature5": "Priority support",
-        "feature6": "Advanced analytics"
-      },
-      "enterprise": {
-        "name": "Enterprise",
-        "description": "For large organizations",
-        "feature1": "Everything in Professional",
-        "feature2": "Unlimited team members",
-        "feature3": "White-label options",
-        "feature4": "Dedicated account manager",
-        "feature5": "24/7 phone support",
-        "feature6": "Custom development"
-      }
+      "coming_soon": "Coming Soon",
+      "coming_soon_desc": "We are currently finalizing our pricing plans. Stay tuned!",
+      "book_demo": "Book a Demo"
     },
     "trust": {
-      "label": "Enterprise Security",
-      "title": "Your Data, Fully Protected",
-      "soc2": "Certified",
-      "gdpr": "Compliant",
-      "encryption": "Bank-grade encryption",
-      "aba": "Tech Approved"
+      "label": "Security",
+      "title": "Your Data, Protected",
+      "soc2": "Secure Auth",
+      "gdpr": "Data Privacy",
+      "encryption": "HTTPS Encryption",
+      "aba": "Role-Based Access"
     },
     "faq": {
       "label": "FAQ",
@@ -652,9 +651,8 @@
     },
     "final_cta": {
       "title": "Ready to Transform Your Practice?",
-      "subtitle": "Join hundreds of law firms already using LexLegal Cloud to streamline operations, increase revenue, and deliver exceptional client experiences.",
-      "email_placeholder": "Enter your email",
-      "button": "Start Free Trial",
+      "subtitle": "Contact our support team for any questions or assistance.",
+      "button": "Email Support",
       "no_credit_card": "No credit card required",
       "cancel_anytime": "Cancel anytime"
     },

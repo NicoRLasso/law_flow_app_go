@@ -242,6 +242,7 @@ func main() {
 	e.GET("/terms", handlers.WebsiteTermsHandler)
 	e.GET("/cookies", handlers.WebsiteCookiesHandler)
 	e.GET("/compliance", handlers.WebsiteComplianceHandler)
+	e.POST("/api/website/contact", handlers.WebsiteContactSubmitHandler)
 
 	// Public case request routes (no authentication)
 	e.GET("/firm/:slug/request", handlers.PublicCaseRequestHandler)
