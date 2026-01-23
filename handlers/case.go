@@ -679,7 +679,15 @@ func CreateCaseModalHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch lawyers")
 	}
 
-	component := partials.CaseCreateModal(c.Request().Context(), clients, lawyers)
+	// Fetch domains for classification
+	var domains []models.CaseDomain
+	if err := db.DB.Where("firm_id = ? AND is_active = ?", currentFirm.ID, true).Order("`order` ASC, name ASC").Find(&domains).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch domains")
+	}
+
+	currentUser := middleware.GetCurrentUser(c)
+
+	component := partials.CaseCreateModal(c.Request().Context(), currentUser, clients, lawyers, domains)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -692,14 +700,24 @@ func CreateCaseHandler(c echo.Context) error {
 	clientID := c.FormValue("client_id")
 	clientRole := c.FormValue("client_role")
 	title := c.FormValue("title")
-	caseType := c.FormValue("case_type")
-	caseNumber := c.FormValue("case_number")
+	filingNumber := c.FormValue("filing_number")
 	description := c.FormValue("description")
 	assignedToID := c.FormValue("assigned_to_id")
 
+	// Classification
+	domainID := c.FormValue("domain_id")
+	branchID := c.FormValue("branch_id")
+	subtypeIDs := c.Request().Form["subtype_ids[]"]
+
 	// Validation
-	if clientID == "" || clientRole == "" || caseType == "" || caseNumber == "" || description == "" {
+	if clientID == "" || clientRole == "" || description == "" || domainID == "" || branchID == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "Missing required fields")
+	}
+
+	// Generate unique case number
+	caseNumber, err := services.EnsureUniqueCaseNumber(db.DB, currentFirm.ID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to generate case number")
 	}
 
 	now := time.Now()
@@ -709,16 +727,21 @@ func CreateCaseHandler(c echo.Context) error {
 		FirmID:          currentFirm.ID,
 		ClientID:        clientID,
 		CaseNumber:      caseNumber,
-		CaseType:        caseType,
+		CaseType:        "General", // Default value as we use classification now
 		Description:     description,
 		Status:          models.CaseStatusOpen,
 		OpenedAt:        now,
 		StatusChangedBy: &currentUser.ID,
 		StatusChangedAt: &now,
+		DomainID:        &domainID,
+		BranchID:        &branchID,
 	}
 
 	if title != "" {
 		newCase.Title = &title
+	}
+	if filingNumber != "" {
+		newCase.FilingNumber = &filingNumber
 	}
 	if clientRole != "" {
 		newCase.ClientRole = &clientRole
@@ -727,8 +750,28 @@ func CreateCaseHandler(c echo.Context) error {
 		newCase.AssignedToID = &assignedToID
 	}
 
-	if err := db.DB.Create(&newCase).Error; err != nil {
+	tx := db.DB.Begin()
+
+	if err := tx.Create(&newCase).Error; err != nil {
+		tx.Rollback()
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create case: "+err.Error())
+	}
+
+	// Link subtypes if provided
+	if len(subtypeIDs) > 0 {
+		var subtypes []models.CaseSubtype
+		if err := tx.Where("id IN ?", subtypeIDs).Find(&subtypes).Error; err != nil {
+			tx.Rollback()
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch subtypes")
+		}
+		if err := tx.Model(&newCase).Association("Subtypes").Append(subtypes); err != nil {
+			tx.Rollback()
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to link subtypes")
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to commit case")
 	}
 
 	// Audit logging
@@ -745,7 +788,7 @@ func CreateCaseHandler(c echo.Context) error {
 		newCase,
 	)
 
-	// Trigger reload of table via HTMX
+	// Trigger reload of table via HTMX header
 	c.Response().Header().Set("HX-Trigger", "reload-cases")
 
 	return c.NoContent(http.StatusOK)

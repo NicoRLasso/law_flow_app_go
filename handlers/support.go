@@ -25,7 +25,19 @@ func SupportPageHandler(c echo.Context) error {
 		Email: user.Email,
 	}
 
-	component := pages.Support(c.Request().Context(), "Support | LexLegal Cloud", csrfToken, user, firm, formData, nil)
+	var successMsgPtr *string
+	if c.QueryParam("success") == "true" {
+		msg := i18n.T(c.Request().Context(), "support.success.submitted")
+		successMsgPtr = &msg
+	}
+
+	var firmUsers []models.User
+	if user.Role == "admin" && firm != nil {
+		// Fetch firm users for filter (excluding password for safety, though not strictly needed here)
+		db.DB.Select("id, name").Where("firm_id = ?", firm.ID).Find(&firmUsers)
+	}
+
+	component := pages.Support(c.Request().Context(), "Support | LexLegal Cloud", csrfToken, user, firm, formData, successMsgPtr, firmUsers)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -59,7 +71,7 @@ func SubmitSupportRequestHandler(c echo.Context) error {
 			Message: message,
 			Errors:  errors,
 		}
-		component := pages.Support(c.Request().Context(), "Support | LexLegal Cloud", csrfToken, user, firm, formData, nil)
+		component := pages.Support(c.Request().Context(), "Support | LexLegal Cloud", csrfToken, user, firm, formData, nil, nil)
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -103,17 +115,6 @@ func SubmitSupportRequestHandler(c echo.Context) error {
 		}
 	}()
 
-	// 3. Render success state (or redirect)
-	// Using HTMX pattern would be nice, but here we might just re-render page with success banner
-	firm := middleware.GetCurrentFirm(c)
-	successMsg := i18n.T(c.Request().Context(), "support.success.submitted")
-
-	// Clear form
-	formData := pages.SupportContactFormData{
-		Name:  user.Name,
-		Email: user.Email,
-	}
-
-	component := pages.Support(c.Request().Context(), "Support | LexLegal Cloud", csrfToken, user, firm, formData, &successMsg)
-	return component.Render(c.Request().Context(), c.Response().Writer)
+	// 3. Redirect to support page with success param (PRG pattern to prevent double submission)
+	return c.Redirect(http.StatusSeeOther, "/support?success=true&tab=contact")
 }

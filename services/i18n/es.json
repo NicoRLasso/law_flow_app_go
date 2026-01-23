@@ -4,6 +4,15 @@
     "description": "Gestión Legal Simplificada",
     "tagline": "Gestión de Práctica Evolucionada"
   },
+  "action": {
+    "view": "Ver",
+    "mark_resolved": "Marcar como Resuelto",
+    "mark_in_progress": "Marcar en Progreso",
+    "mark_closed": "Cerrar Ticket",
+    "reply": "Responder",
+    "view_response": "Ver Respuesta",
+    "take_ticket": "Tomar Ticket"
+  },
   "nav": {
     "home": "Inicio",
     "dashboard": "Panel de Control",
@@ -44,7 +53,17 @@
     "benefits": "Beneficios",
     "pricing": "Precios",
     "availability": "Disponibilidad",
-    "templates": "Plantillas"
+    "templates": "Plantillas",
+    "support": "Soporte",
+    "support_tickets": "Tickets de Soporte",
+    "ticket_response": "Respuesta del Ticket",
+    "status": {
+      "open": "Abierto",
+      "in_progress": "En Progreso",
+      "resolved": "Resuelto",
+      "closed": "Cerrado",
+      "accepted": "Aceptado"
+    }
   },
   "templates": {
     "title": "Plantillas de Documentos",
@@ -1457,6 +1476,10 @@
         "users": "Usuarios",
         "firms": "Firmas",
         "logout": "Cerrar Sesión"
+    },
+    "support": {
+      "title": "Tickets de Soporte",
+      "subtitle": "Gestionar tickets de soporte"
     }
   },
   "audit": {
@@ -1533,6 +1556,76 @@
       "appointment_cancelled": "Cita Cancelada - {firmName}",
       "lawyer_appointment_notification": "Nueva Cita: {clientName} - {date} @ {time}",
       "new_user_welcome": "Bienvenido a LexLegalCloud - Credenciales de su Cuenta"
+    }
+  },
+  "support": {
+    "title": "Centro de Soporte",
+    "subtitle": "Obtenga ayuda con la gestión de su práctica legal",
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "q1": "¿Cómo restablezco mi contraseña?",
+      "a1": "Puede restablecer su contraseña haciendo clic en '¿Olvidó su contraseña?' en la página de inicio de sesión.",
+      "q2": "¿Cómo agrego un nuevo usuario?",
+      "a2": "Los administradores pueden agregar nuevos usuarios desde la página de Usuarios en el panel de control.",
+      "q3": "¿Son seguros mis datos?",
+      "a3": "Sí, utilizamos encriptación de grado bancario para proteger sus datos."
+    },
+    "contact_info": {
+      "title": "Información de Contacto",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección"
+    },
+    "success": {
+      "submitted": "Su solicitud de soporte ha sido enviada exitosamente."
+    },
+    "form": {
+      "title": "Contactar Soporte",
+      "name": "Su Nombre",
+      "email": "Su Correo",
+      "subject": "Asunto",
+      "subject_placeholder": "¿En qué podemos ayudarle?",
+      "message": "Mensaje",
+      "message_placeholder": "Por favor describa su problema en detalle...",
+      "submit": "Enviar Mensaje"
+    },
+    "tickets": {
+      "title": "Mis Tickets",
+      "filter_status": "Estado",
+      "filter_user": "Usuario",
+      "user_all": "Todos los Usuarios",
+      "status_all": "Todos los Estados",
+      "id": "ID Ticket",
+      "subject": "Asunto",
+      "user": "Enviado Por",
+      "status": "Estado",
+      "date": "Fecha",
+      "empty_title": "No se encontraron tickets",
+      "empty_desc": "No ha enviado ningún ticket de soporte todavía."
+    },
+    "status": {
+      "open": "Abierto",
+      "in_progress": "En Progreso",
+      "resolved": "Resuelto",
+      "closed": "Cerrado",
+      "accepted": "Aceptado"
+    },
+    "message": "Mensaje",
+    "user_info": "Información del Usuario",
+    "table": {
+      "status": "Estado",
+      "subject": "Asunto",
+      "user": "Usuario",
+      "date": "Fecha",
+      "message": "Mensaje",
+      "empty": "No hay tickets encontrados"
+    },
+    "field": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "subject": "Asunto",
+      "message": "Mensaje",
+      "role": "Rol"
     }
   }
 }

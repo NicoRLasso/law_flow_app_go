@@ -300,7 +300,10 @@ func main() {
 		superadminRoutes.GET("/firms/:id/delete-confirm", handlers.SuperadminGetFirmDeleteConfirm)
 		// Support Ticket Management
 		superadminRoutes.GET("/support", handlers.SuperadminSupportPageHandler)
-		superadminRoutes.POST("/support/:id/resolve", handlers.SuperadminResolveTicketHandler)
+		superadminRoutes.GET("/support/:id", handlers.SuperadminSupportDetailHandler)
+		superadminRoutes.POST("/support/:id/status", handlers.SuperadminUpdateTicketStatusHandler)
+		superadminRoutes.POST("/support/:id/reply", handlers.SuperadminReplyTicketHandler)
+		superadminRoutes.POST("/support/:id/take", handlers.SuperadminTakeTicketHandler)
 	}
 
 	// Protected routes (authentication + firm required)
@@ -320,6 +323,7 @@ func main() {
 
 		// Support Page
 		protected.GET("/support", handlers.SupportPageHandler)
+		protected.GET("/api/support/tickets", handlers.GetSupportTicketsHandler)
 		protected.POST("/api/support/contact", handlers.SubmitSupportRequestHandler)
 
 		// User management page (all users can view)

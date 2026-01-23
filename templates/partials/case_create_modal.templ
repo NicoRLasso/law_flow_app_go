@@ -7,7 +7,7 @@ import (
 )
 
 // CaseCreateModal renders the modal to create a new case
-templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []models.User) {
+templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.User, lawyers []models.User, domains []models.CaseDomain) {
 	<div
 		id="create-case-modal"
 		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
@@ -24,6 +24,7 @@ templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []mode
 			x-transition:leave="transition ease-in duration-200"
 			x-transition:leave-start="opacity-100 scale-100"
 			x-transition:leave-end="opacity-0 scale-95"
+			@click.stop
 		>
 			<!-- Header -->
 			<div class="flex items-center justify-between p-6 border-b border-white/10">
@@ -41,8 +42,7 @@ templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []mode
 			<div class="p-6 overflow-y-auto">
 				<form
 					hx-post="/api/cases"
-					hx-target="#cases-table"
-					hx-swap="innerHTML"
+					hx-swap="none"
 					@htmx:before-request="loading = true"
 					@htmx:after-request="loading = false; if($event.detail.successful) document.getElementById('create-case-modal').remove()"
 					class="space-y-4"
@@ -63,6 +63,7 @@ templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []mode
 							}
 						</select>
 					</div>
+
 					<!-- Client Role -->
 					<div>
 						<label class="block text-sm font-medium text-foreground mb-1">
@@ -79,6 +80,7 @@ templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []mode
 							</label>
 						</div>
 					</div>
+
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<!-- Case Title -->
 						<div>
@@ -92,33 +94,72 @@ templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []mode
 								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 							/>
 						</div>
-						<!-- Case Type -->
+						
+						<!-- Filing Number (Radicado) -->
 						<div>
 							<label class="block text-sm font-medium text-foreground mb-1">
-								Case Type <span class="text-red-500">*</span>
+								Filing Number (Radicado) <span class="text-red-500">*</span>
 							</label>
 							<input
 								type="text"
-								name="case_type"
-								placeholder="e.g. Civil, Labor, Family"
+								name="filing_number"
+								placeholder="Court Filing Number"
 								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
 								required
 							/>
 						</div>
 					</div>
-					<!-- Case Number -->
-					<div>
-						<label class="block text-sm font-medium text-foreground mb-1">
-							Case Number <span class="text-red-500">*</span>
-						</label>
-						<input
-							type="text"
-							name="case_number"
-							placeholder="Internal Case Reference"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-							required
-						/>
+
+					<!-- Classification Section -->
+					<div class="space-y-4 pt-2 border-t border-white/10">
+						<h3 class="text-sm font-semibold text-foreground">Classification</h3>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<!-- Domain -->
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-1">
+									Domain <span class="text-red-500">*</span>
+								</label>
+								<select
+									name="domain_id"
+									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+									required
+									hx-get="/api/subtypes/branches"
+									hx-target="#branch-select"
+									hx-swap="innerHTML"
+									@htmx:after-request="document.getElementById('branch-select').disabled = false; document.getElementById('subtype-select-container').innerHTML = ''"
+								>
+									<option value="">Select Domain</option>
+									for _, domain := range domains {
+										<option value={ domain.ID }>{ domain.Name }</option>
+									}
+								</select>
+							</div>
+
+							<!-- Branch -->
+							<div>
+								<label class="block text-sm font-medium text-foreground mb-1">
+									Branch <span class="text-red-500">*</span>
+								</label>
+								<select
+									id="branch-select"
+									name="branch_id"
+									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
+									disabled
+									hx-get="/api/subtypes/options"
+									hx-target="#subtype-select-container"
+									hx-swap="innerHTML"
+									hx-trigger="change"
+								>
+									<option value="">Select Domain First</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Subtypes (Multi-select / Checkboxes) -->
+						<div id="subtype-select-container">
+						</div>
 					</div>
+
 					<!-- Description -->
 					<div>
 						<label class="block text-sm font-medium text-foreground mb-1">
@@ -143,7 +184,12 @@ templ CaseCreateModal(ctx context.Context, clients []models.User, lawyers []mode
 						>
 							<option value="">{ i18n.T(ctx, "cases.select_lawyer") }</option>
 							for _, lawyer := range lawyers {
-								<option value={ lawyer.ID }>{ lawyer.Name }</option>
+								<option 
+									value={ lawyer.ID }
+									selected?={ user.Role == "lawyer" && user.ID == lawyer.ID }
+								>
+									{ lawyer.Name }
+								</option>
 							}
 						</select>
 					</div>

@@ -17,10 +17,16 @@ type SupportTicket struct {
 	UserID  string `gorm:"type:uuid;not null;index" json:"user_id"`
 	Subject string `gorm:"not null" json:"subject"`
 	Message string `gorm:"not null" json:"message"`
-	Status  string `gorm:"not null;default:open" json:"status"` // open, resolved, closed
+	Status  string `gorm:"not null;default:open" json:"status"` // open, in_progress, resolved, closed
+
+	// Response fields
+	Response      *string    `json:"response,omitempty"`
+	RespondedByID *string    `gorm:"type:uuid" json:"responded_by_id,omitempty"`
+	RespondedAt   *time.Time `json:"responded_at,omitempty"`
 
 	// Relationships
-	User *User `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	User        *User `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	RespondedBy *User `gorm:"foreignKey:RespondedByID" json:"responded_by,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID
