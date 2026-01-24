@@ -62,6 +62,49 @@ func GetFirmAppointments(firmID string, startDate, endDate time.Time) ([]models.
 	return appointments, err
 }
 
+// GetLawyerAppointmentsPaginated fetches appointments for a lawyer with pagination
+func GetLawyerAppointmentsPaginated(lawyerID string, startDate, endDate time.Time, page, limit int) ([]models.Appointment, int64, error) {
+	var appointments []models.Appointment
+	var total int64
+
+	query := db.DB.Model(&models.Appointment{}).
+		Where("lawyer_id = ? AND start_time >= ? AND end_time <= ?", lawyerID, startDate, endDate).
+		Where("status NOT IN (?)", []string{models.AppointmentStatusCancelled})
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	err := query.Preload("Client").
+		Order("start_time asc").
+		Limit(limit).
+		Offset((page - 1) * limit).
+		Find(&appointments).Error
+
+	return appointments, total, err
+}
+
+// GetFirmAppointmentsPaginated fetches appointments for a firm with pagination
+func GetFirmAppointmentsPaginated(firmID string, startDate, endDate time.Time, page, limit int) ([]models.Appointment, int64, error) {
+	var appointments []models.Appointment
+	var total int64
+
+	query := db.DB.Model(&models.Appointment{}).
+		Where("firm_id = ? AND start_time >= ? AND end_time <= ?", firmID, startDate, endDate)
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	err := query.Preload("Lawyer").Preload("Client").
+		Order("start_time asc").
+		Limit(limit).
+		Offset((page - 1) * limit).
+		Find(&appointments).Error
+
+	return appointments, total, err
+}
+
 // GetClientAppointments fetches appointments for a client
 func GetClientAppointments(clientID string) ([]models.Appointment, error) {
 	var appointments []models.Appointment

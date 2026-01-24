@@ -12,7 +12,7 @@ import (
 // CaseRequestFilters renders the filter controls
 templ CaseRequestFilters(ctx context.Context) {
 	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10">
-		<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
+		<form id="case-requests-filters-form" class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
 			<div class="flex items-center gap-2 w-full sm:w-auto">
 				<label class="text-sm font-medium text-muted-foreground min-w-fit">{ i18n.T(ctx, "case_requests.filters.status") }</label>
 				<select
@@ -20,7 +20,6 @@ templ CaseRequestFilters(ctx context.Context) {
 					hx-get="/api/case-requests"
 					hx-target="#case-requests-table"
 					hx-trigger="change"
-					hx-include="[name='priority']"
 					name="status"
 					id="status-filter"
 				>
@@ -37,7 +36,6 @@ templ CaseRequestFilters(ctx context.Context) {
 					hx-get="/api/case-requests"
 					hx-target="#case-requests-table"
 					hx-trigger="change"
-					hx-include="[name='status']"
 					name="priority"
 					id="priority-filter"
 				>
@@ -48,7 +46,7 @@ templ CaseRequestFilters(ctx context.Context) {
 					<option value="low">{ i18n.T(ctx, "case_requests.priority.low") }</option>
 				</select>
 			</div>
-		</div>
+		</form>
 	</div>
 }
 
@@ -97,8 +95,8 @@ templ CaseRequestTable(ctx context.Context, requests []models.CaseRequest, curre
 			Limit:       limit,
 			Total:       total,
 			BaseURL:     "/api/case-requests",
-			Status:      "",
-			Priority:    "",
+			TargetID:    "#case-requests-table",
+			IncludeID:   "#case-requests-filters-form",
 		})
 	}
 }

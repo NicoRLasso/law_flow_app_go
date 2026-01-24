@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
 )
 
-templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate) {
+templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate, currentPage int, totalPages int, limit int, total int) {
 	if len(templates) == 0 {
 		<div class="p-8 md:p-12 text-center">
 			<svg class="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,6 +144,15 @@ templ TemplateTable(ctx context.Context, templates []models.DocumentTemplate) {
 				</tbody>
 			</table>
 		</div>
+		@components.Pagination(ctx, components.PaginationData{
+			CurrentPage: currentPage,
+			TotalPages:  totalPages,
+			Limit:       limit,
+			Total:       total,
+			BaseURL:     "/api/templates",
+			TargetID:    "#templates-table-container",
+			IncludeID:   "#template-filters-form",
+		})
 	}
 }
 

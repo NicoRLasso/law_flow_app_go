@@ -51,6 +51,8 @@ templ CaseDocumentTable(ctx context.Context, documents []models.CaseDocument, cu
 			BaseURL:     fmt.Sprintf("/api/cases/%s/documents", caseID),
 			Status:      "",
 			Priority:    "",
+			TargetID:    "#case-documents-list",
+			IncludeID:   "#case-doc-filters-form",
 		})
 	}
 }

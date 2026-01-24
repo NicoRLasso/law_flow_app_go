@@ -9,6 +9,7 @@ import (
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -368,12 +369,25 @@ func UsersPageHandler(c echo.Context) error {
 
 // GetUsersListHTMX returns the users table with optional filters
 func GetUsersListHTMX(c echo.Context) error {
-	var users []models.User
 	currentUser := middleware.GetCurrentUser(c)
 
 	// Get filter parameters
 	roleFilter := c.QueryParam("role")
 	statusFilter := c.QueryParam("status")
+
+	// Get pagination parameters
+	page := 1
+	limit := 10
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
 
 	// Scope query to current user's firm
 	query := middleware.GetFirmScopedQuery(c, db.DB)
@@ -392,17 +406,26 @@ func GetUsersListHTMX(c echo.Context) error {
 		}
 	}
 
-	// Order by created_at descending
-	query = query.Order("created_at DESC")
+	// Get total count
+	var total int64
+	if err := query.Model(&models.User{}).Count(&total).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to count users")
+	}
 
-	if err := query.Find(&users).Error; err != nil {
+	// Calculate pagination
+	offset := (page - 1) * limit
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
+
+	// Fetch paginated users
+	var users []models.User
+	if err := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&users).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to fetch users",
 		})
 	}
 
 	// Render the users table
-	component := partials.UsersTable(c.Request().Context(), users, currentUser.Role)
+	component := partials.UsersTable(c.Request().Context(), users, currentUser.Role, page, totalPages, limit, int(total))
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

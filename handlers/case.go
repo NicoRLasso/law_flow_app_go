@@ -40,7 +40,7 @@ func GetCasesHandler(c echo.Context) error {
 
 	// Get pagination parameters
 	page := 1
-	limit := 20
+	limit := 10
 	if pageParam := c.QueryParam("page"); pageParam != "" {
 		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
 			page = p

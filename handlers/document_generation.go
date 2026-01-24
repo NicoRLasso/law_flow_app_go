@@ -14,6 +14,7 @@ import (
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"law_flow_app_go/templates/partials"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -43,16 +44,21 @@ func GetGenerateDocumentTabHandler(c echo.Context) error {
 		Order("name ASC").
 		Find(&templates)
 
-	// Get generated documents for this case
+	// Get generated documents for this case (initial load)
 	var generatedDocs []models.GeneratedDocument
-	middleware.GetFirmScopedQuery(c, db.DB).
-		Where("case_id = ?", caseID).
-		Preload("Template").
+	var totalDocs int64
+	docQuery := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID)
+	docQuery.Model(&models.GeneratedDocument{}).Count(&totalDocs)
+
+	docQuery.Preload("Template").
 		Preload("GeneratedBy").
 		Order("created_at DESC").
+		Limit(10).
 		Find(&generatedDocs)
 
-	return partials.GenerateDocumentTab(ctx, caseRecord, templates, generatedDocs).Render(c.Request().Context(), c.Response().Writer)
+	totalPages := int((totalDocs + 10 - 1) / 10)
+
+	return partials.GenerateDocumentTab(ctx, caseRecord, templates, generatedDocs, 1, totalPages, 10, int(totalDocs)).Render(c.Request().Context(), c.Response().Writer)
 }
 
 // GetTemplateSelectorModalHandler returns the template selector modal for the documents tab
@@ -241,17 +247,41 @@ func GetGeneratedDocumentsHandler(c echo.Context) error {
 	caseID := c.Param("id")
 	ctx := context.Background()
 
+	// Parse pagination
+	page := 1
+	limit := 10
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
+	query := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID)
+
+	var total int64
+	if err := query.Model(&models.GeneratedDocument{}).Count(&total).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Error counting documents")
+	}
+
 	var docs []models.GeneratedDocument
-	if err := middleware.GetFirmScopedQuery(c, db.DB).
-		Where("case_id = ?", caseID).
+	if err := query.
 		Preload("Template").
 		Preload("GeneratedBy").
 		Order("created_at DESC").
+		Limit(limit).
+		Offset((page - 1) * limit).
 		Find(&docs).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching documents")
 	}
 
-	return partials.GeneratedDocumentsTable(ctx, docs, caseID).Render(c.Request().Context(), c.Response().Writer)
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
+
+	return partials.GeneratedDocumentsTable(ctx, docs, caseID, page, totalPages, limit, int(total)).Render(c.Request().Context(), c.Response().Writer)
 }
 
 // DownloadGeneratedDocumentHandler serves a generated document for download

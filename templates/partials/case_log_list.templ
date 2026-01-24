@@ -2,11 +2,13 @@ package partials
 
 import (
 	"context"
+	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
 )
 
-templ CaseLogList(ctx context.Context, logs []models.CaseLog, caseID string) {
+templ CaseLogList(ctx context.Context, logs []models.CaseLog, caseID string, currentPage int, totalPages int, limit int, total int) {
 	<div id="case-logs-container">
 		if len(logs) == 0 {
 			<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
@@ -93,6 +95,18 @@ templ CaseLogList(ctx context.Context, logs []models.CaseLog, caseID string) {
 					</table>
 				</div>
 			</div>
+		}
+
+		if len(logs) > 0 {
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: currentPage,
+				TotalPages:  totalPages,
+				Limit:       limit,
+				Total:       total,
+				BaseURL:     fmt.Sprintf("/api/cases/%s/logs", caseID),
+				TargetID:    "#case-logs-container",
+				IncludeID:   "#case-logs-filters",
+			})
 		}
 	</div>
 }

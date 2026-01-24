@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
@@ -39,11 +40,21 @@ func GetTemplatesHandler(c echo.Context) error {
 	search := c.QueryParam("search")
 	activeOnly := c.QueryParam("active") == "true"
 
-	var templates []models.DocumentTemplate
-	query := middleware.GetFirmScopedQuery(c, db.DB).
-		Preload("Category").
-		Preload("CreatedBy").
-		Order("name ASC")
+	// Parse pagination
+	page := 1
+	limit := 10
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
+	query := middleware.GetFirmScopedQuery(c, db.DB)
 
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
@@ -58,12 +69,26 @@ func GetTemplatesHandler(c echo.Context) error {
 		query = query.Where("is_active = ?", true)
 	}
 
-	if err := query.Find(&templates).Error; err != nil {
+	var total int64
+	if err := query.Model(&models.DocumentTemplate{}).Count(&total).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Error counting templates")
+	}
+
+	var templates []models.DocumentTemplate
+	if err := query.
+		Preload("Category").
+		Preload("CreatedBy").
+		Order("name ASC").
+		Limit(limit).
+		Offset((page - 1) * limit).
+		Find(&templates).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching templates")
 	}
 
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
+
 	ctx := context.Background()
-	return partials.TemplateTable(ctx, templates).Render(c.Request().Context(), c.Response().Writer)
+	return partials.TemplateTable(ctx, templates, page, totalPages, limit, int(total)).Render(c.Request().Context(), c.Response().Writer)
 }
 
 // GetTemplateHandler returns a single template

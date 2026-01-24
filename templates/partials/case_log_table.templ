@@ -6,10 +6,10 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string) {
+templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string, currentPage int, totalPages int, limit int, total int) {
 	<!-- Filters -->
 	<div class="glass-panel p-6 rounded-2xl border border-white/10 mb-6 bg-[#0A0A0B]/40">
-		<div class="flex flex-col md:flex-row gap-4">
+		<form id="case-logs-filters" class="flex flex-col md:flex-row gap-4" onsubmit="return false;">
 			<!-- Keyword Search -->
 			<div class="flex-1 w-full relative group">
 				<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -25,7 +25,7 @@ templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string) {
 					hx-get={ "/api/cases/" + caseID + "/logs" }
 					hx-trigger="keyup changed delay:500ms"
 					hx-target="#case-logs-container"
-					hx-include="[name='type']"
+					hx-swap="outerHTML"
 				/>
 			</div>
 			<div class="flex gap-4 flex-col sm:flex-row md:items-center">
@@ -37,7 +37,7 @@ templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string) {
 						hx-get={ "/api/cases/" + caseID + "/logs" }
 						hx-trigger="change"
 						hx-target="#case-logs-container"
-						hx-include="[name='search']"
+						hx-swap="outerHTML"
 					>
 						<option value="all" class="bg-[#1a1b1e]">{ i18n.T(ctx, "bitacora.filter.all_types") }</option>
 						<option value="note" class="bg-[#1a1b1e]">{ i18n.T(ctx, "bitacora.types.note") }</option>
@@ -63,10 +63,10 @@ templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string) {
 					{ i18n.T(ctx, "bitacora.add_entry") }
 				</button>
 			</div>
-		</div>
+		</form>
 	</div>
 	<!-- Table Container -->
-	@CaseLogList(ctx, logs, caseID)
+	@CaseLogList(ctx, logs, caseID, currentPage, totalPages, limit, total)
 }
 
 func getLogTypeBadgeClass(entryType string) string {

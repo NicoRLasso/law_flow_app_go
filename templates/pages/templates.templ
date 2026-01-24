@@ -31,7 +31,7 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 					</div>
 					<!-- Filters -->
 					<div class="glass-panel rounded-2xl p-6 border border-white/10 mb-8 bg-[#0A0A0B]/40">
-						<div class="flex flex-col sm:flex-row gap-6">
+						<form id="template-filters-form" class="flex flex-col sm:flex-row gap-6">
 							<div class="flex-1">
 								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "common.search") }</label>
 								<div class="relative group">
@@ -47,7 +47,6 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 										hx-get="/api/templates"
 										hx-target="#templates-table-container"
 										hx-trigger="keyup changed delay:300ms"
-										hx-include="[name='category_id']"
 										class="w-full pl-10 pr-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 									/>
 								</div>
@@ -60,7 +59,6 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 										hx-get="/api/templates"
 										hx-target="#templates-table-container"
 										hx-trigger="change"
-										hx-include="[name='search']"
 										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
 									>
 										<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "common.all") }</option>
@@ -73,7 +71,7 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 									</div>
 								</div>
 							</div>
-						</div>
+						</form>
 					</div>
 					<!-- Templates Table -->
 					<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-xl bg-[#0A0A0B]/40">

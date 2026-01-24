@@ -25,6 +25,20 @@ func GetCaseLogsHandler(c echo.Context) error {
 	entryType := c.QueryParam("type")
 	search := c.QueryParam("search")
 
+	// Pagination
+	page := 1
+	limit := 10
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
 	// Verify case belongs to firm
 	var caseRecord models.Case
 	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&caseRecord, "id = ?", caseID).Error; err != nil {
@@ -32,7 +46,8 @@ func GetCaseLogsHandler(c echo.Context) error {
 	}
 
 	var logs []models.CaseLog
-	query := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC")
+	var total int64
+	query := middleware.GetFirmScopedQuery(c, db.DB).Model(&models.CaseLog{}).Where("case_id = ?", caseID)
 
 	if entryType != "" && entryType != "all" {
 		query = query.Where("entry_type = ?", entryType)
@@ -43,20 +58,24 @@ func GetCaseLogsHandler(c echo.Context) error {
 		query = query.Where("title LIKE ? OR content LIKE ?", likeSearch, likeSearch)
 	}
 
-	if err := query.Find(&logs).Error; err != nil {
+	// Count total
+	if err := query.Count(&total).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Error counting logs")
+	}
+
+	// Fetch paginated
+	if err := query.Order("occurred_at DESC, created_at DESC").Limit(limit).Offset((page - 1) * limit).Find(&logs).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching logs")
 	}
 
-	// Also fetch documents for the dropdown if we need to show the form, but here just the list
-	// Actually, for the table we might want to preload CreatedBy if we display the user name
-	// But let's keep it simple for now, maybe preload later if needed.
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
 
 	// If targeting the container directly (e.g. from filter/search), return just the list
 	if c.Request().Header.Get("HX-Target") == "case-logs-container" {
-		return render(c, partials.CaseLogList(context.Background(), logs, caseID))
+		return render(c, partials.CaseLogList(context.Background(), logs, caseID, page, totalPages, limit, int(total)))
 	}
 
-	return render(c, partials.CaseLogTable(context.Background(), logs, caseID))
+	return render(c, partials.CaseLogTable(context.Background(), logs, caseID, page, totalPages, limit, int(total)))
 }
 
 // GetCaseLogFormHandler returns the form for creating a new log entry
@@ -184,14 +203,28 @@ func GetCaseLogViewHandler(c echo.Context) error {
 }
 
 // helper to fetch logs and render the table
+// helper to fetch logs and render the table
 func fetchAndRenderLogs(c echo.Context, caseID string) error {
 	var logs []models.CaseLog
+	var total int64
+	page := 1
+	limit := 10 // Default limit for re-render after action
+
 	// Use firm-scoped query
-	if err := middleware.GetFirmScopedQuery(c, db.DB).Where("case_id = ?", caseID).Order("occurred_at DESC, created_at DESC").Find(&logs).Error; err != nil {
+	query := middleware.GetFirmScopedQuery(c, db.DB).Model(&models.CaseLog{}).Where("case_id = ?", caseID)
+
+	if err := query.Count(&total).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Error counting logs")
+	}
+
+	if err := query.Order("occurred_at DESC, created_at DESC").Limit(limit).Offset(0).Find(&logs).Error; err != nil {
 		return c.String(http.StatusInternalServerError, "Error fetching logs")
 	}
+
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
+
 	// Always return list for updates/creations/deletions as they target the container
-	return render(c, partials.CaseLogList(context.Background(), logs, caseID))
+	return render(c, partials.CaseLogList(context.Background(), logs, caseID, page, totalPages, limit, int(total)))
 }
 
 // UpdateCaseLogHandler updates an existing log entry

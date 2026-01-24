@@ -10,6 +10,7 @@ import (
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -61,27 +62,51 @@ func GetAppointmentsHandler(c echo.Context) error {
 		endDate = time.Now().AddDate(1, 0, 0)
 	}
 
+	// Pagination
+	page := 1
+	limit := 10
+	if pageParam := c.QueryParam("page"); pageParam != "" {
+		if p, err := strconv.Atoi(pageParam); err == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitParam := c.QueryParam("limit"); limitParam != "" {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
 	var appointments []models.Appointment
+	var total int64
 
 	// Admins see all firm appointments, lawyers see their own
 	if user.Role == "admin" {
-		appointments, err = services.GetFirmAppointments(*user.FirmID, startDate, endDate)
+		appointments, total, err = services.GetFirmAppointmentsPaginated(*user.FirmID, startDate, endDate, page, limit)
 	} else {
-		appointments, err = services.GetLawyerAppointments(user.ID, startDate, endDate)
+		appointments, total, err = services.GetLawyerAppointmentsPaginated(user.ID, startDate, endDate, page, limit)
 	}
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch appointments")
 	}
 
+	totalPages := int((total + int64(limit) - 1) / int64(limit))
+
 	// Check if HTMX request - return HTML table
 	if c.Request().Header.Get("HX-Request") == "true" {
-		// For now, simple pagination (page 1, all results)
-		component := partials.AppointmentTable(c.Request().Context(), appointments, 1, 1, len(appointments), len(appointments))
+		component := partials.AppointmentTable(c.Request().Context(), appointments, page, totalPages, limit, int(total))
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
-	return c.JSON(http.StatusOK, appointments)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": appointments,
+		"pagination": map[string]interface{}{
+			"page":        page,
+			"limit":       limit,
+			"total":       total,
+			"total_pages": totalPages,
+		},
+	})
 }
 
 // GetAvailableSlotsHandler returns available slots for a lawyer on a specific date

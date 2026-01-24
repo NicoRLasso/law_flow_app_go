@@ -12,6 +12,7 @@ import (
 templ AppointmentFilters(ctx context.Context, user *models.User) {
 	<div class="glass-panel rounded-xl border border-white/10 p-4">
 		<form
+			id="appointment-filters-form"
 			hx-get="/api/appointments"
 			hx-target="#appointments-table"
 			hx-trigger="change, submit"
@@ -95,6 +96,8 @@ templ AppointmentTable(ctx context.Context, appointments []models.Appointment, c
 			Limit:       limit,
 			Total:       total,
 			BaseURL:     "/api/appointments",
+			TargetID:    "#appointments-table",
+			IncludeID:   "#appointment-filters-form",
 		})
 	}
 }

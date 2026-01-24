@@ -15,6 +15,8 @@ type PaginationData struct {
 	BaseURL     string
 	Status      string
 	Priority    string
+	TargetID    string // HTML element ID to target for HTMX replacement (e.g. "#case-list")
+	IncludeID   string // HTML element ID to include in the request (e.g. "#filter-form")
 }
 
 // Pagination renders pagination controls
@@ -35,7 +37,10 @@ templ Pagination(ctx context.Context, data PaginationData) {
 				if data.CurrentPage > 1 {
 					<button
 						hx-get={ buildPaginationURL(data.BaseURL, data.CurrentPage-1, data.Status, data.Priority) }
-						hx-target="#case-requests-list"
+						hx-target={ data.TargetID }
+						if data.IncludeID != "" {
+							hx-include={ data.IncludeID }
+						}
 						hx-swap="innerHTML"
 						class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium"
 					>
@@ -63,7 +68,10 @@ templ Pagination(ctx context.Context, data PaginationData) {
 						} else {
 							<button
 								hx-get={ buildPaginationURL(data.BaseURL, pageNum, data.Status, data.Priority) }
-								hx-target="#case-requests-list"
+								hx-target={ data.TargetID }
+								if data.IncludeID != "" {
+									hx-include={ data.IncludeID }
+								}
 								hx-swap="innerHTML"
 								class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium min-w-[40px]"
 							>
@@ -76,7 +84,10 @@ templ Pagination(ctx context.Context, data PaginationData) {
 				if data.CurrentPage < data.TotalPages {
 					<button
 						hx-get={ buildPaginationURL(data.BaseURL, data.CurrentPage+1, data.Status, data.Priority) }
-						hx-target="#case-requests-list"
+						hx-target={ data.TargetID }
+						if data.IncludeID != "" {
+							hx-include={ data.IncludeID }
+						}
 						hx-swap="innerHTML"
 						class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium"
 					>

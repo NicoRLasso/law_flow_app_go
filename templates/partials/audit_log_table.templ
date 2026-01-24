@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
 	"strings"
 )
 
@@ -131,7 +132,15 @@ templ AuditLogTable(ctx context.Context, logs []models.AuditLog, total int64, pa
 				</table>
 			</div>
 			<!-- Pagination -->
-			@auditPagination(ctx, total, page, pageSize)
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: page,
+				TotalPages:  (int(total) + pageSize - 1) / pageSize,
+				Limit:       pageSize,
+				Total:       int(total),
+				BaseURL:     "/api/audit-logs",
+				TargetID:    "#audit-logs-table",
+				IncludeID:   "#filter-form",
+			})
 		</div>
 	}
 }
@@ -177,51 +186,7 @@ templ actionBadge(ctx context.Context, action models.AuditAction) {
 	}
 }
 
-templ auditPagination(ctx context.Context, total int64, page, pageSize int) {
-	if total > 0 {
-		<div class="bg-white/5 border-t border-white/10 px-4 py-3 flex items-center justify-between sm:px-6">
-			<div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-				<div>
-					<p class="text-sm text-muted-foreground">
-						{ i18n.T(ctx, "common.pagination.showing", map[string]interface{}{
-                            "start": fmt.Sprint((page-1)*pageSize + 1),
-                            "end": fmt.Sprint(func() int64 {
-                                if int64(page*pageSize) > total { return total }
-                                return int64(page * pageSize)
-                             }()),
-                            "total": fmt.Sprint(total),
-                        }) }
-					</p>
-				</div>
-				if total > int64(pageSize) {
-					<div>
-						<nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-							if page > 1 {
-								<button hx-get={ fmt.Sprintf("/api/audit-logs?page=%d", page-1) } hx-include="#filter-form" hx-target="#audit-logs-table" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-white/10 bg-white/5 text-sm font-medium text-muted-foreground hover:bg-white/10 transition-colors">
-									<span class="sr-only">{ i18n.T(ctx, "common.pagination.previous") }</span>
-									<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-										<path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-									</svg>
-								</button>
-							}
-							<span class="relative inline-flex items-center px-4 py-2 border border-white/10 bg-white/10 text-sm font-medium text-foreground">
-								{ fmt.Sprint(page) }
-							</span>
-							if int64(page*pageSize) < total {
-								<button hx-get={ fmt.Sprintf("/api/audit-logs?page=%d", page+1) } hx-include="#filter-form" hx-target="#audit-logs-table" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-white/10 bg-white/5 text-sm font-medium text-muted-foreground hover:bg-white/10 transition-colors">
-									<span class="sr-only">{ i18n.T(ctx, "common.pagination.next") }</span>
-									<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-										<path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-									</svg>
-								</button>
-							}
-						</nav>
-					</div>
-				}
-			</div>
-		</div>
-	}
-}
+
 
 func getResourceKey(resourceType string) string {
 	switch resourceType {

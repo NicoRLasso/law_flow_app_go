@@ -6,7 +6,7 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates []models.DocumentTemplate, generatedDocs []models.GeneratedDocument) {
+templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates []models.DocumentTemplate, generatedDocs []models.GeneratedDocument, currentPage int, totalPages int, limit int, total int) {
 	<div class="space-y-6" x-data="{ selectedTemplate: '', showPreview: false }">
 		<!-- Template Selection -->
 		<div class="glass-panel rounded-2xl p-4 md:p-6 border border-white/10">
@@ -98,7 +98,7 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 				<h3 class="font-semibold">{ i18n.T(ctx, "templates.generated_documents") }</h3>
 			</div>
 			<div id="generated-docs-container">
-				@GeneratedDocumentsTable(ctx, generatedDocs, caseRecord.ID)
+				@GeneratedDocumentsTable(ctx, generatedDocs, caseRecord.ID, currentPage, totalPages, limit, total)
 			</div>
 		</div>
 	</div>
