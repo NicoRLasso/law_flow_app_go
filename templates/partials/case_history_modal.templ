@@ -10,7 +10,7 @@ import (
 templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []models.User, domains []models.CaseDomain, documentTypes []models.ChoiceOption, currentUser *models.User) {
 	<div
 		id="case-history-modal"
-		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+		class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
 		x-data="{
 			step: 1,
 			clientMode: 'existing',
@@ -35,53 +35,53 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 		@click.self="document.getElementById('case-history-modal').remove()"
 	>
 		<div
-			class="glass-panel rounded-2xl border border-white/10 max-w-2xl w-full max-h-[90vh] shadow-2xl flex flex-col overflow-hidden"
+			class="glass-panel rounded-2xl border border-white/10 max-w-2xl w-full max-h-[90vh] shadow-2xl flex flex-col overflow-hidden bg-[#0A0A0B]/90"
 			@click.stop
 		>
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between p-6 border-b border-white/10">
+			<div class="flex items-center justify-between p-8 border-b border-white/10">
 				<div class="flex items-center gap-4">
-					<div class="p-3 bg-amber-500/20 rounded-xl">
-						<svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
+						<svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
 						</svg>
 					</div>
 					<div>
-						<h2 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "cases.history.title") }</h2>
-						<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "cases.history.description") }</p>
+						<h2 class="text-2xl font-bold text-white">{ i18n.T(ctx, "cases.history.title") }</h2>
+						<p class="text-sm text-white/50">{ i18n.T(ctx, "cases.history.description") }</p>
 					</div>
 				</div>
 				<button
-					class="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
+					class="p-2 hover:bg-white/10 rounded-xl transition-colors duration-200 text-white/50 hover:text-white"
 					@click="document.getElementById('case-history-modal').remove()"
 				>
-					<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
 			</div>
 			<!-- Step Indicator -->
-			<div class="px-6 pt-4">
+			<div class="px-8 pt-6">
 				<div class="flex items-center justify-center gap-4">
 					<!-- Step 1 -->
-					<div class="flex items-center gap-2">
+					<div class="flex items-center gap-3">
 						<div
-							class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors"
-							:class="step >= 1 ? 'bg-accent text-white' : 'bg-white/10 text-muted-foreground'"
+							class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-lg"
+							:class="step >= 1 ? 'bg-gradient-to-r from-accent to-accent/80 text-white shadow-accent/20' : 'bg-white/5 text-white/40 border border-white/10'"
 						>1</div>
-						<span class="text-sm font-medium" :class="step >= 1 ? 'text-foreground' : 'text-muted-foreground'">
+						<span class="text-sm font-medium transition-colors duration-300" :class="step >= 1 ? 'text-white' : 'text-white/40'">
 							{ i18n.T(ctx, "cases.history.step1_title") }
 						</span>
 					</div>
 					<!-- Connector -->
-					<div class="w-12 h-0.5 rounded" :class="step >= 2 ? 'bg-accent' : 'bg-white/10'"></div>
+					<div class="w-16 h-0.5 rounded transition-colors duration-300" :class="step >= 2 ? 'bg-accent' : 'bg-white/10'"></div>
 					<!-- Step 2 -->
-					<div class="flex items-center gap-2">
+					<div class="flex items-center gap-3">
 						<div
-							class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors"
-							:class="step >= 2 ? 'bg-accent text-white' : 'bg-white/10 text-muted-foreground'"
+							class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 shadow-lg"
+							:class="step >= 2 ? 'bg-gradient-to-r from-accent to-accent/80 text-white shadow-accent/20' : 'bg-white/5 text-white/40 border border-white/10'"
 						>2</div>
-						<span class="text-sm font-medium" :class="step >= 2 ? 'text-foreground' : 'text-muted-foreground'">
+						<span class="text-sm font-medium transition-colors duration-300" :class="step >= 2 ? 'text-white' : 'text-white/40'">
 							{ i18n.T(ctx, "cases.history.step2_title") }
 						</span>
 					</div>
@@ -100,12 +100,12 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 					<input type="hidden" name="client_mode" x-model="clientMode"/>
 					<!-- STEP 1: Client Selection -->
 					<div x-show="step === 1" x-transition>
-						<div class="space-y-4">
+						<div class="space-y-6">
 							<!-- Client Mode Selection -->
-							<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+							<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 								<label
-									class="glass-panel p-4 rounded-lg border cursor-pointer transition-all duration-200"
-									:class="clientMode === 'existing' ? 'border-accent bg-accent/10' : 'border-white/10 hover:border-white/20'"
+									class="relative flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-300 group overflow-hidden"
+									:class="clientMode === 'existing' ? 'border-accent bg-accent/5' : 'border-white/10 bg-[#0A0A0B]/60 hover:bg-white/5 hover:border-white/20'"
 								>
 									<input
 										type="radio"
@@ -114,24 +114,24 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 										x-model="clientMode"
 										class="sr-only"
 									/>
-									<div class="flex items-center gap-3">
+									<div class="flex items-center gap-3 relative z-10">
 										<div
-											class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-											:class="clientMode === 'existing' ? 'border-accent' : 'border-white/30'"
+											class="w-5 h-5 rounded-full border flex items-center justify-center transition-colors duration-200"
+											:class="clientMode === 'existing' ? 'border-accent' : 'border-white/30 group-hover:border-white/50'"
 										>
 											<div
-												class="w-2.5 h-2.5 rounded-full bg-accent transition-transform"
+												class="w-2.5 h-2.5 rounded-full bg-accent transition-transform duration-200"
 												:class="clientMode === 'existing' ? 'scale-100' : 'scale-0'"
 											></div>
 										</div>
 										<div>
-											<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "cases.history.client_mode_existing") }</span>
+											<span class="text-sm font-medium text-white group-hover:text-white transition-colors">{ i18n.T(ctx, "cases.history.client_mode_existing") }</span>
 										</div>
 									</div>
 								</label>
 								<label
-									class="glass-panel p-4 rounded-lg border cursor-pointer transition-all duration-200"
-									:class="clientMode === 'new' ? 'border-accent bg-accent/10' : 'border-white/10 hover:border-white/20'"
+									class="relative flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-300 group overflow-hidden"
+									:class="clientMode === 'new' ? 'border-accent bg-accent/5' : 'border-white/10 bg-[#0A0A0B]/60 hover:bg-white/5 hover:border-white/20'"
 								>
 									<input
 										type="radio"
@@ -140,18 +140,18 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 										x-model="clientMode"
 										class="sr-only"
 									/>
-									<div class="flex items-center gap-3">
+									<div class="flex items-center gap-3 relative z-10">
 										<div
-											class="w-5 h-5 rounded-full border-2 flex items-center justify-center"
-											:class="clientMode === 'new' ? 'border-accent' : 'border-white/30'"
+											class="w-5 h-5 rounded-full border flex items-center justify-center transition-colors duration-200"
+											:class="clientMode === 'new' ? 'border-accent' : 'border-white/30 group-hover:border-white/50'"
 										>
 											<div
-												class="w-2.5 h-2.5 rounded-full bg-accent transition-transform"
+												class="w-2.5 h-2.5 rounded-full bg-accent transition-transform duration-200"
 												:class="clientMode === 'new' ? 'scale-100' : 'scale-0'"
 											></div>
 										</div>
 										<div>
-											<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "cases.history.client_mode_new") }</span>
+											<span class="text-sm font-medium text-white group-hover:text-white transition-colors">{ i18n.T(ctx, "cases.history.client_mode_new") }</span>
 										</div>
 									</div>
 								</label>
@@ -159,22 +159,27 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 							<!-- Existing Client Selection -->
 							<div x-show="clientMode === 'existing'" x-transition class="space-y-4">
 								<div>
-									<label class="text-sm font-medium text-foreground mb-2 block">
-										{ i18n.T(ctx, "cases.client") } *
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+										{ i18n.T(ctx, "cases.client") } <span class="text-accent">*</span>
 									</label>
 									if len(clients) > 0 {
-										<select
-											name="client_id"
-											x-model="selectedClientId"
-											class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-										>
-											<option value="">{ i18n.T(ctx, "cases.history.select_client") }</option>
-											for _, client := range clients {
-												<option value={ client.ID }>{ client.Name } ({ client.Email })</option>
-											}
-										</select>
+										<div class="relative">
+											<select
+												name="client_id"
+												x-model="selectedClientId"
+												class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+											>
+												<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.history.select_client") }</option>
+												for _, client := range clients {
+													<option value={ client.ID } class="bg-[#1a1b1e]">{ client.Name } ({ client.Email })</option>
+												}
+											</select>
+											<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+												<i class="fas fa-chevron-down text-xs text-white/30"></i>
+											</div>
+										</div>
 									} else {
-										<div class="p-4 bg-amber-500/10 text-amber-400 rounded-lg text-sm">
+										<div class="p-4 bg-amber-500/10 text-amber-400 rounded-xl text-sm border border-amber-500/20">
 											{ i18n.T(ctx, "cases.history.no_clients") }
 										</div>
 									}
@@ -182,38 +187,38 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 							</div>
 							<!-- New Client Form -->
 							<div x-show="clientMode === 'new'" x-transition class="space-y-4">
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<!-- Name -->
 									<div>
-										<label class="text-sm font-medium text-foreground mb-2 block">
-											{ i18n.T(ctx, "cases.history.client_name") } *
+										<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+											{ i18n.T(ctx, "cases.history.client_name") } <span class="text-accent">*</span>
 										</label>
 										<input
 											type="text"
 											name="new_client_name"
 											x-model="newClient.name"
 											placeholder="John Doe"
-											class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+											class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 										/>
 									</div>
 									<!-- Email -->
 									<div>
-										<label class="text-sm font-medium text-foreground mb-2 block">
-											{ i18n.T(ctx, "cases.history.client_email") } *
+										<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+											{ i18n.T(ctx, "cases.history.client_email") } <span class="text-accent">*</span>
 										</label>
 										<input
 											type="email"
 											name="new_client_email"
 											x-model="newClient.email"
 											placeholder="client@example.com"
-											class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+											class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 										/>
 									</div>
 								</div>
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<!-- Phone -->
 									<div>
-										<label class="text-sm font-medium text-foreground mb-2 block">
+										<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 											{ i18n.T(ctx, "cases.history.client_phone") }
 										</label>
 										<input
@@ -221,29 +226,34 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 											name="new_client_phone"
 											x-model="newClient.phone"
 											placeholder="+1 555 123 4567"
-											class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+											class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 										/>
 									</div>
 									<!-- Document Type -->
 									<div>
-										<label class="text-sm font-medium text-foreground mb-2 block">
+										<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 											{ i18n.T(ctx, "cases.history.client_doc_type") }
 										</label>
-										<select
-											name="new_client_doc_type_id"
-											x-model="newClient.docTypeId"
-											class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-										>
-											<option value="">-- { i18n.T(ctx, "common.select_option") } --</option>
-											for _, docType := range documentTypes {
-												<option value={ docType.ID }>{ docType.Label }</option>
-											}
-										</select>
+										<div class="relative">
+											<select
+												name="new_client_doc_type_id"
+												x-model="newClient.docTypeId"
+												class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+											>
+												<option value="" class="bg-[#1a1b1e]">-- { i18n.T(ctx, "common.select_option") } --</option>
+												for _, docType := range documentTypes {
+													<option value={ docType.ID } class="bg-[#1a1b1e]">{ docType.Label }</option>
+												}
+											</select>
+											<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+												<i class="fas fa-chevron-down text-xs text-white/30"></i>
+											</div>
+										</div>
 									</div>
 								</div>
 								<!-- Document Number -->
 								<div>
-									<label class="text-sm font-medium text-foreground mb-2 block">
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 										{ i18n.T(ctx, "cases.history.client_doc_number") }
 									</label>
 									<input
@@ -251,7 +261,7 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 										name="new_client_doc_number"
 										x-model="newClient.docNumber"
 										placeholder="12345678"
-										class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 									/>
 								</div>
 							</div>
@@ -259,194 +269,219 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 					</div>
 					<!-- STEP 2: Case Details -->
 					<div x-show="step === 2" x-transition>
-						<div class="space-y-4">
-							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div class="space-y-6">
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<!-- Original Filing Date -->
 								<div>
-									<label class="text-sm font-medium text-foreground mb-2 block">
-										{ i18n.T(ctx, "cases.history.original_date") } *
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+										{ i18n.T(ctx, "cases.history.original_date") } <span class="text-accent">*</span>
 									</label>
 									<input
 										type="date"
 										name="original_filing_date"
 										required
-										class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20 [color-scheme:dark]"
 									/>
 								</div>
 								<!-- Historical Case Number -->
 								<div>
-									<label class="text-sm font-medium text-foreground mb-2 block">
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 										{ i18n.T(ctx, "cases.history.original_number") }
 									</label>
 									<input
 										type="text"
 										name="historical_case_number"
 										placeholder="e.g., 2020-C-00123"
-										class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 									/>
 								</div>
 							</div>
 							<!-- Title -->
 							<div>
-								<label class="text-sm font-medium text-foreground mb-2 block">
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 									{ i18n.T(ctx, "cases.title_label") }
 								</label>
 								<input
 									type="text"
 									name="title"
 									placeholder={ i18n.T(ctx, "cases.title_placeholder") }
-									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 								/>
 							</div>
 							<!-- Description -->
 							<div>
-								<label class="text-sm font-medium text-foreground mb-2 block">
-									{ i18n.T(ctx, "cases.description_label") } *
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+									{ i18n.T(ctx, "cases.description_label") } <span class="text-accent">*</span>
 								</label>
 								<textarea
 									name="description"
 									rows="3"
 									required
 									placeholder={ i18n.T(ctx, "cases.description_placeholder") }
-									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 								></textarea>
 							</div>
 							<!-- Lawyer Selection -->
 							<div>
-								<label class="text-sm font-medium text-foreground mb-2 block">
-									{ i18n.T(ctx, "cases.assigned_lawyer") } *
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+									{ i18n.T(ctx, "cases.assigned_lawyer") } <span class="text-accent">*</span>
 								</label>
-								<select
-									name="assigned_to_id"
-									required
-									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-								>
-									<option value="">{ i18n.T(ctx, "cases.select_lawyer") }</option>
-									for _, lawyer := range lawyers {
-										<option value={ lawyer.ID }>{ lawyer.Name } ({ lawyer.Role })</option>
-									}
-								</select>
-							</div>
-							<!-- Classification (Optional) -->
-							<div class="border-t border-white/10 pt-4 mt-4">
-								<h4 class="text-sm font-semibold text-foreground mb-3">{ i18n.T(ctx, "cases.classification") } ({ i18n.T(ctx, "common.optional") })</h4>
-								<!-- Domain -->
-								<div class="mb-3">
-									<label class="text-sm font-medium text-muted-foreground mb-2 block">{ i18n.T(ctx, "cases.domain") }</label>
+								<div class="relative">
 									<select
-										name="domain_id"
-										x-model="classification.domainId"
-										@change="
-											classification.branchId = '';
-											classification.subtypeIds = [];
-											subtypes = [];
-											if(classification.domainId) {
-												fetch('/api/cases/history/branches?domain_id=' + classification.domainId)
-													.then(r => r.json())
-													.then(data => branches = data.branches || []);
-											} else {
-												branches = [];
-											}
-										"
-										class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+										name="assigned_to_id"
+										required
+										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
 									>
-										<option value="">-- { i18n.T(ctx, "cases.select_domain") } --</option>
-										for _, domain := range domains {
-											<option value={ domain.ID }>{ domain.Name }</option>
+										<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.select_lawyer") }</option>
+										for _, lawyer := range lawyers {
+											<option value={ lawyer.ID } class="bg-[#1a1b1e]">{ lawyer.Name } ({ lawyer.Role })</option>
 										}
 									</select>
+									<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+										<i class="fas fa-chevron-down text-xs text-white/30"></i>
+									</div>
+								</div>
+							</div>
+							<!-- Classification (Optional) -->
+							<div class="border-t border-white/10 pt-6 mt-6">
+								<h4 class="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+									</svg>
+									{ i18n.T(ctx, "cases.classification") } <span class="text-white/40 text-sm font-normal ml-2">({ i18n.T(ctx, "common.optional") })</span>
+								</h4>
+								<!-- Domain -->
+								<div class="mb-6">
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "cases.domain") }</label>
+									<div class="relative">
+										<select
+											name="domain_id"
+											x-model="classification.domainId"
+											@change="
+												classification.branchId = '';
+												classification.subtypeIds = [];
+												subtypes = [];
+												if(classification.domainId) {
+													fetch('/api/cases/history/branches?domain_id=' + classification.domainId)
+														.then(r => r.json())
+														.then(data => branches = data.branches || []);
+												} else {
+													branches = [];
+												}
+											"
+											class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+										>
+											<option value="" class="bg-[#1a1b1e]">-- { i18n.T(ctx, "cases.select_domain") } --</option>
+											for _, domain := range domains {
+												<option value={ domain.ID } class="bg-[#1a1b1e]">{ domain.Name }</option>
+											}
+										</select>
+										<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+											<i class="fas fa-chevron-down text-xs text-white/30"></i>
+										</div>
+									</div>
 								</div>
 								<!-- Branch -->
-								<div class="mb-3" x-show="branches.length > 0">
-									<label class="text-sm font-medium text-muted-foreground mb-2 block">{ i18n.T(ctx, "cases.branch") }</label>
-									<select
-										name="branch_id"
-										x-model="classification.branchId"
-										@change="
-											classification.subtypeIds = [];
-											if(classification.branchId) {
-												fetch('/api/cases/history/subtypes?branch_id=' + classification.branchId)
-													.then(r => r.json())
-													.then(data => subtypes = data.subtypes || []);
-											} else {
-												subtypes = [];
-											}
-										"
-										class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-									>
-										<option value="">-- { i18n.T(ctx, "cases.select_branch") } --</option>
-										<template x-for="branch in branches" :key="branch.id">
-											<option :value="branch.id" x-text="branch.name"></option>
-										</template>
-									</select>
+								<div class="mb-6" x-show="branches.length > 0">
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "cases.branch") }</label>
+									<div class="relative">
+										<select
+											name="branch_id"
+											x-model="classification.branchId"
+											@change="
+												classification.subtypeIds = [];
+												if(classification.branchId) {
+													fetch('/api/cases/history/subtypes?branch_id=' + classification.branchId)
+														.then(r => r.json())
+														.then(data => subtypes = data.subtypes || []);
+												} else {
+													subtypes = [];
+												}
+											"
+											class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+										>
+											<option value="" class="bg-[#1a1b1e]">-- { i18n.T(ctx, "cases.select_branch") } --</option>
+											<template x-for="branch in branches" :key="branch.id">
+												<option :value="branch.id" x-text="branch.name" class="bg-[#1a1b1e]"></option>
+											</template>
+										</select>
+										<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+											<i class="fas fa-chevron-down text-xs text-white/30"></i>
+										</div>
+									</div>
 								</div>
 								<!-- Subtypes -->
 								<div x-show="subtypes.length > 0">
-									<label class="text-sm font-medium text-muted-foreground mb-2 block">{ i18n.T(ctx, "cases.subtypes") }</label>
-									<div class="glass-panel p-3 rounded-lg border border-white/5 max-h-32 overflow-y-auto space-y-1">
+									<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "cases.subtypes") }</label>
+									<div class="glass-panel p-4 rounded-xl border border-white/10 max-h-40 overflow-y-auto space-y-2 bg-[#0A0A0B]/40">
 										<template x-for="subtype in subtypes" :key="subtype.id">
-											<label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded">
+											<label class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors">
 												<input
 													type="checkbox"
 													name="subtype_ids[]"
 													:value="subtype.id"
-													class="w-4 h-4 text-accent focus:ring-accent focus:ring-2"
+													class="w-4 h-4 text-accent focus:ring-accent focus:ring-2 rounded bg-white/5 border-white/20"
 												/>
-												<span class="text-sm text-foreground" x-text="subtype.name"></span>
+												<span class="text-sm text-white/80" x-text="subtype.name"></span>
 											</label>
 										</template>
 									</div>
 								</div>
 							</div>
 							<!-- Migration Notes -->
-							<div class="border-t border-white/10 pt-4 mt-4">
-								<label class="text-sm font-medium text-foreground mb-2 block">
+							<div class="border-t border-white/10 pt-6 mt-6">
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 									{ i18n.T(ctx, "cases.history.migration_notes") }
 								</label>
 								<textarea
 									name="migration_notes"
 									rows="2"
 									placeholder={ i18n.T(ctx, "cases.history.migration_notes_placeholder") }
-									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 								></textarea>
 							</div>
 							<!-- Document Upload -->
-							<div class="border-t border-white/10 pt-4 mt-4">
-								<label class="text-sm font-medium text-foreground mb-2 block">
+							<div class="border-t border-white/10 pt-6 mt-6">
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 									{ i18n.T(ctx, "cases.history.upload_documents") }
 								</label>
-								<div class="glass-panel p-4 rounded-lg border border-dashed border-white/20 hover:border-accent/50 transition-colors">
+								<div class="glass-panel p-8 rounded-xl border border-dashed border-white/20 hover:border-accent/50 transition-all duration-300 bg-[#0A0A0B]/40 text-center group">
+									<div class="mb-4">
+										<svg class="w-10 h-10 text-white/30 group-hover:text-accent/70 mx-auto transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+										</svg>
+									</div>
 									<input
 										type="file"
 										name="documents[]"
 										multiple
 										accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-										class="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent/20 file:text-accent hover:file:bg-accent/30 file:cursor-pointer"
+										class="w-full text-sm text-muted-foreground file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 file:cursor-pointer transition-all"
 									/>
-									<p class="text-xs text-muted-foreground mt-2">{ i18n.T(ctx, "cases.history.upload_hint") }</p>
+									<p class="text-xs text-white/40 mt-3">{ i18n.T(ctx, "cases.history.upload_hint") }</p>
 								</div>
 							</div>
 						</div>
 					</div>
 					<!-- Footer -->
-					<div class="flex items-center justify-between gap-3 mt-6 pt-4 border-t border-white/10">
+					<div class="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-white/10">
 						<div>
 							<button
 								type="button"
 								x-show="step > 1"
-								class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+								class="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 border border-white/5 hover:border-white/10"
 								@click="step--"
 							>
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
 								</svg>
 								{ i18n.T(ctx, "cases.history.previous") }
 							</button>
 						</div>
-						<div class="flex items-center gap-3">
+						<div class="flex items-center gap-4">
 							<button
 								type="button"
-								class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+								class="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-sm font-medium transition-all duration-200 border border-white/5 hover:border-white/10"
 								@click="document.getElementById('case-history-modal').remove()"
 							>
 								{ i18n.T(ctx, "common.cancel") }
@@ -455,7 +490,7 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 							<button
 								type="button"
 								x-show="step === 1"
-								class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+								class="px-8 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-accent/20 hover:shadow-accent/40"
 								:disabled="!canProceed()"
 								@click="step++"
 							>
@@ -468,7 +503,7 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 							<button
 								type="submit"
 								x-show="step === 2"
-								class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+								class="px-8 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40"
 							>
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>

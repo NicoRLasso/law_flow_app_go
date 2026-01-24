@@ -389,6 +389,8 @@ func main() {
 			templateApiRoutes.DELETE("/:id", handlers.DeleteTemplateHandler)
 			templateApiRoutes.GET("/:id/metadata", handlers.GetTemplateMetadataHandler)
 			templateApiRoutes.GET("/:id/metadata/modal", handlers.GetTemplateMetadataModalHandler)
+			templateApiRoutes.GET("/:id/clone/modal", handlers.GetCloneTemplateModalHandler)
+			templateApiRoutes.POST("/:id/clone", handlers.CloneTemplateHandler)
 			templateApiRoutes.GET("/variables", handlers.GetTemplateVariablesHandler)
 
 			// Template Categories

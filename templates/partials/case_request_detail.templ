@@ -8,32 +8,11 @@ import (
 	"strings"
 )
 
-script acceptanceModalListener() {
-	window.addEventListener('show-acceptance-modal', function(event) {
-		const requestId = event.detail.requestId;
-		fetch('/api/case-requests/' + requestId + '/accept/start', {
-			headers: { 'HX-Request': 'true' }
-		})
-		.then(res => res.text())
-		.then(html => {
-			const tempDiv = document.createElement('div');
-			tempDiv.innerHTML = html;
-			const modalElement = tempDiv.firstElementChild;
-			document.body.appendChild(modalElement);
-			if (typeof htmx !== 'undefined') {
-				htmx.process(modalElement);
-			}
-		})
-		.catch(err => {
-			console.error('Failed to load acceptance modal:', err);
-			alert('Failed to load acceptance modal');
-		});
-	});
-}
+
 
 // CaseRequestDetailModal renders a modal with case request details
 templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
-	@acceptanceModalListener()
+
 	<div
 		id="case-request-detail-modal"
 		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-4"
@@ -47,6 +26,26 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 		x-transition:leave-end="opacity-0"
 		@keydown.escape.window="show = false; setTimeout(() => document.getElementById('case-request-detail-modal').remove(), 300)"
 		@click.self="show = false; setTimeout(() => document.getElementById('case-request-detail-modal').remove(), 300)"
+		@show-acceptance-modal.window="
+			const requestId = $event.detail.requestId;
+			fetch('/api/case-requests/' + requestId + '/accept/start', {
+				headers: { 'HX-Request': 'true' }
+			})
+			.then(res => res.text())
+			.then(html => {
+				const tempDiv = document.createElement('div');
+				tempDiv.innerHTML = html;
+				const modalElement = tempDiv.firstElementChild;
+				document.body.appendChild(modalElement);
+				if (typeof htmx !== 'undefined') {
+					htmx.process(modalElement);
+				}
+			})
+			.catch(err => {
+				console.error('Failed to load acceptance modal:', err);
+				alert('Failed to load acceptance modal');
+			});
+		"
 	>
 		<div
 			class="glass-panel rounded-xl md:rounded-2xl border border-white/10 max-w-6xl w-full max-h-[98vh] md:max-h-[95vh] shadow-2xl flex flex-col"
@@ -61,7 +60,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 			<!-- Modal Header -->
 			<div class="flex flex-col md:flex-row md:items-center justify-between p-4 md:p-8 border-b border-white/10 gap-4">
 				<div class="flex items-center gap-4 md:gap-6">
-					<div class="p-2 md:p-3 bg-accent/20 rounded-lg md:rounded-xl">
+					<div class="p-2 md:p-3 bg-accent/10 rounded-lg md:rounded-xl">
 						<svg class="w-5 h-5 md:w-6 md:h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 						</svg>
@@ -73,7 +72,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 				</div>
 				<div class="flex items-center gap-3 md:gap-4 justify-between md:justify-end">
 					<div class="flex flex-col items-start md:items-end gap-1 md:gap-2">
-						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.filters.status") }</label>
+						<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.filters.status") }</label>
 						<select
 							class="px-3 md:px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
 							x-data={ fmt.Sprintf("{ originalStatus: '%s' }", request.Status) }
@@ -87,7 +86,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 						</select>
 					</div>
 					<div class="flex flex-col items-start md:items-end gap-1 md:gap-2">
-						<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.filters.priority") }</label>
+						<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.filters.priority") }</label>
 						@PriorityBadge(ctx, request.Priority)
 					</div>
 					<button
@@ -114,11 +113,11 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 						<div class="glass-panel p-4 md:p-6 rounded-xl border border-white/5 space-y-4 md:space-y-5">
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.full_name") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.full_name") }</label>
 									<p class="text-base text-foreground font-medium">{ request.Name }</p>
 								</div>
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.document") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.document") }</label>
 									<p class="text-base text-foreground font-medium">
 										if request.DocumentTypeOption != nil {
 											{ request.DocumentTypeOption.Label } - { request.DocumentNumber }
@@ -130,7 +129,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 							</div>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.email") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.email") }</label>
 									<p class="text-base text-foreground font-medium flex items-center gap-2">
 										<svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -139,7 +138,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 									</p>
 								</div>
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.phone") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.phone") }</label>
 									<p class="text-base text-foreground font-medium flex items-center gap-2">
 										<svg class="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
@@ -201,7 +200,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 									<a
 										href={ templ.URL("/api/case-requests/" + request.ID + "/file") }
 										target="_blank"
-										class="px-5 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+										class="px-5 py-2.5 bg-accent/10 hover:bg-accent/20 border border-accent/20 text-accent rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
 									>
 										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -239,12 +238,12 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 							<div class="glass-panel p-6 rounded-xl border border-white/5 space-y-5">
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 									<div class="space-y-2">
-										<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.reviewed_by") }</label>
+										<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.reviewed_by") }</label>
 										<p class="text-base text-foreground font-medium">{ request.ReviewedBy.Name }</p>
 									</div>
 									if request.ReviewedAt != nil {
 										<div class="space-y-2">
-											<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.reviewed_at") }</label>
+											<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.reviewed_at") }</label>
 											<p class="text-base text-foreground font-medium">{ request.ReviewedAt.Format("Jan 2, 2006 3:04 PM") }</p>
 										</div>
 									}
@@ -263,17 +262,17 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 						<div class="glass-panel p-6 rounded-xl border border-white/5 space-y-5">
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.submitted") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.submitted") }</label>
 									<p class="text-base text-foreground font-medium">{ request.CreatedAt.Format("Jan 2, 2006 3:04 PM") }</p>
 								</div>
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.last_updated") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.last_updated") }</label>
 									<p class="text-base text-foreground font-medium">{ request.UpdatedAt.Format("Jan 2, 2006 3:04 PM") }</p>
 								</div>
 							</div>
 							if request.IPAddress != "" {
 								<div class="space-y-2">
-									<label class="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{ i18n.T(ctx, "case_requests.detail.ip_address") }</label>
+									<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.detail.ip_address") }</label>
 									<p class="text-base text-foreground font-mono">{ request.IPAddress }</p>
 								</div>
 							}
@@ -365,7 +364,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 					</button>
 					<button
 						type="button"
-						class="px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+						class="px-6 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
 						@click="
 						if(rejectionNote.trim() === '') { alert('Please provide a rejection reason'); return; }
 						const btn = $el;

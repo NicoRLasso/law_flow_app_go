@@ -9,8 +9,8 @@ import (
 templ UserList(ctx context.Context, users []models.User) {
 	<div class="space-y-4">
 		if len(users) == 0 {
-			<div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-				<p class="text-yellow-700">{ i18n.T(ctx, "users.table.empty") }</p>
+			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-8 text-center">
+				<p class="text-muted-foreground">{ i18n.T(ctx, "users.table.empty") }</p>
 			</div>
 		} else {
 			for _, user := range users {

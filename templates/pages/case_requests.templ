@@ -15,22 +15,23 @@ templ CaseRequests(ctx context.Context, title string, csrfToken string, user *mo
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/case-requests")
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
-				<div class="space-y-4 md:space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="space-y-6">
 					<!-- Header -->
-					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-						<div>
-							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "case_requests.title") }</h1>
-							<p class="text-muted-foreground mt-1 text-sm md:text-base">{ i18n.T(ctx, "case_requests.description") }</p>
-						</div>
+					<div class="mb-10">
+						<p class="text-sm text-muted-foreground mb-2">{ i18n.T(ctx, "dashboard.overview") }</p>
+						<h1 class="text-3xl font-bold text-gradient mb-2">{ i18n.T(ctx, "case_requests.title") }</h1>
+						<p class="text-muted-foreground">
+							{ i18n.T(ctx, "case_requests.description") }
+						</p>
 					</div>
-					<!-- Case Requests Filters (static, not reloaded) -->
+					<!-- Case Requests Filters -->
 					@partials.CaseRequestFilters(ctx)
-					<!-- Loading indicator (outside the replaceable content) -->
+					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
 						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
 					</div>
-					<!-- Case Requests Table (reloadable content) -->
+					<!-- Case Requests Table -->
 					<div
 						id="case-requests-table"
 						hx-get="/api/case-requests"

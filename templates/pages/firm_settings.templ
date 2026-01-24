@@ -15,7 +15,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 			@components.Navbar(ctx, user, firm, "/firm/settings")
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full max-w-6xl" x-data="{ activeTab: 'general', sidebarOpen: false, showCategoryModal: false }">
+				<div class="w-full" x-data="{ activeTab: 'general', sidebarOpen: false, showCategoryModal: false }">
 					<!-- Header -->
 					<div class="text-center mb-6 md:mb-8 settings-page-header">
 						<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "settings.firm.title") }</h1>
@@ -43,7 +43,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							</button>
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav"
+								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav shadow-xl backdrop-blur-xl"
 								:class="{ 'settings-nav-hidden': !sidebarOpen }"
 								x-show="sidebarOpen || window.innerWidth >= 768"
 								x-transition
@@ -129,7 +129,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- General Tab -->
 							<div x-show="activeTab === 'general'" x-transition class="space-y-6">
 								<!-- Firm Information Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
 									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
 										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
@@ -320,7 +320,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											style="display: none;"
 										>
 											<div
-												class="bg-background border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl relative"
+												class="glass-panel border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl backdrop-blur-xl relative"
 												@click.away="showWarning = false"
 												x-transition:enter="transition ease-out duration-300"
 												x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -368,7 +368,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- Email Tab -->
 							<div x-show="activeTab === 'email'" x-transition class="space-y-6">
 								<!-- Email Configuration Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
 									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
 										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
@@ -462,7 +462,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- Branding Tab -->
 							<div x-show="activeTab === 'branding'" x-transition class="space-y-6">
 								<!-- Logo Upload Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
 									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
 										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -544,7 +544,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- Details Tab -->
 							<div x-show="activeTab === 'details'" x-transition class="space-y-6">
 								<!-- Firm Details -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
 									<h2 class="text-xl font-bold mb-4 flex items-center gap-2">
 										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -570,7 +570,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- Templates Tab -->
 							<div x-show="activeTab === 'templates'" x-transition class="space-y-6">
 								<!-- Template Categories Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
 									<div class="flex items-center justify-between mb-6">
 										<h2 class="text-xl font-bold flex items-center gap-2">
 											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -608,7 +608,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							<!-- Classifications Tab -->
 							<div x-show="activeTab === 'classifications'" x-transition class="space-y-6">
 								<!-- Classifications Card -->
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
 									<div class="flex items-center justify-between mb-6">
 										<h2 class="text-xl font-bold flex items-center gap-2">
 											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -640,7 +640,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 						style="display: none;"
 					>
 						<div
-							class="bg-background border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl"
+							class="glass-panel border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl backdrop-blur-xl"
 							@click.away="showCategoryModal = false"
 							x-transition:enter="transition ease-out duration-200"
 							x-transition:enter-start="opacity-0 scale-95"

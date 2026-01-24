@@ -113,6 +113,11 @@
     "delete_confirm": "Are you sure you want to delete this template?",
     "delete_confirm_title": "Delete Template",
     "delete_confirm_msg": "Are you sure you want to delete this template? This action cannot be undone.",
+    "clone": "Clone",
+    "clone_title": "Clone Template",
+    "clone_desc": "Create a copy of this template with a new name",
+    "clone_name_placeholder": "New template name...",
+    "clone_btn": "Clone Template",
     "variables_title": "Template Variables",
     "insert_variable": "Click a variable to insert it at the cursor position",
     "select_template": "Select Template",
@@ -162,6 +167,16 @@
       "today_date": "Today's Date",
       "today_date_long": "Today (Long Format)",
       "today_year": "Current Year"
+    },
+    "editor": {
+      "normal": "Normal",
+      "heading_1": "Heading 1",
+      "heading_2": "Heading 2",
+      "heading_3": "Heading 3",
+      "heading_4": "Heading 4",
+      "advanced_colors": "Advanced Colors",
+      "hide_advanced": "Hide Advanced",
+      "apply": "Apply"
     }
   },
   "footer": {
@@ -440,6 +455,7 @@
     }
   },
   "dashboard": {
+    "greeting": "Welcome back",
     "welcome": "Welcome back, {name}",
     "overview": "Overview",
     "subtitle": "Here's what's happening with your practice today.",
@@ -473,11 +489,13 @@
     },
     "recent_cases": {
       "label": "Recent Cases",
-      "no_cases": "No recent cases"
+      "no_cases": "No recent cases",
+      "no_cases_hint": "Cases you work on will appear here"
     },
     "upcoming_appointments": {
       "label": "Upcoming Appointments",
-      "no_appointments": "No upcoming appointments"
+      "no_appointments": "No upcoming appointments",
+      "no_appointments_hint": "Scheduled appointments will appear here"
     }
   },
   "landing": {
@@ -767,7 +785,8 @@
       "edit": "Edit",
       "delete": "Delete",
       "never": "Never",
-      "empty": "No users found"
+      "empty": "No users found",
+      "empty_hint": "Add users to get started"
     },
     "modal": {
       "add_title": "Add New User",
@@ -1241,23 +1260,29 @@
     },
     "schedule": {
       "title": "Standard Working Hours",
+      "desc": "Define when you're available to take appointments",
       "add_slot": "Add Time Slot",
+      "add_first": "Add Your First Time Slot",
       "day": "Day",
       "start": "Start Time",
       "end": "End Time",
       "active": "Active",
       "no_slots": "No availability slots configured",
+      "no_slots_hint": "Add time slots to let clients know when you're available for appointments",
       "save": "Save Changes",
       "delete_confirm": "Delete this time slot?"
     },
     "blocked": {
       "title": "Blocked Dates",
+      "desc": "Block dates when you're unavailable for appointments",
       "add": "Block Date",
+      "add_first": "Block Your First Date",
       "date": "Date",
       "reason": "Reason",
       "full_day": "Full Day",
       "time_range": "Time Range",
       "no_blocked": "No blocked dates",
+      "no_blocked_hint": "Block dates for vacations, holidays, or when you're not available",
       "reasons": {
         "vacation": "Vacation",
         "holiday": "Holiday",

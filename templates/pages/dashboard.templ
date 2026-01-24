@@ -15,10 +15,11 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/dashboard")
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-6 py-8">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
 				<!-- Welcome Section -->
-				<div class="mb-8">
-					<h2 class="text-3xl font-bold mb-2">{ i18n.T(ctx, "dashboard.welcome", map[string]interface{}{"name": user.Name}) }</h2>
+				<div class="mb-10">
+					<p class="text-sm text-muted-foreground mb-2">{ i18n.T(ctx, "dashboard.greeting") }</p>
+					<h1 class="text-3xl font-bold text-gradient mb-2">{ user.Name }</h1>
 					<p class="text-muted-foreground">
 						if user.Role == "client" {
 							{ i18n.T(ctx, "dashboard.subtitle_client") }
@@ -27,180 +28,238 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						}
 					</p>
 				</div>
-				<!-- Stats Grid -->
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+				<!-- Stats Grid - Enhanced with gradients -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
 					<!-- Stat Card 1: Active Cases -->
-					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
-						<div class="flex items-center justify-between mb-4">
-							<div class="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-								<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-								</svg>
+					<div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] hover:border-accent/40 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-accent/10">
+						<div class="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl -mr-8 -mt-8 group-hover:bg-accent/20 transition-colors"></div>
+						<div class="relative">
+							<div class="flex items-center justify-between mb-4">
+								<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center">
+									<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+									</svg>
+								</div>
 							</div>
-							// <span class="text-xs text-accent font-medium">+12%</span>
+							<h3 class="text-3xl font-bold mb-1">{ fmt.Sprintf("%d", stats.ActiveCases) }</h3>
+							if user.Role == "client" {
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.my_active_cases") }</p>
+							} else {
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
+							}
 						</div>
-						<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.ActiveCases) }</h3>
-						if user.Role == "client" {
-							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.my_active_cases") }</p>
-						} else {
-							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
-						}
 					</div>
 					<!-- Stat Card 2: Total Clients (Hidden for Clients) -->
 					if user.Role != "client" {
-						<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
-							<div class="flex items-center justify-between mb-4">
-								<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-									<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-									</svg>
+						<div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] hover:border-purple-500/40 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
+							<div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl -mr-8 -mt-8 group-hover:bg-purple-500/20 transition-colors"></div>
+							<div class="relative">
+								<div class="flex items-center justify-between mb-4">
+									<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-500/10 flex items-center justify-center">
+										<svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+										</svg>
+									</div>
 								</div>
-								// <span class="text-xs text-accent font-medium">+5%</span>
+								<h3 class="text-3xl font-bold mb-1">{ fmt.Sprintf("%d", stats.TotalClients) }</h3>
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
 							</div>
-							<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.TotalClients) }</h3>
-							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
 						</div>
 					}
 					<!-- Stat Card 3: Completed Monthly (Hidden for Clients) -->
 					if user.Role != "client" {
-						<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
-							<div class="flex items-center justify-between mb-4">
-								<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-									<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-									</svg>
+						<div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] hover:border-green-500/40 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
+							<div class="absolute top-0 right-0 w-24 h-24 bg-green-500/10 rounded-full blur-2xl -mr-8 -mt-8 group-hover:bg-green-500/20 transition-colors"></div>
+							<div class="relative">
+								<div class="flex items-center justify-between mb-4">
+									<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/30 to-green-500/10 flex items-center justify-center">
+										<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+										</svg>
+									</div>
 								</div>
-								// <span class="text-xs text-accent font-medium">+8%</span>
+								<h3 class="text-3xl font-bold mb-1">{ fmt.Sprintf("%d", stats.CompletedMonthly) }</h3>
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
 							</div>
-							<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.CompletedMonthly) }</h3>
-							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
 						</div>
 					}
 					<!-- Stat Card 4: Pending Tasks / Appointments -->
-					<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
-						<div class="flex items-center justify-between mb-4">
-							<div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-								<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-								</svg>
+					<div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] hover:border-amber-500/40 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10">
+						<div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl -mr-8 -mt-8 group-hover:bg-amber-500/20 transition-colors"></div>
+						<div class="relative">
+							<div class="flex items-center justify-between mb-4">
+								<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/30 to-amber-500/10 flex items-center justify-center">
+									<svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+									</svg>
+								</div>
+								<span class="text-xs bg-amber-500/20 text-amber-400 font-semibold px-2.5 py-1 rounded-full">{ i18n.T(ctx, "dashboard.stats.urgent_label") }</span>
 							</div>
-							<span class="text-xs text-accent font-medium">{ i18n.T(ctx, "dashboard.stats.urgent_label") }</span>
+							<h3 class="text-3xl font-bold mb-1">{ fmt.Sprintf("%d", stats.PendingTasks) }</h3>
+							if user.Role == "client" {
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.my_upcoming_appointments") }</p>
+							} else {
+								<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
+							}
 						</div>
-						<h3 class="text-2xl font-bold mb-1">{ fmt.Sprintf("%d", stats.PendingTasks) }</h3>
-						if user.Role == "client" {
-							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.my_upcoming_appointments") }</p>
-						} else {
-							<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
-						}
 					</div>
 				</div>
-				<div class={ "grid gap-8 mb-8", templ.KV("grid-cols-2 lg:grid-cols-2", user.Role != "client"), templ.KV("grid-cols-1 lg:grid-cols-2", user.Role == "client") }>
+				<!-- Content Grid -->
+				<div class={ "grid gap-6 mb-10", templ.KV("lg:grid-cols-2", true) }>
 					<!-- Recent Cases -->
-					<div class="glass-panel p-6 rounded-2xl border border-white/10">
-						<div class="flex items-center justify-between mb-4">
-							<h3 class="text-xl font-bold">{ i18n.T(ctx, "dashboard.recent_cases.label") }</h3>
-							<a href="/cases" class="text-sm text-accent hover:underline">{ i18n.T(ctx, "common.view") } { i18n.T(ctx, "common.all") }</a>
+					<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden">
+						<div class="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
+							<h3 class="text-lg font-semibold">{ i18n.T(ctx, "dashboard.recent_cases.label") }</h3>
+							<a href="/cases" class="text-sm text-accent hover:text-accent-bright transition-colors flex items-center gap-1">
+								{ i18n.T(ctx, "common.view") } { i18n.T(ctx, "common.all") }
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+							</a>
 						</div>
-						if len(stats.RecentCases) == 0 {
-							<div class="text-center py-8 text-muted-foreground">
-								{ i18n.T(ctx, "dashboard.recent_cases.no_cases") }
-							</div>
-						} else {
-							<div class="space-y-3">
-								for _, kase := range stats.RecentCases {
-									<a href={ templ.SafeURL("/cases/" + kase.ID) } class="block p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-										<div class="flex justify-between items-start">
-											<div>
-												<p class="font-medium text-sm text-foreground">
-													if kase.Title != nil && *kase.Title != "" {
-														{ *kase.Title }
-													} else {
-														{ kase.CaseNumber }
-													}
-												</p>
-												<p class="text-xs text-muted-foreground mt-0.5">{ kase.CaseNumber } • { kase.Client.Name }</p>
+						<div class="p-4">
+							if len(stats.RecentCases) == 0 {
+								<div class="flex flex-col items-center justify-center py-12 text-center">
+									<div class="w-16 h-16 rounded-2xl bg-white/[0.05] flex items-center justify-center mb-4">
+										<svg class="w-8 h-8 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+										</svg>
+									</div>
+									<p class="text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.recent_cases.no_cases") }</p>
+									<p class="text-sm text-muted-foreground/60">{ i18n.T(ctx, "dashboard.recent_cases.no_cases_hint") }</p>
+								</div>
+							} else {
+								<div class="space-y-2">
+									for _, kase := range stats.RecentCases {
+										<a href={ templ.SafeURL("/cases/" + kase.ID) } class="flex justify-between items-center p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-transparent hover:border-white/[0.08] transition-all duration-200 group">
+											<div class="flex items-center gap-3">
+												<div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+													<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+													</svg>
+												</div>
+												<div>
+													<p class="font-medium text-sm text-foreground">
+														if kase.Title != nil && *kase.Title != "" {
+															{ *kase.Title }
+														} else {
+															{ kase.CaseNumber }
+														}
+													</p>
+													<p class="text-xs text-muted-foreground">{ kase.CaseNumber } • { kase.Client.Name }</p>
+												</div>
 											</div>
-											<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-accent/20 text-accent">
+											<span class={ "text-[10px] uppercase font-bold px-2.5 py-1 rounded-full",
+												templ.KV("bg-green-500/20 text-green-400", kase.Status == "open"),
+												templ.KV("bg-amber-500/20 text-amber-400", kase.Status == "on_hold"),
+												templ.KV("bg-gray-500/20 text-gray-400", kase.Status == "closed") }>
 												{ kase.Status }
 											</span>
-										</div>
-									</a>
-								}
-							</div>
-						}
+										</a>
+									}
+								</div>
+							}
+						</div>
 					</div>
 					<!-- Upcoming Appointments -->
-					<div class="glass-panel p-6 rounded-2xl border border-white/10">
-						<div class="flex items-center justify-between mb-4">
-							<h3 class="text-xl font-bold">{ i18n.T(ctx, "dashboard.upcoming_appointments.label") }</h3>
-							<a href="/appointments" class="text-sm text-accent hover:underline">{ i18n.T(ctx, "common.view") } { i18n.T(ctx, "common.all") }</a>
+					<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden">
+						<div class="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
+							<h3 class="text-lg font-semibold">{ i18n.T(ctx, "dashboard.upcoming_appointments.label") }</h3>
+							<a href="/appointments" class="text-sm text-accent hover:text-accent-bright transition-colors flex items-center gap-1">
+								{ i18n.T(ctx, "common.view") } { i18n.T(ctx, "common.all") }
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+								</svg>
+							</a>
 						</div>
-						if len(stats.UpcomingAppointments) == 0 {
-							<div class="text-center py-8 text-muted-foreground">
-								{ i18n.T(ctx, "dashboard.upcoming_appointments.no_appointments") }
-							</div>
-						} else {
-							<div class="space-y-3">
-								for _, appt := range stats.UpcomingAppointments {
-									<div class="p-3 rounded-xl bg-white/5 border-l-2 border-accent">
-										<div class="flex justify-between items-start">
-											<div>
-												<p class="font-medium text-sm text-foreground">
-													if appt.ClientName != "" {
-														{ appt.ClientName }
-													} else if appt.Client != nil {
-														{ appt.Client.Name }
-													} else {
-														Unknown Client
-													}
-												</p>
-												<p class="text-xs text-muted-foreground mt-0.5">
-													{ appt.ScheduledDate.Format("02 Jan 2006") } • { appt.StartTime.Format("15:04") }
-												</p>
+						<div class="p-4">
+							if len(stats.UpcomingAppointments) == 0 {
+								<div class="flex flex-col items-center justify-center py-12 text-center">
+									<div class="w-16 h-16 rounded-2xl bg-white/[0.05] flex items-center justify-center mb-4">
+										<svg class="w-8 h-8 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+										</svg>
+									</div>
+									<p class="text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.upcoming_appointments.no_appointments") }</p>
+									<p class="text-sm text-muted-foreground/60">{ i18n.T(ctx, "dashboard.upcoming_appointments.no_appointments_hint") }</p>
+								</div>
+							} else {
+								<div class="space-y-2">
+									for _, appt := range stats.UpcomingAppointments {
+										<div class="flex justify-between items-center p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border-l-2 border-accent transition-all duration-200">
+											<div class="flex items-center gap-3">
+												<div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+													<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+													</svg>
+												</div>
+												<div>
+													<p class="font-medium text-sm text-foreground">
+														if appt.ClientName != "" {
+															{ appt.ClientName }
+														} else if appt.Client != nil {
+															{ appt.Client.Name }
+														} else {
+															Unknown Client
+														}
+													</p>
+													<p class="text-xs text-muted-foreground">
+														{ appt.ScheduledDate.Format("02 Jan 2006") } • { appt.StartTime.Format("15:04") }
+													</p>
+												</div>
 											</div>
-											<a href={ templ.SafeURL("/api/appointments/" + appt.ID) } class="text-xs bg-white/10 hover:bg-white/20 px-2 py-1 rounded transition-colors">
+											<a href={ templ.SafeURL("/api/appointments/" + appt.ID) } class="text-xs bg-white/[0.06] hover:bg-white/[0.12] px-3 py-1.5 rounded-lg transition-colors font-medium">
 												{ i18n.T(ctx, "common.view") }
 											</a>
 										</div>
-									</div>
-								}
-							</div>
-						}
+									}
+								</div>
+							}
+						</div>
 					</div>
 				</div>
-				<!-- Firm Information Panel -->
-				<div class="glass-panel p-8 rounded-2xl border border-white/10 mb-8">
-					<h3 class="text-xl font-bold mb-6">{ i18n.T(ctx, "dashboard.firm_info.label") }</h3>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<div>
-							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.name") }</p>
-							<p class="font-medium">{ firm.Name }</p>
+				<!-- Firm Information Panel - Enhanced -->
+				<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden">
+					<div class="flex items-center gap-3 px-6 py-5 border-b border-white/[0.06]">
+						<div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+							</svg>
 						</div>
-						<div>
-							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.location") }</p>
-							<p class="font-medium">{ firm.City }, { firm.Country }</p>
-						</div>
-						<div>
-							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.timezone") }</p>
-							<p class="font-medium">{ firm.Timezone }</p>
-						</div>
-						<div>
-							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.contact") }</p>
-							<p class="font-medium">{ firm.Phone }</p>
-						</div>
-						<div>
-							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.billing_email") }</p>
-							<p class="font-medium">{ firm.BillingEmail }</p>
-						</div>
-						<div>
-							<p class="text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "dashboard.firm_info.info_email") }</p>
-							<p class="font-medium">
-								if firm.InfoEmail != "" {
-									{ firm.InfoEmail }
-								} else {
-									<span class="text-muted-foreground">{ i18n.T(ctx, "common.not_set") }</span>
-								}
-							</p>
+						<h3 class="text-lg font-semibold">{ i18n.T(ctx, "dashboard.firm_info.label") }</h3>
+					</div>
+					<div class="p-6">
+						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+							<div class="space-y-1">
+								<p class="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">{ i18n.T(ctx, "dashboard.firm_info.name") }</p>
+								<p class="font-semibold text-foreground">{ firm.Name }</p>
+							</div>
+							<div class="space-y-1">
+								<p class="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">{ i18n.T(ctx, "dashboard.firm_info.location") }</p>
+								<p class="font-semibold text-foreground">{ firm.City }, { firm.Country }</p>
+							</div>
+							<div class="space-y-1">
+								<p class="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">{ i18n.T(ctx, "dashboard.firm_info.timezone") }</p>
+								<p class="font-semibold text-foreground">{ firm.Timezone }</p>
+							</div>
+							<div class="space-y-1">
+								<p class="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">{ i18n.T(ctx, "dashboard.firm_info.contact") }</p>
+								<p class="font-semibold text-foreground">{ firm.Phone }</p>
+							</div>
+							<div class="space-y-1">
+								<p class="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">{ i18n.T(ctx, "dashboard.firm_info.billing_email") }</p>
+								<p class="font-semibold text-foreground">{ firm.BillingEmail }</p>
+							</div>
+							<div class="space-y-1">
+								<p class="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">{ i18n.T(ctx, "dashboard.firm_info.info_email") }</p>
+								<p class="font-semibold text-foreground">
+									if firm.InfoEmail != "" {
+										{ firm.InfoEmail }
+									} else {
+										<span class="text-muted-foreground/50 font-normal">{ i18n.T(ctx, "common.not_set") }</span>
+									}
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>

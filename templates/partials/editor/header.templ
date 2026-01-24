@@ -8,7 +8,7 @@ import (
 
 templ Header(ctx context.Context, template models.DocumentTemplate) {
 	<!-- Top Bar: Actions -->
-	<div class="glass-panel border-b border-white/10 px-6 py-3 flex items-center justify-between z-20">
+	<div class="glass-panel border-b border-white/10 px-6 py-3 flex items-center justify-between z-20 bg-[#0A0A0B]/90 backdrop-blur-xl">
 		<div class="flex items-center gap-4">
 			<a
 				href="/templates"
@@ -18,14 +18,18 @@ templ Header(ctx context.Context, template models.DocumentTemplate) {
 				{ i18n.T(ctx, "templates.return_list") }
 			</a>
 			<div class="h-6 w-px bg-white/10"></div>
-			<h2 class="font-semibold text-foreground">{ template.Name }</h2>
-			<span class="text-xs text-muted-foreground px-2 py-0.5 rounded-full bg-white/5 border border-white/10 uppercase tracking-wider">
-				{ template.PageSize } - { template.PageOrientation }
-			</span>
+			<div class="flex flex-col">
+				<h2 class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 truncate max-w-[300px]">{ template.Name }</h2>
+				<div class="flex items-center gap-2">
+					<span class="text-[10px] uppercase tracking-wider font-semibold text-white/40">
+						{ template.PageSize } • { template.PageOrientation }
+					</span>
+				</div>
+			</div>
 		</div>
 		<div class="flex items-center gap-3">
 			<!-- Page Indicator -->
-			<span x-show="viewMode === 'paginated'" class="text-xs text-muted-foreground px-3 py-1 rounded-full bg-white/5 border border-white/10">
+			<span x-show="viewMode === 'paginated'" class="text-xs font-mono text-white/50 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
 				<span x-text={ "`" + i18n.T(ctx, "templates.page") + " ${currentPage} / ${totalPages}`" }></span>
 			</span>
 			<button
@@ -39,7 +43,7 @@ templ Header(ctx context.Context, template models.DocumentTemplate) {
 			<button
 				type="button"
 				onclick="saveTemplateContent()"
-				class="btn-primary px-4 py-1.5 text-lg font-medium shadow-md hover:shadow-accent/20 transition-all flex items-center gap-2"
+				class="px-6 py-2 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white rounded-xl text-sm font-medium shadow-lg shadow-accent/20 hover:shadow-accent/40 transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
 				{ i18n.T(ctx, "common.save") }

@@ -14,8 +14,8 @@ templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/audit-logs")
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
-				<div class="space-y-4 md:space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="w-full">
 					<!-- Header -->
 					<div class="flex justify-between items-center">
 						<h1 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -23,7 +23,7 @@ templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
 						</h1>
 					</div>
 					<!-- Filters Card -->
-					<div class="glass-panel p-4 rounded-xl border border-white/10">
+					<div class="glass-panel p-4 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
 						<form hx-get="/api/audit-logs" hx-target="#audit-logs-table" hx-trigger="submit, change from:#filter-form" id="filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
 							<!-- Date Range -->
 							<div>

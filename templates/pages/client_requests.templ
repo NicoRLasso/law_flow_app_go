@@ -15,8 +15,8 @@ templ ClientRequests(ctx context.Context, title string, csrfToken string, user *
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/requests")
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
-				<div class="space-y-4 md:space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="w-full">
 					<!-- Header -->
 					<div class="flex items-center justify-between">
 						<div>

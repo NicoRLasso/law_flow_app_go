@@ -10,36 +10,42 @@ import (
 templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes []models.ChoiceOption, partyType string) {
 	<div
 		id="case-party-modal"
-		class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-		style="z-index: 9999;"
+		class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
 		onclick="if(event.target === this) closeCasePartyModal()"
 	>
-		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-lg p-6" onclick="event.stopPropagation()">
+		<div class="glass-panel rounded-2xl border border-white/10 w-full max-w-lg p-8 shadow-2xl relative bg-[#0A0A0B]/90" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between mb-6">
-				if caseRecord.OpposingParty != nil {
-					<h3 class="text-xl font-bold">{ i18n.T(ctx, "case.detail.parties.modal.edit_title") }</h3>
-				} else {
-					<h3 class="text-xl font-bold">{ i18n.T(ctx, "case.detail.parties.modal.add_title") }</h3>
-				}
+			<div class="flex items-center justify-between mb-8">
+				<div class="flex items-center gap-3">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+						</svg>
+					</div>
+					if caseRecord.OpposingParty != nil {
+						<h3 class="text-2xl font-bold text-white">{ i18n.T(ctx, "case.detail.parties.modal.edit_title") }</h3>
+					} else {
+						<h3 class="text-2xl font-bold text-white">{ i18n.T(ctx, "case.detail.parties.modal.add_title") }</h3>
+					}
+				</div>
 				<button
 					type="button"
 					onclick="closeCasePartyModal()"
-					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+					class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/50 hover:text-white"
 				>
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
 			</div>
 			<!-- Party Type Badge -->
-			<div class="mb-4">
+			<div class="mb-6">
 				if partyType == models.ClientRoleDemandante {
-					<span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold">
+					<span class="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
 						{ i18n.T(ctx, "case.detail.parties.role_demandante") }
 					</span>
 				} else {
-					<span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
+					<span class="px-3 py-1.5 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
 						{ i18n.T(ctx, "case.detail.parties.role_demandado") }
 					</span>
 				}
@@ -55,11 +61,11 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 				hx-target="#party-response"
 				hx-swap="innerHTML"
 			>
-				<div class="space-y-4">
+				<div class="space-y-6">
 					<!-- Name -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
-							{ i18n.T(ctx, "case.detail.parties.modal.name") } <span class="text-red-400">*</span>
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							{ i18n.T(ctx, "case.detail.parties.modal.name") } <span class="text-accent">*</span>
 						</label>
 						<input
 							type="text"
@@ -69,12 +75,12 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 								value={ caseRecord.OpposingParty.Name }
 							}
 							placeholder={ i18n.T(ctx, "case.detail.parties.modal.name_placeholder") }
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 						/>
 					</div>
 					<!-- Email -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 							{ i18n.T(ctx, "case.detail.parties.modal.email") }
 						</label>
 						<input
@@ -84,12 +90,12 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 								value={ *caseRecord.OpposingParty.Email }
 							}
 							placeholder={ i18n.T(ctx, "case.detail.parties.modal.email_placeholder") }
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 						/>
 					</div>
 					<!-- Phone -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 							{ i18n.T(ctx, "case.detail.parties.modal.phone") }
 						</label>
 						<input
@@ -99,31 +105,36 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 								value={ *caseRecord.OpposingParty.Phone }
 							}
 							placeholder={ i18n.T(ctx, "case.detail.parties.modal.phone_placeholder") }
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 						/>
 					</div>
 					<!-- Document Type -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 							{ i18n.T(ctx, "case.detail.parties.modal.document_type") }
 						</label>
-						<select
-							name="document_type_id"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-						>
-							<option value="">{ i18n.T(ctx, "case.detail.parties.modal.select_document_type") }</option>
-							for _, docType := range documentTypes {
-								if caseRecord.OpposingParty != nil && caseRecord.OpposingParty.DocumentTypeID != nil && *caseRecord.OpposingParty.DocumentTypeID == docType.ID {
-									<option value={ docType.ID } selected>{ docType.Label }</option>
-								} else {
-									<option value={ docType.ID }>{ docType.Label }</option>
+						<div class="relative">
+							<select
+								name="document_type_id"
+								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+							>
+								<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.detail.parties.modal.select_document_type") }</option>
+								for _, docType := range documentTypes {
+									if caseRecord.OpposingParty != nil && caseRecord.OpposingParty.DocumentTypeID != nil && *caseRecord.OpposingParty.DocumentTypeID == docType.ID {
+										<option value={ docType.ID } selected class="bg-[#1a1b1e]">{ docType.Label }</option>
+									} else {
+										<option value={ docType.ID } class="bg-[#1a1b1e]">{ docType.Label }</option>
+									}
 								}
-							}
-						</select>
+							</select>
+							<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+								<i class="fas fa-chevron-down text-xs text-white/30"></i>
+							</div>
+						</div>
 					</div>
 					<!-- Document Number -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 							{ i18n.T(ctx, "case.detail.parties.modal.document_number") }
 						</label>
 						<input
@@ -133,24 +144,24 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 								value={ *caseRecord.OpposingParty.DocumentNumber }
 							}
 							placeholder={ i18n.T(ctx, "case.detail.parties.modal.document_placeholder") }
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 						/>
 					</div>
 				</div>
 				<!-- Response container -->
 				<div id="party-response" class="mt-4"></div>
 				<!-- Actions -->
-				<div class="flex justify-end gap-3 mt-6">
+				<div class="flex items-center gap-4 mt-8">
 					<button
 						type="button"
 						onclick="closeCasePartyModal()"
-						class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-foreground transition-all duration-200"
+						class="px-6 py-3 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-all duration-200 border border-white/5 hover:border-white/10"
 					>
 						{ i18n.T(ctx, "case.detail.parties.modal.cancel_btn") }
 					</button>
 					<button
 						type="submit"
-						class="px-4 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg font-medium transition-all duration-200"
+						class="flex-1 px-6 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300"
 					>
 						{ i18n.T(ctx, "case.detail.parties.modal.save_btn") }
 					</button>

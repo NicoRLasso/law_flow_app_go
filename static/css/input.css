@@ -38,3 +38,38 @@
   font-family: 'Inter', 'Geist Sans', system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
+
+/* Editor Heading Styles */
+#editor-content h1 {
+  font-size: 32pt;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.5em 0;
+}
+
+#editor-content h2 {
+  font-size: 24pt;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.5em 0;
+}
+
+#editor-content h3 {
+  font-size: 18pt;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0.4em 0;
+}
+
+#editor-content h4 {
+  font-size: 14pt;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0.4em 0;
+}
+
+#editor-content p {
+  font-size: 12pt;
+  line-height: 1.6;
+  margin: 0.3em 0;
+}

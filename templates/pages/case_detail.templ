@@ -23,7 +23,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 			}())
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full max-w-7xl" x-data="{ activeTab: 'summary', sidebarOpen: false }">
+				<div class="w-full" x-data="{ activeTab: 'summary', sidebarOpen: false }">
 					<!-- Header with Back Button -->
 					<div class="flex items-center justify-between mb-6 md:mb-8">
 						<div class="flex items-center gap-4">
@@ -35,19 +35,22 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 		return "/cases"
 	}
 }()) }
-								class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+								class="p-2.5 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white rounded-xl transition-all duration-200 border border-white/5"
 								title={ i18n.T(ctx, "common.back") }
 							>
-								<svg class="w-6 h-6 text-muted-foreground hover:text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
 								</svg>
 							</a>
 							<div>
-								<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "case.detail.title") }</h1>
-								if caseRecord.FilingNumber != nil {
-									<p class="text-sm text-accent font-medium mb-0.5">{ *caseRecord.FilingNumber }</p>
-								}
-								<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "case.detail.case_number") }: { caseRecord.CaseNumber }</p>
+								<h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-1">{ i18n.T(ctx, "case.detail.title") }</h1>
+								<div class="flex items-center gap-3 text-sm">
+									if caseRecord.FilingNumber != nil {
+										<span class="text-accent font-medium bg-accent/10 px-2 py-0.5 rounded-md border border-accent/20">{ *caseRecord.FilingNumber }</span>
+										<span class="text-white/20">•</span>
+									}
+									<span class="text-white/50">{ i18n.T(ctx, "case.detail.case_number") }: <span class="text-white/80 font-mono">{ caseRecord.CaseNumber }</span></span>
+								</div>
 							</div>
 						</div>
 						<div class="flex items-center gap-3">
@@ -58,9 +61,9 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									hx-get={ "/api/cases/" + caseRecord.ID + "/edit" }
 									hx-target="#edit-case-modal-container"
 									hx-swap="innerHTML"
-									class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 flex items-center gap-2"
+									class="px-6 py-2.5 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
 								>
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
 									</svg>
 									<span class="hidden sm:inline">{ i18n.T(ctx, "case.detail.edit_btn") }</span>
@@ -97,7 +100,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							</button>
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav"
+								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav shadow-xl backdrop-blur-xl"
 								:class="{ 'settings-nav-hidden': !sidebarOpen }"
 								x-show="sidebarOpen || window.innerWidth >= 768"
 								x-transition
@@ -106,10 +109,10 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									<li>
 										<button
 											@click="activeTab = 'summary'; sidebarOpen = false"
-											:class="activeTab === 'summary' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'summary' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-white/60 hover:text-white hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3 group"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<svg class="w-5 h-5 transition-colors duration-200" :class="activeTab === 'summary' ? 'text-white' : 'text-white/40 group-hover:text-white'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 											</svg>
 											<span>{ i18n.T(ctx, "case.detail.tab.summary") }</span>
@@ -118,10 +121,10 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									<li>
 										<button
 											@click="activeTab = 'parties'; sidebarOpen = false"
-											:class="activeTab === 'parties' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'parties' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-white/60 hover:text-white hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3 group"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<svg class="w-5 h-5 transition-colors duration-200" :class="activeTab === 'parties' ? 'text-white' : 'text-white/40 group-hover:text-white'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
 											</svg>
 											<span>{ i18n.T(ctx, "case.detail.tab.parties") }</span>
@@ -130,10 +133,10 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									<li>
 										<button
 											@click="activeTab = 'documents'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-documents-list').dataset.loaded) htmx.trigger('#case-documents-list', 'loadDocuments') }, 50)"
-											:class="activeTab === 'documents' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'documents' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-white/60 hover:text-white hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3 group"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<svg class="w-5 h-5 transition-colors duration-200" :class="activeTab === 'documents' ? 'text-white' : 'text-white/40 group-hover:text-white'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
 											</svg>
 											<span>{ i18n.T(ctx, "case.detail.tab.documents") }</span>
@@ -144,10 +147,10 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 										<li>
 											<button
 												@click={ "activeTab = 'bitacora'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-logs-container')) htmx.ajax('GET', '/api/cases/" + caseRecord.ID + "/logs', {target: '#case-logs-wrapper', swap: 'innerHTML'}) }, 50)" }
-												:class="activeTab === 'bitacora' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-												class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+												:class="activeTab === 'bitacora' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-white/60 hover:text-white hover:bg-white/5'"
+												class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3 group"
 											>
-												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<svg class="w-5 h-5 transition-colors duration-200" :class="activeTab === 'bitacora' ? 'text-white' : 'text-white/40 group-hover:text-white'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
 												</svg>
 												<span>{ i18n.T(ctx, "case.detail.tab.bitacora") }</span>
@@ -176,12 +179,21 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							<!-- Bitácora Tab Content -->
 							if user.Role != "client" {
 								<div x-show="activeTab === 'bitacora'" x-transition class="space-y-6">
-									<h2 class="text-xl font-semibold">{ i18n.T(ctx, "bitacora.title") }</h2>
+									<h2 class="text-xl font-semibold flex items-center gap-3 text-white">
+										<div class="p-2 bg-accent/10 rounded-lg">
+											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+											</svg>
+										</div>
+										{ i18n.T(ctx, "bitacora.title") }
+									</h2>
 									<div id="case-logs-wrapper">
 										<!-- Will be loaded via HTMX on tab click -->
-										<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
-											<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-											<p class="text-muted-foreground">{ i18n.T(ctx, "bitacora.loading") }</p>
+										<div class="glass-panel p-12 rounded-xl border border-white/10 text-center shadow-xl backdrop-blur-xl flex flex-col items-center justify-center min-h-[300px]">
+											<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 mx-auto">
+												<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+											</div>
+											<p class="text-white/40 font-medium">{ i18n.T(ctx, "bitacora.loading") }</p>
 										</div>
 									</div>
 								</div>
@@ -258,57 +270,61 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 		<!-- Left Column -->
 		<div class="space-y-6">
 			<!-- Case Information -->
-			<div class="glass-panel p-6 rounded-xl border border-white/10">
-				<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-					</svg>
+			<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
+				<h2 class="text-xl font-semibold mb-6 flex items-center gap-3 text-white">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+						</svg>
+					</div>
 					{ i18n.T(ctx, "case.detail.info_title") }
 				</h2>
 				<div class="space-y-4">
 					if caseRecord.FilingNumber != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.radicado") }</label>
-							<p class="text-foreground mt-1 text-lg font-medium">{ *caseRecord.FilingNumber }</p>
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.radicado") }</label>
+							<p class="text-white text-lg font-medium">{ *caseRecord.FilingNumber }</p>
 						</div>
 					}
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.case_number") }</label>
-						<p class="text-foreground mt-1">{ caseRecord.CaseNumber }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.case_number") }</label>
+						<p class="text-white/90 font-mono text-sm">{ caseRecord.CaseNumber }</p>
 					</div>
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.type") }</label>
-						<p class="text-foreground mt-1">{ caseRecord.CaseType }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.type") }</label>
+						<p class="text-white/90">{ caseRecord.CaseType }</p>
 					</div>
 					if caseRecord.Title != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.table.title") }</label>
-							<p class="text-foreground mt-1">{ *caseRecord.Title }</p>
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.table.title") }</label>
+							<p class="text-white/90 font-medium">{ *caseRecord.Title }</p>
 						</div>
 					}
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.desc") }</label>
-						<p class="text-foreground mt-1 whitespace-pre-wrap">{ caseRecord.Description }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.desc") }</label>
+						<p class="text-white/80 whitespace-pre-wrap leading-relaxed">{ caseRecord.Description }</p>
 					</div>
 				</div>
 			</div>
 			<!-- Timeline -->
-			<div class="glass-panel p-6 rounded-xl border border-white/10">
-				<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-					</svg>
+			<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
+				<h2 class="text-xl font-semibold mb-6 flex items-center gap-3 text-white">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+					</div>
 					{ i18n.T(ctx, "case.detail.timeline_title") }
 				</h2>
 				<div class="space-y-4">
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.opened") }</label>
-						<p class="text-foreground mt-1">{ caseRecord.OpenedAt.Format("January 2, 2006 at 3:04 PM") }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.opened") }</label>
+						<p class="text-white/90">{ caseRecord.OpenedAt.Format("January 2, 2006 at 3:04 PM") }</p>
 					</div>
 					if caseRecord.ClosedAt != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.closed") }</label>
-							<p class="text-foreground mt-1">{ caseRecord.ClosedAt.Format("January 2, 2006 at 3:04 PM") }</p>
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.closed") }</label>
+							<p class="text-white/90">{ caseRecord.ClosedAt.Format("January 2, 2006 at 3:04 PM") }</p>
 						</div>
 					}
 				</div>
@@ -317,30 +333,40 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 		<!-- Right Column -->
 		<div class="space-y-6">
 			<!-- Assignment -->
-			<div class="glass-panel p-6 rounded-xl border border-white/10">
-				<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-					</svg>
+			<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
+				<h2 class="text-xl font-semibold mb-6 flex items-center gap-3 text-white">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+						</svg>
+					</div>
 					{ i18n.T(ctx, "case.detail.assignment_title") }
 				</h2>
 				<div class="space-y-4">
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.assigned_lawyer") }</label>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.assigned_lawyer") }</label>
 						if caseRecord.AssignedTo != nil {
-							<p class="text-foreground mt-1">{ caseRecord.AssignedTo.Name }</p>
+							<div class="flex items-center gap-3">
+								<div class="w-8 h-8 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-xs font-bold text-accent border border-accent/20">
+									{ string([]rune(caseRecord.AssignedTo.Name)[0]) }
+								</div>
+								<p class="text-white font-medium">{ caseRecord.AssignedTo.Name }</p>
+							</div>
 						} else {
-							<p class="text-muted-foreground mt-1 italic">{ i18n.T(ctx, "case.detail.unassigned") }</p>
+							<p class="text-white/40 italic">{ i18n.T(ctx, "case.detail.unassigned") }</p>
 						}
 					</div>
 					<!-- Collaborators Section -->
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.collaborators") }</label>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-2 block">{ i18n.T(ctx, "case.detail.collaborators") }</label>
 						if len(caseRecord.Collaborators) > 0 {
-							<div class="flex flex-wrap gap-2 mt-2">
+							<div class="flex flex-wrap gap-2">
 								for _, collab := range caseRecord.Collaborators {
-									<div class="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg">
-										<span class="text-sm text-foreground">{ collab.Name }</span>
+									<div class="flex items-center gap-2 pl-2 pr-3 py-1 bg-white/5 border border-white/10 rounded-full group hover:bg-white/10 transition-colors">
+										<div class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px]">
+											{ string([]rune(collab.Name)[0]) }
+										</div>
+										<span class="text-sm text-white/90">{ collab.Name }</span>
 										if user.Role == "admin" {
 											<button
 												type="button"
@@ -357,7 +383,7 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 								}
 							</div>
 						} else {
-							<p class="text-muted-foreground mt-1 italic">{ i18n.T(ctx, "case.detail.no_collaborators") }</p>
+							<p class="text-white/40 italic">{ i18n.T(ctx, "case.detail.no_collaborators") }</p>
 						}
 						<!-- Add Collaborator (Admin only) -->
 						if user.Role == "admin" {
@@ -405,30 +431,32 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 			</div>
 			<!-- Classification -->
 			if caseRecord.Domain != nil || caseRecord.Branch != nil || len(caseRecord.Subtypes) > 0 {
-				<div class="glass-panel p-6 rounded-xl border border-white/10">
-					<h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-						</svg>
+				<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
+					<h2 class="text-xl font-semibold mb-6 flex items-center gap-3 text-white">
+						<div class="p-2 bg-accent/10 rounded-lg">
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+							</svg>
+						</div>
 						{ i18n.T(ctx, "case.detail.classification_title") }
 					</h2>
 					<div class="space-y-4">
 						if caseRecord.Domain != nil {
 							<div>
-								<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.domain") }</label>
-								<p class="text-foreground mt-1">{ caseRecord.Domain.Name }</p>
+								<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.domain") }</label>
+								<p class="text-white/90">{ caseRecord.Domain.Name }</p>
 							</div>
 						}
 						if caseRecord.Branch != nil {
 							<div>
-								<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.branch") }</label>
-								<p class="text-foreground mt-1">{ caseRecord.Branch.Name }</p>
+								<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.branch") }</label>
+								<p class="text-white/90">{ caseRecord.Branch.Name }</p>
 							</div>
 						}
 						if len(caseRecord.Subtypes) > 0 {
 							<div>
-								<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.subtypes") }</label>
-								<div class="flex flex-wrap gap-2 mt-2">
+								<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-2 block">{ i18n.T(ctx, "case.detail.subtypes") }</label>
+								<div class="flex flex-wrap gap-2">
 									for _, subtype := range caseRecord.Subtypes {
 										<span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-sm text-foreground">
 											{ subtype.Name }
@@ -449,7 +477,14 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 	<div class="space-y-6">
 		<!-- Header with Upload Button -->
 		<div class="flex items-center justify-between flex-wrap gap-3">
-			<h2 class="text-xl font-semibold">{ i18n.T(ctx, "case.detail.tab.documents") }</h2>
+			<h2 class="text-xl font-semibold flex items-center gap-3 text-white">
+				<div class="p-2 bg-accent/10 rounded-lg">
+					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+					</svg>
+				</div>
+				{ i18n.T(ctx, "case.detail.tab.documents") }
+			</h2>
 			<div class="flex items-center gap-2">
 				<!-- Create with Template Button -->
 				if user.Role != "client" {
@@ -458,9 +493,9 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 						hx-get={ "/api/cases/" + caseRecord.ID + "/templates/modal" }
 						hx-target="#template-modal-container"
 						hx-swap="innerHTML"
-						class="px-4 py-2 bg-white/10 text-foreground rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 flex items-center gap-2 border border-white/10"
+						class="px-4 py-2 bg-white/5 text-white/90 rounded-xl font-medium hover:bg-white/10 transition-all duration-200 flex items-center gap-2 border border-white/10 hover:border-white/20"
 					>
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 						</svg>
 						{ i18n.T(ctx, "case.document.create_from_template") }
@@ -470,9 +505,9 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 				<button
 					type="button"
 					onclick="openUploadModal()"
-					class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 flex items-center gap-2"
+					class="px-4 py-2 bg-accent text-accent-foreground rounded-xl font-semibold hover:bg-accent/90 transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20"
 				>
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
 					</svg>
 					{ i18n.T(ctx, "case.detail.upload_btn") }
@@ -480,37 +515,43 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 			</div>
 		</div>
 		<!-- Document Filters -->
-		<div class="glass-panel p-4 rounded-xl border border-white/10">
+		<div class="glass-panel p-4 rounded-xl border border-white/10 shadow-lg backdrop-blur-xl">
 			<div class="flex flex-col md:flex-row gap-4">
 				<!-- Keyword Search -->
-				<div class="flex-1 w-full">
+				<div class="flex-1 w-full relative">
+					<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+						<i class="fas fa-search text-white/30"></i>
+					</div>
 					<input
 						type="text"
 						id="doc-keyword"
 						placeholder={ i18n.T(ctx, "case.detail.search_placeholder") }
-						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						class="w-full pl-10 pr-4 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 					/>
 				</div>
 				<div class="flex gap-4 flex-col sm:flex-row md:items-center">
 					<!-- Document Type Filter -->
-					<div class="w-full sm:w-[200px]">
+					<div class="w-full sm:w-[200px] relative">
 						<select
 							id="doc-type"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							class="w-full px-4 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
 						>
-							<option value="">{ i18n.T(ctx, "case.detail.filter.all_types") }</option>
-							<option value="initial_request">{ i18n.T(ctx, "case.document.types.initial_request") }</option>
-							<option value="evidence">{ i18n.T(ctx, "case.document.types.evidence") }</option>
-							<option value="contract">{ i18n.T(ctx, "case.document.types.contract") }</option>
-							<option value="correspondence">{ i18n.T(ctx, "case.document.types.correspondence") }</option>
-							<option value="other">{ i18n.T(ctx, "case.document.types.other") }</option>
+							<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.detail.filter.all_types") }</option>
+							<option value="initial_request" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.initial_request") }</option>
+							<option value="evidence" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.evidence") }</option>
+							<option value="contract" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.contract") }</option>
+							<option value="correspondence" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.correspondence") }</option>
+							<option value="other" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.other") }</option>
 						</select>
+						<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+							<i class="fas fa-chevron-down text-xs text-white/30"></i>
+						</div>
 					</div>
 					<!-- Apply Filter Button -->
 					<button
 						type="button"
 						onclick="filterDocuments()"
-						class="w-full sm:w-auto px-6 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200 whitespace-nowrap"
+						class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
 					>
 						{ i18n.T(ctx, "case.detail.filter.apply") }
 					</button>
@@ -526,9 +567,11 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 			hx-swap="innerHTML"
 		>
 			<!-- Loading state -->
-			<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
-				<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-				<p class="text-muted-foreground">{ i18n.T(ctx, "case.detail.loading") }</p>
+			<div class="glass-panel p-12 rounded-xl border border-white/10 text-center shadow-xl backdrop-blur-xl flex flex-col items-center justify-center min-h-[300px]">
+				<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 mx-auto">
+					<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+				</div>
+				<p class="text-white/40 font-medium">{ i18n.T(ctx, "case.detail.loading") }</p>
 			</div>
 		</div>
 	</div>
@@ -560,7 +603,7 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 
 // CaseStatusBadge renders a status badge for cases
 templ CaseStatusBadge(ctx context.Context, status string) {
-	<span class={ "px-3 py-1.5 rounded-full text-sm font-semibold ", getCaseStatusClass(status) }>
+	<span class={ "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider backdrop-blur-sm shadow-sm border", getCaseStatusClass(status) }>
 		{ getCaseStatusLabel(ctx, status) }
 	</span>
 }
@@ -569,13 +612,13 @@ templ CaseStatusBadge(ctx context.Context, status string) {
 func getCaseStatusClass(status string) string {
 	switch status {
 	case "OPEN":
-		return "bg-green-500/20 text-green-400 border border-green-500/30"
+		return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/10"
 	case "ON_HOLD":
-		return "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+		return "bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-amber-500/10"
 	case "CLOSED":
-		return "bg-gray-500/20 text-gray-400 border border-gray-500/30"
+		return "bg-white/5 text-white/40 border-white/10"
 	default:
-		return "bg-white/10 text-white border border-white/20"
+		return "bg-white/5 text-white/60 border-white/10"
 	}
 }
 
@@ -586,15 +629,22 @@ func getCaseStatusLabel(ctx context.Context, status string) string {
 // UploadDocumentModal renders the document upload modal
 templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 	<!-- Upload Document Modal -->
-	<div id="upload-document-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999; display: none;" onclick="if(event.target === this) closeUploadModal()">
-		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
+	<div id="upload-document-modal" class="hidden fixed inset-0 bg-[#000000]/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" onclick="if(event.target === this) closeUploadModal()">
+		<div class="glass-panel rounded-2xl border border-white/10 w-full max-w-2xl p-8 shadow-2xl relative bg-[#0A0A0B]/90" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between mb-6">
-				<h3 class="text-2xl font-bold">{ i18n.T(ctx, "case.document.upload.title") }</h3>
+			<div class="flex items-center justify-between mb-8">
+				<h3 class="text-2xl font-bold text-white flex items-center gap-3">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+						</svg>
+					</div>
+					{ i18n.T(ctx, "case.document.upload.title") }
+				</h3>
 				<button
 					type="button"
 					onclick="closeUploadModal()"
-					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+					class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/50 hover:text-white"
 				>
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -609,84 +659,92 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 				hx-target="#upload-response"
 				hx-swap="innerHTML"
 			>
-				<div class="space-y-4">
+				<div class="space-y-6">
 					<!-- File Upload -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
-							{ i18n.T(ctx, "case.document.upload.file_label") } <span class="text-red-400">*</span>
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							{ i18n.T(ctx, "case.document.upload.file_label") } <span class="text-accent">*</span>
 						</label>
 						<input
 							type="file"
 							name="file"
 							required
 							accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-accent-foreground hover:file:bg-accent/90"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer transition-all duration-200"
 						/>
-						<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "case.document.upload.accepted_formats") }</p>
+						<p class="text-xs text-white/30 mt-2 ml-1">{ i18n.T(ctx, "case.document.upload.accepted_formats") }</p>
 					</div>
 					<!-- Document Type -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
-							{ i18n.T(ctx, "case.document.upload.type_label") } <span class="text-red-400">*</span>
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							{ i18n.T(ctx, "case.document.upload.type_label") } <span class="text-accent">*</span>
 						</label>
-						<select
-							name="document_type"
-							required
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-						>
-							<option value="">{ i18n.T(ctx, "case.document.upload.select_type") }</option>
-							<option value="evidence">{ i18n.T(ctx, "case.document.types.evidence") }</option>
-							<option value="contract">{ i18n.T(ctx, "case.document.types.contract") }</option>
-							<option value="correspondence">{ i18n.T(ctx, "case.document.types.correspondence") }</option>
-							<option value="legal_brief">{ i18n.T(ctx, "case.document.types.legal_brief") }</option>
-							<option value="court_filing">{ i18n.T(ctx, "case.document.types.court_filing") }</option>
-							<option value="invoice">{ i18n.T(ctx, "case.document.types.invoice") }</option>
-							<option value="other">{ i18n.T(ctx, "case.document.types.other") }</option>
-						</select>
+						<div class="relative">
+							<select
+								name="document_type"
+								required
+								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+							>
+								<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.upload.select_type") }</option>
+								<option value="evidence" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.evidence") }</option>
+								<option value="contract" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.contract") }</option>
+								<option value="correspondence" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.correspondence") }</option>
+								<option value="legal_brief" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.legal_brief") }</option>
+								<option value="court_filing" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.court_filing") }</option>
+								<option value="invoice" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.invoice") }</option>
+								<option value="other" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.document.types.other") }</option>
+							</select>
+							<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+								<i class="fas fa-chevron-down text-xs text-white/30"></i>
+							</div>
+						</div>
 					</div>
 					<!-- Description -->
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-2">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 							{ i18n.T(ctx, "case.document.upload.desc_label") }
 						</label>
 						<textarea
 							name="description"
 							rows="3"
 							placeholder={ i18n.T(ctx, "case.document.upload.desc_placeholder") }
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 						></textarea>
 					</div>
 					<!-- Visibility Toggle -->
-					<div class="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-lg">
-						<label class="flex items-center gap-3 cursor-pointer flex-1">
-							<input
-								type="checkbox"
-								name="is_public"
-								value="true"
-								class="w-5 h-5 rounded border-white/20 bg-white/5 text-accent focus:ring-accent focus:ring-offset-0"
-							/>
+					<div class="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-xl group hover:border-accent/30 transition-colors">
+						<label class="flex items-center gap-4 cursor-pointer flex-1">
+							<div class="relative">
+								<input
+									type="checkbox"
+									name="is_public"
+									value="true"
+									class="sr-only peer"
+								/>
+								<div class="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent"></div>
+							</div>
 							<div class="flex flex-col">
-								<span class="text-sm font-medium text-foreground">{ i18n.T(ctx, "case.document.visibility.public") }</span>
-								<span class="text-xs text-muted-foreground">{ i18n.T(ctx, "case.document.visibility.public_desc") }</span>
+								<span class="text-sm font-medium text-white">{ i18n.T(ctx, "case.document.visibility.public") }</span>
+								<span class="text-xs text-white/50">{ i18n.T(ctx, "case.document.visibility.public_desc") }</span>
 							</div>
 						</label>
 					</div>
 					<!-- Response Container -->
 					<div id="upload-response"></div>
 					<!-- Action Buttons -->
-					<div class="flex items-center gap-3 pt-4">
-						<button
-							type="submit"
-							class="flex-1 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
-						>
-							{ i18n.T(ctx, "case.document.upload.btn") }
-						</button>
+					<div class="flex items-center gap-4 pt-4">
 						<button
 							type="button"
 							onclick="closeUploadModal()"
-							class="px-6 py-3 bg-white/5 text-foreground hover:bg-white/10 rounded-lg font-semibold transition-all duration-200"
+							class="px-6 py-3 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-all duration-200 border border-white/5 hover:border-white/10"
 						>
 							{ i18n.T(ctx, "case.document.upload.cancel") }
+						</button>
+						<button
+							type="submit"
+							class="flex-1 px-6 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300"
+						>
+							{ i18n.T(ctx, "case.document.upload.btn") }
 						</button>
 					</div>
 				</div>
@@ -699,47 +757,49 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *models.User) {
 	<div class="w-full mx-auto space-y-6">
 		<!-- Client Section -->
-		<div class="glass-panel p-6 rounded-xl border border-white/10">
-			<div class="flex items-center justify-between mb-4">
-				<h2 class="text-xl font-semibold flex items-center gap-2">
-					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-					</svg>
+		<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
+			<div class="flex items-center justify-between mb-6">
+				<h2 class="text-xl font-semibold flex items-center gap-3 text-white">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+						</svg>
+					</div>
 					{ i18n.T(ctx, "case.detail.parties.client_section") }
 				</h2>
 				<!-- Client Role Badge -->
 				if caseRecord.ClientRole != nil {
 					if *caseRecord.ClientRole == models.ClientRoleDemandante {
-						<span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold">
+						<span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
 							{ i18n.T(ctx, "case.detail.parties.role_demandante") }
 						</span>
 					} else {
-						<span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
+						<span class="px-3 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
 							{ i18n.T(ctx, "case.detail.parties.role_demandado") }
 						</span>
 					}
 				}
 			</div>
 			if caseRecord.Client.ID != "" {
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.name") }</label>
-						<p class="text-foreground mt-1">{ caseRecord.Client.Name }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.name") }</label>
+						<p class="text-white/90 font-medium">{ caseRecord.Client.Name }</p>
 					</div>
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.email") }</label>
-						<p class="text-foreground mt-1">{ caseRecord.Client.Email }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.email") }</label>
+						<p class="text-white/90">{ caseRecord.Client.Email }</p>
 					</div>
 					if caseRecord.Client.PhoneNumber != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.phone") }</label>
-							<p class="text-foreground mt-1">{ *caseRecord.Client.PhoneNumber }</p>
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.phone") }</label>
+							<p class="text-white/90">{ *caseRecord.Client.PhoneNumber }</p>
 						</div>
 					}
 					if caseRecord.Client.DocumentNumber != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.document_number") }</label>
-							<p class="text-foreground mt-1">
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.document_number") }</label>
+							<p class="text-white/90">
 								if caseRecord.Client.DocumentType != nil {
 									{ caseRecord.Client.DocumentType.Label } -
 								}
@@ -753,22 +813,24 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 			}
 		</div>
 		<!-- Opposing Party Section -->
-		<div class="glass-panel p-6 rounded-xl border border-white/10">
-			<div class="flex items-center justify-between mb-4">
-				<h2 class="text-xl font-semibold flex items-center gap-2">
-					<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-					</svg>
+		<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
+			<div class="flex items-center justify-between mb-6">
+				<h2 class="text-xl font-semibold flex items-center gap-3 text-white">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+						</svg>
+					</div>
 					{ i18n.T(ctx, "case.detail.parties.opposing_section") }
 				</h2>
 				<!-- Opposing Party Role Badge -->
 				if caseRecord.OpposingParty != nil {
 					if caseRecord.OpposingParty.PartyType == models.ClientRoleDemandante {
-						<span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-semibold">
+						<span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
 							{ i18n.T(ctx, "case.detail.parties.role_demandante") }
 						</span>
 					} else {
-						<span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
+						<span class="px-3 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-full text-xs font-semibold uppercase tracking-wider">
 							{ i18n.T(ctx, "case.detail.parties.role_demandado") }
 						</span>
 					}
@@ -776,27 +838,27 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 			</div>
 			if caseRecord.OpposingParty != nil {
 				<!-- Show opposing party info -->
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div>
-						<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.name") }</label>
-						<p class="text-foreground mt-1">{ caseRecord.OpposingParty.Name }</p>
+						<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.name") }</label>
+						<p class="text-white/90 font-medium">{ caseRecord.OpposingParty.Name }</p>
 					</div>
 					if caseRecord.OpposingParty.Email != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.email") }</label>
-							<p class="text-foreground mt-1">{ *caseRecord.OpposingParty.Email }</p>
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.email") }</label>
+							<p class="text-white/90">{ *caseRecord.OpposingParty.Email }</p>
 						</div>
 					}
 					if caseRecord.OpposingParty.Phone != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.phone") }</label>
-							<p class="text-foreground mt-1">{ *caseRecord.OpposingParty.Phone }</p>
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.phone") }</label>
+							<p class="text-white/90">{ *caseRecord.OpposingParty.Phone }</p>
 						</div>
 					}
 					if caseRecord.OpposingParty.DocumentNumber != nil {
 						<div>
-							<label class="text-sm font-medium text-muted-foreground">{ i18n.T(ctx, "case.detail.parties.modal.document_number") }</label>
-							<p class="text-foreground mt-1">
+							<label class="text-xs font-semibold uppercase tracking-wider text-white/40 mb-1 block">{ i18n.T(ctx, "case.detail.parties.modal.document_number") }</label>
+							<p class="text-white/90">
 								if caseRecord.OpposingParty.DocumentType != nil {
 									{ caseRecord.OpposingParty.DocumentType.Label } -
 								}

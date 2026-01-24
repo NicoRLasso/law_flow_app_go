@@ -10,13 +10,13 @@ import (
 templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.User, lawyers []models.User, domains []models.CaseDomain) {
 	<div
 		id="create-case-modal"
-		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+		class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
 		x-data="{ loading: false }"
 		@keydown.escape.window="document.getElementById('create-case-modal').remove()"
 		@click.self="document.getElementById('create-case-modal').remove()"
 	>
 		<div
-			class="glass-panel rounded-2xl border border-white/10 max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh]"
+			class="glass-panel rounded-2xl border border-white/10 max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] bg-[#0A0A0B]/90 transition-all duration-300 transform scale-100 opacity-100"
 			x-show="true"
 			x-transition:enter="transition ease-out duration-300"
 			x-transition:enter-start="opacity-0 scale-95"
@@ -27,13 +27,20 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 			@click.stop
 		>
 			<!-- Header -->
-			<div class="flex items-center justify-between p-6 border-b border-white/10">
-				<h2 class="text-xl font-bold text-foreground">Create New Case</h2>
+			<div class="flex items-center justify-between p-8 border-b border-white/10">
+				<div class="flex items-center gap-3">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+						</svg>
+					</div>
+					<h2 class="text-2xl font-bold text-white">Create New Case</h2>
+				</div>
 				<button
-					class="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
+					class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/50 hover:text-white"
 					@click="document.getElementById('create-case-modal').remove()"
 				>
-					<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
@@ -49,109 +56,129 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 				>
 					<!-- Client -->
 					<div>
-						<label class="block text-sm font-medium text-foreground mb-1">
-							{ i18n.T(ctx, "cases.client") } <span class="text-red-500">*</span>
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							{ i18n.T(ctx, "cases.client") } <span class="text-accent">*</span>
 						</label>
-						<select
-							name="client_id"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-							required
-						>
-							<option value="">{ i18n.T(ctx, "cases.select_client") }</option>
-							for _, client := range clients {
-								<option value={ client.ID }>{ client.Name } ({ client.Email })</option>
-							}
-						</select>
+						<div class="relative">
+							<select
+								name="client_id"
+								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+								required
+							>
+								<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.select_client") }</option>
+								for _, client := range clients {
+									<option value={ client.ID } class="bg-[#1a1b1e]">{ client.Name } ({ client.Email })</option>
+								}
+							</select>
+							<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+								<i class="fas fa-chevron-down text-xs text-white/30"></i>
+							</div>
+						</div>
 					</div>
 
 					<!-- Client Role -->
 					<div>
-						<label class="block text-sm font-medium text-foreground mb-1">
-							Client Role <span class="text-red-500">*</span>
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							Client Role <span class="text-accent">*</span>
 						</label>
 						<div class="grid grid-cols-2 gap-4">
-							<label class="flex items-center gap-2 p-3 rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10">
-								<input type="radio" name="client_role" value="DEMANDANTE" class="text-accent focus:ring-accent" required checked/>
-								<span class="text-sm text-foreground">Demandante (Plaintiff)</span>
+							<label class="relative flex items-center gap-3 p-4 rounded-xl border border-white/10 bg-[#0A0A0B]/60 cursor-pointer hover:bg-white/5 hover:border-white/20 transition-all duration-200 group">
+								<input type="radio" name="client_role" value="DEMANDANTE" class="text-accent focus:ring-accent w-4 h-4 bg-transparent border-white/30 checked:bg-accent" required checked/>
+								<span class="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Demandante (Plaintiff)</span>
 							</label>
-							<label class="flex items-center gap-2 p-3 rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10">
-								<input type="radio" name="client_role" value="DEMANDADO" class="text-accent focus:ring-accent" required/>
-								<span class="text-sm text-foreground">Demandado (Defendant)</span>
+							<label class="relative flex items-center gap-3 p-4 rounded-xl border border-white/10 bg-[#0A0A0B]/60 cursor-pointer hover:bg-white/5 hover:border-white/20 transition-all duration-200 group">
+								<input type="radio" name="client_role" value="DEMANDADO" class="text-accent focus:ring-accent w-4 h-4 bg-transparent border-white/30 checked:bg-accent" required/>
+								<span class="text-sm font-medium text-white/80 group-hover:text-white transition-colors">Demandado (Defendant)</span>
 							</label>
 						</div>
 					</div>
 
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<!-- Case Title -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-1">
+							<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 								{ i18n.T(ctx, "cases.title_label") }
 							</label>
 							<input
 								type="text"
 								name="title"
 								placeholder={ i18n.T(ctx, "cases.title_placeholder") }
-								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 							/>
 						</div>
 						
 						<!-- Filing Number (Radicado) -->
 						<div>
-							<label class="block text-sm font-medium text-foreground mb-1">
-								Filing Number (Radicado) <span class="text-red-500">*</span>
+							<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+								Filing Number (Radicado) <span class="text-accent">*</span>
 							</label>
 							<input
 								type="text"
 								name="filing_number"
 								placeholder="Court Filing Number"
-								class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 								required
 							/>
 						</div>
 					</div>
 
 					<!-- Classification Section -->
-					<div class="space-y-4 pt-2 border-t border-white/10">
-						<h3 class="text-sm font-semibold text-foreground">Classification</h3>
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="space-y-6 pt-6 border-t border-white/10">
+						<h3 class="text-lg font-semibold text-white flex items-center gap-2">
+							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+							</svg>
+							Classification
+						</h3>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<!-- Domain -->
 							<div>
-								<label class="block text-sm font-medium text-foreground mb-1">
-									Domain <span class="text-red-500">*</span>
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+									Domain <span class="text-accent">*</span>
 								</label>
-								<select
-									name="domain_id"
-									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-									required
-									hx-get="/api/subtypes/branches"
-									hx-target="#branch-select"
-									hx-swap="innerHTML"
-									@htmx:after-request="document.getElementById('branch-select').disabled = false; document.getElementById('subtype-select-container').innerHTML = ''"
-								>
-									<option value="">Select Domain</option>
-									for _, domain := range domains {
-										<option value={ domain.ID }>{ domain.Name }</option>
-									}
-								</select>
+								<div class="relative">
+									<select
+										name="domain_id"
+										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+										required
+										hx-get="/api/subtypes/branches"
+										hx-target="#branch-select"
+										hx-swap="innerHTML"
+										@htmx:after-request="document.getElementById('branch-select').disabled = false; document.getElementById('subtype-select-container').innerHTML = ''"
+									>
+										<option value="" class="bg-[#1a1b1e]">Select Domain</option>
+										for _, domain := range domains {
+											<option value={ domain.ID } class="bg-[#1a1b1e]">{ domain.Name }</option>
+										}
+									</select>
+									<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+										<i class="fas fa-chevron-down text-xs text-white/30"></i>
+									</div>
+								</div>
 							</div>
 
 							<!-- Branch -->
 							<div>
-								<label class="block text-sm font-medium text-foreground mb-1">
-									Branch <span class="text-red-500">*</span>
+								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+									Branch <span class="text-accent">*</span>
 								</label>
-								<select
-									id="branch-select"
-									name="branch_id"
-									class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent disabled:opacity-50 disabled:cursor-not-allowed"
-									disabled
-									hx-get="/api/subtypes/options"
-									hx-target="#subtype-select-container"
-									hx-swap="innerHTML"
-									hx-trigger="change"
-								>
-									<option value="">Select Domain First</option>
-								</select>
+								<div class="relative">
+									<select
+										id="branch-select"
+										name="branch_id"
+										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer disabled:opacity-50"
+										disabled
+										hx-get="/api/subtypes/options"
+										hx-target="#subtype-select-container"
+										hx-swap="innerHTML"
+										hx-trigger="change"
+									>
+										<option value="" class="bg-[#1a1b1e]">Select Domain First</option>
+									</select>
+									<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+										<i class="fas fa-chevron-down text-xs text-white/30"></i>
+									</div>
+								</div>
 							</div>
 						</div>
 
@@ -162,49 +189,55 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 
 					<!-- Description -->
 					<div>
-						<label class="block text-sm font-medium text-foreground mb-1">
-							{ i18n.T(ctx, "cases.description_label") } <span class="text-red-500">*</span>
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							{ i18n.T(ctx, "cases.description_label") } <span class="text-accent">*</span>
 						</label>
 						<textarea
 							name="description"
 							rows="3"
 							placeholder={ i18n.T(ctx, "cases.description_placeholder") }
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
 							required
 						></textarea>
 					</div>
 					<!-- Assigned Lawyer -->
 					<div>
-						<label class="block text-sm font-medium text-foreground mb-1">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
 							{ i18n.T(ctx, "cases.assigned_lawyer") }
 						</label>
-						<select
-							name="assigned_to_id"
-							class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-						>
-							<option value="">{ i18n.T(ctx, "cases.select_lawyer") }</option>
-							for _, lawyer := range lawyers {
-								<option 
-									value={ lawyer.ID }
-									selected?={ user.Role == "lawyer" && user.ID == lawyer.ID }
-								>
-									{ lawyer.Name }
-								</option>
-							}
-						</select>
+						<div class="relative">
+							<select
+								name="assigned_to_id"
+								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+							>
+								<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.select_lawyer") }</option>
+								for _, lawyer := range lawyers {
+									<option 
+										value={ lawyer.ID }
+										selected?={ user.Role == "lawyer" && user.ID == lawyer.ID }
+										class="bg-[#1a1b1e]"
+									>
+										{ lawyer.Name }
+									</option>
+								}
+							</select>
+							<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+								<i class="fas fa-chevron-down text-xs text-white/30"></i>
+							</div>
+						</div>
 					</div>
 					<!-- Footer Actions -->
-					<div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+					<div class="flex items-center justify-end gap-4 pt-6 border-t border-white/10">
 						<button
 							type="button"
-							class="px-4 py-2 text-sm font-medium text-foreground bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+							class="px-6 py-3 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-all duration-200 border border-white/5 hover:border-white/10"
 							@click="document.getElementById('create-case-modal').remove()"
 						>
 							{ i18n.T(ctx, "common.cancel") }
 						</button>
 						<button
 							type="submit"
-							class="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent/90 rounded-lg transition-colors flex items-center gap-2"
+							class="px-8 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2"
 							:disabled="loading"
 						>
 							<span x-show="!loading">{ i18n.T(ctx, "common.submit") }</span>

@@ -1,0 +1,117 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ TemplateCloneModal(ctx context.Context, template models.DocumentTemplate, categories []models.TemplateCategory) {
+	<div
+		id="clone-modal"
+		class="fixed inset-0 z-50 flex items-center justify-center bg-[#000000]/80 backdrop-blur-sm p-4"
+		x-data="{ show: false }"
+		x-init="$nextTick(() => show = true)"
+	>
+		<div
+			id="clone-modal-content"
+			class="relative w-full max-w-lg glass-panel rounded-2xl p-8 border border-white/10 bg-[#0A0A0B]/90 shadow-2xl"
+			:class="show ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
+			style="transition: all 0.2s ease-out"
+		>
+			<!-- Close Button -->
+			<button
+				type="button"
+				onclick="document.getElementById('clone-modal').remove()"
+				class="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors"
+			>
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+			</button>
+			<!-- Modal Header -->
+			<div class="mb-8">
+				<div class="flex items-center gap-3 mb-2">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+						</svg>
+					</div>
+					<h2 class="text-xl font-bold text-white">{ i18n.T(ctx, "templates.clone_title") }</h2>
+				</div>
+				<p class="text-sm text-white/50">{ i18n.T(ctx, "templates.clone_desc") }</p>
+			</div>
+			<!-- Clone Form -->
+			<form
+				hx-post={ "/api/templates/" + template.ID + "/clone" }
+				hx-target="#templates-table-container"
+				hx-swap="innerHTML"
+				hx-on::after-request="if(event.detail.successful) document.getElementById('clone-modal').remove()"
+				class="space-y-6"
+			>
+				<!-- Template Name -->
+				<div>
+					<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "templates.name") } <span class="text-accent">*</span></label>
+					<input
+						type="text"
+						name="name"
+						value={ "Copy of " + template.Name }
+						placeholder={ i18n.T(ctx, "templates.clone_name_placeholder") }
+						class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
+						required
+						autofocus
+					/>
+				</div>
+				<!-- Category -->
+				<div>
+					<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+						{ i18n.T(ctx, "templates.category") }
+						<span class="text-white/30 font-normal ml-1 normal-case">({ i18n.T(ctx, "common.optional") })</span>
+					</label>
+					<div class="relative">
+						<select
+							name="category_id"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+						>
+							<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "templates.select_category") }</option>
+							for _, cat := range categories {
+								<option
+									value={ cat.ID }
+									selected?={ template.CategoryID != nil && *template.CategoryID == cat.ID }
+									class="bg-[#1a1b1e]"
+								>
+									{ cat.Name }
+								</option>
+							}
+						</select>
+						<div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-white/30">
+							<i class="fas fa-chevron-down text-xs"></i>
+						</div>
+					</div>
+				</div>
+				<!-- Actions -->
+				<div class="flex justify-end gap-4 pt-6 mt-2 border-t border-white/5">
+					<button
+						type="button"
+						onclick="document.getElementById('clone-modal').remove()"
+						class="px-6 py-3 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-200"
+					>
+						{ i18n.T(ctx, "common.cancel") }
+					</button>
+					<button
+						type="submit"
+						class="px-8 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-accent/40"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+						</svg>
+						<span>{ i18n.T(ctx, "templates.clone_btn") }</span>
+					</button>
+				</div>
+			</form>
+		</div>
+		<!-- Click outside to close -->
+		<div
+			class="absolute inset-0 -z-10"
+			onclick="document.getElementById('clone-modal').remove()"
+		></div>
+	</div>
+}

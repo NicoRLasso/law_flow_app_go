@@ -7,7 +7,39 @@ import (
 
 templ Toolbar(ctx context.Context) {
 	<!-- Toolbar -->
-	<div class="bg-background/80 backdrop-blur-md border-b border-white/5 py-2 px-6 flex justify-center items-center gap-1 z-10 sticky top-0">
+	<div class="border-b border-white/10 py-2 px-6 flex justify-center items-center gap-2 z-10 sticky top-0 bg-[#000000]/90 backdrop-blur-xl">
+		<!-- Heading Buttons -->
+		<div class="flex items-center gap-0.5">
+			<button
+				type="button"
+				@mousedown.prevent="saveEditorSelection(); setHeading('p')"
+				:class="currentHeading === 'Normal' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+				class="px-2 py-1 text-xs font-medium hover:bg-white/10 rounded transition-colors"
+				title="Normal text"
+			>P</button>
+			<button
+				type="button"
+				@mousedown.prevent="saveEditorSelection(); setHeading('h1')"
+				:class="currentHeading === 'Heading 1' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+				class="px-2 py-1 text-xs font-bold hover:bg-white/10 rounded transition-colors"
+				title="Heading 1"
+			>H1</button>
+			<button
+				type="button"
+				@mousedown.prevent="saveEditorSelection(); setHeading('h2')"
+				:class="currentHeading === 'Heading 2' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+				class="px-2 py-1 text-xs font-bold hover:bg-white/10 rounded transition-colors"
+				title="Heading 2"
+			>H2</button>
+			<button
+				type="button"
+				@mousedown.prevent="saveEditorSelection(); setHeading('h3')"
+				:class="currentHeading === 'Heading 3' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
+				class="px-2 py-1 text-xs font-semibold hover:bg-white/10 rounded transition-colors"
+				title="Heading 3"
+			>H3</button>
+		</div>
+		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
 		<!-- Formatting Buttons with Active States -->
 		<button
 			type="button"
@@ -36,6 +68,57 @@ templ Toolbar(ctx context.Context) {
 		>
 			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3M4 21h16"></path></svg>
 		</button>
+		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+		<!-- Font Size Control -->
+		<div class="flex items-center gap-1">
+			<button
+				type="button"
+				@mousedown.prevent="saveEditorSelection(); setFontSize(Math.max(8, currentFontSize - 1))"
+				class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded transition-colors"
+				title="Decrease font size"
+			>
+				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+			</button>
+			<input
+				type="number"
+				:value="currentFontSize"
+				@focus="saveEditorSelection()"
+				@change="setFontSize(parseInt($event.target.value) || 12)"
+				@keydown.enter.prevent="setFontSize(parseInt($event.target.value) || 12); $event.target.blur()"
+				min="8"
+				max="72"
+				class="w-12 px-1 py-1 text-xs text-center font-medium text-foreground bg-white/5 hover:bg-white/10 border border-white/10 rounded transition-colors focus:outline-none focus:ring-1 focus:ring-accent"
+				title="Font Size (pt)"
+			/>
+			<button
+				type="button"
+				@mousedown.prevent="saveEditorSelection(); setFontSize(Math.min(72, currentFontSize + 1))"
+				class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded transition-colors"
+				title="Increase font size"
+			>
+				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+			</button>
+		</div>
+		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+		<!-- Color Picker -->
+		<div class="flex items-center gap-1">
+			<!-- Quick colors -->
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#000000')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #000000" title="Black"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#EF4444')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #EF4444" title="Red"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#3B82F6')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #3B82F6" title="Blue"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#22C55E')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #22C55E" title="Green"></button>
+			<!-- Custom color picker -->
+			<div class="relative">
+				<input
+					type="color"
+					:value="currentTextColor"
+					@focus="saveEditorSelection()"
+					@input="setTextColor($event.target.value)"
+					class="w-6 h-6 rounded cursor-pointer border border-white/20 bg-transparent"
+					title="Custom color"
+				/>
+			</div>
+		</div>
 		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
 		<button
 			type="button"
@@ -73,7 +156,6 @@ templ Toolbar(ctx context.Context) {
 		>
 			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 		</button>
-		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
 		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
 		<!-- View Mode Toggle -->
 		<div class="flex items-center bg-white/5 rounded-lg p-0.5">

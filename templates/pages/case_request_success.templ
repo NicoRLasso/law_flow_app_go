@@ -17,7 +17,7 @@ templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm
 			</div>
 			<div class="w-full max-w-2xl relative z-10 px-6">
 				<!-- Success Card -->
-				<div class="glass-panel p-12 rounded-2xl border border-white/10 text-center">
+				<div class="glass-panel p-12 rounded-xl border border-white/10 text-center shadow-xl backdrop-blur-xl">
 					<!-- Success Icon -->
 					<div class="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
 						<svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@ templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm
 						{ i18n.T(ctx, "public.success.thank_you") } <span class="text-foreground font-semibold">{ firm.Name }</span>
 					</p>
 					<!-- Details -->
-					<div class="glass-panel p-6 rounded-xl border border-white/10 mb-8 text-left">
+					<div class="glass-panel p-6 rounded-xl border border-white/10 mb-8 text-left shadow-xl backdrop-blur-xl">
 						<h2 class="text-lg font-semibold mb-4 text-center">{ i18n.T(ctx, "public.success.next_steps") }</h2>
 						<ul class="space-y-3 text-muted-foreground">
 							<li class="flex items-start gap-3">

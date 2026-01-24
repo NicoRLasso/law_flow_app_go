@@ -113,6 +113,11 @@
     "delete_confirm": "¿Estás seguro de que deseas eliminar esta plantilla?",
     "delete_confirm_title": "Eliminar Plantilla",
     "delete_confirm_msg": "¿Estás seguro de que deseas eliminar esta plantilla? Esta acción no se puede deshacer.",
+    "clone": "Clonar",
+    "clone_title": "Clonar Plantilla",
+    "clone_desc": "Crear una copia de esta plantilla con un nuevo nombre",
+    "clone_name_placeholder": "Nombre de la nueva plantilla...",
+    "clone_btn": "Clonar Plantilla",
     "insert_variable_description": "Haz clic en una variable para insertarla en la posición del cursor",
     "select_template": "Seleccionar Plantilla",
     "generate": "Generar Documento",
@@ -161,6 +166,16 @@
       "today_date": "Fecha de Hoy",
       "today_date_long": "Hoy (Formato Largo)",
       "today_year": "Año Actual"
+    },
+    "editor": {
+      "normal": "Normal",
+      "heading_1": "Título 1",
+      "heading_2": "Título 2",
+      "heading_3": "Título 3",
+      "heading_4": "Título 4",
+      "advanced_colors": "Colores Avanzados",
+      "hide_advanced": "Ocultar Avanzados",
+      "apply": "Aplicar"
     }
   },
   "footer": {
@@ -438,6 +453,7 @@
     }
   },
   "dashboard": {
+    "greeting": "Bienvenido de nuevo",
     "welcome": "Bienvenido de nuevo, {name}",
     "overview": "Resumen General",
     "subtitle": "Esto es lo que está pasando con tu práctica hoy.",
@@ -471,11 +487,13 @@
     },
     "recent_cases": {
       "label": "Casos Recientes",
-      "no_cases": "No hay casos recientes"
+      "no_cases": "No hay casos recientes",
+      "no_cases_hint": "Los casos en los que trabajes aparecerán aquí"
     },
     "upcoming_appointments": {
       "label": "Próximas Citas",
-      "no_appointments": "No hay citas próximas"
+      "no_appointments": "No hay citas próximas",
+      "no_appointments_hint": "Las citas programadas aparecerán aquí"
     }
   },
   "landing": {
@@ -765,7 +783,8 @@
       "edit": "Editar",
       "delete": "Eliminar",
       "never": "Nunca",
-      "empty": "No se encontraron usuarios"
+      "empty": "No se encontraron usuarios",
+      "empty_hint": "Añade usuarios para comenzar"
     },
     "modal": {
       "add_title": "Añadir Nuevo Usuario",
@@ -1240,23 +1259,29 @@
     },
     "schedule": {
       "title": "Horario de Trabajo Estándar",
+      "desc": "Define cuándo estás disponible para citas",
       "add_slot": "Agregar Horario",
+      "add_first": "Agrega tu Primer Horario",
       "day": "Día",
       "start": "Hora de Inicio",
       "end": "Hora de Fin",
       "active": "Activo",
       "no_slots": "No hay horarios configurados",
+      "no_slots_hint": "Agrega horarios para que los clientes sepan cuándo estás disponible para citas",
       "save": "Guardar Cambios",
       "delete_confirm": "¿Eliminar este horario?"
     },
     "blocked": {
       "title": "Fechas Bloqueadas",
+      "desc": "Bloquea fechas cuando no estés disponible para citas",
       "add": "Bloquear Fecha",
+      "add_first": "Bloquea tu Primera Fecha",
       "date": "Fecha",
       "reason": "Razón",
       "full_day": "Día Completo",
       "time_range": "Rango de Tiempo",
       "no_blocked": "Sin fechas bloqueadas",
+      "no_blocked_hint": "Bloquea fechas para vacaciones, feriados o cuando no estés disponible",
       "reasons": {
         "vacation": "Vacaciones",
         "holiday": "Feriado",

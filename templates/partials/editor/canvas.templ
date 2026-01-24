@@ -8,7 +8,7 @@ import (
 templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 	<!-- Editor Canvas -->
 	<div
-		class="flex-1 bg-[#525659] overflow-auto relative"
+		class="flex-1 overflow-auto relative bg-[#18181b] cursor-default"
 		id="editor-scroller"
 		@scroll="updateCurrentPage()"
 	>
@@ -25,11 +25,11 @@ templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 						:style="`top: ${(page - 1) * (pageHeight + pageGap)}px; height: ${pageHeight}px;`"
 					>
 						<!-- Shadow -->
-						<div class="absolute inset-0 bg-black/30 translate-x-1 translate-y-1 rounded-sm"></div>
+						<div class="absolute inset-0 bg-black/50 translate-x-4 translate-y-4 rounded-sm blur-sm"></div>
 						<!-- White page background -->
-						<div class="absolute inset-0 bg-white rounded-sm shadow-xl"></div>
+						<div class="absolute inset-0 bg-white rounded-sm shadow-2xl"></div>
 						<!-- Page number -->
-						<div class="absolute -top-6 left-0 text-xs text-white/70 font-medium">
+						<div class="absolute -top-8 left-0 text-xs font-mono text-white/40 tracking-wider">
 							<span x-text="`Page ${page}`"></span>
 						</div>
 					</div>

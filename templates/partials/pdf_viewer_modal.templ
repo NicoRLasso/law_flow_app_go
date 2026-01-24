@@ -10,21 +10,28 @@ templ PDFViewerModal(ctx context.Context, caseRecord models.Case) {
 	<!-- PDF Viewer Modal -->
 	<div
 		id="pdf-viewer-modal"
-		class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center p-2"
+		class="hidden fixed inset-0 bg-[#000000]/95 backdrop-blur-md flex items-center justify-center p-4"
 		style="z-index: 9999; display: none;"
 		onclick="if(event.target === this) closePDFViewerModal()"
 	>
-		<div class="glass-panel rounded-lg border border-white/10 w-full max-w-6xl h-full flex flex-col" onclick="event.stopPropagation()">
+		<div class="glass-panel rounded-2xl border border-white/10 w-full max-w-6xl h-full flex flex-col bg-[#0A0A0B]/90 shadow-2xl transition-all duration-300 transform scale-100 opacity-100" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between px-3 py-1.5 border-b border-white/10">
-				<h3 id="pdf-title" class="text-sm font-semibold text-foreground truncate">{ i18n.T(ctx, "case.document.viewer.title") }</h3>
+			<div class="flex items-center justify-between px-6 py-4 border-b border-white/10">
+				<div class="flex items-center gap-3">
+					<div class="p-2 bg-accent/10 rounded-lg">
+						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+						</svg>
+					</div>
+					<h3 id="pdf-title" class="text-base font-semibold text-white truncate">{ i18n.T(ctx, "case.document.viewer.title") }</h3>
+				</div>
 				<button
 					type="button"
 					onclick="closePDFViewerModal()"
-					class="p-1 hover:bg-white/5 rounded transition-all duration-200 flex-shrink-0 ml-2"
+					class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/50 hover:text-white"
 					title={ i18n.T(ctx, "case.document.viewer.close_tooltip") }
 				>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>

@@ -108,11 +108,11 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 			@components.Navbar(ctx, user, firm, "/availability")
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full max-w-6xl" x-data="{ activeTab: 'schedule', sidebarOpen: false }">
-					<!-- Header -->
-					<div class="text-center mb-6 md:mb-8 settings-page-header">
-						<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "availability.title") }</h1>
-						<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "availability.desc") }</p>
+				<div class="w-full mx-auto" x-data="{ activeTab: 'schedule', sidebarOpen: false }">
+					<!-- Header Section -->
+					<div class="mb-10">
+						<h1 class="text-3xl font-bold text-gradient mb-2">{ i18n.T(ctx, "availability.title") }</h1>
+						<p class="text-muted-foreground">{ i18n.T(ctx, "availability.desc") }</p>
 					</div>
 					<!-- Layout with Sidebar -->
 					<div class="settings-layout">
@@ -136,7 +136,7 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 							</button>
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav"
+								class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-4 settings-nav"
 								:class="{ 'settings-nav-hidden': !sidebarOpen }"
 								x-show="sidebarOpen || window.innerWidth >= 768"
 								x-transition
@@ -145,35 +145,45 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 									<li>
 										<button
 											@click="activeTab = 'schedule'; sidebarOpen = false"
-											:class="activeTab === 'schedule' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'schedule' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-between gap-3 group"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-											</svg>
-											<span>{ i18n.T(ctx, "availability.nav.schedule") }</span>
+											<span class="flex items-center gap-3">
+												<svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+												</svg>
+												<span>{ i18n.T(ctx, "availability.nav.schedule") }</span>
+											</span>
+											if len(slots) > 0 {
+												<span class="text-xs bg-white/10 px-2 py-0.5 rounded-full">{ fmt.Sprintf("%d", len(slots)) }</span>
+											}
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'blocked'; sidebarOpen = false"
-											:class="activeTab === 'blocked' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'blocked' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-between gap-3 group"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-											</svg>
-											<span>{ i18n.T(ctx, "availability.nav.blocked") }</span>
+											<span class="flex items-center gap-3">
+												<svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+												</svg>
+												<span>{ i18n.T(ctx, "availability.nav.blocked") }</span>
+											</span>
+											if len(blockedDates) > 0 {
+												<span class="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">{ fmt.Sprintf("%d", len(blockedDates)) }</span>
+											}
 										</button>
 									</li>
 									if user.Role == "admin" {
 										<li>
 											<button
 												@click="activeTab = 'settings'; sidebarOpen = false"
-												:class="activeTab === 'settings' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-												class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+												:class="activeTab === 'settings' ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
+												class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3 group"
 											>
-												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
 													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
 												</svg>
@@ -188,17 +198,20 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 						<div class="settings-content space-y-6">
 							<!-- Schedule Tab - Grid Style -->
 							<div x-show="activeTab === 'schedule'" x-transition class="space-y-6">
-								<div class="glass-panel rounded-2xl p-4 md:p-6 border border-white/10">
+								<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-6">
 									<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-										<h2 class="text-xl font-bold flex items-center gap-2">
-											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-											</svg>
-											{ i18n.T(ctx, "availability.schedule.title") }
-										</h2>
+										<div>
+											<h2 class="text-xl font-bold flex items-center gap-2">
+												<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+												</svg>
+												{ i18n.T(ctx, "availability.schedule.title") }
+											</h2>
+											<p class="text-sm text-muted-foreground mt-1">{ i18n.T(ctx, "availability.schedule.desc") }</p>
+										</div>
 										<button
 											type="button"
-											class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
+											class="px-4 py-2.5 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20 hover:shadow-xl hover:shadow-accent/30 hover:-translate-y-0.5"
 											@click="$dispatch('open-modal', 'add-slot-modal')"
 										>
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,17 +227,20 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 							</div>
 							<!-- Blocked Dates Tab -->
 							<div x-show="activeTab === 'blocked'" x-transition class="space-y-6">
-								<div class="glass-panel rounded-2xl p-6 border border-white/10">
+								<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-6">
 									<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-										<h2 class="text-xl font-bold flex items-center gap-2">
-											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-											</svg>
-											{ i18n.T(ctx, "availability.blocked.title") }
-										</h2>
+										<div>
+											<h2 class="text-xl font-bold flex items-center gap-2">
+												<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+												</svg>
+												{ i18n.T(ctx, "availability.blocked.title") }
+											</h2>
+											<p class="text-sm text-muted-foreground mt-1">{ i18n.T(ctx, "availability.blocked.desc") }</p>
+										</div>
 										<button
 											type="button"
-											class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
+											class="px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 hover:-translate-y-0.5"
 											@click="$dispatch('open-modal', 'add-blocked-modal')"
 										>
 											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -242,7 +258,7 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 							<!-- Buffer Settings Tab (Admin Only) -->
 							if user.Role == "admin" {
 								<div x-show="activeTab === 'settings'" x-transition class="space-y-6">
-									<div class="glass-panel rounded-2xl p-6 border border-white/10">
+									<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-6">
 										<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
 											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -305,12 +321,24 @@ templ AvailabilitySettings(ctx context.Context, title string, csrfToken string, 
 // BlockedDatesList renders the list of blocked dates
 templ BlockedDatesList(ctx context.Context, blockedDates []models.BlockedDate) {
 	if len(blockedDates) == 0 {
-		<div class="text-center py-12 text-muted-foreground">
-			<svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-			</svg>
-			<p class="text-lg font-medium mb-2">{ i18n.T(ctx, "availability.blocked.no_blocked") }</p>
-			<p class="text-sm opacity-70">Block dates for vacations or holidays</p>
+		<div class="text-center py-16">
+			<div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-500/5 flex items-center justify-center">
+				<svg class="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+				</svg>
+			</div>
+			<h3 class="text-lg font-semibold text-foreground mb-2">{ i18n.T(ctx, "availability.blocked.no_blocked") }</h3>
+			<p class="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">{ i18n.T(ctx, "availability.blocked.no_blocked_hint") }</p>
+			<button
+				type="button"
+				@click="$dispatch('open-modal', 'add-blocked-modal')"
+				class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl font-medium transition-all duration-200 border border-red-500/20 hover:border-red-500/30"
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+				</svg>
+				{ i18n.T(ctx, "availability.blocked.add_first") }
+			</button>
 		</div>
 	} else {
 		<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -447,7 +475,7 @@ templ addSlotModal(ctx context.Context, csrfToken string) {
 	>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" @click="open = false" style="display: none;"></div>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
-			<div class="glass-panel rounded-2xl border border-white/10 shadow-2xl w-full max-w-md" @click.stop>
+			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] shadow-2xl w-full max-w-md" @click.stop>
 				<div class="p-6 border-b border-white/10">
 					<h3 class="text-xl font-bold">{ i18n.T(ctx, "availability.schedule.add_slot") }</h3>
 				</div>
@@ -522,7 +550,7 @@ templ editSlotModal(ctx context.Context, csrfToken string) {
 	>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" @click="open = false" style="display: none;"></div>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
-			<div class="glass-panel rounded-2xl border border-white/10 shadow-2xl w-full max-w-md" @click.stop>
+			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] shadow-2xl w-full max-w-md" @click.stop>
 				<div class="p-6 border-b border-white/10">
 					<h3 class="text-xl font-bold">{ i18n.T(ctx, "common.edit") } { i18n.T(ctx, "availability.schedule.title") }</h3>
 				</div>
@@ -604,7 +632,7 @@ templ deleteSlotModal(ctx context.Context) {
 	>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" @click="open = false" style="display: none;"></div>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
-			<div class="glass-panel rounded-2xl border border-white/10 shadow-2xl w-full max-w-sm" @click.stop>
+			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] shadow-2xl w-full max-w-sm" @click.stop>
 				<div class="p-6 text-center">
 					<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
 						<svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -636,7 +664,7 @@ templ deleteBlockedModal(ctx context.Context) {
 	>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" @click="open = false" style="display: none;"></div>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
-			<div class="glass-panel rounded-2xl border border-white/10 shadow-2xl w-full max-w-sm" @click.stop>
+			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] shadow-2xl w-full max-w-sm" @click.stop>
 				<div class="p-6 text-center">
 					<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/10 flex items-center justify-center">
 						<svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -667,7 +695,7 @@ templ addBlockedDateModal(ctx context.Context, csrfToken string) {
 	>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50" @click="open = false" style="display: none;"></div>
 		<div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
-			<div class="glass-panel rounded-2xl border border-white/10 shadow-2xl w-full max-w-md" @click.stop>
+			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] shadow-2xl w-full max-w-md" @click.stop>
 				<div class="p-6 border-b border-white/10">
 					<h3 class="text-xl font-bold">{ i18n.T(ctx, "availability.blocked.add") }</h3>
 				</div>
@@ -726,82 +754,86 @@ templ addBlockedDateModal(ctx context.Context, csrfToken string) {
 // AvailabilitySchedule renders the schedule grid/list for HTMX updates
 templ AvailabilitySchedule(ctx context.Context, slots []models.Availability) {
 	if len(slots) == 0 {
-		<div class="text-center py-12 text-muted-foreground">
-			<svg class="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-			</svg>
-			<p class="text-lg font-medium mb-2">{ i18n.T(ctx, "availability.schedule.no_slots") }</p>
-			<p class="text-sm opacity-70">Click "Add Time Slot" to get started</p>
-		</div>
-	} else {
-		<!-- Desktop: Weekly Grid -->
-		<div class="hidden md:block overflow-x-auto">
-			<div class="min-w-[800px] border border-white/10 rounded-xl bg-white/5 relative" style="display: grid; grid-template-columns: 60px repeat(7, 1fr); grid-template-rows: 40px repeat(32, 28px);">
-				<!-- Header Row -->
-				<div class="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-white/10 col-span-full grid grid-cols-subgrid items-center">
-					<div class="p-2 text-xs font-semibold text-muted-foreground text-center">Time</div>
-					<!-- Days Headers -->
-					for i := 1; i <= 6; i++ {
-						<div class={ "p-2 text-center text-sm font-semibold border-l border-white/5 " + getDayHeaderClass(i) }>
-							{ getDayShort(ctx, i) }
-						</div>
-					}
-					<!-- Sunday -->
-					<div class={ "p-2 text-center text-sm font-semibold border-l border-white/5 " + getDayHeaderClass(0) }>
-						{ getDayShort(ctx, 0) }
-					</div>
-				</div>
-				<!-- Time Labels (Left Column) -->
-				for h := 6; h <= 21; h++ {
-					<div style={ fmt.Sprintf("grid-column: 1; grid-row: %d / span 2;", (h-6)*2+2) } class="relative border-t border-white/5 text-[10px] text-muted-foreground p-1 text-right pr-2 -mt-2.5">
-						{ fmt.Sprintf("%02d:00", h) }
-					</div>
-				}
-				<!-- Grid Lines for Cells -->
-				// Vertical lines (days)
-				for d := 1; d <= 7; d++ {
-					<div style={ fmt.Sprintf("grid-column: %d; grid-row: 2 / -1;", d+1) } class="border-l border-white/5 pointer-events-none"></div>
-				}
-				// Horizontal lines (hours/half-hours)
-				for r := 2; r <= 33; r++ {
-					<div
-						style={ fmt.Sprintf("grid-column: 2 / -1; grid-row: %d;", r) }
-						class={ "border-t pointer-events-none " + func() string {
-	if (r-2)%2 == 0 {
-		return "border-white/10"
-	} else {
-		return "border-white/5 border-dashed"
-	}
-}() }
-					></div>
-				}
-				<!-- Slots -->
-				for _, slot := range slots {
-					<div
-						style={ fmt.Sprintf("grid-column: %s; grid-row: %s / span %s;", isDayActive(slot.DayOfWeek), getTimeGridRow(slot.StartTime), getTimeGridSpan(slot.StartTime, slot.EndTime)) }
-						class={ "m-0.5 rounded px-2 py-1 text-xs font-medium border shadow-sm cursor-pointer hover:brightness-110 flex flex-col justify-center overflow-hidden transition-all z-10 " + getSlotCardClass(slot.IsActive) }
-						@click={ fmt.Sprintf("editSlotId = '%s'; editSlotDay = %d; editSlotStart = '%s'; editSlotEnd = '%s'; editSlotActive = %t; $dispatch('open-modal', 'edit-slot-modal')", slot.ID, slot.DayOfWeek, slot.StartTime, slot.EndTime, slot.IsActive) }
-					>
-						<span class="truncate">{ slot.StartTime } - { slot.EndTime }</span>
-						<!-- Small Delete Btn -->
-						<button
-							type="button"
-							@click.stop={ fmt.Sprintf("deleteSlotId = '%s'; deleteSlotDay = '%s'; deleteSlotTime = '%s - %s'; $dispatch('open-modal', 'delete-slot-modal')", slot.ID, getDayName(ctx, slot.DayOfWeek), slot.StartTime, slot.EndTime) }
-							class="absolute top-0.5 right-0.5 p-0.5 text-white/50 hover:text-red-300 rounded hover:bg-red-500/20"
-						>
-							<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</div>
-				}
+		<div class="text-center py-16">
+			<div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+				<svg class="w-10 h-10 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
 			</div>
+			<h3 class="text-lg font-semibold text-foreground mb-2">{ i18n.T(ctx, "availability.schedule.no_slots") }</h3>
+			<p class="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">{ i18n.T(ctx, "availability.schedule.no_slots_hint") }</p>
+			<button
+				type="button"
+				@click="$dispatch('open-modal', 'add-slot-modal')"
+				class="inline-flex items-center gap-2 px-4 py-2.5 bg-accent/10 hover:bg-accent/20 text-accent rounded-xl font-medium transition-all duration-200 border border-accent/20 hover:border-accent/30"
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+				</svg>
+				{ i18n.T(ctx, "availability.schedule.add_first") }
+			</button>
 		</div>
-		<!-- Mobile: Stacked Cards -->
-		<div class="md:hidden space-y-4">
+	} else {
+		<!-- Day Cards Layout - Clean and Simple -->
+		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 			for day := 1; day <= 7; day++ {
-				@dayCardMobile(ctx, (day % 7), getSlotsForDay(slots, (day%7)))
+				@dayCard(ctx, (day % 7), getSlotsForDay(slots, (day%7)))
 			}
 		</div>
 	}
+}
+
+// Day card component - unified for all screen sizes
+templ dayCard(ctx context.Context, dayOfWeek int, slots []models.Availability) {
+	<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden transition-all hover:border-white/[0.15]">
+		<!-- Day Header -->
+		<div class={ "px-4 py-3 flex items-center justify-between border-b border-white/[0.08] " + getDayHeaderClass(dayOfWeek) }>
+			<span class="font-semibold">{ getDayName(ctx, dayOfWeek) }</span>
+			if len(slots) > 0 {
+				<span class="text-xs bg-white/10 px-2 py-0.5 rounded-full">{ fmt.Sprintf("%d", len(slots)) }</span>
+			}
+		</div>
+		<!-- Slots -->
+		<div class="p-3 space-y-2 min-h-[80px]">
+			if len(slots) == 0 {
+				<div class="flex items-center justify-center h-16 text-sm text-muted-foreground/50">
+					<span>—</span>
+				</div>
+			} else {
+				for _, slot := range slots {
+					<div class={ "group relative flex items-center justify-between p-3 rounded-xl border transition-all " + getSlotCardClass(slot.IsActive) }>
+						<div class="flex items-center gap-3">
+							<div class={ "w-2 h-2 rounded-full " + getStatusDotClass(slot.IsActive) }></div>
+							<div>
+								<span class="font-medium text-sm">{ slot.StartTime } - { slot.EndTime }</span>
+								if !slot.IsActive {
+									<span class="ml-2 text-xs text-muted-foreground/60">(inactive)</span>
+								}
+							</div>
+						</div>
+						<div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+							<button
+								type="button"
+								@click={ fmt.Sprintf("editSlotId = '%s'; editSlotDay = %d; editSlotStart = '%s'; editSlotEnd = '%s'; editSlotActive = %t; $dispatch('open-modal', 'edit-slot-modal')", slot.ID, slot.DayOfWeek, slot.StartTime, slot.EndTime, slot.IsActive) }
+								class="p-1.5 text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-lg transition-colors"
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+								</svg>
+							</button>
+							<button
+								type="button"
+								@click={ fmt.Sprintf("deleteSlotId = '%s'; deleteSlotDay = '%s'; deleteSlotTime = '%s - %s'; $dispatch('open-modal', 'delete-slot-modal')", slot.ID, getDayName(ctx, dayOfWeek), slot.StartTime, slot.EndTime) }
+								class="p-1.5 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+								</svg>
+							</button>
+						</div>
+					</div>
+				}
+			}
+		</div>
+	</div>
 }

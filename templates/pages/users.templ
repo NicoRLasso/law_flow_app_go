@@ -15,17 +15,18 @@ templ Users(ctx context.Context, title string, csrfToken string, user *models.Us
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/users")
 			<!-- Main Content -->
-			<main class="w-full mx-auto px-4 md:px-6 py-6 md:py-8">
-				<div class="space-y-4 md:space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+				<div class="space-y-6">
 					<!-- Header -->
-					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
 						<div>
-							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "users.title") }</h1>
-							<p class="text-muted-foreground mt-1 text-sm md:text-base">{ i18n.T(ctx, "users.description") }</p>
+							<p class="text-sm text-muted-foreground mb-2">{ i18n.T(ctx, "dashboard.overview") }</p>
+							<h1 class="text-3xl font-bold text-gradient">{ i18n.T(ctx, "users.title") }</h1>
+							<p class="text-muted-foreground mt-2">{ i18n.T(ctx, "users.description") }</p>
 						</div>
 						if user.Role == "admin" {
 							<button
-								class="px-4 md:px-6 py-2.5 md:py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 w-full sm:w-auto justify-center"
+								class="px-5 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 w-full sm:w-auto justify-center shadow-lg shadow-accent/20"
 								hx-get="/api/users/new"
 								hx-target="body"
 								hx-swap="beforeend"
@@ -37,13 +38,13 @@ templ Users(ctx context.Context, title string, csrfToken string, user *models.Us
 							</button>
 						}
 					</div>
-					<!-- User Filters (static, not reloaded) -->
+					<!-- User Filters -->
 					@partials.UserFilters(ctx)
-					<!-- Loading indicator (outside of the replaced content) -->
+					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
 						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
 					</div>
-					<!-- Users Table (reloadable content) -->
+					<!-- Users Table -->
 					<div
 						id="users-table"
 						hx-get="/api/users/list"

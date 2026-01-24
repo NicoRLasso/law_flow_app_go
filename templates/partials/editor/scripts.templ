@@ -11,5 +11,13 @@ templ Scripts(ctx context.Context, template models.DocumentTemplate) {
 		<input type="hidden" name="content" id="hidden-content-input"/>
 		<input type="hidden" name="name" value={ template.Name }/>
 	</form>
+	<!-- Editor Module Scripts -->
+	<script src="/static/js/editor/config.js"></script>
+	<script src="/static/js/editor/selection.js"></script>
+	<script src="/static/js/editor/menu.js"></script>
+	<script src="/static/js/editor/formatting.js"></script>
+	<script src="/static/js/editor/paging.js"></script>
+	<script src="/static/js/editor/auto-paging.js"></script>
 	<script src="/static/js/template-editor.js"></script>
 }
+

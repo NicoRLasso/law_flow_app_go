@@ -408,11 +408,11 @@ func UpdateBufferSettingsHandler(c echo.Context) error {
 	}
 
 	bufferMinutes, err := strconv.Atoi(c.FormValue("buffer_minutes"))
-	if err != nil || (bufferMinutes != 30 && bufferMinutes != 45 && bufferMinutes != 60) {
+	if err != nil || (bufferMinutes != 15 && bufferMinutes != 30 && bufferMinutes != 45 && bufferMinutes != 60) {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Buffer must be 30, 45, or 60 minutes</div>`)
+			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">`+i18n.T(c.Request().Context(), "availability.errors.invalid_buffer")+`</div>`)
 		}
-		return echo.NewHTTPError(http.StatusBadRequest, "Buffer must be 30, 45, or 60 minutes")
+		return echo.NewHTTPError(http.StatusBadRequest, "Buffer must be 15, 30, 45, or 60 minutes")
 	}
 
 	firm := middleware.GetCurrentFirm(c)

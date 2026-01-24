@@ -309,6 +309,74 @@ func GetTemplateMetadataModalHandler(c echo.Context) error {
 	return partials.MetadataModal(ctx, template, categories).Render(c.Request().Context(), c.Response().Writer)
 }
 
+// GetCloneTemplateModalHandler returns the clone modal for a template
+func GetCloneTemplateModalHandler(c echo.Context) error {
+	id := c.Param("id")
+
+	var template models.DocumentTemplate
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&template, "id = ?", id).Error; err != nil {
+		return c.String(http.StatusNotFound, "Template not found")
+	}
+
+	// Fetch categories
+	var categories []models.TemplateCategory
+	middleware.GetFirmScopedQuery(c, db.DB).Where("is_active = ?", true).Order("sort_order ASC, name ASC").Find(&categories)
+
+	ctx := context.Background()
+	return partials.TemplateCloneModal(ctx, template, categories).Render(c.Request().Context(), c.Response().Writer)
+}
+
+// CloneTemplateHandler creates a copy of an existing template
+func CloneTemplateHandler(c echo.Context) error {
+	id := c.Param("id")
+	user := c.Get("user").(*models.User)
+	firmID := *user.FirmID
+
+	// Find the original template
+	var original models.DocumentTemplate
+	if err := middleware.GetFirmScopedQuery(c, db.DB).First(&original, "id = ?", id).Error; err != nil {
+		return c.String(http.StatusNotFound, "Template not found")
+	}
+
+	name := c.FormValue("name")
+	categoryID := c.FormValue("category_id")
+
+	if name == "" {
+		return c.String(http.StatusBadRequest, "Name is required")
+	}
+
+	// Create new template as a copy
+	cloned := models.DocumentTemplate{
+		FirmID:          firmID,
+		Name:            name,
+		Description:     original.Description,
+		Content:         original.Content,
+		PageOrientation: original.PageOrientation,
+		PageSize:        original.PageSize,
+		CreatedByID:     user.ID,
+		IsActive:        true,
+		Version:         1,
+		MarginTop:       original.MarginTop,
+		MarginBottom:    original.MarginBottom,
+		MarginLeft:      original.MarginLeft,
+		MarginRight:     original.MarginRight,
+	}
+
+	// Use the new category if provided, otherwise keep the original
+	if categoryID != "" {
+		cloned.CategoryID = &categoryID
+	} else if original.CategoryID != nil {
+		cloned.CategoryID = original.CategoryID
+	}
+
+	if err := db.DB.Create(&cloned).Error; err != nil {
+		return c.String(http.StatusInternalServerError, "Error cloning template")
+	}
+
+	// Return the updated template list
+	return GetTemplatesHandler(c)
+}
+
 // --- Category Handlers ---
 
 // GetCategoriesHandler returns the list of template categories as HTML

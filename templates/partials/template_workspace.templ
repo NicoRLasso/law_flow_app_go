@@ -12,7 +12,7 @@ templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 		class="flex flex-col h-[calc(100vh-140px)]"
 		x-data={ "templateEditor(" + editor.GetPageHeight(template) + ")" }
 		x-init="init()"
-		@click="showContextMenu = false"
+		@click="showContextMenu = false; openDropdown = ''"
 		@contextmenu.prevent="openContextMenu($event)"
 	>
 		@editor.Header(ctx, template)
