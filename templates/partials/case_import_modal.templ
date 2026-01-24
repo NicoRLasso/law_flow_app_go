@@ -1,0 +1,118 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+)
+
+// CaseImportModal renders the modal for importing cases via Excel
+templ CaseImportModal(ctx context.Context) {
+	<div 
+		id="import-cases-modal"
+		class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+		x-data="{ loading: false }"
+		@keydown.escape.window="document.getElementById('import-cases-modal').remove()"
+		@click.self="document.getElementById('import-cases-modal').remove()"
+		@close-import-modal.window="document.getElementById('import-cases-modal').remove()"
+	>
+		<div 
+			class="glass-panel w-full max-w-lg p-6 relative flex flex-col max-h-[90vh] transition-all duration-300 transform scale-100 opacity-100"
+			x-show="true"
+			x-transition:enter="transition ease-out duration-300"
+			x-transition:enter-start="opacity-0 scale-95"
+			x-transition:enter-end="opacity-100 scale-100"
+			x-transition:leave="transition ease-in duration-200"
+			x-transition:leave-start="opacity-100 scale-100"
+			x-transition:leave-end="opacity-0 scale-95"
+			@click.stop
+		>
+			// Close button
+			<button 
+				class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+				@click="document.getElementById('import-cases-modal').remove()"
+			>
+				<i class="fas fa-times"></i>
+			</button>
+
+			<h2 class="text-xl font-bold text-white mb-1">
+				{ i18n.T(ctx, "cases.import.modal_title") }
+			</h2>
+			<p class="text-slate-400 text-sm mb-6">
+				{ i18n.T(ctx, "cases.import.title") }
+			</p>
+
+			<div id="import-form-container" class="overflow-y-auto">
+				// Step 1: Download Template
+				<div class="mb-8">
+					<h3 class="text-sm font-medium text-slate-300 mb-2">
+						{ i18n.T(ctx, "cases.import.instruction_step1") }
+					</h3>
+					<a href="/api/cases/import/template" class="flex items-center justify-between p-4 bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/50 rounded-lg transition-colors group">
+						<div class="flex items-center gap-3">
+							<div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 group-hover:bg-green-500/30 transition-colors">
+								<i class="fas fa-file-excel"></i>
+							</div>
+							<div>
+								<span class="block text-white font-medium">{ i18n.T(ctx, "cases.import.download_template") }</span>
+								<span class="text-xs text-slate-400">.xlsx format</span>
+							</div>
+						</div>
+						<i class="fas fa-download text-slate-400 group-hover:text-white transition-colors"></i>
+					</a>
+				</div>
+
+				// Step 2: Upload
+				<form hx-post="/api/cases/import" 
+					  hx-encoding="multipart/form-data" 
+					  hx-target="#import-result" 
+					  hx-indicator="#import-loading"
+					  @htmx:before-request="loading = true"
+					  @htmx:after-request="loading = false"
+				>
+					<div class="mb-6">
+						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
+							{ i18n.T(ctx, "cases.import.upload_file") } <span class="text-accent">*</span>
+						</label>
+						<input
+							type="file"
+							name="file"
+							required
+							accept=".xlsx"
+							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-500/10 file:text-blue-400 hover:file:bg-blue-500/20 cursor-pointer transition-all duration-200"
+						/>
+						<p class="text-xs text-white/30 mt-2 ml-1">Excel files only (.xlsx)</p>
+					</div>
+
+					// Loading Indicator (Alpine controlled)
+					<div x-show="loading" class="mb-4 flex items-center justify-center gap-2 text-blue-400">
+						<i class="fas fa-circle-notch fa-spin"></i>
+						<span>Processing file...</span>
+					</div>
+
+					// HTMX Indicator (Backup/Alternative if needed, but Alpine handles UI state mostly)
+					<div id="import-loading" class="htmx-indicator hidden"></div>
+
+					// Result Container
+					<div id="import-result"></div>
+
+					// Actions
+					<div class="flex justify-end gap-3 mt-6">
+						<button type="button" 
+							class="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+							@click="document.getElementById('import-cases-modal').remove()"
+						>
+							{ i18n.T(ctx, "common.cancel") }
+						</button>
+						<button type="submit" 
+							class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg shadow-lg shadow-blue-900/20 transition-all transform hover:scale-[1.02]"
+							:disabled="loading"
+						>
+							<span x-show="!loading">{ i18n.T(ctx, "cases.import.btn_import") }</span>
+							<span x-show="loading">Importing...</span>
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+}

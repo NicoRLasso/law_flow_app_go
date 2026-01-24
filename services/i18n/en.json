@@ -761,7 +761,55 @@
     "select_domain": "Select domain",
     "branch": "Branch",
     "select_branch": "Select branch",
-    "subtypes": "Subtypes"
+    "subtypes": "Subtypes",
+    "import": {
+      "title": "Import Cases",
+      "modal_title": "Import Cases from Excel",
+      "instruction_step1": "Step 1: Download Excel Template",
+      "instruction_step2": "Step 2: Upload Excel File (.xlsx)",
+      "download_template": "Download Template",
+      "upload_file": "Upload Excel File",
+      "review": "Step 3: Review",
+      "btn_import": "Import Cases",
+      "sheets": {
+        "instructions": "Instructions",
+        "clients": "Clients",
+        "cases": "Cases"
+      },
+      "instructions": {
+        "title": "Instructions for Importing Cases",
+        "considerations": "Considerations",
+        "cons_1": "Do not rename the sheets 'Clients' and 'Cases'.",
+        "cons_2": "The 'Client Email' is the unique identifier. If the client does not exist, a new user account will be created.",
+        "cons_3": "Status values must be: OPEN, CLOSED, or ON_HOLD.",
+        "cons_4": "Dates must be in YYYY-MM-DD format.",
+        "cons_5": "Legacy Case Number will be stored as Historical Case Number.",
+        "cons_6": "Document Type must match system codes (CC, NIT, PASSPORT, etc).",
+        "cons_7": "Classification (Domain, Branch, Subtype) is optional.",
+        "valid_classifications": "Available Classifications:",
+        "example": "Example Data"
+      },
+      "headers": {
+        "email": "Client Email",
+        "name": "Client Name",
+        "phone": "Phone",
+        "document_type": "Document Type",
+        "document_number": "Document Number",
+        "legacy_number": "Legacy Case Number",
+        "case_title": "Case Title",
+        "description": "Description",
+        "domain": "Domain",
+        "branch": "Branch",
+        "subtype": "Subtype",
+        "status": "Status",
+        "opened_date": "Opened Date",
+        "closed_date": "Closed Date"
+      },
+      "success_msg": "Import completed successfully.",
+      "summary_total": "Total Processed",
+      "summary_success": "Success",
+      "summary_failed": "Failed"
+    }
   },
   "users": {
     "title": "User Management",

@@ -1247,6 +1247,54 @@
       "open": "Abierto",
       "on_hold": "En Espera",
       "closed": "Cerrado"
+    },
+    "import": {
+      "title": "Importar Casos",
+      "modal_title": "Importar Casos desde Excel",
+      "instruction_step1": "Paso 1: Descargar Plantilla Excel",
+      "instruction_step2": "Paso 2: Subir Archivo Excel (.xlsx)",
+      "download_template": "Descargar Plantilla",
+      "upload_file": "Subir Archivo Excel",
+      "review": "Paso 3: Revisión",
+      "btn_import": "Importar Casos",
+      "sheets": {
+        "instructions": "Instrucciones",
+        "clients": "Clientes",
+        "cases": "Casos"
+      },
+      "instructions": {
+        "title": "Instrucciones para Importar Casos",
+        "considerations": "Consideraciones",
+        "cons_1": "No cambie el nombre de las hojas 'Clientes' y 'Casos'.",
+        "cons_2": "El 'Email del Cliente' es el identificador único. Si el cliente no existe, se creará una cuenta nueva.",
+        "cons_3": "Los valores de Estado deben ser: OPEN, CLOSED, u ON_HOLD.",
+        "cons_4": "Las fechas deben estar en formato AAAA-MM-DD.",
+        "cons_5": "El Número de Caso Legado se guardará como Número Histórico.",
+        "cons_6": "El Tipo de Documento debe coincidir con los códigos del sistema (CC, CE, NIT, PASAPORTE, etc).",
+        "cons_7": "La clasificación (Dominio, Rama, Subtipo) es opcional.",
+        "valid_classifications": "Clasificaciones Disponibles:",
+        "example": "Datos de Ejemplo"
+      },
+      "headers": {
+        "email": "Email Cliente",
+        "name": "Nombre Cliente",
+        "phone": "Teléfono",
+        "document_type": "Tipo Documento (CC, NIT, etc)",
+        "document_number": "Número Documento",
+        "legacy_number": "Número Caso Legado",
+        "case_title": "Título Caso",
+        "description": "Descripción",
+        "domain": "Dominio",
+        "branch": "Rama",
+        "subtype": "Subtipo",
+        "status": "Estado",
+        "opened_date": "Fecha Apertura",
+        "closed_date": "Fecha Cierre"
+      },
+      "success_msg": "Importación completada con éxito.",
+      "summary_total": "Total Procesados",
+      "summary_success": "Exitosos",
+      "summary_failed": "Fallidos"
     }
   },
   "availability": {

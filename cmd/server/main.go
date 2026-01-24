@@ -469,6 +469,10 @@ func main() {
 			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)
 			caseRoutes.GET("/:id/collaborators/available", handlers.GetAvailableCollaboratorsHandler)
+			// Import routes
+			caseRoutes.GET("/import/modal", handlers.ImportCasesModalHandler)
+			caseRoutes.GET("/import/template", handlers.GetImportTemplateHandler)
+			caseRoutes.POST("/import", handlers.ImportCasesHandler)
 			// Opposing Party routes
 			caseRoutes.GET("/:id/party/modal", handlers.GetCasePartyModalHandler)
 			caseRoutes.POST("/:id/party", handlers.AddCasePartyHandler)

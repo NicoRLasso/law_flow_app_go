@@ -31,6 +31,15 @@ templ Cases(ctx context.Context, title string, csrfToken string, user *models.Us
 						</div>
 						if user.Role == "admin" || user.Role == "lawyer" {
 							<button
+								hx-get="/api/cases/import/modal"
+								hx-target="body"
+								hx-swap="beforeend"
+								class="px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white bg-slate-800/50 hover:bg-slate-700/50 backdrop-blur-md rounded-xl transition-all border border-slate-700/50 hover:border-slate-600 shadow-sm hover:shadow-md flex items-center gap-2 group"
+							>
+								<i class="fas fa-file-import text-slate-400 group-hover:text-blue-400 transition-colors"></i>
+								{ i18n.T(ctx, "cases.import.title") }
+							</button>
+							<button
 								hx-get="/api/cases/new"
 								hx-target="body"
 								hx-swap="beforeend"
