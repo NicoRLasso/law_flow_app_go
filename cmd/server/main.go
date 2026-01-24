@@ -249,14 +249,6 @@ func main() {
 	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler)
 	e.GET("/firm/:slug/request/success", handlers.PublicCaseRequestSuccessHandler)
 
-	// Public appointment booking routes (no authentication)
-	e.GET("/firm/:slug/book", handlers.PublicBookingPageHandler)
-	e.GET("/firm/:slug/book/lawyers", handlers.PublicGetLawyersHandler)
-	e.GET("/firm/:slug/book/slots", handlers.PublicGetSlotsHandler)
-	e.POST("/firm/:slug/book", handlers.PublicSubmitBookingHandler)
-	e.GET("/appointment/:token", handlers.PublicAppointmentDetailHandler)
-	e.POST("/appointment/:token/cancel", handlers.PublicCancelAppointmentHandler)
-
 	// Firm setup routes (authenticated but no firm required)
 	firmSetup := e.Group("/firm")
 	firmSetup.Use(middleware.RequireAuth())
