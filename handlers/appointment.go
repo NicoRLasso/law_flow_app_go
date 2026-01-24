@@ -224,32 +224,62 @@ func CreateAppointmentHandler(c echo.Context) error {
 	var firm models.Firm
 	db.DB.First(&firm, "id = ?", apt.FirmID)
 
+	// Generate ICS file
+	firmEmail := firm.InfoEmail
+	if firmEmail == "" {
+		firmEmail = firm.NoreplyEmail
+	}
+	icsContent, err := services.GenerateAppointmentICS(apt, firm.Name, firmEmail, firm.Timezone)
+	if err != nil {
+		// Log error but continue with email sending
+		fmt.Printf("Error generating ICS: %v\n", err)
+	}
+
 	// Send confirmation to client
 	clientEmailData := services.AppointmentConfirmationEmailData{
-		ClientName: client.Name,
-		FirmName:   firm.Name,
-		Date:       apt.StartTime.Format("January 2, 2006"),
-		Time:       apt.StartTime.Format("3:04 PM"),
-		Duration:   int(apt.EndTime.Sub(apt.StartTime).Minutes()),
-		LawyerName: lawyer.Name,
+		ClientName:      client.Name,
+		FirmName:        firm.Name,
+		Date:            apt.StartTime.Format("January 2, 2006"),
+		Time:            apt.StartTime.Format("3:04 PM"),
+		Duration:        int(apt.EndTime.Sub(apt.StartTime).Minutes()),
+		LawyerName:      lawyer.Name,
+		AppointmentType: "", // Added to fix potential missing field if struct changed or just empty
 	}
+	if apt.AppointmentType != nil {
+		clientEmailData.AppointmentType = apt.AppointmentType.Name
+	}
+
 	clientLang := client.Language
 	if clientLang == "" {
 		clientLang = "es"
 	}
 	clientEmail := services.BuildAppointmentConfirmationEmail(client.Email, clientEmailData, clientLang)
+
+	// Attach ICS if generated successfully
+	if len(icsContent) > 0 {
+		clientEmail.Attachments = append(clientEmail.Attachments, services.Attachment{
+			Filename: "appointment.ics",
+			Content:  icsContent,
+		})
+	}
+
 	services.SendEmailAsync(cfg, clientEmail)
 
 	// Notify lawyer about new appointment
 	lawyerEmailData := services.LawyerAppointmentNotificationEmailData{
-		LawyerName:  lawyer.Name,
-		ClientName:  client.Name,
-		ClientEmail: client.Email,
-		ClientPhone: "",
-		Date:        apt.StartTime.Format("January 2, 2006"),
-		Time:        apt.StartTime.Format("3:04 PM"),
-		Duration:    int(apt.EndTime.Sub(apt.StartTime).Minutes()),
+		LawyerName:      lawyer.Name,
+		ClientName:      client.Name,
+		ClientEmail:     client.Email,
+		ClientPhone:     "",
+		Date:            apt.StartTime.Format("January 2, 2006"),
+		Time:            apt.StartTime.Format("3:04 PM"),
+		Duration:        int(apt.EndTime.Sub(apt.StartTime).Minutes()),
+		AppointmentType: "",
 	}
+	if apt.AppointmentType != nil {
+		lawyerEmailData.AppointmentType = apt.AppointmentType.Name
+	}
+
 	if client.PhoneNumber != nil {
 		lawyerEmailData.ClientPhone = *client.PhoneNumber
 	}
@@ -261,6 +291,15 @@ func CreateAppointmentHandler(c echo.Context) error {
 		lawyerLang = "es"
 	}
 	lawyerEmail := services.BuildLawyerAppointmentNotificationEmail(lawyer.Email, lawyerEmailData, lawyerLang)
+
+	// Attach ICS to lawyer email as well
+	if len(icsContent) > 0 {
+		lawyerEmail.Attachments = append(lawyerEmail.Attachments, services.Attachment{
+			Filename: "appointment.ics",
+			Content:  icsContent,
+		})
+	}
+
 	services.SendEmailAsync(cfg, lawyerEmail)
 
 	// For HTMX requests, return success with trigger to reload table

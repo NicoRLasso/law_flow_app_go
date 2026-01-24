@@ -51,10 +51,17 @@ func buildEmailWithFallback(templateName string, lang string, tmplData interface
 
 // Email represents an email message
 type Email struct {
-	To       []string
-	Subject  string
-	HTMLBody string
-	TextBody string
+	To          []string
+	Subject     string
+	HTMLBody    string
+	TextBody    string
+	Attachments []Attachment
+}
+
+// Attachment represents an email attachment
+type Attachment struct {
+	Filename string
+	Content  []byte
 }
 
 // loadTemplate loads an email template from the templates/emails directory
@@ -137,6 +144,14 @@ func SendEmail(cfg *config.Config, email *Email) error {
 		params.Text = email.TextBody
 	}
 
+	// Add attachments
+	for _, att := range email.Attachments {
+		params.Attachments = append(params.Attachments, &resend.Attachment{
+			Filename: att.Filename,
+			Content:  att.Content,
+		})
+	}
+
 	// Validate we have at least one body
 	if params.Html == "" && params.Text == "" {
 		return fmt.Errorf("email must have either HTMLBody or TextBody")
@@ -158,6 +173,12 @@ func logEmailToConsole(email *Email) {
 	log.Printf("\n%s\n📧 EMAIL (Development Mode - Not Actually Sent)\n%s", separator, separator)
 	log.Printf("To: %v", email.To)
 	log.Printf("Subject: %s", email.Subject)
+	if len(email.Attachments) > 0 {
+		log.Printf("Attachments: %d", len(email.Attachments))
+		for _, att := range email.Attachments {
+			log.Printf(" - %s (%d bytes)", att.Filename, len(att.Content))
+		}
+	}
 	log.Printf("\n--- TEXT BODY ---\n%s", email.TextBody)
 	log.Printf("\n--- HTML BODY (first 500 chars) ---\n%s...", truncate(email.HTMLBody, 500))
 	log.Printf("%s\n", separator)
@@ -176,10 +197,11 @@ func truncate(s string, maxLen int) string {
 func SendEmailAsync(cfg *config.Config, email *Email) {
 	// Create a copy of the email to avoid race conditions
 	emailCopy := &Email{
-		To:       append([]string{}, email.To...),
-		Subject:  email.Subject,
-		HTMLBody: email.HTMLBody,
-		TextBody: email.TextBody,
+		To:          append([]string{}, email.To...),
+		Subject:     email.Subject,
+		HTMLBody:    email.HTMLBody,
+		TextBody:    email.TextBody,
+		Attachments: append([]Attachment{}, email.Attachments...),
 	}
 
 	// Send in goroutine
