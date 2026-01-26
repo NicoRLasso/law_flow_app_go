@@ -28,7 +28,7 @@ type Case struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
 	// Firm relationship
-	FirmID string `gorm:"type:uuid;not null;index:idx_case_firm_opened;index:idx_case_firm_status" json:"firm_id"`
+	FirmID string `gorm:"type:uuid;not null;index:idx_case_firm_opened;index:idx_case_firm_status;uniqueIndex:idx_firm_filing_number" json:"firm_id"`
 	Firm   Firm   `gorm:"foreignKey:FirmID" json:"firm,omitempty"`
 
 	// Client relationship (User with role 'client')
@@ -40,7 +40,7 @@ type Case struct {
 	Title        *string `json:"title,omitempty"` // Brief case title for identification
 	CaseType     string  `gorm:"not null" json:"case_type"`
 	Description  string  `gorm:"type:text;not null" json:"description"`
-	FilingNumber *string `gorm:"size:100;uniqueIndex" json:"filing_number,omitempty"` // External filing number from court/process
+	FilingNumber *string `gorm:"size:100;uniqueIndex:idx_firm_filing_number" json:"filing_number,omitempty"` // External filing number from court/process
 
 	// Client's role in the case (demandante/demandado)
 	ClientRole *string `gorm:"size:20" json:"client_role,omitempty"`

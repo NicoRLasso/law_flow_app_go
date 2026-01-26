@@ -323,7 +323,9 @@ func UpdateCaseHandler(c echo.Context) error {
 	// Save updates
 	if err := db.DB.Save(&caseRecord).Error; err != nil {
 		// Check for duplicate filing number
-		if strings.Contains(err.Error(), "UNIQUE constraint failed: cases.filing_number") || strings.Contains(err.Error(), "cases_filing_number_key") {
+		if strings.Contains(err.Error(), "UNIQUE constraint failed: cases.filing_number") ||
+			strings.Contains(err.Error(), "cases_filing_number_key") ||
+			strings.Contains(err.Error(), "idx_firm_filing_number") {
 			errMsg := i18n.T(c.Request().Context(), "case.edit.error.duplicate_radicado")
 			if c.Request().Header.Get("HX-Request") == "true" {
 				return c.HTML(http.StatusConflict, fmt.Sprintf(`<div class="p-4 bg-red-500/20 text-red-400 rounded-lg flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5"></i> <span>%s</span></div><script>lucide.createIcons();</script>`, errMsg))
