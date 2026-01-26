@@ -10,137 +10,148 @@ import (
 templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption, turnstileSiteKey string) {
 	@layouts.Base(ctx, i18n.T(ctx, "public.request.title")+" - "+firm.Name, csrfToken, nil) {
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-		<main class="min-h-screen flex items-center justify-center relative overflow-hidden py-12">
+		<main class="min-h-screen relative bg-base-100 py-12 lg:py-20">
 			<!-- Background effects -->
-			<div class="absolute inset-0 z-0">
-				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
-				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px]"></div>
-			</div>
-			<div class="w-full max-w-3xl relative z-10 px-6">
-				<!-- Firm Header -->
-				<div class="text-center mb-10">
-					<h1 class="text-4xl md:text-5xl font-bold font-space-grotesk tracking-tighter mb-2">
+			<div class="absolute inset-0 z-0 bg-base-200/30"></div>
+			
+			<div class="container mx-auto px-4 max-w-4xl relative z-10">
+				<!-- Firm Header - Letterhead Style -->
+				<div class="text-center mb-12 bg-base-100 p-10 shadow-sm border border-base-200 rounded-sm">
+					<h1 class="text-4xl md:text-5xl font-serif font-bold tracking-tight mb-2 text-primary">
 						{ firm.Name }
 					</h1>
-					<p class="text-muted-foreground">
+					<p class="opacity-60 font-serif italic text-lg">
 						if firm.City != "" && firm.Country != "" {
 							{ firm.City }, { firm.Country }
 						} else if firm.Country != "" {
 							{ firm.Country }
 						}
 					</p>
-					<p class="text-lg mt-4 text-foreground/80">{ i18n.T(ctx, "public.request.subtitle") }</p>
+					<div class="w-16 h-1 bg-primary/20 mx-auto my-6"></div>
+					<p class="text-lg font-medium opacity-80 font-sans max-w-2xl mx-auto">{ i18n.T(ctx, "public.request.subtitle") }</p>
 				</div>
+				
 				<!-- Request Form Card -->
-				<div class="glass-panel p-10 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
-					<div class="mb-10">
-						<h2 class="text-2xl font-bold mb-3">{ i18n.T(ctx, "public.request.form_title") }</h2>
-						<p class="text-muted-foreground text-sm">{ i18n.T(ctx, "public.request.form_desc") }</p>
-					</div>
-					<form
-						method="POST"
-						action={ templ.URL("/firm/" + firm.Slug + "/request") }
-						enctype="multipart/form-data"
-						class="space-y-8"
-					>
-						<!-- Form Message Area -->
-						<div id="form-message" class="min-h-[24px]"></div>
-						<!-- Personal Information Section -->
-						<div class="space-y-5">
-							<h3 class="text-lg font-semibold text-accent">{ i18n.T(ctx, "public.request.personal_info") }</h3>
-							<!-- Full Name -->
-							<div class="space-y-3">
-								<label for="name" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.full_name") } *</label>
-								<div class="relative group">
-									<input
-										type="text"
-										id="name"
-										name="name"
-										required
-										placeholder="Juan Pérez"
-										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
-									/>
-									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+				<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm overflow-hidden">
+					<!-- Top Accent -->
+					<div class="h-2 bg-gradient-to-r from-primary to-secondary w-full"></div>
+					
+					<div class="card-body p-8 md:p-12">
+						<div class="mb-10 border-b border-base-200 pb-6">
+							<h2 class="text-2xl font-serif font-bold mb-2">{ i18n.T(ctx, "public.request.form_title") }</h2>
+							<p class="text-sm opacity-60 font-sans leading-relaxed">{ i18n.T(ctx, "public.request.form_desc") }</p>
+						</div>
+						
+						<form
+							method="POST"
+							action={ templ.URL("/firm/" + firm.Slug + "/request") }
+							enctype="multipart/form-data"
+							class="space-y-8"
+						>
+							<!-- Form Message Area -->
+							<div id="form-message" class="empty:hidden alert text-sm py-4 rounded-sm border-l-4 border-error"></div>
+							
+							<!-- Personal Information Section -->
+							<div class="space-y-6">
+								<h3 class="text-lg font-bold font-serif text-primary uppercase tracking-widest border-b border-base-200 pb-2">{ i18n.T(ctx, "public.request.personal_info") }</h3>
+								
+								<div class="grid md:grid-cols-2 gap-6">
+									<!-- Full Name -->
+									<div class="form-control md:col-span-2">
+										<label for="name" class="label pb-1">
+											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.full_name") } <span class="text-error">*</span></span>
+										</label>
+										<input
+											type="text"
+											id="name"
+											name="name"
+											required
+											placeholder="Juan Pérez"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+										/>
+									</div>
+									
+									<!-- Email -->
+									<div class="form-control">
+										<label for="email" class="label pb-1">
+											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.email") } <span class="text-error">*</span></span>
+										</label>
+										<input
+											type="email"
+											id="email"
+											name="email"
+											required
+											placeholder="juan@example.com"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+										/>
+									</div>
+									
+									<!-- Phone -->
+									<div class="form-control">
+										<label for="phone" class="label pb-1">
+											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.phone") } <span class="text-error">*</span></span>
+										</label>
+										<input
+											type="tel"
+											id="phone"
+											name="phone"
+											required
+											placeholder="+57 300 123 4567"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+										/>
+									</div>
 								</div>
-							</div>
-							<!-- Email -->
-							<div class="space-y-3">
-								<label for="email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.email") } *</label>
-								<div class="relative group">
-									<input
-										type="email"
-										id="email"
-										name="email"
-										required
-										placeholder="juan@example.com"
-										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
-									/>
-									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-								</div>
-							</div>
-							<!-- Phone -->
-							<div class="space-y-3">
-								<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.phone") } *</label>
-								<div class="relative group">
-									<input
-										type="tel"
-										id="phone"
-										name="phone"
-										required
-										placeholder="+57 300 123 4567"
-										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
-									/>
-									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-								</div>
-							</div>
-							<!-- Document Type and Number (Grid) -->
-							<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<!-- Document Type -->
-								<div class="space-y-3">
-									<label for="document_type" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.doc_type") } *</label>
-									<div class="relative group">
+								
+								<!-- Document Type and Number (Grid) -->
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-base-200/30 rounded-sm border border-base-200">
+									<!-- Document Type -->
+									<div class="form-control">
+										<label for="document_type" class="label pb-1">
+											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.doc_type") } <span class="text-error">*</span></span>
+										</label>
 										<select
 											id="document_type"
 											name="document_type"
 											required
-											class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+											class="select select-bordered rounded-sm w-full focus:select-primary h-12"
 										>
 											<option value="">{ i18n.T(ctx, "public.request.select_type") }</option>
 											for _, opt := range documentTypes {
 												<option value={ opt.Code }>{ opt.Label }</option>
 											}
 										</select>
-										<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 									</div>
-								</div>
-								<!-- Document Number -->
-								<div class="space-y-3">
-									<label for="document_number" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.doc_number") } *</label>
-									<div class="relative group">
+									
+									<!-- Document Number -->
+									<div class="form-control">
+										<label for="document_number" class="label pb-1">
+											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.doc_number") } <span class="text-error">*</span></span>
+										</label>
 										<input
 											type="text"
 											id="document_number"
 											name="document_number"
 											required
 											placeholder="1234567890"
-											class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
 										/>
-										<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 									</div>
 								</div>
 							</div>
-						</div>
-						<!-- Case Details Section -->
-						<div class="space-y-5">
-							<h3 class="text-lg font-semibold text-accent">{ i18n.T(ctx, "cases.detail.title") }</h3>
-							<!-- Priority -->
-							<div class="space-y-3">
-								<label for="priority" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "case_requests.filters.priority") }</label>
-								<div class="relative group">
+							
+							<!-- Case Details Section -->
+							<div class="space-y-6 pt-6">
+								<h3 class="text-lg font-bold font-serif text-primary uppercase tracking-widest border-b border-base-200 pb-2">{ i18n.T(ctx, "cases.detail.title") }</h3>
+								
+								<!-- Priority -->
+								<div class="form-control max-w-xs">
+									<label for="priority" class="label pb-1">
+										<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "case_requests.filters.priority") }</span>
+									</label>
 									<select
 										id="priority"
 										name="priority"
-										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+										class="select select-bordered rounded-sm w-full focus:select-primary h-12"
 									>
 										for _, opt := range priorities {
 											if opt.Code == "medium" {
@@ -150,56 +161,67 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 											}
 										}
 									</select>
-									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 								</div>
-							</div>
-							<!-- Description -->
-							<div class="space-y-3">
-								<label for="description" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.case_desc") } *</label>
-								<div class="relative group">
+								
+								<!-- Description -->
+								<div class="form-control">
+									<label for="description" class="label pb-1">
+										<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.case_desc") } <span class="text-error">*</span></span>
+									</label>
 									<textarea
 										id="description"
 										name="description"
 										required
-										rows="6"
+										rows="8"
 										placeholder={ i18n.T(ctx, "public.request.case_desc_ph") }
-										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 resize-none"
+										class="textarea textarea-bordered rounded-sm w-full focus:textarea-primary resize-y text-base p-4"
 									></textarea>
-									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 								</div>
-							</div>
-							<!-- File Upload -->
-							<div class="space-y-3">
-								<label for="file" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.support_doc") } ({ i18n.T(ctx, "public.request.optional") })</label>
-								<div class="relative group">
+								
+								<!-- File Upload -->
+								<div class="form-control">
+									<label for="file" class="label pb-1">
+										<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.support_doc") } <span class="text-xs opacity-60 font-sans font-normal">({ i18n.T(ctx, "public.request.optional") })</span></span>
+									</label>
 									<input
 										type="file"
 										id="file"
 										name="file"
 										accept=".pdf"
-										class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-accent file:text-accent-foreground hover:file:bg-accent/80 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+										class="file-input file-input-bordered file-input-primary rounded-sm w-full"
 									/>
-									<div class="absolute inset-0 rounded-xl bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+									<label class="label">
+										<span class="label-text-alt opacity-60">{ i18n.T(ctx, "public.request.pdf_only") }</span>
+									</label>
 								</div>
-								<p class="text-xs text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.pdf_only") }</p>
 							</div>
-						</div>
-						<!-- Turnstile CAPTCHA -->
-						if turnstileSiteKey != "" {
-							<div class="cf-turnstile" data-sitekey={ turnstileSiteKey }></div>
-						}
-						<!-- Submit Button -->
-						<button
-							type="submit"
-							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
-						>
-							<span class="relative z-10">{ i18n.T(ctx, "public.request.submit_btn") }</span>
-							<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-						</button>
-						<p class="text-center text-xs text-muted-foreground mt-4">
-							{ i18n.T(ctx, "public.request.terms") }
-						</p>
-					</form>
+							
+							<!-- Turnstile CAPTCHA -->
+							if turnstileSiteKey != "" {
+								<div class="cf-turnstile pt-4" data-sitekey={ turnstileSiteKey }></div>
+							}
+							
+							<!-- Submit Button -->
+							<div class="form-control mt-10">
+								<button type="submit" class="btn btn-primary btn-lg w-full rounded-sm font-serif shadow-xl text-lg hover:brightness-110">
+									{ i18n.T(ctx, "public.request.submit_btn") }
+								</button>
+							</div>
+							
+							<div class="text-center mt-6 p-4 bg-base-200/30 rounded-sm">
+								<p class="text-xs opacity-60 font-sans leading-relaxed">
+									{ i18n.T(ctx, "public.request.terms") }
+								</p>
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				<div class="text-center mt-12 opacity-40">
+					<div class="flex items-center justify-center gap-2 mb-2">
+						<span class="w-2 h-2 rounded-full bg-success"></span>
+						<span class="text-sm font-mono uppercase tracking-widest">{ i18n.T(ctx, "landing.highlights.secure") } • Encrypted</span>
+					</div>
 				</div>
 			</div>
 		</main>

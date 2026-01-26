@@ -1,16 +1,4 @@
-# CSS build stage
-FROM node:20-alpine AS css-builder
 
-WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm ci
-
-# Copy files needed for Tailwind to scan classes
-COPY static/css/input.css static/css/kinetic.css ./static/css/
-COPY templates ./templates
-COPY postcss.config.js ./
-RUN npm run build:css
 
 # Go build stage - use Debian for glibc compatibility with runtime
 FROM golang:1.24-bookworm AS builder
@@ -27,8 +15,7 @@ RUN go mod download
 
 COPY . .
 
-# Copy built CSS from css-builder stage
-COPY --from=css-builder /app/static/css/bundle.min.css ./static/css/bundle.min.css
+
 
 # Generate templ files
 RUN templ generate

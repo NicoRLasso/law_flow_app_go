@@ -10,115 +10,89 @@ import (
 templ About(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
 		<!-- Hero Section -->
-		<section class="section-lg relative overflow-hidden">
-			<!-- Animated background elements -->
-			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
-			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
-			<div class="container mx-auto px-6 relative z-10">
-				<div class="mx-auto text-center reveal">
-					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.about.mission_label") }</span>
-					<h1 class="text-display text-gradient mb-8">
+		<div class="hero py-24 bg-base-100">
+			<div class="hero-content text-center">
+				<div class="max-w-3xl">
+					<div class="inline-block mb-6 px-4 py-1 border border-primary/30 rounded-full bg-primary/5 text-primary text-sm font-semibold tracking-widest uppercase">
+						{ i18n.T(ctx, "pages.about.mission_label") }
+					</div>
+					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-6 text-base-content leading-tight">
 						{ i18n.T(ctx, "pages.about.mission_title") }
-						<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.about.mission_highlight") }</span>
+						<span class="block text-primary italic mt-2">{ i18n.T(ctx, "pages.about.mission_highlight") }</span>
 					</h1>
-					<p class="text-body-lg text-muted mx-auto leading-relaxed">
+					<p class="py-6 text-xl opacity-80 font-sans leading-relaxed max-w-2xl mx-auto">
 						{ i18n.T(ctx, "pages.about.mission_desc") }
 					</p>
 				</div>
 			</div>
-		</section>
+		</div>
+
 		<!-- Values Section -->
-		<section class="section border-t border-white/[0.06]">
+		<section class="py-20 bg-base-100 border-t border-base-200">
 			<div class="container mx-auto px-6">
-				<div class="grid md:grid-cols-3 gap-8 mx-auto">
-					<div class="card card-glass card-hover p-8 reveal">
-						<div class="icon-container mb-6">
-							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-							</svg>
+				<div class="grid md:grid-cols-3 gap-8">
+					<!-- Innovation -->
+					<div class="group p-10 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 text-center">
+						<div class="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 text-primary group-hover:bg-primary group-hover:text-primary-content transition-colors duration-300">
+							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.innovation_title") }</h3>
-						<p class="text-body text-muted">
+						<h3 class="text-2xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.about.values.innovation_title") }</h3>
+						<p class="opacity-70 font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.about.values.innovation_desc") }
 						</p>
 					</div>
-					<div class="card card-glass card-hover p-8 reveal reveal-stagger-1">
-						<div class="icon-container mb-6">
-							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-							</svg>
+					<!-- Trust -->
+					<div class="group p-10 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 text-center">
+						<div class="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 text-primary group-hover:bg-primary group-hover:text-primary-content transition-colors duration-300">
+							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.trust_title") }</h3>
-						<p class="text-body text-muted">
+						<h3 class="text-2xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.about.values.trust_title") }</h3>
+						<p class="opacity-70 font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.about.values.trust_desc") }
 						</p>
 					</div>
-					<div class="card card-glass card-hover p-8 reveal reveal-stagger-2">
-						<div class="icon-container mb-6">
-							<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
-							</svg>
+					<!-- Partnership -->
+					<div class="group p-10 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 text-center">
+						<div class="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 text-primary group-hover:bg-primary group-hover:text-primary-content transition-colors duration-300">
+							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.about.values.partnership_title") }</h3>
-						<p class="text-body text-muted">
+						<h3 class="text-2xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.about.values.partnership_title") }</h3>
+						<p class="opacity-70 font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.about.values.partnership_desc") }
 						</p>
 					</div>
 				</div>
 			</div>
 		</section>
-		// <!-- Team Section - COMMENTED OUT -->
+
+		<!-- Team Section - COMMENTED OUT -->
 		// Uncomment the block below when ready to show the team
 		if false {
-			<section class="section border-t border-white/[0.06]">
+			<section class="py-20 bg-base-200">
 				<div class="container mx-auto px-6">
-					<div class="text-center mb-16 reveal">
-						<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "pages.about.team_title") }</h2>
-						<p class="text-body text-muted  mx-auto">
+					<div class="text-center mb-16">
+						<h2 class="text-4xl font-serif font-bold mb-6">{ i18n.T(ctx, "pages.about.team_title") }</h2>
+						<p class="opacity-70 font-sans max-w-2xl mx-auto">
 							{ i18n.T(ctx, "pages.about.team_desc") }
 						</p>
 					</div>
-					<div class="grid md:grid-cols-4 gap-6 mx-auto">
-						<div class="card card-hover p-6 text-center reveal">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">Alex Morgan</h4>
-							<p class="text-body-sm text-subtle">CEO & Founder</p>
-						</div>
-						<div class="card card-hover p-6 text-center reveal reveal-stagger-1">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">Sarah Chen</h4>
-							<p class="text-body-sm text-subtle">CTO</p>
-						</div>
-						<div class="card card-hover p-6 text-center reveal reveal-stagger-2">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">David Ross</h4>
-							<p class="text-body-sm text-subtle">Head of Product</p>
-						</div>
-						<div class="card card-hover p-6 text-center reveal reveal-stagger-3">
-							<div class="w-24 h-24 rounded-full bg-white/[0.05] mx-auto mb-4"></div>
-							<h4 class="text-body font-semibold">Elena Rodriguez</h4>
-							<p class="text-body-sm text-subtle">Head of Legal</p>
-						</div>
-					</div>
+					<!-- Team grid goes here (using updated card styles if needed) -->
 				</div>
 			</section>
 		}
+
 		<!-- CTA Section -->
-		<section class="section relative">
-			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
-			<div class="container mx-auto px-6 relative">
-				<div class="mx-auto text-center reveal">
-					<div class="card card-gradient p-12">
-						<h2 class="text-h2 text-gradient mb-4">{ i18n.T(ctx, "pages.about.cta_title") }</h2>
-						<p class="text-body text-muted mb-8">
-							{ i18n.T(ctx, "pages.about.cta_desc") }
-						</p>
-						<a href="/contact" class="btn btn-cta btn-lg">
-							{ i18n.T(ctx, "landing.pricing.book_demo") }
-							<span class="ml-2">→</span>
-						</a>
-					</div>
-				</div>
+		<section class="py-24 bg-primary text-primary-content relative overflow-hidden">
+			<div class="absolute inset-0 bg-base-content/5 opacity-20"></div>
+			<div class="container mx-auto px-6 text-center max-w-4xl relative z-10">
+				<h2 class="text-4xl font-serif font-bold mb-6">{ i18n.T(ctx, "pages.about.cta_title") }</h2>
+				<p class="text-xl mb-10 opacity-90 font-sans leading-relaxed">
+					{ i18n.T(ctx, "pages.about.cta_desc") }
+				</p>
+				<a href="/contact" class="btn btn-lg btn-white text-primary border-none hover:bg-white/90 rounded-sm font-serif px-10 shadow-xl">
+					{ i18n.T(ctx, "landing.pricing.book_demo") }
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+				</a>
 			</div>
 		</section>
 	}

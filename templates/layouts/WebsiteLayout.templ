@@ -10,34 +10,48 @@ import (
 templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@Base(ctx, title, csrfToken, seo) {
 		<!-- Navigation -->
-		<nav class="border-b border-white/[0.06] backdrop-blur-xl bg-background/80 sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
-			<div class="container mx-auto px-6">
-				<div class="flex justify-between items-center h-20">
-					<a href="/" class="text-h3 tracking-tight">
-						<span class="text-gradient">{ i18n.T(ctx, "app.name") }</span>
+		<nav class="navbar bg-base-100 sticky top-0 z-50 border-b border-base-200" x-data="{ mobileMenuOpen: false }">
+			<div class="container mx-auto">
+				<div class="navbar-start">
+					<!-- Mobile menu button -->
+					<div class="dropdown lg:hidden">
+						<button 
+							type="button" 
+							class="btn btn-ghost lg:hidden" 
+							@click="mobileMenuOpen = !mobileMenuOpen"
+							aria-label="Toggle menu">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+							</svg>
+						</button>
+					</div>
+					<a href="/" class="btn btn-ghost text-2xl font-serif font-bold tracking-tight text-primary normal-case gap-2">
+						<img src="/static/images/favicon.png" alt="Logo" class="w-8 h-8" />
+						{ i18n.T(ctx, "app.name") }
 					</a>
-					<div class="hidden md:flex gap-8 items-center">
-						<a href="/#features" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.features") }</a>
-						<a href="/#benefits" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.benefits") }</a>
-						<a href="/#pricing" class="text-body text-muted hover:text-foreground transition-colors duration-200">{ i18n.T(ctx, "nav.pricing") }</a>
-						<a href="/login" class="btn btn-primary btn-sm">{ i18n.T(ctx, "nav.login") }</a>
+				</div>
+				
+				<div class="navbar-center hidden lg:flex">
+					<ul class="menu menu-horizontal px-1 gap-2">
+						<li><a href="/#features">{ i18n.T(ctx, "nav.features") }</a></li>
+						<li><a href="/#benefits">{ i18n.T(ctx, "nav.benefits") }</a></li>
+						<li><a href="/#pricing">{ i18n.T(ctx, "nav.pricing") }</a></li>
+					</ul>
+				</div>
+
+				<div class="navbar-end gap-2">
+					<div class="hidden lg:flex gap-2 items-center">
+						<a href="/login" class="btn btn-primary btn-sm text-primary-content">{ i18n.T(ctx, "nav.login") }</a>
 						@components.LanguageSwitcher(ctx)
 					</div>
-					<!-- Mobile menu button -->
-					<div class="flex items-center gap-4 md:hidden">
+					<!-- Language switcher for mobile (buttons are in dropdown) -->
+					<div class="lg:hidden">
 						@components.LanguageSwitcher(ctx)
-						<button
-							class="btn btn-ghost btn-sm"
-							@click="mobileMenuOpen = !mobileMenuOpen"
-							aria-label="Toggle menu"
-						>
-							<span x-show="!mobileMenuOpen">Menu</span>
-							<span x-show="mobileMenuOpen">Close</span>
-						</button>
 					</div>
 				</div>
 			</div>
-			<!-- Mobile Menu Dropdown -->
+
+			<!-- Mobile Menu Dropdown (Alpine controlled) -->
 			<div
 				x-show="mobileMenuOpen"
 				x-transition:enter="transition ease-out duration-200"
@@ -46,77 +60,70 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 				x-transition:leave="transition ease-in duration-150"
 				x-transition:leave-start="opacity-100 translate-y-0"
 				x-transition:leave-end="opacity-0 -translate-y-2"
-				class="md:hidden border-t border-white/[0.06] bg-background/95 backdrop-blur-xl absolute w-full"
+				class="absolute top-16 left-0 w-full bg-base-100 border-b border-base-200 shadow-lg lg:hidden"
+				style="display: none;"
 			>
-				<div class="container mx-auto px-6 py-6 flex flex-col gap-4">
-					<a href="/#features" @click="mobileMenuOpen = false" class="text-body text-muted hover:text-foreground py-2">{ i18n.T(ctx, "nav.features") }</a>
-					<a href="/#benefits" @click="mobileMenuOpen = false" class="text-body text-muted hover:text-foreground py-2">{ i18n.T(ctx, "nav.benefits") }</a>
-					<a href="/#pricing" @click="mobileMenuOpen = false" class="text-body text-muted hover:text-foreground py-2">{ i18n.T(ctx, "nav.pricing") }</a>
-					<div class="h-px bg-white/[0.06] my-2"></div>
-					<a href="/login" class="btn btn-primary btn-md justify-center">{ i18n.T(ctx, "nav.login") }</a>
-				</div>
+				<ul class="menu p-4 w-full gap-2">
+					<li><a href="/#features" @click="mobileMenuOpen = false">{ i18n.T(ctx, "nav.features") }</a></li>
+					<li><a href="/#benefits" @click="mobileMenuOpen = false">{ i18n.T(ctx, "nav.benefits") }</a></li>
+					<li><a href="/#pricing" @click="mobileMenuOpen = false">{ i18n.T(ctx, "nav.pricing") }</a></li>
+					<li class="border-t border-base-200 my-1"></li>
+					<li><a href="/login" class="btn btn-primary btn-sm text-primary-content justify-center">{ i18n.T(ctx, "nav.login") }</a></li>
+				</ul>
 			</div>
 		</nav>
-		<main>
+
+		<main class="min-h-screen bg-base-100 text-base-content">
 			{ children... }
 		</main>
+
 		<!-- Footer -->
-		<footer class="border-t border-white/[0.06] bg-background-deep text-center">
-			<div class="container mx-auto px-6 py-16">
-				<div class="grid md:grid-cols-5 gap-12 mb-16">
-					<div class="md:col-span-2">
-						<h3 class="text-h3 text-gradient mb-4">LexLegal Cloud</h3>
-						<p class="text-body text-muted leading-relaxed mb-6">
-							{ i18n.T(ctx, "footer.slogan") }
-						</p>
-						<div class="flex gap-4 justify-center">
-							<a href="#" class="w-10 h-10 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] flex items-center justify-center transition-colors">
-								<span class="text-muted">𝕏</span>
-							</a>
-							<a href="#" class="w-10 h-10 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] flex items-center justify-center transition-colors">
-								<span class="text-muted">in</span>
-							</a>
-							<a href="#" class="w-10 h-10 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] flex items-center justify-center transition-colors">
-								<span class="text-muted">f</span>
-							</a>
-						</div>
-					</div>
-					<div>
-						<h4 class="text-label text-foreground mb-4">{ i18n.T(ctx, "footer.product") }</h4>
-						<ul class="space-y-3">
-							<li><a href="/#features" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.features") }</a></li>
-							<li><a href="/#pricing" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.pricing") }</a></li>
-							<li><a href="/security" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.security") }</a></li>
-						</ul>
-					</div>
-					<div>
-						<h4 class="text-label text-foreground mb-4">{ i18n.T(ctx, "footer.company") }</h4>
-						<ul class="space-y-3">
-							<li><a href="/about" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.about") }</a></li>
-							<li><a href="/contact" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.contact") }</a></li>
-						</ul>
-					</div>
-					<div>
-						<h4 class="text-label text-foreground mb-4">{ i18n.T(ctx, "footer.legal") }</h4>
-						<ul class="space-y-3">
-							<li><a href="/privacy" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.privacy") }</a></li>
-							<li><a href="/terms" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.terms") }</a></li>
-							<li><a href="/cookies" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.cookies") }</a></li>
-							<li><a href="/compliance" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.compliance") }</a></li>
-						</ul>
-					</div>
+		<footer class="footer p-10 bg-base-200 text-base-content">
+			<aside>
+				<h3 class="text-xl font-bold text-primary">LexLegal Cloud</h3>
+				<p class="max-w-xs">{ i18n.T(ctx, "footer.slogan") }</p>
+				<div class="flex gap-4 mt-4">
+					<a href="#" class="btn btn-square btn-ghost btn-sm" aria-label="Twitter">
+						<span class="text-lg">𝕏</span>
+					</a>
+					<a href="#" class="btn btn-square btn-ghost btn-sm" aria-label="LinkedIn">
+						<span class="text-lg">in</span>
+					</a>
+					<a href="#" class="btn btn-square btn-ghost btn-sm" aria-label="Facebook">
+						<span class="text-lg">f</span>
+					</a>
 				</div>
-				<div class="border-t border-white/[0.06] pt-8 flex flex-col justify-center items-center gap-6">
-					<p class="text-body text-subtle">
-						{ i18n.T(ctx, "footer.rights") }
-					</p>
-					<div class="flex gap-6">
-						<a href="#" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.status") }</a>
-						<a href="#" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.changelog") }</a>
-						<a href="#" class="text-body text-muted hover:text-foreground transition-colors">{ i18n.T(ctx, "footer.docs") }</a>
-					</div>
+			</aside> 
+			<nav>
+				<h6 class="footer-title opacity-100 text-primary">{ i18n.T(ctx, "footer.product") }</h6> 
+				<a href="/#features" class="link link-hover">{ i18n.T(ctx, "footer.features") }</a>
+				<a href="/#pricing" class="link link-hover">{ i18n.T(ctx, "footer.pricing") }</a>
+				<a href="/security" class="link link-hover">{ i18n.T(ctx, "footer.security") }</a>
+			</nav> 
+			<nav>
+				<h6 class="footer-title opacity-100 text-primary">{ i18n.T(ctx, "footer.company") }</h6> 
+				<a href="/about" class="link link-hover">{ i18n.T(ctx, "footer.about") }</a>
+				<a href="/contact" class="link link-hover">{ i18n.T(ctx, "footer.contact") }</a>
+			</nav> 
+			<nav>
+				<h6 class="footer-title opacity-100 text-primary">{ i18n.T(ctx, "footer.legal") }</h6> 
+				<a href="/privacy" class="link link-hover">{ i18n.T(ctx, "footer.privacy") }</a>
+				<a href="/terms" class="link link-hover">{ i18n.T(ctx, "footer.terms") }</a>
+				<a href="/cookies" class="link link-hover">{ i18n.T(ctx, "footer.cookies") }</a>
+				<a href="/compliance" class="link link-hover">{ i18n.T(ctx, "footer.compliance") }</a>
+			</nav>
+		</footer>
+		<footer class="footer px-10 py-4 border-t bg-base-200 text-base-content border-base-300">
+			<aside class="items-center grid-flow-col">
+				<p>{ i18n.T(ctx, "footer.rights") }</p>
+			</aside> 
+			<nav class="md:place-self-center md:justify-self-end">
+				<div class="grid grid-flow-col gap-4">
+					<a href="#" class="link link-hover text-sm">{ i18n.T(ctx, "footer.status") }</a>
+					<a href="#" class="link link-hover text-sm">{ i18n.T(ctx, "footer.changelog") }</a>
+					<a href="#" class="link link-hover text-sm">{ i18n.T(ctx, "footer.docs") }</a>
 				</div>
-			</div>
+			</nav>
 		</footer>
 	}
 }

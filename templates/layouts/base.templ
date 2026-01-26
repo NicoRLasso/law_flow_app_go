@@ -10,7 +10,7 @@ import (
 
 templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	<!DOCTYPE html>
-	<html lang={ i18n.GetLocale(ctx) }>
+	<html lang={ i18n.GetLocale(ctx) } data-theme="autumn">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -71,19 +71,26 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			}
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
-			<!-- Preconnect to external domains for faster loading -->
-			<link rel="preconnect" href="https://fonts.googleapis.com"/>
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link rel="preconnect" href="https://unpkg.com" crossorigin/>
-			<link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
-			<link rel="dns-prefetch" href="https://unpkg.com"/>
-			<!-- Preload critical CSS -->
-			<link rel="preload" href="/static/css/bundle.min.css" as="style"/>
-			<!-- Google Fonts - Inter (with font-display swap) -->
-			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
-			<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/></noscript>
-			<!-- CSS Bundle (Tailwind + Kinetic + Custom) -->
-			<link rel="stylesheet" href="/static/css/bundle.min.css"/>
+			<!-- Google Fonts: Playfair Display (Serif) & Lato (Sans) -->
+			<link rel="preconnect" href="https://fonts.googleapis.com">
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+			<!-- DaisyUI + Tailwind CDN -->
+			<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+			<script src="https://cdn.tailwindcss.com"></script>
+			<script>
+				tailwind.config = {
+					theme: {
+						extend: {
+							fontFamily: {
+								sans: ['Lato', 'sans-serif'],
+								serif: ['Playfair Display', 'serif'],
+							}
+						}
+					}
+				}
+			</script>
 			<!-- HTMX - defer loading -->
 			<script src="https://unpkg.com/htmx.org@2.0.0" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- Alpine.js Plugins (must load before Alpine) -->
@@ -106,13 +113,7 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<script src="/static/js/app.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 		</head>
 		<body class="bg-background text-foreground">
-			<!-- Ambient Gradient Blobs -->
-			<div class="ambient-blobs" aria-hidden="true">
-				<div class="blob blob-1"></div>
-				<div class="blob blob-2"></div>
-				<div class="blob blob-3"></div>
-				<div class="blob blob-4"></div>
-			</div>
+
 			{ children... }
 		</body>
 	</html>

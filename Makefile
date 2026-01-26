@@ -10,27 +10,18 @@ install-deps: ## Install project dependencies
 	go mod download
 	go install github.com/a-h/templ/cmd/templ@latest
 	go install github.com/air-verse/air@latest
-	npm install
 
 generate: ## Generate Templ templates
 	$(HOME)/go/bin/templ generate
 
-css-build: ## Build CSS with PostCSS and Tailwind
-	npm run build:css
-
-css-watch: ## Watch and rebuild CSS on changes
-	npm run watch:css
-
-dev: css-build ## Run with live-reload (requires air and npm)
+dev: generate ## Run with live-reload (requires air)
 	@echo "Starting development servers..."
-	@trap 'kill 0' EXIT; \
-	npm run watch:css & \
 	$(HOME)/go/bin/air
 
 run: generate ## Run the application
 	go run cmd/server/main.go
 
-build: generate css-build ## Build the application
+build: generate ## Build the application
 	go build -trimpath -o bin/server cmd/server/main.go
 
 clean: ## Clean build artifacts

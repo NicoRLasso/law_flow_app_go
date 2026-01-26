@@ -10,120 +10,114 @@ import (
 templ Security(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
 		<!-- Hero Section -->
-		<section class="section-lg relative overflow-hidden">
-			<!-- Animated background elements -->
-			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
-			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
-			<div class="container mx-auto px-6 relative z-10">
-				<div class=" mx-auto text-center reveal">
-					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.security.label") }</span>
-					<h1 class="text-display text-gradient mb-8">
+		<div class="hero py-24 bg-base-100">
+			<div class="hero-content text-center">
+				<div class="max-w-3xl">
+					<div class="inline-block mb-6 px-4 py-1 border border-primary/30 rounded-full bg-primary/5 text-primary text-sm font-semibold tracking-widest uppercase">
+						{ i18n.T(ctx, "pages.security.label") }
+					</div>
+					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-6 text-base-content leading-tight">
 						{ i18n.T(ctx, "pages.security.hero_title") }
-						<span class="text-accent-gradient block mt-2">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
+						<span class="block text-primary italic mt-2">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
 					</h1>
-					<p class="text-body-lg text-muted mx-auto leading-relaxed">
+					<p class="py-6 text-xl opacity-80 font-sans max-w-2xl mx-auto leading-relaxed">
 						{ i18n.T(ctx, "pages.security.hero_desc") }
 					</p>
 				</div>
 			</div>
-		</section>
+		</div>
+
 		<!-- Security Features Grid -->
-		<section class="section border-t border-white/[0.06]">
+		<section class="py-20 bg-base-100 border-t border-base-200">
 			<div class="container mx-auto px-6">
-				<div class="grid md:grid-cols-4 gap-8 mx-auto">
+				<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
 					<!-- Encryption -->
-					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal text-center group">
-						<div class="icon-container-lg mx-auto mb-6">
-							<span class="text-3xl">🔒</span>
+					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+						<div class="mb-6 text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+							<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.encryption_title") }</h3>
-						<p class="text-body text-muted leading-relaxed">
+						<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.security.encryption_title") }</h3>
+						<p class="opacity-70 text-sm font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.security.encryption_desc") }
 						</p>
 					</div>
 					<!-- Infrastructure -->
-					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-1 text-center group">
-						<div class="icon-container-lg mx-auto mb-6">
-							<span class="text-3xl">☁️</span>
+					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+						<div class="mb-6 text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+							<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.infrastructure_title") }</h3>
-						<p class="text-body text-muted leading-relaxed">
+						<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.security.infrastructure_title") }</h3>
+						<p class="opacity-70 text-sm font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.security.infrastructure_desc") }
 						</p>
 					</div>
 					<!-- Compliance -->
-					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-2 text-center group">
-						<div class="icon-container-lg mx-auto mb-6">
-							<span class="text-3xl">🛡️</span>
+					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+						<div class="mb-6 text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+							<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.compliance_title") }</h3>
-						<p class="text-body text-muted leading-relaxed">
+						<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.security.compliance_title") }</h3>
+						<p class="opacity-70 text-sm font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.security.compliance_desc") }
 						</p>
 					</div>
 					<!-- Access Control -->
-					<div class="card-gradient-border card-glow-hover card-hover p-8 reveal reveal-stagger-3 text-center group">
-						<div class="icon-container-lg mx-auto mb-6">
-							<span class="text-3xl">👁️</span>
+					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+						<div class="mb-6 text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+							<svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
 						</div>
-						<h3 class="text-h3 mb-4">{ i18n.T(ctx, "pages.security.access_title") }</h3>
-						<p class="text-body text-muted leading-relaxed">
+						<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.security.access_title") }</h3>
+						<p class="opacity-70 text-sm font-sans leading-relaxed">
 							{ i18n.T(ctx, "pages.security.access_desc") }
 						</p>
 					</div>
 				</div>
 			</div>
 		</section>
-		<!-- Trust Badges Section -->
-		<section class="section-sm border-t border-white/[0.06]">
-			<div class="container mx-auto px-6">
-				<div class="flex flex-wrap justify-center gap-6 reveal">
-					<div class="trust-badge-card">
-						<div class="icon-container">
-							<span class="text-xl">🔒</span>
-						</div>
-						<div>
-							<div class="text-body font-semibold">SOC 2 Type II</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.soc2") }</div>
-						</div>
-					</div>
-					<div class="trust-badge-card">
-						<div class="icon-container">
-							<span class="text-xl">🇪🇺</span>
-						</div>
-						<div>
-							<div class="text-body font-semibold">GDPR</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.gdpr") }</div>
+
+		<!-- Trust Badges Section - Refined -->
+		<section class="py-16 bg-base-100 border-t border-base-200">
+			<div class="container mx-auto px-6 text-center">
+				<p class="text-sm font-bold tracking-widest uppercase text-base-content/40 mb-8 font-sans">
+					{ i18n.T(ctx, "landing.trust.label") }
+				</p>
+				<div class="flex flex-wrap justify-center gap-6 lg:gap-12">
+					<div class="flex items-center gap-3 px-6 py-3 border border-base-200 rounded-sm bg-base-50">
+						<span class="text-xl">🔒</span>
+						<div class="flex flex-col text-left">
+							<span class="font-bold font-serif">SOC 2 Type II</span>
+							<span class="text-xs opacity-70 uppercase tracking-wider">{ i18n.T(ctx, "landing.trust.soc2") }</span>
 						</div>
 					</div>
-					<div class="trust-badge-card">
-						<div class="icon-container">
-							<span class="text-xl">🛡️</span>
+					<div class="flex items-center gap-3 px-6 py-3 border border-base-200 rounded-sm bg-base-50">
+						<span class="text-xl">🇪🇺</span>
+						<div class="flex flex-col text-left">
+							<span class="font-bold font-serif">GDPR</span>
+							<span class="text-xs opacity-70 uppercase tracking-wider">{ i18n.T(ctx, "landing.trust.gdpr") }</span>
 						</div>
-						<div>
-							<div class="text-body font-semibold">256-bit SSL</div>
-							<div class="text-body text-subtle text-sm">{ i18n.T(ctx, "landing.trust.encryption") }</div>
+					</div>
+					<div class="flex items-center gap-3 px-6 py-3 border border-base-200 rounded-sm bg-base-50">
+						<span class="text-xl">🛡️</span>
+						<div class="flex flex-col text-left">
+							<span class="font-bold font-serif">256-bit SSL</span>
+							<span class="text-xs opacity-70 uppercase tracking-wider">{ i18n.T(ctx, "landing.trust.encryption") }</span>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
+
 		<!-- CTA Section -->
-		<section class="section relative">
-			<div class="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent"></div>
-			<div class="container mx-auto px-6 relative">
-				<div class="mx-auto text-center reveal">
-					<div class="card card-gradient p-12">
-						<h2 class="text-h2 text-gradient mb-4">{ i18n.T(ctx, "pages.security.cta_title") }</h2>
-						<p class="text-body text-muted mb-8">
-							{ i18n.T(ctx, "pages.security.cta_desc") }
-						</p>
-						<a href="/contact" class="btn btn-cta btn-lg">
-							{ i18n.T(ctx, "landing.pricing.book_demo") }
-							<span class="ml-2">→</span>
-						</a>
-					</div>
-				</div>
+		<section class="py-4 bg-primary text-primary-content relative overflow-hidden">
+			<div class="absolute inset-0 bg-base-content/5 opacity-20"></div>
+			<div class="container mx-auto px-6 text-center max-w-4xl relative z-10">
+				<h2 class="text-4xl font-serif font-bold mb-6">{ i18n.T(ctx, "pages.security.cta_title") }</h2>
+				<p class="text-xl mb-10 opacity-90 font-sans leading-relaxed">
+					{ i18n.T(ctx, "pages.security.cta_desc") }
+				</p>
+				<a href="/contact" class="btn btn-lg btn-white text-primary border-none hover:bg-white/90 rounded-sm font-serif px-10 shadow-xl">
+					{ i18n.T(ctx, "landing.pricing.book_demo") }
+				</a>
 			</div>
 		</section>
 	}

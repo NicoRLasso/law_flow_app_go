@@ -9,63 +9,45 @@ import (
 
 templ Privacy(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
-		<!-- Hero Section -->
-		<section class="section-lg relative overflow-hidden">
-			<!-- Animated background elements -->
-			<div class="absolute top-20 right-20 w-48 h-48 rounded-full bg-accent/5 blur-3xl animate-float-slow"></div>
-			<div class="container mx-auto px-6 relative z-10">
-				<div class="mx-auto reveal">
-					<div class="text-center mb-12">
-						<h1 class="text-h1 text-gradient mb-4">{ i18n.T(ctx, "pages.privacy.title") }</h1>
-						<p class="text-body text-muted">{ i18n.T(ctx, "pages.privacy.updated") }</p>
-					</div>
-					<div class="card card-glass p-8 md:p-12">
-						<div class="prose max-w-none">
-							<p class="text-body-lg text-muted leading-relaxed mb-8">
-								{ i18n.T(ctx, "pages.privacy.intro") }
-							</p>
-							<div class="space-y-8">
-								<div class="reveal">
-									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.privacy.section1_title") }</h3>
-									<p class="text-body text-muted leading-relaxed">
-										{ i18n.T(ctx, "pages.privacy.section1_content") }
-									</p>
-								</div>
-								<div class="reveal reveal-stagger-1">
-									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.privacy.section2_title") }</h3>
-									<p class="text-body text-muted leading-relaxed">
-										{ i18n.T(ctx, "pages.privacy.section2_content") }
-									</p>
-								</div>
-								<div class="reveal reveal-stagger-2">
-									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.privacy.section3_title") }</h3>
-									<p class="text-body text-muted leading-relaxed">
-										{ i18n.T(ctx, "pages.privacy.section3_content") }
-									</p>
-								</div>
-								<div class="reveal reveal-stagger-3">
-									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.privacy.section4_title") }</h3>
-									<p class="text-body text-muted leading-relaxed">
-										{ i18n.T(ctx, "pages.privacy.section4_content") }
-									</p>
-								</div>
-								<div class="reveal reveal-stagger-4">
-									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.privacy.section5_title") }</h3>
-									<p class="text-body text-muted leading-relaxed">
-										{ i18n.T(ctx, "pages.privacy.section5_content") }
-									</p>
-								</div>
-								<div class="reveal reveal-stagger-5">
-									<h3 class="text-h3 text-foreground mb-4">{ i18n.T(ctx, "pages.privacy.section6_title") }</h3>
-									<p class="text-body text-muted leading-relaxed">
-										{ i18n.T(ctx, "pages.privacy.section6_content") } <a href="mailto:support@LexLegalCloud.org" class="text-accent hover:text-accent-bright transition-colors">support@LexLegalCloud.org</a>.
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
+		<div class="py-20 bg-base-100 min-h-screen">
+			<div class="container mx-auto px-6 max-w-4xl">
+				<div class="text-center mb-16">
+					<h1 class="text-5xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "pages.privacy.title") }</h1>
+					<p class="text-lg opacity-60 font-serif italic">{ i18n.T(ctx, "pages.privacy.updated") }</p>
+				</div>
+				
+				<div class="bg-base-100 p-12 md:p-16 border border-base-200 shadow-sm relative">
+					<!-- Decorative top border -->
+					<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
+					
+					<article class="prose max-w-none prose-lg prose-headings:font-serif prose-headings:font-bold prose-p:font-sans prose-p:leading-relaxed">
+						<p class="lead font-serif text-xl border-l-4 border-primary pl-6 py-2 italic bg-base-200/50">
+							{ i18n.T(ctx, "pages.privacy.intro") }
+						</p>
+						
+						<h3>{ i18n.T(ctx, "pages.privacy.section1_title") }</h3>
+						<p>{ i18n.T(ctx, "pages.privacy.section1_content") }</p>
+						
+						<h3>{ i18n.T(ctx, "pages.privacy.section2_title") }</h3>
+						<p>{ i18n.T(ctx, "pages.privacy.section2_content") }</p>
+						
+						<h3>{ i18n.T(ctx, "pages.privacy.section3_title") }</h3>
+						<p>{ i18n.T(ctx, "pages.privacy.section3_content") }</p>
+						
+						<h3>{ i18n.T(ctx, "pages.privacy.section4_title") }</h3>
+						<p>{ i18n.T(ctx, "pages.privacy.section4_content") }</p>
+						
+						<h3>{ i18n.T(ctx, "pages.privacy.section5_title") }</h3>
+						<p>{ i18n.T(ctx, "pages.privacy.section5_content") }</p>
+						
+						<h3>{ i18n.T(ctx, "pages.privacy.section6_title") }</h3>
+						<p>
+							{ i18n.T(ctx, "pages.privacy.section6_content") } 
+							<a href="mailto:support@LexLegalCloud.org" class="link link-primary font-bold">support@LexLegalCloud.org</a>.
+						</p>
+					</article>
 				</div>
 			</div>
-		</section>
+		</div>
 	}
 }

@@ -9,99 +9,100 @@ import (
 
 templ Contact(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
-		<!-- Hero Section -->
-		<section class="section-lg relative overflow-hidden">
-			<!-- Animated background elements -->
-			<div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent/10 blur-3xl animate-float-slow"></div>
-			<div class="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-accent/5 blur-3xl animate-float-delayed"></div>
-			<div class="container mx-auto px-6 relative z-10">
-				<!-- Header -->
-				<div class="mx-auto text-center mb-16 reveal">
-					<span class="text-label text-accent mb-4 block">{ i18n.T(ctx, "pages.contact.label") }</span>
-					<h1 class="text-display text-gradient mb-8">{ i18n.T(ctx, "pages.contact.title") }</h1>
-					<p class="text-body-lg text-muted leading-relaxed">
-						{ i18n.T(ctx, "pages.contact.desc") }
-					</p>
-				</div>
-				<!-- Two Column Grid -->
-				<div class="grid md:grid-cols-2 gap-12 items-center">
-					<!-- Left Column - Promotional Content -->
-					<div class="reveal flex flex-col items-center md:items-start text-center md:text-left">
-						<!-- Logo -->
-						<div class="mb-8">
-							<img src="/static/images/favicon.png" alt="lexlegalcloud Logo" class="w-32 h-32 md:w-40 md:h-40"/>
-						</div>
-						<!-- Tagline -->
-						<h2 class="text-h2 text-gradient mb-6">{ i18n.T(ctx, "pages.contact.promo.tagline") }</h2>
-						<p class="text-body-lg text-muted mb-8 leading-relaxed">
-							{ i18n.T(ctx, "pages.contact.promo.desc") }
-						</p>
-						<!-- Features List -->
-						<div class="space-y-4 w-full">
-							<div class="flex items-center gap-4">
-								<div class="icon-container flex-shrink-0">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-									</svg>
-								</div>
-								<div>
-									<h4 class="text-body font-semibold">{ i18n.T(ctx, "pages.contact.promo.fast_title") }</h4>
-									<p class="text-body-sm text-muted">{ i18n.T(ctx, "pages.contact.promo.fast_desc") }</p>
-								</div>
+		<div class="hero min-h-screen bg-base-100 relative">
+			<!-- Background effects - Minimal & Elegant -->
+			<div class="absolute inset-0 z-0 opacity-5 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary via-base-100 to-base-100"></div>
+
+			<div class="hero-content flex-col lg:flex-row-reverse gap-16 w-full max-w-6xl z-10 p-6 lg:p-12">
+				<!-- Right Side - Contact Form (Elegant Card) -->
+				<div class="card shrink-0 w-full max-w-lg shadow-xl bg-base-100 border border-base-200 rounded-sm">
+					<div class="card-body p-8 lg:p-10">
+						<h3 class="text-3xl font-serif font-bold mb-6 text-center">{ i18n.T(ctx, "pages.contact.form.title") }</h3>
+						
+						<form class="space-y-5" hx-post="/api/website/contact" hx-swap="outerHTML">
+							<input type="hidden" name="csrf_token" value={ csrfToken }/>
+							
+							<div class="form-control">
+								<label class="label">
+									<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "pages.contact.form.name") }</span>
+								</label>
+								<input type="text" name="name" class="input input-bordered rounded-sm focus:input-primary h-12" placeholder={ i18n.T(ctx, "pages.contact.form.name") } required/>
 							</div>
-							<div class="flex items-center gap-4">
-								<div class="icon-container flex-shrink-0">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-									</svg>
-								</div>
-								<div>
-									<h4 class="text-body font-semibold">{ i18n.T(ctx, "pages.contact.promo.secure_title") }</h4>
-									<p class="text-body-sm text-muted">{ i18n.T(ctx, "pages.contact.promo.secure_desc") }</p>
-								</div>
+							
+							<div class="form-control">
+								<label class="label">
+									<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "pages.contact.form.email") }</span>
+								</label>
+								<input type="email" name="email" class="input input-bordered rounded-sm focus:input-primary h-12" placeholder="attorney@lawfirm.com" required/>
 							</div>
-							<div class="flex items-center gap-4">
-								<div class="icon-container flex-shrink-0">
-									<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
-									</svg>
-								</div>
-								<div>
-									<h4 class="text-body font-semibold">{ i18n.T(ctx, "pages.contact.promo.support_title") }</h4>
-									<p class="text-body-sm text-muted">{ i18n.T(ctx, "pages.contact.promo.support_desc") }</p>
-								</div>
+							
+							<div class="form-control">
+								<label class="label">
+									<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "pages.contact.form.message") }</span>
+								</label>
+								<textarea name="message" class="textarea textarea-bordered rounded-sm h-32 focus:textarea-primary" placeholder={ i18n.T(ctx, "pages.contact.form.message") } required></textarea>
 							</div>
+							
+							<div class="form-control mt-8">
+								<button type="submit" class="btn btn-primary w-full rounded-sm font-serif text-lg">
+									{ i18n.T(ctx, "pages.contact.form.send") }
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+								</button>
+							</div>
+						</form>
+						
+						<div class="divider text-xs uppercase tracking-widest opacity-50 my-8">Or</div>
+						
+						<div class="text-center">
+							<p class="text-sm opacity-70 mb-2 font-serif">{ i18n.T(ctx, "pages.contact.form.or_email") }</p>
+							<a href="mailto:support@LexLegalCloud.org" class="link link-primary font-bold text-lg font-serif">support@LexLegalCloud.org</a>
 						</div>
 					</div>
-					<!-- Right Column - Contact Form -->
-					<div class="card card-gradient p-8 md:p-12 reveal reveal-stagger-1">
-						<h3 class="text-h3 mb-6">{ i18n.T(ctx, "pages.contact.form.title") }</h3>
-						<form class="space-y-6" hx-post="/api/website/contact" hx-swap="outerHTML">
-							<input type="hidden" name="csrf_token" value={ csrfToken }/>
-							<div>
-								<label class="block text-body-sm font-medium text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.name") }</label>
-								<input type="text" name="name" class="input w-full" placeholder={ i18n.T(ctx, "pages.contact.form.name") } required/>
+				</div>
+
+				<!-- Left Side - Promotional Content -->
+				<div class="text-center lg:text-left self-center">
+					<div class="mb-10">
+						<img src="/static/images/favicon.png" alt="lexlegalcloud Logo" class="w-24 h-24 mx-auto lg:mx-0 opacity-90"/>
+					</div>
+					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight">
+						{ i18n.T(ctx, "pages.contact.title") }
+					</h1>
+					<p class="py-6 text-xl opacity-80 font-sans max-w-xl mx-auto lg:mx-0 leading-relaxed">
+						{ i18n.T(ctx, "pages.contact.desc") }
+					</p>
+					
+					<div class="space-y-8 mt-10">
+						<div class="flex items-center gap-6 justify-center lg:justify-start">
+							<div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary bg-primary/5">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
 							</div>
-							<div>
-								<label class="block text-body-sm font-medium text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.email") }</label>
-								<input type="email" name="email" class="input w-full" placeholder="you@company.com" required/>
+							<div class="text-left">
+								<h4 class="font-bold font-serif text-lg">{ i18n.T(ctx, "pages.contact.promo.fast_title") }</h4>
+								<p class="text-sm opacity-70 font-sans">{ i18n.T(ctx, "pages.contact.promo.fast_desc") }</p>
 							</div>
-							<div>
-								<label class="block text-body-sm font-medium text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.message") }</label>
-								<textarea name="message" class="textarea w-full h-32" placeholder={ i18n.T(ctx, "pages.contact.form.message") } required></textarea>
+						</div>
+						<div class="flex items-center gap-6 justify-center lg:justify-start">
+							<div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary bg-primary/5">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 							</div>
-							<button type="submit" class="btn btn-cta w-full justify-center" :disabled="loading">
-								{ i18n.T(ctx, "pages.contact.form.send") }
-								<span class="ml-2">→</span>
-							</button>
-						</form>
-						<div class="mt-8 pt-8 border-t border-white/[0.1] text-center">
-							<p class="text-body text-muted mb-2">{ i18n.T(ctx, "pages.contact.form.or_email") }</p>
-							<a href="mailto:support@LexLegalCloud.org" class="text-accent hover:text-accent-bright transition-colors">support@LexLegalCloud.org</a>
+							<div class="text-left">
+								<h4 class="font-bold font-serif text-lg">{ i18n.T(ctx, "pages.contact.promo.secure_title") }</h4>
+								<p class="text-sm opacity-70 font-sans">{ i18n.T(ctx, "pages.contact.promo.secure_desc") }</p>
+							</div>
+						</div>
+						<div class="flex items-center gap-6 justify-center lg:justify-start">
+							<div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary bg-primary/5">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+							</div>
+							<div class="text-left">
+								<h4 class="font-bold font-serif text-lg">{ i18n.T(ctx, "pages.contact.promo.support_title") }</h4>
+								<p class="text-sm opacity-70 font-sans">{ i18n.T(ctx, "pages.contact.promo.support_desc") }</p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</section>
+		</div>
 	}
 }
