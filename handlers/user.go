@@ -57,6 +57,55 @@ func CreateUser(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
 	firm := middleware.GetCurrentFirm(c)
 
+	// Check role first to determine if this is a billable user
+	role := c.FormValue("role")
+	if role == "" {
+		role = "staff" // Default to staff
+	}
+
+	// Only check user limits for billable roles (admin, lawyer, staff)
+	// Clients don't count towards the user limit
+	if role == "admin" || role == "lawyer" || role == "staff" {
+		limitResult, err := services.CanAddUser(db.DB, firm.ID)
+		if err != nil {
+			if err == services.ErrUserLimitReached {
+				if c.Request().Header.Get("HX-Request") == "true" {
+					return c.HTML(http.StatusForbidden, `
+						<div class="alert alert-warning shadow-lg">
+							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+							</svg>
+							<div>
+								<h3 class="font-bold">User Limit Reached</h3>
+								<div class="text-xs">`+limitResult.Message+`</div>
+							</div>
+							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">Upgrade Plan</a>
+						</div>
+					`)
+				}
+				return echo.NewHTTPError(http.StatusForbidden, limitResult.Message)
+			}
+			if err == services.ErrSubscriptionExpired {
+				if c.Request().Header.Get("HX-Request") == "true" {
+					return c.HTML(http.StatusForbidden, `
+						<div class="alert alert-error shadow-lg">
+							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+							</svg>
+							<div>
+								<h3 class="font-bold">Subscription Expired</h3>
+								<div class="text-xs">Your subscription has expired. Please renew to continue.</div>
+							</div>
+							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">Renew Now</a>
+						</div>
+					`)
+				}
+				return echo.NewHTTPError(http.StatusForbidden, "Subscription has expired")
+			}
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check subscription limits")
+		}
+	}
+
 	// Only admins can create users (enforced by route middleware)
 	user := new(models.User)
 
@@ -91,13 +140,11 @@ func CreateUser(c echo.Context) error {
 		})
 	}
 
-	// Validate role
+	// Validate role (already validated and set at the beginning)
 	validRoles := map[string]bool{
 		"admin": true, "lawyer": true, "staff": true, "client": true,
 	}
-	if user.Role == "" {
-		user.Role = "staff" // Default to staff
-	} else if !validRoles[user.Role] {
+	if !validRoles[user.Role] {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "Invalid role. Must be one of: admin, lawyer, staff, client",
 		})
@@ -126,6 +173,14 @@ func CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to create user",
 		})
+	}
+
+	// Update usage cache for billable users
+	if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+		if err := services.UpdateFirmUsageAfterUserChange(db.DB, firm.ID, 1); err != nil {
+			// Log but don't fail - usage will be recalculated on next check
+			services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update user count: "+err.Error())
+		}
 	}
 
 	// Create default availability for lawyers and admins
@@ -332,6 +387,14 @@ func DeleteUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to delete user",
 		})
+	}
+
+	// Update usage cache for billable users
+	if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+		if err := services.UpdateFirmUsageAfterUserChange(db.DB, firm.ID, -1); err != nil {
+			// Log but don't fail - usage will be recalculated on next check
+			services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update user count: "+err.Error())
+		}
 	}
 
 	// Log security event

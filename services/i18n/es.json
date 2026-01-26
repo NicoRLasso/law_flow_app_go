@@ -1733,5 +1733,35 @@
       "message": "Mensaje",
       "role": "Rol"
     }
+  },
+  "subscription": {
+    "users": "Usuarios",
+    "unlimited": "Ilimitado",
+    "storage": "Almacenamiento",
+    "cases": "Casos",
+    "trial_days_remaining": "Prueba: {days} días restantes",
+    "trial_ends_on": "La prueba finaliza el {date}",
+    "renews_on": "Se renueva el {date}",
+    "max_users": "Usuarios Máximos",
+    "max_storage": "Almacenamiento Máximo",
+    "max_cases": "Casos Máximos",
+    "templates": "Plantillas de Documentos",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "current_plan": "Plan Actual",
+    "manage_billing_desc": "Gestiona tu suscripción y detalles de facturación",
+    "free_trial": "Gratis/Prueba",
+    "active_addons": "Complementos Activos",
+    "no_active_addons": "No hay complementos activos.",
+    "buy_addons": "Comprar Complementos",
+    "purchase_modal_title": "Comprar Complementos",
+    "purchase_modal_desc": "Selecciona un complemento para aumentar la capacidad de tu firma.",
+    "add_users": "Añade {count} usuarios a tu equipo.",
+    "add_storage": "Añade {size} de almacenamiento.",
+    "add_cases": "Añade {count} procesos judiciales.",
+    "unlock_templates": "Desbloquea la función de plantillas de documentos.",
+    "purchase_btn": "Comprar",
+    "cancel_addon": "Cancelar Complemento",
+    "cancel_addon_confirm": "¿Estás seguro de que deseas cancelar este complemento? Se desactivará inmediatamente."
   }
 }

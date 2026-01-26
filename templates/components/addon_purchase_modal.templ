@@ -1,0 +1,76 @@
+package components
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
+)
+
+templ AddOnPurchaseModal(ctx context.Context, addons []models.PlanAddOn, info *services.SubscriptionInfo) {
+	<div 
+		x-show="showAddOnModal" 
+		class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base-300/80 backdrop-blur-sm"
+		x-transition.opacity
+		style="display: none;"
+	>
+		<div 
+			class="bg-base-100 border border-base-200 rounded-sm w-full max-w-2xl p-8 shadow-xl relative"
+			@click.away="showAddOnModal = false"
+		>
+			<button @click="showAddOnModal = false" class="absolute top-4 right-4 text-base-content/40 hover:text-base-content">
+				<i data-lucide="x" class="w-6 h-6"></i>
+			</button>
+
+			<h3 class="text-2xl font-serif font-bold text-primary mb-2">{ i18n.T(ctx, "subscription.purchase_modal_title") }</h3>
+			<p class="text-base-content/60 mb-8">{ i18n.T(ctx, "subscription.purchase_modal_desc") }</p>
+
+			<div class="grid md:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-2">
+				for _, addon := range addons {
+					if addon.Type != "templates" || (info != nil && !info.HasTemplates) {
+						<div class="border border-base-200 rounded-sm p-4 hover:border-primary transition-colors flex flex-col justify-between">
+							<div>
+								<div class="flex justify-between items-start mb-2">
+									<h4 class="font-bold text-base-content">{ addon.Name }</h4>
+									<span class="text-primary font-bold">
+										{ addon.FormatPrice() }
+									</span>
+								</div>
+								<p class="text-xs text-base-content/60 mb-4">
+									if addon.Type == "users" {
+										{ i18n.T(ctx, "subscription.add_users", i18n.Args{"count": fmt.Sprintf("%d", addon.UnitsIncluded)}) }
+									} else if addon.Type == "storage" {
+										{ i18n.T(ctx, "subscription.add_storage", i18n.Args{"size": models.FormatBytes(addon.StorageBytes)}) }
+									} else if addon.Type == "cases" {
+										{ i18n.T(ctx, "subscription.add_cases", i18n.Args{"count": fmt.Sprintf("%d", addon.UnitsIncluded)}) }
+									} else if addon.Type == "templates" {
+										{ i18n.T(ctx, "subscription.unlock_templates") }
+									}
+								</p>
+							</div>
+
+							<form 
+								hx-post="/api/addons/purchase" 
+								hx-target="#addon-message" 
+								hx-swap="innerHTML"
+								@htmx:after-request="if(event.detail.successful) { setTimeout(() => { showAddOnModal = false; $el.reset(); document.getElementById('addon-message').innerHTML = ''; }, 2000) }"
+							>
+								<input type="hidden" name="addon_id" value={ addon.ID } />
+								<button type="submit" class="btn btn-primary btn-sm w-full rounded-sm">
+									{ i18n.T(ctx, "subscription.purchase_btn") }
+								</button>
+							</form>
+						</div>
+					}
+				}
+			</div>
+
+			<div id="addon-message" class="mt-4"></div>
+
+			<div class="flex justify-end mt-8 pt-4 border-t border-base-200">
+				<button @click="showAddOnModal = false" class="btn btn-ghost btn-sm rounded-sm">{ i18n.T(ctx, "common.close") }</button>
+			</div>
+		</div>
+	</div>
+}

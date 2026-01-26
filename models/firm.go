@@ -38,7 +38,8 @@ type Firm struct {
 	BufferMinutes int `gorm:"not null;default:15" json:"buffer_minutes"` // Buffer between appointments (30, 45, or 60 min)
 
 	// Relationships
-	Users []User `gorm:"foreignKey:FirmID" json:"-"`
+	Users        []User            `gorm:"foreignKey:FirmID" json:"-"`
+	Subscription *FirmSubscription `gorm:"foreignKey:FirmID" json:"subscription,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID and slug

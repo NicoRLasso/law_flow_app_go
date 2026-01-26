@@ -7,6 +7,7 @@ import (
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/pages"
 	"net/http"
 	"os"
@@ -117,6 +118,16 @@ func FirmSetupPostHandler(c echo.Context) error {
 		c.Logger().Errorf("Failed to seed case classifications for firm %s: %v", firm.ID, err)
 	}
 
+	// Create trial subscription for the new firm
+	if err := services.CreateTrialSubscription(db.DB, firm.ID); err != nil {
+		c.Logger().Errorf("Failed to create trial subscription for firm %s: %v", firm.ID, err)
+	}
+
+	// Initialize usage tracking
+	if _, err := services.RecalculateFirmUsage(db.DB, firm.ID); err != nil {
+		c.Logger().Errorf("Failed to initialize usage tracking for firm %s: %v", firm.ID, err)
+	}
+
 	// Send firm setup confirmation email asynchronously (non-blocking)
 	cfg := config.Load()
 	if user.Email != "" {
@@ -147,8 +158,27 @@ func FirmSettingsPageHandler(c echo.Context) error {
 	firm := middleware.GetCurrentFirm(c)
 	csrfToken := middleware.GetCSRFToken(c)
 
+	// Get subscription info for billing tab
+	subscriptionInfo, _ := services.GetFirmSubscriptionInfo(db.DB, firm.ID)
+
+	// Get available add-ons for the purchase modal
+	availableAddOns, _ := services.GetAvailableAddOns(db.DB)
+
 	// Render the firm settings page
-	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm)
+	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm, subscriptionInfo, availableAddOns)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// FirmBillingTabHandler renders only the billing tab component for HTMX updates
+func FirmBillingTabHandler(c echo.Context) error {
+	firm := middleware.GetCurrentFirm(c)
+	if firm == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "Firm not found")
+	}
+
+	subscriptionInfo, _ := services.GetFirmSubscriptionInfo(db.DB, firm.ID)
+
+	component := components.BillingTab(c.Request().Context(), subscriptionInfo)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

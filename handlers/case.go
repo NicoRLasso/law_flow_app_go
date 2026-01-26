@@ -499,6 +499,36 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "File is required")
 	}
 
+	// Check storage limit before uploading
+	limitResult, err := services.CanUploadFile(db.DB, currentFirm.ID, file.Size)
+	if err != nil {
+		if err == services.ErrStorageLimitReached {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusForbidden, `
+					<div class="p-4 bg-warning/20 text-warning rounded-lg">
+						<p class="font-bold">Storage Limit Reached</p>
+						<p class="text-sm">`+limitResult.Message+`</p>
+						<a href="/firm/settings#subscription" class="btn btn-sm btn-primary mt-2">Upgrade Plan</a>
+					</div>
+				`)
+			}
+			return echo.NewHTTPError(http.StatusForbidden, limitResult.Message)
+		}
+		if err == services.ErrSubscriptionExpired {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusForbidden, `
+					<div class="p-4 bg-error/20 text-error rounded-lg">
+						<p class="font-bold">Subscription Expired</p>
+						<p class="text-sm">Your subscription has expired. Please renew to continue.</p>
+						<a href="/firm/settings#subscription" class="btn btn-sm btn-primary mt-2">Renew Now</a>
+					</div>
+				`)
+			}
+			return echo.NewHTTPError(http.StatusForbidden, "Subscription has expired")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check storage limits")
+	}
+
 	// Validate file
 	if err := services.ValidateDocumentUpload(file); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
@@ -546,6 +576,12 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to save document</div>`)
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to save document")
+	}
+
+	// Update storage usage
+	if err := services.UpdateFirmUsageAfterStorageChange(db.DB, currentFirm.ID, uploadResult.FileSize); err != nil {
+		// Log but don't fail - usage will be recalculated on next check
+		services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update storage: "+err.Error())
 	}
 
 	// Audit logging (Upload)
@@ -696,6 +732,46 @@ func CreateCaseHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
 	currentFirm := middleware.GetCurrentFirm(c)
 
+	// Check case limit before creating
+	limitResult, err := services.CanAddCase(db.DB, currentFirm.ID)
+	if err != nil {
+		if err == services.ErrCaseLimitReached {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusForbidden, `
+					<div class="alert alert-warning shadow-lg">
+						<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+						</svg>
+						<div>
+							<h3 class="font-bold">Case Limit Reached</h3>
+							<div class="text-xs">`+limitResult.Message+`</div>
+						</div>
+						<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">Upgrade Plan</a>
+					</div>
+				`)
+			}
+			return echo.NewHTTPError(http.StatusForbidden, limitResult.Message)
+		}
+		if err == services.ErrSubscriptionExpired {
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusForbidden, `
+					<div class="alert alert-error shadow-lg">
+						<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+						</svg>
+						<div>
+							<h3 class="font-bold">Subscription Expired</h3>
+							<div class="text-xs">Your subscription has expired. Please renew to continue.</div>
+						</div>
+						<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">Renew Now</a>
+					</div>
+				`)
+			}
+			return echo.NewHTTPError(http.StatusForbidden, "Subscription has expired")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check subscription limits")
+	}
+
 	// Parse form
 	clientID := c.FormValue("client_id")
 	clientRole := c.FormValue("client_role")
@@ -772,6 +848,12 @@ func CreateCaseHandler(c echo.Context) error {
 
 	if err := tx.Commit().Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to commit case")
+	}
+
+	// Update usage cache
+	if err := services.UpdateFirmUsageAfterCaseChange(db.DB, currentFirm.ID, 1); err != nil {
+		// Log but don't fail - usage will be recalculated on next check
+		services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update case count: "+err.Error())
 	}
 
 	// Audit logging

@@ -23,6 +23,17 @@ func TemplatesPageHandler(c echo.Context) error {
 	csrfToken := middleware.GetCSRFToken(c)
 	ctx := context.Background()
 
+	// Check if templates feature is available
+	canAccess, err := services.CanAccessTemplates(db.DB, firm.ID)
+	if err != nil || !canAccess {
+		// Redirect to subscription page with message
+		if c.Request().Header.Get("HX-Request") == "true" {
+			c.Response().Header().Set("HX-Redirect", "/firm/settings#subscription")
+			return c.NoContent(http.StatusForbidden)
+		}
+		return c.Redirect(http.StatusSeeOther, "/firm/settings?upgrade=templates#subscription")
+	}
+
 	var categories []models.TemplateCategory
 	if err := middleware.GetFirmScopedQuery(c, db.DB).
 		Where("is_active = ?", true).

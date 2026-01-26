@@ -48,12 +48,21 @@ func DeleteCaseDocumentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "Document not found")
 	}
 
+	// Store file size before deletion for usage update
+	deletedFileSize := document.FileSize
+
 	// Perform deletion
 	if err := services.DeleteCaseDocument(docID, currentUser.ID, currentFirm.ID); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to delete document</div>`)
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete document")
+	}
+
+	// Update storage usage (decrease by deleted file size)
+	if err := services.UpdateFirmUsageAfterStorageChange(db.DB, currentFirm.ID, -deletedFileSize); err != nil {
+		// Log but don't fail - usage will be recalculated on next check
+		services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update storage after delete: "+err.Error())
 	}
 
 	// Audit logging (Delete)

@@ -315,7 +315,7 @@ func SuperadminFirmsPageHandler(c echo.Context) error {
 
 	// Fetch firms (limit 50 initially)
 	var firms []models.Firm
-	if err := db.DB.Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+	if err := db.DB.Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
 	}
 
@@ -332,7 +332,7 @@ func SuperadminFirmsPageHandler(c echo.Context) error {
 
 // SuperadminGetFirmsListHTMX returns the filtered firms table
 func SuperadminGetFirmsListHTMX(c echo.Context) error {
-	query := db.DB.Model(&models.Firm{})
+	query := db.DB.Model(&models.Firm{}).Preload("Subscription.Plan")
 
 	// Filters
 	if search := c.QueryParam("search"); search != "" {
@@ -479,4 +479,21 @@ func SuperadminDeleteFirm(c echo.Context) error {
 
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetFirmsListHTMX(c)
+}
+
+// SuperadminGetFirmSubscriptionForm renders the subscription management modal
+func SuperadminGetFirmSubscriptionForm(c echo.Context) error {
+	id := c.Param("id")
+	var firm models.Firm
+	if err := db.DB.Preload("Subscription").Preload("Subscription.Plan").First(&firm, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
+	}
+
+	var plans []models.Plan
+	if err := db.DB.Order("display_order ASC").Find(&plans).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch plans")
+	}
+
+	component := superadmin_partials.FirmSubscriptionModal(c.Request().Context(), &firm, plans)
+	return component.Render(c.Request().Context(), c.Response().Writer)
 }

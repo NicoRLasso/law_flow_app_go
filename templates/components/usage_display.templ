@@ -1,0 +1,170 @@
+package components
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
+)
+
+// UsageDisplay shows the current usage vs limits
+templ UsageDisplay(ctx context.Context, info *services.SubscriptionInfo) {
+	if info != nil {
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+			<!-- Users Usage -->
+			<div class="card bg-base-100 shadow-sm border border-base-200">
+				<div class="card-body p-4">
+					<div class="flex justify-between items-center mb-2">
+						<span class="text-sm font-medium opacity-70">{ i18n.T(ctx, "subscription.users") }</span>
+						<span class="text-sm font-bold">
+							if info.EffectiveUsers == -1 {
+								{ fmt.Sprintf("%d", info.Usage.CurrentUsers) } / { i18n.T(ctx, "subscription.unlimited") }
+							} else {
+								{ fmt.Sprintf("%d / %d", info.Usage.CurrentUsers, info.EffectiveUsers) }
+							}
+						</span>
+					</div>
+					if info.EffectiveUsers != -1 {
+						<progress
+							class={ "progress w-full",
+								templ.KV("progress-error", info.UsersPercent >= 90),
+								templ.KV("progress-warning", info.UsersPercent >= 75 && info.UsersPercent < 90),
+								templ.KV("progress-primary", info.UsersPercent < 75) }
+							value={ fmt.Sprintf("%.0f", info.UsersPercent) }
+							max="100">
+						</progress>
+					}
+				</div>
+			</div>
+			<!-- Storage Usage -->
+			<div class="card bg-base-100 shadow-sm border border-base-200">
+				<div class="card-body p-4">
+					<div class="flex justify-between items-center mb-2">
+						<span class="text-sm font-medium opacity-70">{ i18n.T(ctx, "subscription.storage") }</span>
+						<span class="text-sm font-bold">
+							if info.EffectiveStorage == -1 {
+								{ models.FormatBytes(info.Usage.CurrentStorageBytes) } / { i18n.T(ctx, "subscription.unlimited") }
+							} else {
+								{ models.FormatBytes(info.Usage.CurrentStorageBytes) } / { models.FormatBytes(info.EffectiveStorage) }
+							}
+						</span>
+					</div>
+					if info.EffectiveStorage != -1 {
+						<progress
+							class={ "progress w-full",
+								templ.KV("progress-error", info.StoragePercent >= 90),
+								templ.KV("progress-warning", info.StoragePercent >= 75 && info.StoragePercent < 90),
+								templ.KV("progress-primary", info.StoragePercent < 75) }
+							value={ fmt.Sprintf("%.0f", info.StoragePercent) }
+							max="100">
+						</progress>
+					}
+				</div>
+			</div>
+			<!-- Cases Usage -->
+			<div class="card bg-base-100 shadow-sm border border-base-200">
+				<div class="card-body p-4">
+					<div class="flex justify-between items-center mb-2">
+						<span class="text-sm font-medium opacity-70">{ i18n.T(ctx, "subscription.cases") }</span>
+						<span class="text-sm font-bold">
+							if info.EffectiveCases == -1 {
+								{ fmt.Sprintf("%d", info.Usage.CurrentCases) } / { i18n.T(ctx, "subscription.unlimited") }
+							} else {
+								{ fmt.Sprintf("%d / %d", info.Usage.CurrentCases, info.EffectiveCases) }
+							}
+						</span>
+					</div>
+					if info.EffectiveCases != -1 {
+						<progress
+							class={ "progress w-full",
+								templ.KV("progress-error", info.CasesPercent >= 90),
+								templ.KV("progress-warning", info.CasesPercent >= 75 && info.CasesPercent < 90),
+								templ.KV("progress-primary", info.CasesPercent < 75) }
+							value={ fmt.Sprintf("%.0f", info.CasesPercent) }
+							max="100">
+						</progress>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}
+
+// PlanCard shows plan information
+templ PlanCard(ctx context.Context, info *services.SubscriptionInfo) {
+	if info != nil {
+		<div class="card bg-base-100 shadow-lg border border-base-200">
+			<div class="card-body">
+				<div class="flex items-center justify-between mb-4">
+					<div>
+						<h3 class="text-xl font-bold">{ info.Plan.Name }</h3>
+						<p class="text-sm opacity-70">{ info.Plan.Description }</p>
+					</div>
+					<div class={ "badge", info.Subscription.GetStatusBadgeClass() }>
+						{ info.Subscription.GetStatusDisplay() }
+					</div>
+				</div>
+				if info.Subscription.IsTrialing() {
+					<div class="alert alert-info mb-4">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+						</svg>
+						<span>
+							{ i18n.T(ctx, "subscription.trial_days_remaining", i18n.Args{"days": info.TrialDaysLeft}) }
+						</span>
+					</div>
+				}
+				<div class="divider"></div>
+				<div class="grid grid-cols-2 gap-4 text-sm">
+					<div>
+						<span class="opacity-70">{ i18n.T(ctx, "subscription.max_users") }:</span>
+						<span class="font-medium ml-2">
+							if info.Plan.IsUnlimitedUsers() {
+								{ i18n.T(ctx, "subscription.unlimited") }
+							} else {
+								{ fmt.Sprintf("%d", info.EffectiveUsers) }
+							}
+						</span>
+					</div>
+					<div>
+						<span class="opacity-70">{ i18n.T(ctx, "subscription.max_storage") }:</span>
+						<span class="font-medium ml-2">
+							if info.Plan.IsUnlimitedStorage() {
+								{ i18n.T(ctx, "subscription.unlimited") }
+							} else {
+								{ models.FormatBytes(info.EffectiveStorage) }
+							}
+						</span>
+					</div>
+					<div>
+						<span class="opacity-70">{ i18n.T(ctx, "subscription.max_cases") }:</span>
+						<span class="font-medium ml-2">
+							if info.Plan.IsUnlimitedCases() {
+								{ i18n.T(ctx, "subscription.unlimited") }
+							} else {
+								{ fmt.Sprintf("%d", info.EffectiveCases) }
+							}
+						</span>
+					</div>
+					<div>
+						<span class="opacity-70">{ i18n.T(ctx, "subscription.templates") }:</span>
+						<span class="font-medium ml-2">
+							if info.HasTemplates {
+								<span class="text-success">{ i18n.T(ctx, "subscription.enabled") }</span>
+							} else {
+								<span class="text-error">{ i18n.T(ctx, "subscription.disabled") }</span>
+							}
+						</span>
+					</div>
+				</div>
+				if info.Plan.PriceMonthly > 0 {
+					<div class="divider"></div>
+					<div class="flex items-center justify-between">
+						<span class="text-2xl font-bold">{ info.Plan.FormatPriceMonthly() }</span>
+					</div>
+				}
+			</div>
+		</div>
+	}
+}

@@ -1,0 +1,73 @@
+package superadmin
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+)
+
+templ AddOnsPage(ctx context.Context, title string, csrfToken string, user *models.User, addons []models.PlanAddOn) {
+	@Layout(ctx, title, csrfToken, user, "addons") {
+		<div class="mb-8 flex justify-between items-center">
+			<div>
+				<h1 class="text-3xl font-serif font-bold text-base-content">Plan Add-Ons</h1>
+				<p class="text-base-content/60">Manage additional capacity options for firms</p>
+			</div>
+			<button class="btn btn-primary rounded-sm" disabled>
+				<i data-lucide="plus" class="mr-2"></i> New Add-On
+			</button>
+		</div>
+
+		<div class="bg-base-100 border border-base-200 rounded-sm overflow-hidden shadow-sm">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-50 border-b border-base-200">
+						<th class="font-serif">Name</th>
+						<th class="font-serif">Type</th>
+						<th class="font-serif">Capacity</th>
+						<th class="font-serif">Price</th>
+						<th class="font-serif">Type</th>
+						<th class="text-right font-serif">Actions</th>
+					</tr>
+				</thead>
+				<tbody class="text-sm">
+					for _, addon := range addons {
+						<tr class="hover:bg-base-50 border-b border-base-200 last:border-0">
+							<td class="font-bold">{ addon.Name }</td>
+							<td>
+								<span class="badge badge-sm badge-outline uppercase text-[10px]">{ addon.Type }</span>
+							</td>
+							<td>
+								if addon.Type == "users" {
+									{ fmt.Sprintf("+%d Users", addon.UnitsIncluded) }
+								} else if addon.Type == "storage" {
+									{ fmt.Sprintf("+%s", models.FormatBytes(addon.StorageBytes)) }
+								} else if addon.Type == "cases" {
+									{ fmt.Sprintf("+%d Cases", addon.UnitsIncluded) }
+								} else {
+									-
+								}
+							</td>
+							<td>
+								{ addon.FormatPrice() }
+							</td>
+							<td>
+								if addon.IsRecurring {
+									<span class="text-info">Recurring</span>
+								} else {
+									<span class="text-success">Permanent</span>
+								}
+							</td>
+							<td class="text-right">
+								<div class="flex justify-end gap-2">
+									<button class="btn btn-ghost btn-xs" title="Edit"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+									<button class="btn btn-ghost btn-xs text-error" title="Delete"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+}

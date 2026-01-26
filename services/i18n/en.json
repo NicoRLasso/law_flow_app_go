@@ -1734,5 +1734,35 @@
       "message": "Message",
       "role": "Role"
     }
+  },
+  "subscription": {
+    "users": "Users",
+    "unlimited": "Unlimited",
+    "storage": "Storage",
+    "cases": "Cases",
+    "trial_days_remaining": "Trial: {days} days left",
+    "trial_ends_on": "Trial ends on {date}",
+    "renews_on": "Renews on {date}",
+    "max_users": "Max Users",
+    "max_storage": "Max Storage",
+    "max_cases": "Max Cases",
+    "templates": "Document Templates",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "current_plan": "Current Plan",
+    "manage_billing_desc": "Manage your subscription and billing details",
+    "free_trial": "Free/Trial",
+    "active_addons": "Active Add-Ons",
+    "no_active_addons": "No active add-ons.",
+    "buy_addons": "Buy Add-Ons",
+    "purchase_modal_title": "Purchase Add-Ons",
+    "purchase_modal_desc": "Select an add-on to increase your firm's capacity.",
+    "add_users": "Add {count} users to your team.",
+    "add_storage": "Add {size} of storage.",
+    "add_cases": "Add {count} judicial cases.",
+    "unlock_templates": "Unlock the document templates feature.",
+    "purchase_btn": "Purchase",
+    "cancel_addon": "Cancel Add-On",
+    "cancel_addon_confirm": "Are you sure you want to cancel this add-on? It will be deactivated immediately."
   }
 }

@@ -44,7 +44,7 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
@@ -64,6 +64,11 @@ func main() {
 	// Seed superadmin user from environment variables
 	if err := services.SeedSuperadminFromEnv(db.DB); err != nil {
 		log.Printf("[WARNING] Failed to seed superadmin user: %v", err)
+	}
+
+	// Initialize subscription system (plans, add-ons, migrate existing firms)
+	if err := services.InitializeSubscriptionSystem(db.DB); err != nil {
+		log.Printf("[WARNING] Failed to initialize subscription system: %v", err)
 	}
 
 	// Initialize storage (R2 or local filesystem)
@@ -310,6 +315,12 @@ func main() {
 		superadminRoutes.POST("/support/:id/status", handlers.SuperadminUpdateTicketStatusHandler)
 		superadminRoutes.POST("/support/:id/reply", handlers.SuperadminReplyTicketHandler)
 		superadminRoutes.POST("/support/:id/take", handlers.SuperadminTakeTicketHandler)
+
+		// Subscription & Plan Management
+		superadminRoutes.GET("/plans", handlers.SuperadminPlansPageHandler)
+		superadminRoutes.GET("/addons", handlers.SuperadminAddOnsPageHandler)
+		superadminRoutes.PUT("/firms/:id/subscription", handlers.SuperadminUpdateFirmSubscriptionHandler)
+		superadminRoutes.GET("/firms/:id/subscription", handlers.SuperadminGetFirmSubscriptionForm)
 	}
 
 	// Protected routes (authentication + firm required)
@@ -356,6 +367,11 @@ func main() {
 			adminRoutes.PUT("/api/firm/settings", handlers.UpdateFirmHandler)
 			adminRoutes.POST("/api/firm/logo", handlers.UploadFirmLogoHandler)
 			adminRoutes.DELETE("/api/firm/logo", handlers.DeleteFirmLogoHandler)
+			adminRoutes.GET("/api/firm/settings/billing", handlers.FirmBillingTabHandler)
+
+			// Add-ons (admin only)
+			adminRoutes.POST("/api/addons/purchase", handlers.PurchaseAddOnHandler)
+			adminRoutes.DELETE("/api/addons/:id", handlers.CancelAddOnHandler)
 
 			// Audit Logs (admin only)
 			adminRoutes.GET("/audit-logs", handlers.AuditLogsPageHandler)
@@ -596,6 +612,11 @@ func main() {
 			// Clean up expired password reset tokens
 			if err := services.CleanupExpiredTokens(db.DB); err != nil {
 				log.Printf("Error cleaning up expired tokens: %v", err)
+			}
+
+			// Expire add-ons that have passed their expiry date
+			if err := services.ExpireAddOns(db.DB); err != nil {
+				log.Printf("Error expiring add-ons: %v", err)
 			}
 		}
 	}()

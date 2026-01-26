@@ -1,0 +1,88 @@
+package superadmin
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+)
+
+templ PlansPage(ctx context.Context, title string, csrfToken string, user *models.User, plans []models.Plan) {
+	@Layout(ctx, title, csrfToken, user, "plans") {
+		<div class="mb-8 flex justify-between items-center">
+			<div>
+				<h1 class="text-3xl font-serif font-bold text-base-content">Subscription Plans</h1>
+				<p class="text-base-content/60">Define and manage available subscription tiers</p>
+			</div>
+			<button class="btn btn-primary rounded-sm" disabled>
+				<i data-lucide="plus" class="mr-2"></i> New Plan
+			</button>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+			for _, plan := range plans {
+				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm overflow-hidden flex flex-col">
+					<div class="p-6 flex-1">
+						<div class="flex justify-between items-start mb-4">
+							<h3 class="text-xl font-serif font-bold">{ plan.Name }</h3>
+							if plan.IsTrialPlan {
+								<span class="badge badge-info badge-sm rounded-sm">Trial</span>
+							}
+						</div>
+						<p class="text-sm text-base-content/60 mb-6 line-clamp-2">{ plan.Description }</p>
+						
+						<div class="space-y-3 text-sm">
+							<div class="flex justify-between">
+								<span class="opacity-60">Price (Monthly)</span>
+								<span class="font-bold">{ plan.FormatPriceMonthly() }</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="opacity-60">Users</span>
+								<span class="font-bold">
+									if plan.MaxUsers == -1 {
+										Unlimited
+									} else {
+										{ fmt.Sprintf("%d", plan.MaxUsers) }
+									}
+								</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="opacity-60">Storage</span>
+								<span class="font-bold">
+									if plan.MaxStorageBytes == -1 {
+										Unlimited
+									} else {
+										{ models.FormatBytes(plan.MaxStorageBytes) }
+									}
+								</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="opacity-60">Cases</span>
+								<span class="font-bold">
+									if plan.MaxCases == -1 {
+										Unlimited
+									} else {
+										{ fmt.Sprintf("%d", plan.MaxCases) }
+									}
+								</span>
+							</div>
+							<div class="flex justify-between">
+								<span class="opacity-60">Templates</span>
+								<span>
+									if plan.TemplatesEnabled {
+										<i data-lucide="check" class="w-4 h-4 text-success inline"></i>
+									} else {
+										<i data-lucide="x" class="w-4 h-4 text-error inline"></i>
+									}
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="bg-base-50 p-4 border-t border-base-200 flex justify-end gap-2">
+						<button class="btn btn-ghost btn-xs rounded-sm">Edit</button>
+						<button class="btn btn-ghost btn-xs text-error rounded-sm">Disable</button>
+					</div>
+				</div>
+			}
+		</div>
+	}
+}

@@ -1,0 +1,54 @@
+package components
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
+)
+
+// SubscriptionBanner shows trial warning when trial is expiring soon
+templ SubscriptionBanner(ctx context.Context, info *services.SubscriptionInfo) {
+	if info != nil && info.ShowTrialWarning {
+		<div class="bg-warning/10 border-b border-warning/20">
+			<div class="container mx-auto px-4 py-3 flex items-center justify-between">
+				<div class="flex items-center gap-3">
+					<svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+					</svg>
+					<span class="text-sm font-medium text-warning">
+						if info.TrialDaysLeft == 0 {
+							{ i18n.T(ctx, "subscription.trial_expires_today") }
+						} else if info.TrialDaysLeft == 1 {
+							{ i18n.T(ctx, "subscription.trial_expires_tomorrow") }
+						} else {
+							{ fmt.Sprintf(i18n.T(ctx, "subscription.trial_expires_in_days"), info.TrialDaysLeft) }
+						}
+					</span>
+				</div>
+				<a href="/firm/settings#subscription" class="btn btn-sm btn-warning">
+					{ i18n.T(ctx, "subscription.upgrade_now") }
+				</a>
+			</div>
+		</div>
+	}
+}
+
+// SubscriptionExpiredBanner shows when subscription has expired
+templ SubscriptionExpiredBanner(ctx context.Context) {
+	<div class="bg-error/10 border-b border-error/20">
+		<div class="container mx-auto px-4 py-3 flex items-center justify-between">
+			<div class="flex items-center gap-3">
+				<svg class="w-5 h-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
+				<span class="text-sm font-medium text-error">
+					{ i18n.T(ctx, "subscription.expired") }
+				</span>
+			</div>
+			<a href="/firm/settings#subscription" class="btn btn-sm btn-error">
+				{ i18n.T(ctx, "subscription.renew_now") }
+			</a>
+		</div>
+	</div>
+}
