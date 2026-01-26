@@ -202,6 +202,27 @@
     "rights": "© 2026 LexLegal Cloud. Todos los derechos reservados.",
     "slogan": "Gestión moderna para firmas de abogados modernas. Optimiza tu flujo de trabajo y enfócate en lo que importa."
   },
+  "judicial": {
+    "process_info": "Información del Proceso",
+    "office": "Despacho",
+    "judge": "Ponente",
+    "type": "Tipo",
+    "location": "Ubicación",
+    "subjects": "Sujetos Procesales",
+    "last_updated": "Última Actualización",
+    "actions_history": "Historial de Actuaciones",
+    "no_actions": "No se encontraron actuaciones para este proceso.",
+    "registered": "Registrado",
+    "term": "Término",
+    "loading": "Cargando información del proceso...",
+    "not_found": {
+      "title": "Proceso No Encontrado",
+      "desc_pending": "No hemos encontrado información judicial asociada al radicado",
+      "desc_no_radicado": "Este caso no tiene un número de radicado asociado para consultar."
+    },
+    "sync_info": "El sistema intentará sincronizar automáticamente esta noche.",
+    "missing_radicado": "Edite el caso para agregar el número de radicado y habilitar la consulta."
+  },
   "pages": {
     "contact": {
       "title": "Contáctenos",
@@ -677,7 +698,10 @@
 
   "cases": {
     "detail": {
-      "title": "Detalles del Caso"
+      "title": "Detalles del Caso",
+      "tab": {
+        "unified": "Unificada"
+      }
     },
     "title": "Casos",
     "description": {

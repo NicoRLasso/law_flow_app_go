@@ -83,7 +83,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							>
 								<span class="flex items-center gap-3 font-serif font-bold">
 									<i data-lucide="menu"></i>
-									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'parties' ? '" + i18n.T(ctx, "case.detail.tab.parties") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "case.detail.tab.documents") + "' : '" + i18n.T(ctx, "case.detail.tab.bitacora") + "'" }></span>
+									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'parties' ? '" + i18n.T(ctx, "case.detail.tab.parties") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "case.detail.tab.documents") + "' : activeTab === 'bitacora' ? '" + i18n.T(ctx, "case.detail.tab.bitacora") + "' : '" + i18n.T(ctx, "cases.detail.tab.unified") + "'" }></span>
 								</span>
 								<i data-lucide="chevron-down" class="transition-transform" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
@@ -136,6 +136,18 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 											</button>
 										</li>
 									}
+									if user.Role != "client" {
+										<li>
+											<button
+												@click={ "activeTab = 'unified'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-unified-container')) htmx.ajax('GET', '/api/cases/" + caseRecord.ID + "/judicial-view', {target: '#case-unified-wrapper', swap: 'innerHTML'}) }, 50)" }
+												:class="activeTab === 'unified' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+												class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+											>
+												<i data-lucide="scale" class="w-5 text-center"></i>
+												<span>{ i18n.T(ctx, "cases.detail.tab.unified") }</span>
+											</button>
+										</li>
+									}
 								</ul>
 							</nav>
 						</aside>
@@ -164,6 +176,20 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 										<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
 											<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
 											<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "bitacora.loading") }</p>
+										</div>
+									</div>
+								</div>
+
+								<!-- Unified Tab Content -->
+								<div x-show="activeTab === 'unified'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+									<h2 class="text-xl font-serif font-bold text-base-content border-b border-base-200 pb-3 mb-4">
+										{ i18n.T(ctx, "cases.detail.tab.unified") }
+									</h2>
+									<div id="case-unified-wrapper">
+										<!-- Will be loaded via HTMX on tab click -->
+										<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+											<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+											<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "judicial.loading") }</p>
 										</div>
 									</div>
 								</div>

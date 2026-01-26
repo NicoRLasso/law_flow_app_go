@@ -203,6 +203,27 @@
     "rights": "© 2026 LexLegal Cloud. All rights reserved.",
     "slogan": "Modern practice management for modern law firms. Streamline your workflow and focus on what matters."
   },
+  "judicial": {
+    "process_info": "Process Information",
+    "office": "Court Office",
+    "judge": "Judge",
+    "type": "Type",
+    "location": "Location",
+    "subjects": "Involved Parties",
+    "last_updated": "Last Updated",
+    "actions_history": "Actions History",
+    "no_actions": "No actions found for this process.",
+    "registered": "Registered",
+    "term": "Term",
+    "loading": "Loading process information...",
+    "not_found": {
+      "title": "Process Not Found",
+      "desc_pending": " We haven't found judicial information associated with the filing number",
+      "desc_no_radicado": "This case does not have an associated filing number (radicado) to query."
+    },
+    "sync_info": "The system will attempt to automatically sync tonight.",
+    "missing_radicado": "Edit the case to add a filing number and enable polling."
+  },
   "pages": {
     "contact": {
       "title": "Contact Us",
@@ -679,7 +700,10 @@
 
   "cases": {
     "detail": {
-      "title": "Case Details"
+      "title": "Case Details",
+      "tab": {
+        "unified": "Unified"
+      }
     },
     "title": "Cases",
     "description": {

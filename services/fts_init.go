@@ -30,6 +30,7 @@ func InitializeFTS5(db *gorm.DB) error {
 			case_number,
 			case_title,
 			case_description,
+			filing_number,
 			client_name,
 			party_name,
 			log_content,
@@ -97,7 +98,7 @@ func createCasesTriggers(db *gorm.DB) error {
 
 			INSERT INTO cases_fts (
 				rowid, case_id, firm_id, case_number, case_title,
-				case_description, client_name, party_name, log_content, document_content
+				case_description, filing_number, client_name, party_name, log_content, document_content
 			)
 			SELECT
 				m.rowid,
@@ -106,6 +107,7 @@ func createCasesTriggers(db *gorm.DB) error {
 				NEW.case_number,
 				COALESCE(NEW.title, ''),
 				COALESCE(NEW.description, ''),
+				COALESCE(NEW.filing_number, ''),
 				COALESCE((SELECT name FROM users WHERE id = NEW.client_id), ''),
 				'',
 				'',
@@ -123,6 +125,7 @@ func createCasesTriggers(db *gorm.DB) error {
 		WHEN OLD.title IS NOT NEW.title
 		   OR OLD.description IS NOT NEW.description
 		   OR OLD.case_number IS NOT NEW.case_number
+		   OR OLD.filing_number IS NOT NEW.filing_number
 		   OR OLD.client_id IS NOT NEW.client_id
 		BEGIN
 			DELETE FROM cases_fts WHERE rowid = (
@@ -131,7 +134,7 @@ func createCasesTriggers(db *gorm.DB) error {
 
 			INSERT INTO cases_fts (
 				rowid, case_id, firm_id, case_number, case_title,
-				case_description, client_name, party_name, log_content, document_content
+				case_description, filing_number, client_name, party_name, log_content, document_content
 			)
 			SELECT
 				m.rowid,
@@ -140,6 +143,7 @@ func createCasesTriggers(db *gorm.DB) error {
 				NEW.case_number,
 				COALESCE(NEW.title, ''),
 				COALESCE(NEW.description, ''),
+				COALESCE(NEW.filing_number, ''),
 				COALESCE((SELECT name FROM users WHERE id = NEW.client_id), ''),
 				COALESCE((SELECT name FROM case_parties WHERE case_id = NEW.id LIMIT 1), ''),
 				COALESCE((SELECT GROUP_CONCAT(COALESCE(title, '') || ' ' || COALESCE(content, ''), ' ') FROM case_logs WHERE case_id = NEW.id AND deleted_at IS NULL), ''),
@@ -336,7 +340,7 @@ func RebuildFTSIndex(db *gorm.DB) error {
 	err = db.Exec(`
 		INSERT INTO cases_fts (
 			rowid, case_id, firm_id, case_number, case_title,
-			case_description, client_name, party_name, log_content, document_content
+			case_description, filing_number, client_name, party_name, log_content, document_content
 		)
 		SELECT
 			m.rowid,
@@ -345,6 +349,7 @@ func RebuildFTSIndex(db *gorm.DB) error {
 			c.case_number,
 			COALESCE(c.title, ''),
 			COALESCE(c.description, ''),
+			COALESCE(c.filing_number, ''),
 			COALESCE(u.name, ''),
 			COALESCE(cp.name, ''),
 			COALESCE((

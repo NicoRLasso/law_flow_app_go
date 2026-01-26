@@ -1,11 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/services/jobs"
 	"law_flow_app_go/templates/partials"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -318,8 +322,17 @@ func UpdateCaseHandler(c echo.Context) error {
 
 	// Save updates
 	if err := db.DB.Save(&caseRecord).Error; err != nil {
+		// Check for duplicate filing number
+		if strings.Contains(err.Error(), "UNIQUE constraint failed: cases.filing_number") || strings.Contains(err.Error(), "cases_filing_number_key") {
+			errMsg := i18n.T(c.Request().Context(), "case.edit.error.duplicate_radicado")
+			if c.Request().Header.Get("HX-Request") == "true" {
+				return c.HTML(http.StatusConflict, fmt.Sprintf(`<div class="p-4 bg-red-500/20 text-red-400 rounded-lg flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5"></i> <span>%s</span></div><script>lucide.createIcons();</script>`, errMsg))
+			}
+			return echo.NewHTTPError(http.StatusConflict, errMsg)
+		}
+
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to update case</div>`)
+			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to update case: `+err.Error()+`</div>`)
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update case")
 	}
@@ -338,18 +351,53 @@ func UpdateCaseHandler(c echo.Context) error {
 		caseRecord,
 	)
 
+	// Trigger async judicial process update if filing number changed or was just set
+	oldFilingNumber := ""
+	if oldCase.FilingNumber != nil {
+		oldFilingNumber = *oldCase.FilingNumber
+	}
+	newFilingNumber := ""
+	if caseRecord.FilingNumber != nil {
+		newFilingNumber = *caseRecord.FilingNumber
+	}
+
+	// Trigger async judicial process update ONLY if filing number was just added (was empty before)
+	// Updates to existing numbers will be picked up by the nightly job to avoid spamming/issues
+	if newFilingNumber != "" && oldFilingNumber == "" {
+		log.Printf("[HANDLER] New filing number added: %s. Scheduling initial async update for CaseID: %s", newFilingNumber, caseRecord.ID)
+		go func(id string) {
+			// Small delay to ensure transaction committed if any (though GORM Save is normally blocking until committed)
+			time.Sleep(1 * time.Second)
+			log.Printf("[HANDLER] Starting async update for CaseID: %s", id)
+			fmt.Println(">> [DEBUG] Goroutine started for CaseID:", id) // Force stdout
+			if err := jobs.UpdateSingleCase(id); err != nil {
+				log.Printf("[HANDLER] Async update failed for CaseID %s: %v", id, err)
+				fmt.Printf(">> [DEBUG] UpdateSingleCase failed: %v\n", err)
+			} else {
+				log.Printf("[HANDLER] Async update completed for CaseID: %s", id)
+				fmt.Println(">> [DEBUG] UpdateSingleCase completed successfully")
+			}
+		}(caseRecord.ID)
+	}
+
+	// Determine success message
+	successMsg := "Case updated successfully!"
+	if newFilingNumber != "" && oldFilingNumber == "" {
+		successMsg = "Case updated! Judicial sync started in background."
+	}
+
 	// Return success response with page reload
 	if c.Request().Header.Get("HX-Request") == "true" {
-		return c.HTML(http.StatusOK, `
+		return c.HTML(http.StatusOK, fmt.Sprintf(`
 			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4">
-				Case updated successfully!
+				%s
 			</div>
 			<script>
 				setTimeout(function() {
 					window.location.reload();
-				}, 1000);
+				}, 2000);
 			</script>
-		`)
+		`, successMsg))
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
