@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -11,6 +12,17 @@ func InitializeFTS5(db *gorm.DB) error {
 	log.Println("Initializing FTS5 search index...")
 
 	// Create FTS5 virtual table
+	// Check for existing contentless table and drop it if found
+	var sql string
+	db.Raw("SELECT sql FROM sqlite_master WHERE type='table' AND name='cases_fts'").Scan(&sql)
+	if strings.Contains(sql, "content=''") {
+		log.Println("Migrating FTS5 table to support snippets...")
+		db.Exec("DROP TABLE IF EXISTS cases_fts")
+		db.Exec("DROP TABLE IF EXISTS cases_fts_mapping")
+	}
+
+	// Create FTS5 virtual table
+	// Note: We removed content='' to allow snippet generation
 	err := db.Exec(`
 		CREATE VIRTUAL TABLE IF NOT EXISTS cases_fts USING fts5(
 			case_id UNINDEXED,
@@ -22,8 +34,6 @@ func InitializeFTS5(db *gorm.DB) error {
 			party_name,
 			log_content,
 			document_content,
-			content='',
-			content_rowid='rowid',
 			tokenize='unicode61 remove_diacritics 2'
 		)
 	`).Error

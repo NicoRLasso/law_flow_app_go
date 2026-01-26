@@ -52,7 +52,7 @@ func (s *SearchService) Search(ctx context.Context, firmID, query string, limit 
 			COALESCE(c.title, '') as case_title,
 			COALESCE(u.name, '') as client_name,
 			c.status,
-			snippet(cases_fts, 5, '<mark>', '</mark>', '...', 32) as snippet,
+			snippet(cases_fts, -1, '<mark>', '</mark>', '...', 32) as snippet,
 			bm25(cases_fts) as rank
 		FROM cases_fts
 		INNER JOIN cases_fts_mapping m ON cases_fts.rowid = m.rowid
@@ -101,7 +101,7 @@ func (s *SearchService) SearchWithRoleFilter(ctx context.Context, firmID, userID
 			COALESCE(c.title, '') as case_title,
 			COALESCE(u.name, '') as client_name,
 			c.status,
-			snippet(cases_fts, 5, '<mark>', '</mark>', '...', 32) as snippet,
+			snippet(cases_fts, -1, '<mark>', '</mark>', '...', 32) as snippet,
 			bm25(cases_fts) as rank
 		FROM cases_fts
 		INNER JOIN cases_fts_mapping m ON cases_fts.rowid = m.rowid
