@@ -56,16 +56,16 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 		<!-- Trust/Social Proof - Sophisticated -->
 		<div class="bg-base-200/50 py-12 border-y border-base-200">
 			<div class="container mx-auto px-4">
-				<p class="text-center text-sm font-bold tracking-widest uppercase text-base-content/40 mb-8 font-sans">
+				<p class="text-center text-sm font-bold tracking-widest uppercase text-base-content/70 mb-8 font-sans">
 					{ i18n.T(ctx, "landing.hero.social_proof") }
 				</p>
-				<div class="flex flex-wrap justify-center gap-12 lg:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+				<div class="flex flex-wrap justify-center gap-12 lg:gap-20 grayscale hover:grayscale-0 transition-all duration-500">
 					<!-- Placeholders for Law Firm Logos - using text for now to match classic style -->
-					<div class="text-xl font-serif font-bold text-base-content/60">Schor & Associates</div>
-					<div class="text-xl font-serif font-bold text-base-content/60">Vanguard Legal</div>
-					<div class="text-xl font-serif font-bold text-base-content/60">Heritage Law</div>
-					<div class="text-xl font-serif font-bold text-base-content/60">Axis Partners</div>
-					<div class="text-xl font-serif font-bold text-base-content/60">Beacon Counsel</div>
+					<div class="text-xl font-serif font-bold text-base-content/80">Schor & Associates</div>
+					<div class="text-xl font-serif font-bold text-base-content/80">Vanguard Legal</div>
+					<div class="text-xl font-serif font-bold text-base-content/80">Heritage Law</div>
+					<div class="text-xl font-serif font-bold text-base-content/80">Axis Partners</div>
+					<div class="text-xl font-serif font-bold text-base-content/80">Beacon Counsel</div>
 				</div>
 			</div>
 		</div>
@@ -404,7 +404,7 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 		<!-- Final CTA Section - Authoritative -->
 		<section class="py-4 bg-primary text-primary-content relative overflow-hidden">
 			<!-- Simple textured overlay or gradient -->
-			<div class="absolute inset-0 bg-base-content/5 opacity-20"></div>
+			<div class="absolute inset-0 bg-base-content/10 opacity-30"></div>
 			
 			<div class="container mx-auto px-4 relative z-10 text-center">
 				<div class="max-w-3xl mx-auto">
@@ -421,7 +421,7 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						</a>
 					</div>
 					
-					<p class="mt-8 text-sm opacity-60 font-sans tracking-wider uppercase">
+					<p class="mt-8 text-sm opacity-80 font-sans tracking-wider uppercase">
 						{ i18n.T(ctx, "landing.final_cta.no_credit_card") } • { i18n.T(ctx, "landing.final_cta.cancel_anytime") }
 					</p>
 				</div>

@@ -11,17 +11,17 @@ import (
 
 templ Cases(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/cases")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
 				<div class="w-full">
 					<!-- Header -->
-					<div class="flex items-center justify-between gap-4">
+					<div class="flex items-center justify-between gap-4 mb-8">
 						<div>
-							<h1 class="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{ i18n.T(ctx, "cases.title") }</h1>
-							<p class="text-muted-foreground mt-1 text-sm md:text-base">
+							<h1 class="text-3xl md:text-4xl font-serif font-bold tracking-tight text-base-content">{ i18n.T(ctx, "cases.title") }</h1>
+							<p class="text-base-content/60 mt-1 text-sm md:text-base font-sans">
 								if user.Role == "admin" {
 									{ i18n.T(ctx, "cases.description.admin") }
 								} else {
@@ -30,40 +30,45 @@ templ Cases(ctx context.Context, title string, csrfToken string, user *models.Us
 							</p>
 						</div>
 						if user.Role == "admin" || user.Role == "lawyer" {
-							<button
-								hx-get="/api/cases/import/modal"
-								hx-target="body"
-								hx-swap="beforeend"
-								class="px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white bg-slate-800/50 hover:bg-slate-700/50 backdrop-blur-md rounded-xl transition-all border border-slate-700/50 hover:border-slate-600 shadow-sm hover:shadow-md flex items-center gap-2 group"
-							>
-								<i class="fas fa-file-import text-slate-400 group-hover:text-blue-400 transition-colors"></i>
-								{ i18n.T(ctx, "cases.import.title") }
-							</button>
-							<button
-								hx-get="/api/cases/new"
-								hx-target="body"
-								hx-swap="beforeend"
-								class="px-4 py-2.5 text-sm font-medium text-white bg-accent hover:bg-accent/90 rounded-xl transition-all shadow-lg shadow-accent/20 flex items-center gap-2"
-							>
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-								</svg>
-								Create Case
-							</button>
+							<div class="flex gap-3">
+								<button
+									hx-get="/api/cases/import/modal"
+									hx-target="body"
+									hx-swap="beforeend"
+									class="px-4 py-2.5 text-sm font-medium text-primary hover:text-primary-focus bg-primary/5 hover:bg-primary/10 rounded-sm transition-all border border-primary/20 flex items-center gap-2 group"
+								>
+									<i data-lucide="file-input" class="group-hover:scale-110 transition-transform"></i>
+									{ i18n.T(ctx, "cases.import.title") }
+								</button>
+								<button
+									hx-get="/api/cases/new"
+									hx-target="body"
+									hx-swap="beforeend"
+									class="px-4 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-focus rounded-sm transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+								>
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+									</svg>
+									Create Case
+								</button>
+							</div>
 						}
 					</div>
-					<!-- Case Filters (static, not reloaded) -->
-					@partials.CaseFilters(ctx, user)
-					<!-- Loading indicator (outside the replaceable content) -->
-					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
-						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+					<!-- Case Filters -->
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200 mb-6">
+						@partials.CaseFilters(ctx, user)
 					</div>
-					<!-- Cases Table (reloadable content) -->
+					<!-- Loading indicator -->
+					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
+						<span class="loading loading-spinner loading-lg text-primary"></span>
+					</div>
+					<!-- Cases Table -->
 					<div
 						id="cases-table"
 						hx-get="/api/cases"
 						hx-trigger="load, reload-cases from:body"
 						hx-indicator="#loading-indicator"
+						class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
 					></div>
 				</div>
 			</main>

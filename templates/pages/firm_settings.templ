@@ -10,114 +10,106 @@ import (
 
 templ FirmSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/firm/settings")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
 				<div class="w-full" x-data="{ activeTab: 'general', sidebarOpen: false, showCategoryModal: false }">
 					<!-- Header -->
-					<div class="text-center mb-6 md:mb-8 settings-page-header">
-						<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "settings.firm.title") }</h1>
-						<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "settings.firm.desc") }</p>
+					<div class="mb-8 border-b border-base-300 pb-6">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "settings.firm.title") }</h1>
+						<p class="text-base-content/60 font-sans">{ i18n.T(ctx, "settings.firm.desc") }</p>
 					</div>
 					<!-- Layout with Sidebar -->
-					<div class="settings-layout">
+					<div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 items-start">
 						<!-- Sidebar Navigation -->
-						<aside class="settings-sidebar">
+						<aside class="w-full">
 							<!-- Mobile Toggle Button -->
 							<button
 								@click="sidebarOpen = !sidebarOpen"
 								:aria-expanded="sidebarOpen"
-								class="settings-mobile-toggle md:hidden"
+								class="md:hidden w-full flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-sm mb-4 font-serif font-bold shadow-sm"
 							>
 								<span class="flex items-center gap-3">
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-									</svg>
+									<i data-lucide="menu"></i>
 									<span x-text={ "activeTab === 'general' ? '" + i18n.T(ctx, "settings.nav.general") + "' : activeTab === 'email' ? '" + i18n.T(ctx, "settings.nav.email") + "' : activeTab === 'templates' ? '" + i18n.T(ctx, "settings.nav.templates") + "' : '" + i18n.T(ctx, "settings.nav.details") + "'" }></span>
 								</span>
-								<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-								</svg>
+								<i data-lucide="chevron-down" class="transition-transform" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav shadow-xl backdrop-blur-xl"
-								:class="{ 'settings-nav-hidden': !sidebarOpen }"
-								x-show="sidebarOpen || window.innerWidth >= 768"
-								x-transition
+								class="bg-base-100 rounded-sm border border-base-200 shadow-sm overflow-hidden"
+								:class="{ 'hidden md:block': !sidebarOpen }"
 							>
-								<ul class="space-y-2">
+								<ul class="flex flex-col">
 									<li>
 										<button
 											@click="activeTab = 'general'; sidebarOpen = false"
-											:class="activeTab === 'general' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'general' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-											</svg>
+											<i data-lucide="building" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.nav.general") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'email'; sidebarOpen = false"
-											:class="activeTab === 'email' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'email' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-											</svg>
+											<i data-lucide="mail" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.nav.email") }</span>
 										</button>
 									</li>
 									<li>
 										<button
-											@click="activeTab = 'branding'; sidebarOpen = false"
-											:class="activeTab === 'branding' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											@click="activeTab = 'billing'; sidebarOpen = false"
+											:class="activeTab === 'billing' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-											</svg>
+											<i data-lucide="credit-card" class="w-5 text-center"></i>
+											<span>Billing & Plan</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'branding'; sidebarOpen = false"
+											:class="activeTab === 'branding' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="paintbrush" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.nav.branding") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'details'; sidebarOpen = false"
-											:class="activeTab === 'details' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'details' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-											</svg>
+											<i data-lucide="info" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.nav.details") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'templates'; sidebarOpen = false"
-											:class="activeTab === 'templates' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'templates' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-											</svg>
+											<i data-lucide="file-text" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.nav.templates") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'classifications'; sidebarOpen = false"
-											:class="activeTab === 'classifications' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'classifications' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-											</svg>
+											<i data-lucide="tags" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.nav.classifications") }</span>
 										</button>
 									</li>
@@ -125,239 +117,185 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 							</nav>
 						</aside>
 						<!-- Main Content Area -->
-						<div class="settings-content space-y-6">
+						<div class="w-full min-w-0 space-y-6">
 							<!-- General Tab -->
-							<div x-show="activeTab === 'general'" x-transition class="space-y-6">
+							<div x-show="activeTab === 'general'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
 								<!-- Firm Information Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-										</svg>
-										{ i18n.T(ctx, "settings.firm.info_title") }
-									</h2>
-									<div
-										x-data="{ 
-										originalName: $el.dataset.originalName, 
-										currentName: $el.dataset.originalName, 
-										country: $el.dataset.country,
-										timezone: $el.dataset.initialTimezone,
-										timezoneLocked: false,
-										showWarning: false,
-										updateTimezone() {
-											if (this.country.trim().toLowerCase() === 'colombia') {
-												this.timezone = 'America/Bogota';
-												this.timezoneLocked = true;
-											} else {
-												this.timezoneLocked = false;
-											}
-										},
-										init() {
-											this.updateTimezone();
-										},
-										submitForm() {
-											htmx.trigger(document.getElementById('firm-settings-form'), 'submit');
-										}
-									}"
-										data-original-name={ firm.Name }
-										data-country={ firm.Country }
-										data-initial-timezone={ firm.Timezone }
-									>
-										<form
-											id="firm-settings-form"
-											hx-put="/api/firm/settings"
-											hx-target="#firm-message"
-											hx-swap="innerHTML"
-											class="space-y-4"
-										>
-											<input type="hidden" name="update_type" value="general"/>
-											<!-- Firm Name -->
-											<div>
-												<label for="name" class="block text-sm font-medium text-foreground mb-2">
-													{ i18n.T(ctx, "settings.firm.name") } <span class="text-red-500">*</span>
-												</label>
-												<input
-													type="text"
-													id="name"
-													name="name"
-													x-model="currentName"
-													required
-													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-												/>
-											</div>
-											<!-- Country and Timezone Row -->
-											<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-												<!-- Country -->
-												<div>
-													<label for="country" class="block text-sm font-medium text-foreground mb-2">
-														{ i18n.T(ctx, "settings.firm.country") } <span class="text-red-500">*</span>
-													</label>
-													<input
-														type="text"
-														id="country"
-														name="country"
-														x-model="country"
-														@input="updateTimezone()"
-														required
-														class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-													/>
-												</div>
-												<!-- Timezone -->
-												<div>
-													<label for="timezone" class="block text-sm font-medium text-foreground mb-2">
-														{ i18n.T(ctx, "settings.firm.timezone") }
-													</label>
-													<input
-														type="text"
-														id="timezone"
-														name="timezone"
-														x-model="timezone"
-														:disabled="timezoneLocked"
-														:class="{'opacity-50 cursor-not-allowed': timezoneLocked}"
-														placeholder="UTC"
-														class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-													/>
-													<!-- Hidden input to ensure value is sent when disabled -->
-													<input
-														type="hidden"
-														name="timezone"
-														x-model="timezone"
-													/>
-												</div>
-											</div>
-											<!-- Address and City Row -->
-											<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-												<!-- Address -->
-												<div>
-													<label for="address" class="block text-sm font-medium text-foreground mb-2">
-														{ i18n.T(ctx, "settings.firm.address") }
-													</label>
-													<input
-														type="text"
-														id="address"
-														name="address"
-														value={ firm.Address }
-														class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-													/>
-												</div>
-												<!-- City -->
-												<div>
-													<label for="city" class="block text-sm font-medium text-foreground mb-2">
-														{ i18n.T(ctx, "settings.firm.city") }
-													</label>
-													<input
-														type="text"
-														id="city"
-														name="city"
-														value={ firm.City }
-														class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-													/>
-												</div>
-											</div>
-											<!-- Phone -->
-											<div>
-												<label for="phone" class="block text-sm font-medium text-foreground mb-2">
-													{ i18n.T(ctx, "settings.firm.phone") }
-												</label>
-												<input
-													type="tel"
-													id="phone"
-													name="phone"
-													value={ firm.Phone }
-													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-												/>
-											</div>
-											<!-- Description -->
-											<div>
-												<label for="description" class="block text-sm font-medium text-foreground mb-2">
-													{ i18n.T(ctx, "settings.firm.desc_label") }
-												</label>
-												<textarea
-													id="description"
-													name="description"
-													rows="4"
-													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all resize-none"
-												>{ firm.Description }</textarea>
-												<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.firm.desc_ph") }</p>
-											</div>
-											<!-- Email Sender Name -->
-											<div>
-												<label for="email_sender_name" class="block text-sm font-medium text-foreground mb-2">
-													{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-red-500">*</span>
-												</label>
-												<input
-													type="text"
-													id="email_sender_name"
-													name="email_sender_name"
-													value={ firm.EmailSenderName }
-													required
-													placeholder="My Law Firm"
-													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-												/>
-												<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.sender_name_desc") }</p>
-											</div>
-											<!-- Message Container -->
-											<div id="firm-message"></div>
-											<!-- Submit Button -->
-											<div class="flex justify-end pt-4">
-												<button
-													type="button"
-													@click="if (currentName !== originalName) { showWarning = true } else { submitForm() }"
-													class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
-												>
-													<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-													</svg>
-													<span>{ i18n.T(ctx, "settings.firm.save_btn") }</span>
-												</button>
-											</div>
-										</form>
-										<!-- Warning Modal -->
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest border-b border-base-200 pb-2 mb-6">
+											{ i18n.T(ctx, "settings.firm.info_title") }
+										</h2>
 										<div
-											x-show="showWarning"
-											class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-											x-transition.opacity
-											style="display: none;"
+											x-data="{ 
+											originalName: $el.dataset.originalName, 
+											currentName: $el.dataset.originalName, 
+											country: $el.dataset.country,
+											timezone: $el.dataset.initialTimezone,
+											timezoneLocked: false,
+											showWarning: false,
+											updateTimezone() {
+												if (this.country.trim().toLowerCase() === 'colombia') {
+													this.timezone = 'America/Bogota';
+													this.timezoneLocked = true;
+												} else {
+													this.timezoneLocked = false;
+												}
+											},
+											init() {
+												this.updateTimezone();
+											},
+											submitForm() {
+												htmx.trigger(document.getElementById('firm-settings-form'), 'submit');
+											}
+										}"
+											data-original-name={ firm.Name }
+											data-country={ firm.Country }
+											data-initial-timezone={ firm.Timezone }
 										>
-											<div
-												class="glass-panel border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl backdrop-blur-xl relative"
-												@click.away="showWarning = false"
-												x-transition:enter="transition ease-out duration-300"
-												x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-												x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-												x-transition:leave="transition ease-in duration-200"
-												x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-												x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+											<form
+												id="firm-settings-form"
+												hx-put="/api/firm/settings"
+												hx-target="#firm-message"
+												hx-swap="innerHTML"
+												class="space-y-6"
 											>
-												<div class="flex items-start gap-4">
-													<div class="p-3 bg-red-500/10 rounded-full shrink-0">
-														<svg class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-														</svg>
+												<input type="hidden" name="update_type" value="general"/>
+												<!-- Firm Name -->
+												<div class="form-control w-full">
+													<label class="label">
+														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+															{ i18n.T(ctx, "settings.firm.name") } <span class="text-error">*</span>
+														</span>
+													</label>
+													<input type="text" id="name" name="name" x-model="currentName" required class="input input-bordered w-full rounded-sm focus:input-primary" />
+												</div>
+												<!-- Country and Timezone Row -->
+												<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+													<!-- Country -->
+													<div class="form-control w-full">
+														<label class="label">
+															<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+																{ i18n.T(ctx, "settings.firm.country") } <span class="text-error">*</span>
+															</span>
+														</label>
+														<input type="text" id="country" name="country" x-model="country" @input="updateTimezone()" required class="input input-bordered w-full rounded-sm focus:input-primary" />
 													</div>
-													<div class="flex-1">
-														<h3 class="text-lg font-semibold text-foreground mb-2">Warning: Slug Change</h3>
-														<p class="text-muted-foreground text-sm mb-4">
-															Changing the firm name will regenerate your firm's unique URL slug. 
-															<span class="font-bold text-red-400">This will break all existing public links</span> to your booking pages and case request forms.
-														</p>
-														<p class="text-muted-foreground text-sm mb-6">
-															Are you sure you want to proceed?
-														</p>
-														<div class="flex justify-end gap-3">
-															<button
-																@click="showWarning = false"
-																class="px-4 py-2 text-foreground hover:bg-white/5 rounded-lg transition-colors"
-															>
-																Cancel
-															</button>
-															<button
-																@click="showWarning = false; submitForm()"
-																class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-															>
-																Yes, Change Name
-															</button>
-														</div>
+													<!-- Timezone -->
+													<div class="form-control w-full">
+														<label class="label">
+															<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+																{ i18n.T(ctx, "settings.firm.timezone") }
+															</span>
+														</label>
+														<input 
+															type="text" 
+															id="timezone" 
+															name="timezone" 
+															x-model="timezone" 
+															:disabled="timezoneLocked" 
+															:class="{'opacity-50 cursor-not-allowed': timezoneLocked}"
+															placeholder="UTC"
+															class="input input-bordered w-full rounded-sm focus:input-primary" 
+														/>
+														<input type="hidden" name="timezone" x-model="timezone" />
+													</div>
+												</div>
+												<!-- Address and City Row -->
+												<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+													<div class="form-control w-full">
+														<label class="label">
+															<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+																{ i18n.T(ctx, "settings.firm.address") }
+															</span>
+														</label>
+														<input type="text" id="address" name="address" value={ firm.Address } class="input input-bordered w-full rounded-sm focus:input-primary" />
+													</div>
+													<div class="form-control w-full">
+														<label class="label">
+															<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+																{ i18n.T(ctx, "settings.firm.city") }
+															</span>
+														</label>
+														<input type="text" id="city" name="city" value={ firm.City } class="input input-bordered w-full rounded-sm focus:input-primary" />
+													</div>
+												</div>
+												<!-- Phone -->
+												<div class="form-control w-full">
+													<label class="label">
+														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+															{ i18n.T(ctx, "settings.firm.phone") }
+														</span>
+													</label>
+													<input type="tel" id="phone" name="phone" value={ firm.Phone } class="input input-bordered w-full rounded-sm focus:input-primary" />
+												</div>
+												<!-- Description -->
+												<div class="form-control w-full">
+													<label class="label">
+														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+															{ i18n.T(ctx, "settings.firm.desc_label") }
+														</span>
+													</label>
+													<textarea id="description" name="description" rows="4" class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary">{ firm.Description }</textarea>
+													<label class="label">
+														<span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.firm.desc_ph") }</span>
+													</label>
+												</div>
+												<!-- Email Sender Name -->
+												<div class="form-control w-full">
+													<label class="label">
+														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+															{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
+														</span>
+													</label>
+													<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary" />
+													<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
+												</div>
+												<!-- Message Container -->
+												<div id="firm-message"></div>
+												<!-- Submit Button -->
+												<div class="flex justify-end pt-4 border-t border-base-200">
+													<button
+														type="button"
+														@click="if (currentName !== originalName) { showWarning = true } else { submitForm() }"
+														class="btn btn-primary rounded-sm"
+													>
+														{ i18n.T(ctx, "settings.firm.save_btn") }
+													</button>
+												</div>
+											</form>
+											<!-- Warning Modal -->
+											<div
+												x-show="showWarning"
+												class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base-300/80 backdrop-blur-sm"
+												x-transition.opacity
+												style="display: none;"
+											>
+												<div
+													class="bg-base-100 border border-base-200 rounded-sm w-full max-w-md p-6 shadow-xl relative"
+													@click.away="showWarning = false"
+												>
+													<h3 class="text-lg font-bold text-error mb-2">Warning: Slug Change</h3>
+													<p class="text-base-content/70 text-sm mb-4">
+														Changing the firm name will regenerate your firm's unique URL slug. 
+														<span class="font-bold text-error">This will break all existing public links</span> to your booking pages and case request forms.
+													</p>
+													<p class="text-base-content/70 text-sm mb-6">
+														Are you sure you want to proceed?
+													</p>
+													<div class="flex justify-end gap-3">
+														<button
+															@click="showWarning = false"
+															class="btn btn-primary btn-sm rounded-sm"
+														>
+															Cancel
+														</button>
+														<button
+															@click="showWarning = false; submitForm()"
+															class="btn btn-error btn-sm rounded-sm"
+														>
+															Yes, Change Name
+														</button>
 													</div>
 												</div>
 											</div>
@@ -366,290 +304,346 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 								</div>
 							</div>
 							<!-- Email Tab -->
-							<div x-show="activeTab === 'email'" x-transition class="space-y-6">
+							<div x-show="activeTab === 'email'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
 								<!-- Email Configuration Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-										</svg>
-										{ i18n.T(ctx, "settings.email.title") }
-									</h2>
-									<form
-										hx-put="/api/firm/settings"
-										hx-target="#email-message"
-										hx-swap="innerHTML"
-										class="space-y-4"
-									>
-										<input type="hidden" name="update_type" value="email"/>
-										<!-- Billing Email -->
-										<div>
-											<label for="billing_email" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.email.billing") } <span class="text-red-500">*</span>
-											</label>
-											<input
-												type="email"
-												id="billing_email"
-												name="billing_email"
-												value={ firm.BillingEmail }
-												required
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-											<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.billing_desc") }</p>
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest border-b border-base-200 pb-2 mb-6">
+											{ i18n.T(ctx, "settings.email.title") }
+										</h2>
+										<form
+											hx-put="/api/firm/settings"
+											hx-target="#email-message"
+											hx-swap="innerHTML"
+											class="space-y-6"
+										>
+											<input type="hidden" name="update_type" value="email"/>
+											<!-- Billing Email -->
+											<div class="form-control w-full">
+												<label class="label">
+													<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+														{ i18n.T(ctx, "settings.email.billing") } <span class="text-error">*</span>
+													</span>
+												</label>
+												<input type="email" id="billing_email" name="billing_email" value={ firm.BillingEmail } required class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.billing_desc") }</span></label>
+											</div>
+											<!-- Info Email -->
+											<div class="form-control w-full">
+												<label class="label">
+													<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+														{ i18n.T(ctx, "settings.email.info") }
+													</span>
+												</label>
+												<input type="email" id="info_email" name="info_email" value={ firm.InfoEmail } class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.info_desc") }</span></label>
+											</div>
+											<!-- Noreply Email -->
+											<div class="form-control w-full">
+												<label class="label">
+													<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+														{ i18n.T(ctx, "settings.email.noreply") } <span class="text-error">*</span>
+													</span>
+												</label>
+												<input type="email" id="noreply_email" name="noreply_email" value={ firm.NoreplyEmail } required class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.noreply_desc") }</span></label>
+											</div>
+											<!-- Email Sender Name -->
+											<div class="form-control w-full">
+												<label class="label">
+													<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+														{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
+													</span>
+												</label>
+												<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
+											</div>
+											<!-- Message Container -->
+											<div id="email-message"></div>
+							<!-- Billing Tab -->
+							<div x-show="activeTab === 'billing'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								<!-- Current Plan Card -->
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-base-200 pb-6">
+											<div>
+												<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest mb-1">Current Plan</h2>
+												<p class="text-sm text-base-content/60">Manage your subscription and billing details</p>
+											</div>
+											<span class="badge badge-lg badge-primary rounded-sm font-bold uppercase mt-4 md:mt-0">Professional</span>
 										</div>
-										<!-- Info Email -->
-										<div>
-											<label for="info_email" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.email.info") }
-											</label>
-											<input
-												type="email"
-												id="info_email"
-												name="info_email"
-												value={ firm.InfoEmail }
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-											<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.info_desc") }</p>
+
+										<div class="grid md:grid-cols-3 gap-8">
+											<div class="col-span-2 space-y-6">
+												<div class="flex items-center justify-between p-4 bg-base-50 rounded-sm border border-base-200">
+													<div>
+														<p class="font-bold text-base-content">Professional Plan</p>
+														<p class="text-sm text-base-content/60">$79.00 / month</p>
+													</div>
+													<div class="text-right">
+														<p class="text-xs font-bold uppercase tracking-wider text-success">Active</p>
+														<p class="text-xs text-base-content/50">Renews on Feb 25, 2026</p>
+													</div>
+												</div>
+												
+												<!-- Payment Method -->
+												<div>
+													<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-3">Payment Method</h3>
+													<div class="flex items-center justify-between p-4 border border-base-200 rounded-sm">
+														<div class="flex items-center gap-4">
+															<div class="w-10 h-6 bg-base-200 rounded flex items-center justify-center">
+																<i data-lucide="credit-card" class="text-xl text-primary"></i>
+															</div>
+															<div>
+																<p class="text-sm font-bold">Visa ending in 4242</p>
+																<p class="text-xs text-base-content/50">Expires 12/28</p>
+															</div>
+														</div>
+														<button class="btn btn-info btn-xs">Update</button>
+													</div>
+												</div>
+											</div>
+
+											<!-- Actions -->
+											<div class="bg-base-50 p-6 rounded-sm border border-base-200 space-y-4">
+												<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-2">Actions</h3>
+												<button class="btn btn-outline btn-primary btn-sm w-full rounded-sm">Change Plan</button>
+												<button class="btn btn-outline btn-error btn-sm w-full rounded-sm">Cancel Subscription</button>
+												<div class="divider"></div>
+												<a href="#" class="text-xs text-center block text-primary hover:underline">View Invoices</a>
+											</div>
 										</div>
-										<!-- Noreply Email -->
-										<div>
-											<label for="noreply_email" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.email.noreply") } <span class="text-red-500">*</span>
-											</label>
-											<input
-												type="email"
-												id="noreply_email"
-												name="noreply_email"
-												value={ firm.NoreplyEmail }
-												required
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-											<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.noreply_desc") }</p>
+									</div>
+								</div>
+
+								<!-- Billing History -->
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest border-b border-base-200 pb-2 mb-6">Billing History</h2>
+										<div class="overflow-x-auto">
+											<table class="table w-full">
+												<thead>
+													<tr class="text-xs uppercase tracking-wider text-base-content/50 border-b border-base-200">
+														<th class="font-bold">Date</th>
+														<th class="font-bold">Amount</th>
+														<th class="font-bold">Status</th>
+														<th class="font-bold text-right">Invoice</th>
+													</tr>
+												</thead>
+												<tbody class="text-sm">
+													<tr class="hover:bg-base-50">
+														<td>Jan 25, 2026</td>
+														<td class="font-mono">$79.00</td>
+														<td><span class="badge badge-xs badge-success gap-1">Paid</span></td>
+														<td class="text-right">
+															<button class="btn btn-primary btn-xs"><i data-lucide="download"></i></button>
+														</td>
+													</tr>
+													<tr class="hover:bg-base-50">
+														<td>Dec 25, 2025</td>
+														<td class="font-mono">$79.00</td>
+														<td><span class="badge badge-xs badge-success gap-1">Paid</span></td>
+														<td class="text-right">
+															<button class="btn btn-primary btn-xs"><i data-lucide="download"></i></button>
+														</td>
+													</tr>
+													<tr class="hover:bg-base-50">
+														<td>Nov 25, 2025</td>
+														<td class="font-mono">$79.00</td>
+														<td><span class="badge badge-xs badge-success gap-1">Paid</span></td>
+														<td class="text-right">
+															<button class="btn btn-primary btn-xs"><i data-lucide="download"></i></button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
 										</div>
-										<!-- Email Sender Name -->
-										<div>
-											<label for="email_sender_name" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-red-500">*</span>
-											</label>
-											<input
-												type="text"
-												id="email_sender_name"
-												name="email_sender_name"
-												value={ firm.EmailSenderName }
-												required
-												placeholder="My Law Firm"
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-											<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.email.sender_name_desc") }</p>
-										</div>
-										<!-- Message Container -->
-										<div id="email-message"></div>
-										<!-- Submit Button -->
-										<div class="flex justify-end pt-4">
-											<button
-												type="submit"
-												class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
-											>
-												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-												</svg>
-												<span>{ i18n.T(ctx, "settings.email.save_btn") }</span>
-											</button>
-										</div>
-									</form>
+									</div>
 								</div>
 							</div>
-							<!-- Branding Tab -->
-							<div x-show="activeTab === 'branding'" x-transition class="space-y-6">
-								<!-- Logo Upload Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-										</svg>
-										{ i18n.T(ctx, "settings.branding.title") }
-									</h2>
-									<p class="text-sm text-muted-foreground mb-6">{ i18n.T(ctx, "settings.branding.desc") }</p>
-									<!-- Logo Preview -->
-									<div class="mb-6">
-										<label class="block text-sm font-medium text-foreground mb-3">{ i18n.T(ctx, "settings.branding.current_logo") }</label>
-										if firm.LogoURL != "" {
-											<div id="logo-preview-container" class="space-y-4">
-												<div class="flex items-center gap-4">
-													<div class="w-20 h-20 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-														<img src={ firm.LogoURL } alt="Firm Logo" class="max-w-full max-h-full object-contain"/>
-													</div>
-													<div class="flex flex-col gap-2">
-														<span class="text-sm text-green-500">{ i18n.T(ctx, "settings.branding.logo_uploaded") }</span>
-														<button
-															type="button"
-															hx-delete="/api/firm/logo"
-															hx-target="#logo-preview-container"
-															hx-swap="outerHTML"
-															class="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"
-														>
-															<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-															{ i18n.T(ctx, "settings.branding.remove_logo") }
-														</button>
-													</div>
-												</div>
-											</div>
-										} else {
-											<div id="logo-preview-container" class="space-y-4">
-												<div class="flex items-center gap-4">
-													<div class="w-20 h-20 rounded-xl bg-white/5 border border-white/10 border-dashed flex items-center justify-center">
-														<svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-														</svg>
-													</div>
-													<div class="text-sm text-muted-foreground">
-														{ i18n.T(ctx, "settings.branding.no_logo") }
-													</div>
-												</div>
-											</div>
-										}
-									</div>
-									<!-- Upload Form -->
-									<div class="border-t border-white/10 pt-6">
-										<label class="block text-sm font-medium text-foreground mb-3">{ i18n.T(ctx, "settings.branding.upload_new") }</label>
-										<form
-											hx-post="/api/firm/logo"
-											hx-encoding="multipart/form-data"
-											hx-target="#logo-preview-container"
-											hx-swap="outerHTML"
-											class="space-y-4"
-										>
-											<div class="flex items-center gap-4">
-												<input
-													type="file"
-													name="logo"
-													accept="image/png,image/jpeg,image/jpg,image/svg+xml"
-													class="flex-1 text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent file:text-white hover:file:bg-accent/90 file:cursor-pointer"
-												/>
-												<button
-													type="submit"
-													class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
-												>
-													<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
-													</svg>
-													{ i18n.T(ctx, "settings.branding.upload_btn") }
+											<!-- Submit Button -->
+											<div class="flex justify-end pt-4 border-t border-base-200">
+												<button type="submit" class="btn btn-primary rounded-sm">
+													{ i18n.T(ctx, "settings.email.save_btn") }
 												</button>
 											</div>
-											<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "settings.branding.upload_hint") }</p>
 										</form>
 									</div>
 								</div>
 							</div>
+							<!-- Branding Tab -->
+							<div x-show="activeTab === 'branding'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								<!-- Logo Upload Card -->
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest border-b border-base-200 pb-2 mb-6">
+											{ i18n.T(ctx, "settings.branding.title") }
+										</h2>
+										<p class="text-sm text-base-content/60 mb-6">{ i18n.T(ctx, "settings.branding.desc") }</p>
+										<!-- Logo Preview -->
+										<div class="mb-6">
+											<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "settings.branding.current_logo") }</label>
+											if firm.LogoURL != "" {
+												<div id="logo-preview-container" class="space-y-4">
+													<div class="flex items-center gap-6">
+														<div class="w-24 h-24 rounded-sm bg-base-50 border border-base-300 flex items-center justify-center overflow-hidden p-2">
+															<img src={ firm.LogoURL } alt="Firm Logo" class="max-w-full max-h-full object-contain"/>
+														</div>
+														<div class="flex flex-col gap-2">
+															<span class="badge badge-success gap-2">{ i18n.T(ctx, "settings.branding.logo_uploaded") }</span>
+															<button
+																type="button"
+																hx-delete="/api/firm/logo"
+																hx-target="#logo-preview-container"
+																hx-swap="outerHTML"
+																class="btn btn-error btn-xs justify-start px-0"
+															>
+																<i data-lucide="trash-2" class="mr-1"></i>
+																{ i18n.T(ctx, "settings.branding.remove_logo") }
+															</button>
+														</div>
+													</div>
+												</div>
+											} else {
+												<div id="logo-preview-container" class="space-y-4">
+													<div class="flex items-center gap-6">
+														<div class="w-24 h-24 rounded-sm bg-base-50 border border-base-300 border-dashed flex items-center justify-center">
+															<i data-lucide="image" class="text-3xl text-base-content/20"></i>
+														</div>
+														<div class="text-sm text-base-content/50 italic">
+															{ i18n.T(ctx, "settings.branding.no_logo") }
+														</div>
+													</div>
+												</div>
+											}
+										</div>
+										<!-- Upload Form -->
+										<div class="border-t border-base-200 pt-6">
+											<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-4 block">{ i18n.T(ctx, "settings.branding.upload_new") }</label>
+											<form
+												hx-post="/api/firm/logo"
+												hx-encoding="multipart/form-data"
+												hx-target="#logo-preview-container"
+												hx-swap="outerHTML"
+												class="space-y-4"
+											>
+												<div class="flex items-center gap-4">
+													<input
+														type="file"
+														name="logo"
+														accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+														class="file-input file-input-bordered w-full max-w-xs rounded-lg"
+													/>
+													<button
+														type="submit"
+														class="btn btn-primary rounded-sm"
+													>
+														<i data-lucide="upload" class="mr-2"></i>
+														{ i18n.T(ctx, "settings.branding.upload_btn") }
+													</button>
+												</div>
+												<p class="text-xs text-base-content/50">{ i18n.T(ctx, "settings.branding.upload_hint") }</p>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
 							<!-- Details Tab -->
-							<div x-show="activeTab === 'details'" x-transition class="space-y-6">
+							<div x-show="activeTab === 'details'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
 								<!-- Firm Details -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-										</svg>
-										{ i18n.T(ctx, "settings.details.title") }
-									</h2>
-									<div class="space-y-3 text-sm">
-										<div class="flex justify-between py-2 border-b border-white/5">
-											<span class="text-muted-foreground">{ i18n.T(ctx, "settings.details.id") }</span>
-											<span class="font-mono text-xs text-foreground">{ firm.ID }</span>
-										</div>
-										<div class="flex justify-between py-2 border-b border-white/5">
-											<span class="text-muted-foreground">{ i18n.T(ctx, "settings.details.slug") }</span>
-											<span id="firm-slug-display" class="font-mono text-xs text-foreground">{ firm.Slug }</span>
-										</div>
-										<div class="flex justify-between py-2">
-											<span class="text-muted-foreground">{ i18n.T(ctx, "settings.details.created") }</span>
-											<span class="text-foreground">{ firm.CreatedAt.Format("January 2, 2006") }</span>
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest border-b border-base-200 pb-2 mb-6">
+											{ i18n.T(ctx, "settings.details.title") }
+										</h2>
+										<div class="space-y-3 text-sm">
+											<div class="flex justify-between py-2 border-b border-base-200">
+												<span class="text-base-content/70">{ i18n.T(ctx, "settings.details.id") }</span>
+												<span class="font-mono text-xs text-base-content">{ firm.ID }</span>
+											</div>
+											<div class="flex justify-between py-2 border-b border-base-200">
+												<span class="text-base-content/70">{ i18n.T(ctx, "settings.details.slug") }</span>
+												<span id="firm-slug-display" class="font-mono text-xs text-base-content">{ firm.Slug }</span>
+											</div>
+											<div class="flex justify-between py-2">
+												<span class="text-base-content/70">{ i18n.T(ctx, "settings.details.created") }</span>
+												<span class="text-base-content">{ firm.CreatedAt.Format("02 Jan 2006") }</span>
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 							<!-- Templates Tab -->
-							<div x-show="activeTab === 'templates'" x-transition class="space-y-6">
+							<div x-show="activeTab === 'templates'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
 								<!-- Template Categories Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<div class="flex items-center justify-between mb-6">
-										<h2 class="text-xl font-bold flex items-center gap-2">
-											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-											</svg>
-											{ i18n.T(ctx, "settings.templates.categories_title") }
-										</h2>
-										<button
-											type="button"
-											@click="showCategoryModal = true"
-											class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors text-sm flex items-center gap-2"
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<div class="flex items-center justify-between mb-6 border-b border-base-200 pb-2">
+											<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest">
+												{ i18n.T(ctx, "settings.templates.categories_title") }
+											</h2>
+											<button
+												type="button"
+												@click="showCategoryModal = true"
+												class="btn btn-sm btn-primary rounded-sm"
+											>
+												<i data-lucide="plus" class="mr-2"></i>
+												{ i18n.T(ctx, "settings.templates.add_category") }
+											</button>
+										</div>
+										<p class="text-sm text-base-content/60 mb-8">{ i18n.T(ctx, "settings.templates.categories_desc") }</p>
+										<!-- Categories List -->
+										<div
+											id="categories-list"
+											hx-get="/api/templates/categories"
+											hx-trigger="load, categoryUpdated from:body"
+											hx-target="#categories-list-content"
 										>
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-											</svg>
-											{ i18n.T(ctx, "settings.templates.add_category") }
-										</button>
-									</div>
-									<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "settings.templates.categories_desc") }</p>
-									<!-- Categories List -->
-									<div
-										id="categories-list"
-										hx-get="/api/templates/categories"
-										hx-trigger="load, categoryUpdated from:body"
-										hx-target="#categories-list-content"
-									>
-										<div id="categories-list-content">
-											<div class="text-center py-8 text-muted-foreground">
-												{ i18n.T(ctx, "common.loading") }
+											<div id="categories-list-content">
+												<div class="text-center py-12 text-base-content/40 font-serif font-medium">
+													{ i18n.T(ctx, "common.loading") }
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 							<!-- Classifications Tab -->
-							<div x-show="activeTab === 'classifications'" x-transition class="space-y-6">
+							<div x-show="activeTab === 'classifications'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
 								<!-- Classifications Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<div class="flex items-center justify-between mb-6">
-										<h2 class="text-xl font-bold flex items-center gap-2">
-											<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-											</svg>
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-8">
+										<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest border-b border-base-200 pb-2 mb-6">
 											{ i18n.T(ctx, "settings.classifications.title") }
 										</h2>
-									</div>
-									<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "settings.classifications.desc") }</p>
-									<!-- Classifications Container -->
-									<div
-										hx-get="/api/subtypes"
-										hx-trigger="load"
-										hx-swap="innerHTML"
-									>
-										<div class="text-center py-8 text-muted-foreground">
-											{ i18n.T(ctx, "common.loading") }
+										<p class="text-sm text-base-content/60 mb-8">{ i18n.T(ctx, "settings.classifications.desc") }</p>
+										<!-- Classifications Container -->
+										<div
+											hx-get="/api/subtypes"
+											hx-trigger="load"
+											hx-swap="innerHTML"
+										>
+											<div class="text-center py-12 text-base-content/40 font-serif font-medium">
+												{ i18n.T(ctx, "common.loading") }
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<!-- Category Modal (inside x-data scope) -->
+					<!-- Category Modal -->
 					<div
 						x-show="showCategoryModal"
 						x-transition.opacity
-						class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+						class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base-300/80 backdrop-blur-sm"
 						style="display: none;"
 					>
 						<div
-							class="glass-panel border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl backdrop-blur-xl"
+							class="bg-base-100 border border-base-200 rounded-sm w-full max-w-md p-6 shadow-xl"
 							@click.away="showCategoryModal = false"
-							x-transition:enter="transition ease-out duration-200"
-							x-transition:enter-start="opacity-0 scale-95"
-							x-transition:enter-end="opacity-100 scale-100"
-							x-transition:leave="transition ease-in duration-150"
-							x-transition:leave-start="opacity-100 scale-100"
-							x-transition:leave-end="opacity-0 scale-95"
 						>
-							<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "settings.templates.category_modal_title") }</h3>
+							<h3 class="text-lg font-serif font-bold mb-4 border-b border-base-200 pb-2">{ i18n.T(ctx, "settings.templates.category_modal_title") }</h3>
 							<form
 								hx-post="/api/templates/categories"
 								hx-target="#categories-list-content"
@@ -658,35 +652,30 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 								@submit="setTimeout(() => { $el.reset(); }, 100)"
 							>
 								<div class="space-y-4">
-									<div>
-										<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "settings.templates.category_name") }</label>
-										<input
-											type="text"
-											name="name"
-											required
-											class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-										/>
+									<div class="form-control w-full">
+										<label class="label">
+											<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">{ i18n.T(ctx, "settings.templates.category_name") }</span>
+										</label>
+										<input type="text" name="name" required class="input input-bordered w-full rounded-sm" />
 									</div>
-									<div>
-										<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "settings.templates.category_description") }</label>
-										<textarea
-											name="description"
-											rows="2"
-											class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
-										></textarea>
+									<div class="form-control w-full">
+										<label class="label">
+											<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">{ i18n.T(ctx, "settings.templates.category_description") }</span>
+										</label>
+										<textarea name="description" rows="2" class="textarea textarea-bordered w-full rounded-sm resize-none"></textarea>
 									</div>
 								</div>
-								<div class="flex justify-end gap-3 mt-6">
+								<div class="flex justify-end gap-3 mt-6 pt-4 border-t border-base-200">
 									<button
 										type="button"
 										@click="showCategoryModal = false"
-										class="px-4 py-2 text-foreground hover:bg-white/5 rounded-lg transition-colors"
+										class="btn btn-primary btn-sm rounded-sm"
 									>
 										{ i18n.T(ctx, "common.cancel") }
 									</button>
 									<button
 										type="submit"
-										class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors"
+										class="btn btn-primary btn-sm rounded-sm"
 									>
 										{ i18n.T(ctx, "common.save") }
 									</button>

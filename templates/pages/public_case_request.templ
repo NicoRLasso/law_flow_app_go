@@ -8,15 +8,15 @@ import (
 )
 
 templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption, turnstileSiteKey string) {
-	@layouts.Base(ctx, i18n.T(ctx, "public.request.title")+" - "+firm.Name, csrfToken, nil) {
+	@layouts.WebsiteLayout(ctx, i18n.T(ctx, "public.request.title")+" - "+firm.Name, csrfToken, nil) {
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-		<main class="min-h-screen relative bg-base-100 py-12 lg:py-20">
+		<main class="min-h-screen relative bg-base-100 py-8 lg:py-12">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0 bg-base-200/30"></div>
 			
 			<div class="container mx-auto px-4 max-w-4xl relative z-10">
 				<!-- Firm Header - Letterhead Style -->
-				<div class="text-center mb-12 bg-base-100 p-10 shadow-sm border border-base-200 rounded-sm">
+				<div class="text-center mb-6 bg-base-100 p-6 md:p-8 shadow-sm border border-base-200 rounded-sm">
 					<h1 class="text-4xl md:text-5xl font-serif font-bold tracking-tight mb-2 text-primary">
 						{ firm.Name }
 					</h1>
@@ -27,7 +27,7 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 							{ firm.Country }
 						}
 					</p>
-					<div class="w-16 h-1 bg-primary/20 mx-auto my-6"></div>
+					<div class="w-16 h-1 bg-primary/20 mx-auto my-4"></div>
 					<p class="text-lg font-medium opacity-80 font-sans max-w-2xl mx-auto">{ i18n.T(ctx, "public.request.subtitle") }</p>
 				</div>
 				
@@ -36,8 +36,8 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 					<!-- Top Accent -->
 					<div class="h-2 bg-gradient-to-r from-primary to-secondary w-full"></div>
 					
-					<div class="card-body p-8 md:p-12">
-						<div class="mb-10 border-b border-base-200 pb-6">
+					<div class="card-body p-6 md:p-8">
+						<div class="mb-6 border-b border-base-200 pb-6">
 							<h2 class="text-2xl font-serif font-bold mb-2">{ i18n.T(ctx, "public.request.form_title") }</h2>
 							<p class="text-sm opacity-60 font-sans leading-relaxed">{ i18n.T(ctx, "public.request.form_desc") }</p>
 						</div>
@@ -46,20 +46,20 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 							method="POST"
 							action={ templ.URL("/firm/" + firm.Slug + "/request") }
 							enctype="multipart/form-data"
-							class="space-y-8"
+							class="space-y-5"
 						>
 							<!-- Form Message Area -->
 							<div id="form-message" class="empty:hidden alert text-sm py-4 rounded-sm border-l-4 border-error"></div>
 							
 							<!-- Personal Information Section -->
-							<div class="space-y-6">
+							<div class="space-y-4">
 								<h3 class="text-lg font-bold font-serif text-primary uppercase tracking-widest border-b border-base-200 pb-2">{ i18n.T(ctx, "public.request.personal_info") }</h3>
 								
-								<div class="grid md:grid-cols-2 gap-6">
+								<div class="grid md:grid-cols-2 gap-4">
 									<!-- Full Name -->
 									<div class="form-control md:col-span-2">
 										<label for="name" class="label pb-1">
-											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.full_name") } <span class="text-error">*</span></span>
+											<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.full_name") } <span class="text-error">*</span></span>
 										</label>
 										<input
 											type="text"
@@ -67,14 +67,14 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 											name="name"
 											required
 											placeholder="Juan Pérez"
-											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-11"
 										/>
 									</div>
 									
 									<!-- Email -->
 									<div class="form-control">
 										<label for="email" class="label pb-1">
-											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.email") } <span class="text-error">*</span></span>
+											<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.email") } <span class="text-error">*</span></span>
 										</label>
 										<input
 											type="email"
@@ -82,14 +82,14 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 											name="email"
 											required
 											placeholder="juan@example.com"
-											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-11"
 										/>
 									</div>
 									
 									<!-- Phone -->
 									<div class="form-control">
 										<label for="phone" class="label pb-1">
-											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.phone") } <span class="text-error">*</span></span>
+											<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.phone") } <span class="text-error">*</span></span>
 										</label>
 										<input
 											type="tel"
@@ -97,23 +97,23 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 											name="phone"
 											required
 											placeholder="+57 300 123 4567"
-											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-11"
 										/>
 									</div>
 								</div>
 								
 								<!-- Document Type and Number (Grid) -->
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-base-200/30 rounded-sm border border-base-200">
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-base-200/30 rounded-sm border border-base-200">
 									<!-- Document Type -->
 									<div class="form-control">
 										<label for="document_type" class="label pb-1">
-											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.doc_type") } <span class="text-error">*</span></span>
+											<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.doc_type") } <span class="text-error">*</span></span>
 										</label>
 										<select
 											id="document_type"
 											name="document_type"
 											required
-											class="select select-bordered rounded-sm w-full focus:select-primary h-12"
+											class="select select-bordered rounded-sm w-full focus:select-primary h-11"
 										>
 											<option value="">{ i18n.T(ctx, "public.request.select_type") }</option>
 											for _, opt := range documentTypes {
@@ -125,7 +125,7 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 									<!-- Document Number -->
 									<div class="form-control">
 										<label for="document_number" class="label pb-1">
-											<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.doc_number") } <span class="text-error">*</span></span>
+											<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.doc_number") } <span class="text-error">*</span></span>
 										</label>
 										<input
 											type="text"
@@ -133,7 +133,7 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 											name="document_number"
 											required
 											placeholder="1234567890"
-											class="input input-bordered rounded-sm w-full focus:input-primary h-12"
+											class="input input-bordered rounded-sm w-full focus:input-primary h-11"
 										/>
 									</div>
 								</div>
@@ -146,12 +146,12 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 								<!-- Priority -->
 								<div class="form-control max-w-xs">
 									<label for="priority" class="label pb-1">
-										<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "case_requests.filters.priority") }</span>
+										<span class="label-text font-serif font-bold">{ i18n.T(ctx, "case_requests.filters.priority") }</span>
 									</label>
 									<select
 										id="priority"
 										name="priority"
-										class="select select-bordered rounded-sm w-full focus:select-primary h-12"
+										class="select select-bordered rounded-sm w-full focus:select-primary h-11"
 									>
 										for _, opt := range priorities {
 											if opt.Code == "medium" {
@@ -166,7 +166,7 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 								<!-- Description -->
 								<div class="form-control">
 									<label for="description" class="label pb-1">
-										<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.case_desc") } <span class="text-error">*</span></span>
+										<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.case_desc") } <span class="text-error">*</span></span>
 									</label>
 									<textarea
 										id="description"
@@ -181,7 +181,7 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 								<!-- File Upload -->
 								<div class="form-control">
 									<label for="file" class="label pb-1">
-										<span class="label-text font-serif font-semibold">{ i18n.T(ctx, "public.request.support_doc") } <span class="text-xs opacity-60 font-sans font-normal">({ i18n.T(ctx, "public.request.optional") })</span></span>
+										<span class="label-text font-serif font-bold">{ i18n.T(ctx, "public.request.support_doc") } <span class="text-xs opacity-60 font-sans font-normal">({ i18n.T(ctx, "public.request.optional") })</span></span>
 									</label>
 									<input
 										type="file"
@@ -202,7 +202,7 @@ templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm,
 							}
 							
 							<!-- Submit Button -->
-							<div class="form-control mt-10">
+							<div class="form-control mt-6">
 								<button type="submit" class="btn btn-primary btn-lg w-full rounded-sm font-serif shadow-xl text-lg hover:brightness-110">
 									{ i18n.T(ctx, "public.request.submit_btn") }
 								</button>

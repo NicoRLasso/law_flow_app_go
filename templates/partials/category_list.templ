@@ -8,29 +8,27 @@ import (
 
 templ CategoryList(ctx context.Context, categories []models.TemplateCategory) {
 	if len(categories) == 0 {
-		<div class="text-center py-8 text-muted-foreground">
-			<svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-			</svg>
-			<p>{ i18n.T(ctx, "settings.templates.no_categories") }</p>
+		<div class="text-center py-8 text-base-content/60">
+			<i data-lucide="tags" class="text-4xl opacity-50 mb-3"></i>
+			<p class="font-serif italic">{ i18n.T(ctx, "settings.templates.no_categories") }</p>
 		</div>
 	} else {
 		<div class="space-y-2">
 			for _, category := range categories {
-				<div class="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/8 transition-colors">
+				<div class="flex items-center justify-between p-4 bg-base-200/50 rounded-sm border border-base-200 hover:border-primary/30 transition-colors">
 					<div class="flex-1">
-						<h4 class="font-medium text-foreground">{ category.Name }</h4>
+						<h4 class="font-bold text-base-content">{ category.Name }</h4>
 						if category.Description != nil && *category.Description != "" {
-							<p class="text-sm text-muted-foreground mt-0.5">{ *category.Description }</p>
+							<p class="text-sm text-base-content/60 mt-0.5">{ *category.Description }</p>
 						}
 					</div>
 					<div class="flex items-center gap-2">
 						if category.IsActive {
-							<span class="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">
+							<span class="badge badge-success badge-sm text-white font-bold">
 								{ i18n.T(ctx, "common.active") }
 							</span>
 						} else {
-							<span class="px-2 py-1 bg-gray-500/10 text-gray-400 text-xs font-medium rounded">
+							<span class="badge badge-ghost badge-sm font-bold">
 								{ i18n.T(ctx, "common.inactive") }
 							</span>
 						}
@@ -40,12 +38,10 @@ templ CategoryList(ctx context.Context, categories []models.TemplateCategory) {
 							hx-target="#categories-list-content"
 							hx-swap="innerHTML"
 							hx-confirm={ i18n.T(ctx, "settings.templates.delete_category_confirm") }
-							class="p-2 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+							class="btn btn-error btn-xs"
 							title={ i18n.T(ctx, "common.delete") }
 						>
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-							</svg>
+							<i data-lucide="trash-2"></i>
 						</button>
 					</div>
 				</div>

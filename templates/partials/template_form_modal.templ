@@ -10,160 +10,152 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 	<div
 		x-data="{ open: true }"
 		x-show="open"
-		x-transition:enter="transition ease-out duration-200"
-		x-transition:enter-start="opacity-0"
-		x-transition:enter-end="opacity-100"
-		x-transition:leave="transition ease-in duration-150"
-		x-transition:leave-start="opacity-100"
-		x-transition:leave-end="opacity-0"
-		class="fixed inset-0 z-50 overflow-y-auto"
+		class="modal modal-open"
 		aria-labelledby="modal-title"
 		role="dialog"
 		aria-modal="true"
 	>
-		<div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-			<!-- Backdrop -->
-			<div
-				class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-				@click="open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200)"
-			></div>
-			<!-- Modal -->
-			<div
-				class="inline-block w-full max-w-4xl transform overflow-hidden rounded-2xl bg-[#0A0A0B]/95 text-left align-bottom shadow-xl transition-all sm:my-8 sm:align-middle border border-white/10"
-				x-show="open"
-				x-transition:enter="transition ease-out duration-200"
-				x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-				x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-				x-transition:leave="transition ease-in duration-150"
-				x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-				x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+		<div class="modal-box max-w-4xl bg-base-100 rounded-sm max-h-[85vh] flex flex-col">
+			<form
+				if isNew {
+					hx-post="/api/templates"
+				} else {
+					hx-put={ "/api/templates/" + template.ID }
+				}
+				hx-target="#templates-table-container"
+				hx-swap="innerHTML"
+				@htmx:after-request="if(event.detail.successful) { open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200) }"
+				x-data="templateEditor()"
+				class="flex flex-col h-full"
 			>
-				<form
-					if isNew {
-						hx-post="/api/templates"
-					} else {
-						hx-put={ "/api/templates/" + template.ID }
-					}
-					hx-target="#templates-table-container"
-					hx-swap="innerHTML"
-					@htmx:after-request="if(event.detail.successful) { open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200) }"
-					x-data="templateEditor()"
-				>
-					<!-- Header -->
-					<div class="px-6 py-4 border-b border-white/10">
-						<div class="flex items-center justify-between">
-							<h3 id="modal-title" class="text-lg font-semibold text-foreground">
-								if isNew {
-									{ i18n.T(ctx, "templates.create") }
-								} else {
-									{ i18n.T(ctx, "templates.edit") }
-								}
-							</h3>
-							<button
-								type="button"
-								@click="open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200)"
-								class="p-2 text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
-							>
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-								</svg>
-							</button>
-						</div>
-					</div>
-					<!-- Content -->
-					<div class="px-6 py-4 max-h-[70vh] overflow-y-auto">
-						<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-							<!-- Left: Form Fields -->
-							<div class="lg:col-span-2 space-y-4">
-								<!-- Name -->
-								<div>
-									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.name") } *</label>
-									<input
-										type="text"
-										name="name"
-										value={ template.Name }
-										required
-										class="input-field w-full"
-										placeholder={ i18n.T(ctx, "templates.name_placeholder") }
-									/>
-								</div>
-								<!-- Description -->
-								<div>
-									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.description") }</label>
-									<textarea
-										name="description"
-										rows="2"
-										class="input-field w-full resize-none"
-										placeholder={ i18n.T(ctx, "templates.description_placeholder") }
-									>{ safeStringFromPtr(template.Description) }</textarea>
-								</div>
-								<!-- Category -->
-								<div>
-									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.category") }</label>
-									<select name="category_id" class="input-field w-full">
-										<option value="">{ i18n.T(ctx, "templates.select_category") }</option>
-										for _, cat := range categories {
-											<option
-												value={ cat.ID }
-												if template.CategoryID != nil && *template.CategoryID == cat.ID {
-													selected
-												}
-											>{ cat.Name }</option>
-										}
-									</select>
-								</div>
-								<!-- Content Editor -->
-								<div>
-									<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.content") } *</label>
-									<div class="border border-white/10 rounded-xl overflow-hidden">
-										<!-- Editor Toolbar -->
-										<div class="flex flex-wrap items-center gap-1 p-2 bg-white/5 border-b border-white/10">
-											<button type="button" @click="formatBold()" class="p-2 hover:bg-white/10 rounded transition-colors" title="Bold">
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path></svg>
-											</button>
-											<button type="button" @click="formatItalic()" class="p-2 hover:bg-white/10 rounded transition-colors" title="Italic">
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4m-2 16V4m6 0h-4m-6 16h4"></path></svg>
-											</button>
-											<div class="w-px h-6 bg-white/10 mx-1"></div>
-											<button type="button" @click="formatHeading()" class="p-2 hover:bg-white/10 rounded transition-colors" title="Heading">
-												<span class="text-xs font-bold">H</span>
-											</button>
-											<button type="button" @click="formatParagraph()" class="p-2 hover:bg-white/10 rounded transition-colors" title="Paragraph">
-												<span class="text-xs">P</span>
-											</button>
-											<div class="w-px h-6 bg-white/10 mx-1"></div>
-											<button type="button" @click="formatList()" class="p-2 hover:bg-white/10 rounded transition-colors" title="List">
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-											</button>
-										</div>
-										<!-- Content Area -->
-										<div
-											id="template-editor"
-											contenteditable="true"
-											@input="updateContent($event.target.innerHTML)"
-											class="min-h-[200px] p-4 bg-white/5 text-foreground focus:outline-none prose prose-invert max-w-none"
-										>
-											if template.Content != "" {
-												@templ.Raw(template.Content)
-											} else {
-												<p></p>
+				<!-- Header -->
+				<div class="flex items-center justify-between mb-6">
+					<h3 id="modal-title" class="text-xl font-serif font-bold text-base-content">
+						if isNew {
+							{ i18n.T(ctx, "templates.create") }
+						} else {
+							{ i18n.T(ctx, "templates.edit") }
+						}
+					</h3>
+					<button
+						type="button"
+						@click="open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200)"
+						class="btn btn-primary btn-sm btn-circle"
+					>
+						<i data-lucide="x"></i>
+					</button>
+				</div>
+				<!-- Content -->
+				<div class="flex-1 overflow-y-auto">
+					<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+						<!-- Left: Form Fields -->
+						<div class="lg:col-span-2 space-y-4">
+							<!-- Name -->
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+										{ i18n.T(ctx, "templates.name") } <span class="text-error">*</span>
+									</span>
+								</label>
+								<input
+									type="text"
+									name="name"
+									value={ template.Name }
+									required
+									class="input input-bordered w-full rounded-sm focus:input-primary"
+									placeholder={ i18n.T(ctx, "templates.name_placeholder") }
+								/>
+							</div>
+							<!-- Description -->
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+										{ i18n.T(ctx, "templates.description") }
+									</span>
+								</label>
+								<textarea
+									name="description"
+									rows="2"
+									class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary resize-none"
+									placeholder={ i18n.T(ctx, "templates.description_placeholder") }
+								>{ safeStringFromPtr(template.Description) }</textarea>
+							</div>
+							<!-- Category -->
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+										{ i18n.T(ctx, "templates.category") }
+									</span>
+								</label>
+								<select name="category_id" class="select select-bordered w-full rounded-sm focus:select-primary">
+									<option value="">{ i18n.T(ctx, "templates.select_category") }</option>
+									for _, cat := range categories {
+										<option
+											value={ cat.ID }
+											if template.CategoryID != nil && *template.CategoryID == cat.ID {
+												selected
 											}
-										</div>
+										>{ cat.Name }</option>
+									}
+								</select>
+							</div>
+							<!-- Content Editor -->
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+										{ i18n.T(ctx, "templates.content") } <span class="text-error">*</span>
+									</span>
+								</label>
+								<div class="border border-base-200 rounded-sm overflow-hidden">
+									<!-- Editor Toolbar -->
+									<div class="flex flex-wrap items-center gap-1 p-2 bg-base-200/50 border-b border-base-200">
+										<button type="button" @click="formatBold()" class="btn btn-primary btn-xs" title="Bold">
+											<i data-lucide="bold"></i>
+										</button>
+										<button type="button" @click="formatItalic()" class="btn btn-primary btn-xs" title="Italic">
+											<i data-lucide="italic"></i>
+										</button>
+										<div class="divider divider-horizontal mx-1 h-4"></div>
+										<button type="button" @click="formatHeading()" class="btn btn-primary btn-xs" title="Heading">
+											<span class="font-bold">H</span>
+										</button>
+										<button type="button" @click="formatParagraph()" class="btn btn-primary btn-xs" title="Paragraph">
+											<span>P</span>
+										</button>
+										<div class="divider divider-horizontal mx-1 h-4"></div>
+										<button type="button" @click="formatList()" class="btn btn-primary btn-xs" title="List">
+											<i data-lucide="list"></i>
+										</button>
 									</div>
-									<input type="hidden" name="content" x-model="content"/>
+									<!-- Content Area -->
+									<div
+										id="template-editor"
+										contenteditable="true"
+										@input="updateContent($event.target.innerHTML)"
+										class="min-h-[200px] p-4 bg-base-100 text-base-content focus:outline-none prose max-w-none"
+									>
+										if template.Content != "" {
+											@templ.Raw(template.Content)
+										} else {
+											<p></p>
+										}
+									</div>
 								</div>
-								<!-- Page Settings (Collapsible) -->
-								<details class="group">
-									<summary class="cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2">
-										<svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-										</svg>
-										{ i18n.T(ctx, "templates.page_settings") }
-									</summary>
-									<div class="mt-4 grid grid-cols-2 gap-4 pl-6">
-										<div>
-											<label class="block text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "templates.orientation") }</label>
-											<select name="page_orientation" class="input-field w-full text-sm">
+								<input type="hidden" name="content" x-model="content"/>
+							</div>
+							<!-- Page Settings (Collapsible) -->
+							<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
+								<input type="checkbox" />
+								<div class="collapse-title text-sm font-bold py-2 min-h-0">
+									{ i18n.T(ctx, "templates.page_settings") }
+								</div>
+								<div class="collapse-content">
+									<div class="grid grid-cols-2 gap-4 pt-2">
+										<div class="form-control">
+											<label class="label pt-0 pb-1">
+												<span class="label-text text-xs opacity-60">{ i18n.T(ctx, "templates.orientation") }</span>
+											</label>
+											<select name="page_orientation" class="select select-bordered select-sm w-full rounded-sm">
 												<option
 													value="portrait"
 													if template.PageOrientation == "portrait" || template.PageOrientation == "" {
@@ -178,9 +170,11 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 												>Landscape</option>
 											</select>
 										</div>
-										<div>
-											<label class="block text-sm text-muted-foreground mb-1">{ i18n.T(ctx, "templates.page_size") }</label>
-											<select name="page_size" class="input-field w-full text-sm">
+										<div class="form-control">
+											<label class="label pt-0 pb-1">
+												<span class="label-text text-xs opacity-60">{ i18n.T(ctx, "templates.page_size") }</span>
+											</label>
+											<select name="page_size" class="select select-bordered select-sm w-full rounded-sm">
 												<option
 													value="letter"
 													if template.PageSize == "letter" || template.PageSize == "" {
@@ -202,10 +196,12 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 											</select>
 										</div>
 									</div>
-								</details>
-								if !isNew {
-									<!-- Active Toggle -->
-									<div class="flex items-center gap-3">
+								</div>
+							</div>
+							if !isNew {
+								<!-- Active Toggle -->
+								<div class="form-control">
+									<label class="label cursor-pointer justify-start gap-3">
 										<input
 											type="checkbox"
 											name="is_active"
@@ -213,42 +209,45 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 											if template.IsActive {
 												checked
 											}
-											class="w-4 h-4 rounded border-white/20 bg-white/5 text-accent focus:ring-accent"
+											class="checkbox checkbox-primary"
 										/>
-										<label for="template-is-active" class="text-sm text-foreground">{ i18n.T(ctx, "templates.active") }</label>
-									</div>
-								}
-							</div>
-							<!-- Right: Variables Sidebar -->
-							<div class="lg:col-span-1">
-								<div class="sticky top-0">
-									<h4 class="text-sm font-medium text-foreground mb-3">{ i18n.T(ctx, "templates.variables_title") }</h4>
-									<p class="text-xs text-muted-foreground mb-4">{ i18n.T(ctx, "templates.insert_variable") }</p>
-									@VariablesSidebar(ctx)
+										<span class="label-text font-bold">{ i18n.T(ctx, "templates.active") }</span>
+									</label>
 								</div>
+							}
+						</div>
+						<!-- Right: Variables Sidebar -->
+						<div class="lg:col-span-1">
+							<div class="sticky top-0">
+								<h4 class="text-sm font-serif font-bold text-base-content mb-3">{ i18n.T(ctx, "templates.variables_title") }</h4>
+								<p class="text-xs text-base-content/50 mb-4">{ i18n.T(ctx, "templates.insert_variable") }</p>
+								@VariablesSidebar(ctx)
 							</div>
 						</div>
 					</div>
-					<!-- Footer -->
-					<div class="px-6 py-4 border-t border-white/10 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
-						<button
-							type="button"
-							@click="open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200)"
-							class="btn-secondary w-full sm:w-auto"
-						>
-							{ i18n.T(ctx, "common.cancel") }
-						</button>
-						<button type="submit" class="btn-primary w-full sm:w-auto">
-							if isNew {
-								{ i18n.T(ctx, "templates.create") }
-							} else {
-								{ i18n.T(ctx, "common.save") }
-							}
-						</button>
-					</div>
-				</form>
-			</div>
+				</div>
+				<!-- Footer -->
+				<div class="modal-action pt-4 border-t border-base-200">
+					<button
+						type="button"
+						@click="open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200)"
+						class="btn btn-primary rounded-sm"
+					>
+						{ i18n.T(ctx, "common.cancel") }
+					</button>
+					<button type="submit" class="btn btn-primary rounded-sm">
+						if isNew {
+							{ i18n.T(ctx, "templates.create") }
+						} else {
+							{ i18n.T(ctx, "common.save") }
+						}
+					</button>
+				</div>
+			</form>
 		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button onclick="document.getElementById('template-modal-container').innerHTML = ''">close</button>
+		</form>
 	</div>
 	@templ.Raw(`<script>
 		function templateEditor() {

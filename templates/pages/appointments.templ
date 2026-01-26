@@ -11,33 +11,33 @@ import (
 
 templ Appointments(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background" x-data="appointmentPage()">
+		<div class="min-h-screen bg-base-200" x-data="appointmentPage()">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/appointments")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full space-y-6">
 					<!-- Header -->
-					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
 						<div>
-							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "appointments.title") }</h1>
-							<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "appointments.description") }</p>
+							<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "appointments.title") }</h1>
+							<p class="text-base-content/60 mt-2 font-sans">{ i18n.T(ctx, "appointments.description") }</p>
 						</div>
 						<button
 							@click="showCreateModal = true"
-							class="px-4 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-lg shadow-accent/20"
+							class="btn btn-primary rounded-sm shadow-md gap-2"
 						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-							</svg>
+							<i data-lucide="plus"></i>
 							<span>{ i18n.T(ctx, "appointments.new") }</span>
 						</button>
 					</div>
 					<!-- Filters -->
-					@partials.AppointmentFilters(ctx, user)
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200">
+						@partials.AppointmentFilters(ctx, user)
+					</div>
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
-						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+						<span class="loading loading-spinner loading-lg text-primary"></span>
 					</div>
 					<!-- Appointments Table -->
 					<div
@@ -45,6 +45,7 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 						hx-get="/api/appointments"
 						hx-trigger="load, reload-appointments from:body"
 						hx-indicator="#loading-indicator"
+						class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
 					></div>
 				</div>
 			</main>
@@ -52,33 +53,24 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 			<!-- Create Appointment Modal -->
 			<div
 				x-show="showCreateModal"
-				x-transition:enter="transition ease-out duration-300"
-				x-transition:enter-start="opacity-0"
-				x-transition:enter-end="opacity-100"
-				x-transition:leave="transition ease-in duration-200"
-				x-transition:leave-start="opacity-100"
-				x-transition:leave-end="opacity-0"
-				class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+				x-transition.opacity
+				class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base-300/80 backdrop-blur-sm"
 				@click.self="showCreateModal = false"
 				@keydown.escape.window="showCreateModal = false"
+				style="display: none;"
 			>
 				<div
 					x-show="showCreateModal"
 					x-transition:enter="transition ease-out duration-300"
 					x-transition:enter-start="opacity-0 scale-95"
 					x-transition:enter-end="opacity-100 scale-100"
-					x-transition:leave="transition ease-in duration-200"
-					x-transition:leave-start="opacity-100 scale-100"
-					x-transition:leave-end="opacity-0 scale-95"
-					class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-white/10"
+					class="bg-base-100 w-full max-w-lg rounded-sm p-8 border border-base-200 shadow-2xl"
 					@click.stop
 				>
-					<div class="flex items-center justify-between mb-6">
-						<h2 class="text-xl font-bold">{ i18n.T(ctx, "appointments.create.title") }</h2>
-						<button @click="showCreateModal = false" class="text-muted-foreground hover:text-foreground">
-							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
+					<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
+						<h2 class="text-2xl font-serif font-bold text-base-content">{ i18n.T(ctx, "appointments.create.title") }</h2>
+						<button @click="showCreateModal = false" class="btn btn-sm btn-circle btn-primary">
+							<i data-lucide="x"></i>
 						</button>
 					</div>
 					<form
@@ -86,33 +78,41 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 						hx-target="#create-result"
 						hx-swap="innerHTML"
 						@htmx:after-request="if(event.detail.successful && event.detail.xhr.status === 201) { showCreateModal = false; htmx.trigger('body', 'reload-appointments'); }"
-						class="space-y-4"
+						class="space-y-6"
 					>
 						<input type="hidden" name="_csrf" value={ csrfToken }/>
 						<!-- Case Selection -->
-						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "case.title") }</label>
+						<div class="form-control w-full">
+							<label class="label">
+								<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+									{ i18n.T(ctx, "case.title") } <span class="text-error">*</span>
+								</span>
+							</label>
 							<select
 								id="case-select"
 								name="case_id"
 								x-model="selectedCase"
 								required
-								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+								class="select select-bordered w-full rounded-sm focus:select-primary"
 							>
 								<option value="">{ i18n.T(ctx, "appointments.form.select_case") }</option>
 							</select>
 						</div>
 						<!-- Lawyer Selection (for admins only) -->
 						if user.Role == "admin" {
-							<div>
-								<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.lawyer") }</label>
+							<div class="form-control w-full">
+								<label class="label">
+									<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+										{ i18n.T(ctx, "appointments.form.lawyer") } <span class="text-error">*</span>
+									</span>
+								</label>
 								<select
 									id="lawyer-select"
 									name="lawyer_id"
 									x-model="selectedLawyer"
 									@change="loadSlots()"
 									required
-									class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+									class="select select-bordered w-full rounded-sm focus:select-primary"
 								>
 									<option value="">{ i18n.T(ctx, "appointments.form.select_lawyer") }</option>
 								</select>
@@ -122,51 +122,63 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 							<input type="hidden" name="lawyer_id" value={ user.ID }/>
 						}
 						<!-- Date Selection -->
-						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.date") }</label>
+						<div class="form-control w-full">
+							<label class="label">
+								<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+									{ i18n.T(ctx, "appointments.form.date") } <span class="text-error">*</span>
+								</span>
+							</label>
 							<input
 								type="date"
 								x-model="selectedDate"
 								@change="loadSlots()"
 								required
-								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+								class="input input-bordered w-full rounded-sm focus:input-primary"
 							/>
 						</div>
 						<!-- Available Slots -->
 						<div x-show="selectedDate">
-							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.time_slot") }</label>
+							<label class="label">
+								<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+									{ i18n.T(ctx, "appointments.form.time_slot") } <span class="text-error">*</span>
+								</span>
+							</label>
 							<div id="available-slots" class="grid grid-cols-3 gap-2">
-								<p class="col-span-3 text-muted-foreground text-sm">{ i18n.T(ctx, "appointments.form.select_date_first") }</p>
+								<p class="col-span-3 text-base-content/50 text-sm italic py-2">{ i18n.T(ctx, "appointments.form.select_date_first") }</p>
 							</div>
 						</div>
 						<!-- Hidden inputs for selected time -->
 						<input type="hidden" name="start_time" x-model="selectedStartTime"/>
 						<input type="hidden" name="end_time" x-model="selectedEndTime"/>
 						<!-- Notes -->
-						<div>
-							<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "appointments.form.notes") }</label>
+						<div class="form-control w-full">
+							<label class="label">
+								<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+									{ i18n.T(ctx, "appointments.form.notes") }
+								</span>
+							</label>
 							<textarea
 								name="notes"
 								rows="3"
-								class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+								class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary resize-none"
 								placeholder={ i18n.T(ctx, "appointments.form.notes_placeholder") }
 							></textarea>
 						</div>
 						<!-- Result/Error Display -->
 						<div id="create-result"></div>
 						<!-- Buttons -->
-						<div class="flex gap-3 pt-4">
+						<div class="flex gap-4 pt-4 border-t border-base-200">
 							<button
 								type="button"
 								@click="showCreateModal = false"
-								class="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-foreground rounded-xl font-medium transition-all"
+								class="btn btn-primary rounded-sm"
 							>
 								{ i18n.T(ctx, "common.cancel") }
 							</button>
 							<button
 								type="submit"
 								:disabled="!selectedStartTime"
-								class="flex-1 px-4 py-3 bg-accent hover:bg-accent/80 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-all"
+								class="btn btn-primary rounded-sm flex-1"
 							>
 								{ i18n.T(ctx, "appointments.create.submit") }
 							</button>
@@ -191,10 +203,10 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 					init() {
 						this.$watch('showCreateModal', (value) => {
 							if (value) {
-							if (value) {
-								this.loadCases();
-								this.loadLawyers();
-							}
+								if (value) {
+									this.loadCases();
+									this.loadLawyers();
+								}
 							}
 						});
 					},
@@ -246,7 +258,7 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 						if (!container) return;
 						
 						if (this.slots.length === 0) {
-							container.innerHTML = '<p class="col-span-3 text-muted-foreground text-sm">No available slots for this date</p>';
+							container.innerHTML = '<p class="col-span-3 text-base-content/50 text-sm italic py-2">No available slots for this date</p>';
 							return;
 						}
 						
@@ -254,11 +266,12 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 							const start = new Date(slot.start_time);
 							const end = new Date(slot.end_time);
 							const timeStr = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+							const isSelected = this.selectedStartTime === slot.start_time;
 							return `
 								<button 
 									type="button"
 									@click="selectSlot('${slot.start_time}', '${slot.end_time}')"
-									class="px-3 py-2 text-sm rounded-lg transition-all ${this.selectedStartTime === slot.start_time ? 'bg-accent text-white' : 'bg-white/5 hover:bg-white/10 text-foreground'}"
+									class="btn btn-sm rounded-sm ${isSelected ? 'btn-primary' : 'btn-outline border-base-300'}"
 								>${timeStr}</button>
 							`;
 						}).join('');

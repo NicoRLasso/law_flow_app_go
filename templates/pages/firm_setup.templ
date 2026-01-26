@@ -9,152 +9,170 @@ import (
 
 templ FirmSetup(ctx context.Context, title string, csrfToken string, user *models.User) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<main class="min-h-screen flex items-center justify-center relative overflow-hidden">
-			<!-- Background effects -->
-			<div class="absolute inset-0 z-0">
-				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
-				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px]"></div>
-			</div>
-			<div class="w-full max-w-2xl relative z-10 px-6">
+		<main class="min-h-screen flex items-center justify-center bg-base-200 relative overflow-hidden py-12 px-4">
+
+			<div class="w-full max-w-2xl relative z-10">
 				<!-- Header -->
 				<div class="text-center mb-10">
-					<h1 class="text-4xl md:text-5xl font-bold font-space-grotesk tracking-tighter mb-2">
+					<h1 class="text-4xl md:text-5xl font-serif font-bold tracking-tight mb-2 text-base-content">
 						{ i18n.T(ctx, "app.name") }
 					</h1>
-					<p class="text-muted-foreground">{ i18n.T(ctx, "firm.setup.welcome", map[string]interface{}{"name": user.Name}) }</p>
+					<p class="text-base-content/60 font-sans">{ i18n.T(ctx, "firm.setup.welcome", map[string]interface{}{"name": user.Name}) }</p>
 				</div>
 				<!-- Setup Card -->
-				<div class="glass-panel p-10 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
-					<div class="mb-10">
-						<h2 class="text-2xl font-bold mb-3">{ i18n.T(ctx, "firm.setup.create_title") }</h2>
-						<p class="text-muted-foreground text-sm">{ i18n.T(ctx, "firm.setup.enter_info") }</p>
+				<div class="bg-base-100 p-8 md:p-10 rounded-sm shadow-lg border border-base-200">
+					<div class="mb-8 border-b border-base-200 pb-6">
+						<h2 class="text-2xl font-serif font-bold mb-2 text-base-content">{ i18n.T(ctx, "firm.setup.create_title") }</h2>
+						<p class="text-base-content/60 text-sm">{ i18n.T(ctx, "firm.setup.enter_info") }</p>
 					</div>
 					<form hx-post="/firm/setup" hx-target="#error-message" hx-swap="innerHTML" class="space-y-6">
 						<!-- Error Message Area -->
 						<div id="error-message" class="min-h-[24px]"></div>
 						<!-- Firm Name -->
-						<div class="space-y-3">
-							<label for="name" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.name") } <span class="text-red-500">*</span></label>
+						<div class="form-control">
+							<label for="name" class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "dashboard.firm_info.name") } <span class="text-error">*</span></span>
+							</label>
 							<input
 								type="text"
 								id="name"
 								name="name"
 								required
 								placeholder="Smith & Associates Law Firm"
-								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+								class="input input-bordered w-full rounded-sm focus:input-primary"
 							/>
 						</div>
 						<!-- Country and City -->
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div class="space-y-3">
-								<label for="country" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.country") } <span class="text-red-500">*</span></label>
+							<div class="form-control">
+								<label for="country" class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "firm.setup.country") } <span class="text-error">*</span></span>
+								</label>
 								<select
 									id="country"
 									name="country"
 									required
-									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									class="select select-bordered w-full rounded-sm focus:select-primary"
 								>
 									<option value="Colombia" selected>Colombia</option>
 								</select>
 							</div>
-							<div class="space-y-3">
-								<label for="city" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.city") }</label>
+							<div class="form-control">
+								<label for="city" class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "firm.setup.city") }</span>
+								</label>
 								<input
 									type="text"
 									id="city"
 									name="city"
-									placeholder="New York"
-									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									placeholder="Bogotá"
+									class="input input-bordered w-full rounded-sm focus:input-primary"
 								/>
 							</div>
 						</div>
 						<!-- Timezone -->
-						<div class="space-y-3">
-							<label for="timezone" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.timezone") }</label>
+						<div class="form-control">
+							<label for="timezone" class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "dashboard.firm_info.timezone") }</span>
+							</label>
 							<input
 								type="text"
 								id="timezone"
 								name="timezone"
-								placeholder="America/New_York (default: UTC)"
-								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+								placeholder="America/Bogota (default: UTC)"
+								class="input input-bordered w-full rounded-sm focus:input-primary"
 							/>
 						</div>
 						<!-- Address -->
-						<div class="space-y-3">
-							<label for="address" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.address") }</label>
+						<div class="form-control">
+							<label for="address" class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "firm.setup.address") }</span>
+							</label>
 							<input
 								type="text"
 								id="address"
 								name="address"
-								placeholder="123 Legal Street"
-								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+								placeholder="Cra 7 #72-64, Suite 901"
+								class="input input-bordered w-full rounded-sm focus:input-primary"
 							/>
 						</div>
 						<!-- Phone -->
-						<div class="space-y-3">
-							<label for="phone" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "public.request.phone") }</label>
+						<div class="form-control">
+							<label for="phone" class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "public.request.phone") }</span>
+							</label>
 							<input
 								type="tel"
 								id="phone"
 								name="phone"
-								placeholder="+1 (555) 123-4567"
-								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+								placeholder="+57 (601) 555-1234"
+								class="input input-bordered w-full rounded-sm focus:input-primary"
 							/>
 						</div>
 						<!-- Billing Email -->
-						<div class="space-y-3">
-							<label for="billing_email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.billing_email") } <span class="text-red-500">*</span></label>
+						<div class="form-control">
+							<label for="billing_email" class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "dashboard.firm_info.billing_email") } <span class="text-error">*</span></span>
+							</label>
 							<input
 								type="email"
 								id="billing_email"
 								name="billing_email"
 								required
 								placeholder="billing@yourfirm.com"
-								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+								class="input input-bordered w-full rounded-sm focus:input-primary"
 							/>
 						</div>
 						<!-- Info and Noreply Emails -->
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<div class="space-y-3">
-								<label for="info_email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "dashboard.firm_info.info_email") }</label>
+							<div class="form-control">
+								<label for="info_email" class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "dashboard.firm_info.info_email") }</span>
+								</label>
 								<input
 									type="email"
 									id="info_email"
 									name="info_email"
 									placeholder="info@yourfirm.com"
-									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									class="input input-bordered w-full rounded-sm focus:input-primary"
 								/>
 							</div>
-							<div class="space-y-3">
-								<label for="noreply_email" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "firm.setup.noreply_email") }</label>
+							<div class="form-control">
+								<label for="noreply_email" class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "firm.setup.noreply_email") }</span>
+								</label>
 								<input
 									type="email"
 									id="noreply_email"
 									name="noreply_email"
 									placeholder="noreply@yourfirm.com"
-									class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300"
+									class="input input-bordered w-full rounded-sm focus:input-primary"
 								/>
 							</div>
 						</div>
 						<!-- Description -->
-						<div class="space-y-3">
-							<label for="description" class="text-sm font-medium text-muted-foreground ml-1">{ i18n.T(ctx, "case_requests.detail.case_description") }</label>
+						<div class="form-control">
+							<label for="description" class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "case_requests.detail.case_description") }</span>
+							</label>
 							<textarea
 								id="description"
 								name="description"
 								rows="4"
 								placeholder="Brief description of your firm..."
-								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-foreground placeholder:text-white/20 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 resize-none"
+								class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary resize-none"
 							></textarea>
 						</div>
 						<!-- Submit Button -->
-						<button
-							type="submit"
-							class="w-full bg-foreground text-background font-bold py-4 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group mt-8"
-						>
-							<span class="relative z-10">{ i18n.T(ctx, "firm.setup.create_btn") }</span>
-							<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-						</button>
+						<div class="pt-6 border-t border-base-200 mt-6">
+							<button
+								type="submit"
+								class="btn btn-primary w-full rounded-sm gap-2"
+							>
+								<span>{ i18n.T(ctx, "firm.setup.create_btn") }</span>
+								<i data-lucide="arrow-right"></i>
+							</button>
+						</div>
 					</form>
 				</div>
 			</div>

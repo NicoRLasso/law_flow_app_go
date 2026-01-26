@@ -7,77 +7,77 @@ import (
 
 templ Toolbar(ctx context.Context) {
 	<!-- Toolbar -->
-	<div class="border-b border-white/10 py-2 px-6 flex justify-center items-center gap-2 z-10 sticky top-0 bg-[#000000]/90 backdrop-blur-xl">
+	<div class="border-b border-base-200 py-2 px-6 flex justify-center items-center gap-1 z-10 sticky top-0 bg-base-100 shadow-sm text-base-content">
 		<!-- Heading Buttons -->
-		<div class="flex items-center gap-0.5">
+		<div class="flex items-center gap-0.5 border-r border-base-200 pr-2 mr-2">
 			<button
 				type="button"
 				@mousedown.prevent="saveEditorSelection(); setHeading('p')"
-				:class="currentHeading === 'Normal' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="px-2 py-1 text-xs font-medium hover:bg-white/10 rounded transition-colors"
+				:class="currentHeading === 'Normal' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+				class="px-2 py-1 text-xs font-serif font-medium rounded-sm transition-colors"
 				title="Normal text"
-			>P</button>
+			>Normal</button>
 			<button
 				type="button"
 				@mousedown.prevent="saveEditorSelection(); setHeading('h1')"
-				:class="currentHeading === 'Heading 1' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="px-2 py-1 text-xs font-bold hover:bg-white/10 rounded transition-colors"
+				:class="currentHeading === 'Heading 1' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+				class="px-2 py-1 text-xs font-serif font-bold rounded-sm transition-colors"
 				title="Heading 1"
 			>H1</button>
 			<button
 				type="button"
 				@mousedown.prevent="saveEditorSelection(); setHeading('h2')"
-				:class="currentHeading === 'Heading 2' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="px-2 py-1 text-xs font-bold hover:bg-white/10 rounded transition-colors"
+				:class="currentHeading === 'Heading 2' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+				class="px-2 py-1 text-xs font-serif font-bold rounded-sm transition-colors"
 				title="Heading 2"
 			>H2</button>
 			<button
 				type="button"
 				@mousedown.prevent="saveEditorSelection(); setHeading('h3')"
-				:class="currentHeading === 'Heading 3' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="px-2 py-1 text-xs font-semibold hover:bg-white/10 rounded transition-colors"
+				:class="currentHeading === 'Heading 3' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+				class="px-2 py-1 text-xs font-serif font-semibold rounded-sm transition-colors"
 				title="Heading 3"
 			>H3</button>
 		</div>
-		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
-		<!-- Formatting Buttons with Active States -->
+
+		<!-- Formatting Buttons -->
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('bold')"
-			:class="isBold ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="isBold ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center"
 			title="Bold (Ctrl+B)"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"></path></svg>
+			<i data-lucide="bold" class="text-xs"></i>
 		</button>
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('italic')"
-			:class="isItalic ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="isItalic ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center"
 			title="Italic (Ctrl+I)"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4M14 4l-4 16M6 20h4"></path></svg>
+			<i data-lucide="italic" class="text-xs"></i>
 		</button>
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('underline')"
-			:class="isUnderline ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="isUnderline ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center border-r border-base-200 mr-2 pr-2"
 			title="Underline (Ctrl+U)"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3M4 21h16"></path></svg>
+			<i data-lucide="underline" class="text-xs"></i>
 		</button>
-		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+
 		<!-- Font Size Control -->
-		<div class="flex items-center gap-1">
+		<div class="flex items-center gap-1 border-r border-base-200 pr-2 mr-2">
 			<button
 				type="button"
 				@mousedown.prevent="saveEditorSelection(); setFontSize(Math.max(8, currentFontSize - 1))"
-				class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded transition-colors"
+				class="p-1.5 text-base-content/60 hover:text-base-content hover:bg-base-200 rounded-sm transition-colors"
 				title="Decrease font size"
 			>
-				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+				<i data-lucide="minus" class="text-xs"></i>
 			</button>
 			<input
 				type="number"
@@ -87,84 +87,88 @@ templ Toolbar(ctx context.Context) {
 				@keydown.enter.prevent="setFontSize(parseInt($event.target.value) || 12); $event.target.blur()"
 				min="8"
 				max="72"
-				class="w-12 px-1 py-1 text-xs text-center font-medium text-foreground bg-white/5 hover:bg-white/10 border border-white/10 rounded transition-colors focus:outline-none focus:ring-1 focus:ring-accent"
+				class="w-12 px-1 py-1 text-xs text-center font-medium bg-base-100 border border-base-300 rounded-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
 				title="Font Size (pt)"
 			/>
 			<button
 				type="button"
 				@mousedown.prevent="saveEditorSelection(); setFontSize(Math.min(72, currentFontSize + 1))"
-				class="p-1.5 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded transition-colors"
+				class="p-1.5 text-base-content/60 hover:text-base-content hover:bg-base-200 rounded-sm transition-colors"
 				title="Increase font size"
 			>
-				<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+				<i data-lucide="plus" class="text-xs"></i>
 			</button>
 		</div>
-		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+
 		<!-- Color Picker -->
-		<div class="flex items-center gap-1">
+		<div class="flex items-center gap-1 border-r border-base-200 pr-2 mr-2">
 			<!-- Quick colors -->
-			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#000000')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #000000" title="Black"></button>
-			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#EF4444')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #EF4444" title="Red"></button>
-			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#3B82F6')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #3B82F6" title="Blue"></button>
-			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#22C55E')" class="w-5 h-5 rounded border border-white/20 hover:scale-110 transition-transform" style="background-color: #22C55E" title="Green"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#000000')" class="w-4 h-4 rounded-full border border-base-300 hover:scale-110 transition-transform shadow-sm" style="background-color: #000000" title="Black"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#DC2626')" class="w-4 h-4 rounded-full border border-base-300 hover:scale-110 transition-transform shadow-sm" style="background-color: #DC2626" title="Red"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#2563EB')" class="w-4 h-4 rounded-full border border-base-300 hover:scale-110 transition-transform shadow-sm" style="background-color: #2563EB" title="Blue"></button>
+			<button type="button" @mousedown.prevent="saveEditorSelection(); setTextColor('#16A34A')" class="w-4 h-4 rounded-full border border-base-300 hover:scale-110 transition-transform shadow-sm" style="background-color: #16A34A" title="Green"></button>
 			<!-- Custom color picker -->
-			<div class="relative">
+			<div class="relative flex items-center">
 				<input
 					type="color"
 					:value="currentTextColor"
 					@focus="saveEditorSelection()"
 					@input="setTextColor($event.target.value)"
-					class="w-6 h-6 rounded cursor-pointer border border-white/20 bg-transparent"
+					class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent overflow-hidden"
 					title="Custom color"
 				/>
 			</div>
 		</div>
-		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+
+		<!-- Alignment -->
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('justifyLeft')"
-			:class="alignment === 'left' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="alignment === 'left' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center"
 			title="Align Left"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+			<i data-lucide="align-left" class="text-xs"></i>
 		</button>
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('justifyCenter')"
-			:class="alignment === 'center' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="alignment === 'center' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center"
 			title="Align Center"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M4 18h16"></path></svg>
+			<i data-lucide="align-center" class="text-xs"></i>
 		</button>
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('justifyRight')"
-			:class="alignment === 'right' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="alignment === 'right' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center"
 			title="Align Right"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 12h10M4 18h16"></path></svg>
+			<i data-lucide="align-right" class="text-xs"></i>
 		</button>
 		<button
 			type="button"
 			@mousedown.prevent="execCommand('justifyFull')"
-			:class="alignment === 'justify' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-			class="p-2 hover:bg-white/10 rounded transition-colors"
+			:class="alignment === 'justify' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+			class="p-2 rounded-sm transition-colors w-8 h-8 flex items-center justify-center"
 			title="Justify"
 		>
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+			<i data-lucide="align-justify" class="text-xs"></i>
 		</button>
-		<div class="w-px h-6 bg-white/10 mx-2 self-center"></div>
+		
+		<div class="w-px h-6 bg-base-200 mx-2 self-center"></div>
+		
 		<!-- View Mode Toggle -->
-		<div class="flex items-center bg-white/5 rounded-lg p-0.5">
+		<div class="flex items-center">
 			<button
 				type="button"
 				@click="viewMode = 'paginated'"
-				:class="viewMode === 'paginated' ? 'bg-accent/20 text-accent' : 'text-muted-foreground hover:text-foreground'"
-				class="px-3 py-1 text-xs font-medium rounded-md transition-colors"
+				:class="viewMode === 'paginated' ? 'bg-primary/10 text-primary' : 'text-base-content/60 hover:text-base-content hover:bg-base-200'"
+				class="px-2 py-1 text-xs font-medium rounded-sm transition-colors flex items-center gap-1"
 			>
+				<i data-lucide="file-text"></i>
 				{ i18n.T(ctx, "templates.view_paginated") }
 			</button>
 		</div>

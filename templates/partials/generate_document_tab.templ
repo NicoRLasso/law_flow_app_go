@@ -9,23 +9,25 @@ import (
 templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates []models.DocumentTemplate, generatedDocs []models.GeneratedDocument, currentPage int, totalPages int, limit int, total int) {
 	<div class="space-y-6" x-data="{ selectedTemplate: '', showPreview: false }">
 		<!-- Template Selection -->
-		<div class="glass-panel rounded-2xl p-4 md:p-6 border border-white/10">
-			<h3 class="text-lg font-semibold mb-4">{ i18n.T(ctx, "templates.generate") }</h3>
+		<div class="bg-base-100 rounded-sm border border-base-200 p-4 md:p-6">
+			<h3 class="text-lg font-serif font-bold text-base-content mb-4">{ i18n.T(ctx, "templates.generate") }</h3>
 			if len(templates) == 0 {
 				<div class="text-center py-8">
-					<svg class="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-					</svg>
-					<p class="text-muted-foreground">{ i18n.T(ctx, "templates.no_templates") }</p>
-					<p class="text-sm text-muted-foreground mt-2">{ i18n.T(ctx, "templates.create_first") }</p>
+					<div class="w-12 h-12 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+						<i data-lucide="file-text" class="text-xl"></i>
+					</div>
+					<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "templates.no_templates") }</p>
+					<p class="text-sm text-base-content/40 mt-2">{ i18n.T(ctx, "templates.create_first") }</p>
 				</div>
 			} else {
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-					<div>
-						<label class="block text-sm font-medium text-foreground mb-2">{ i18n.T(ctx, "templates.select_template") }</label>
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "templates.select_template") }</span>
+						</label>
 						<select
 							x-model="selectedTemplate"
-							class="input-field w-full"
+							class="select select-bordered w-full rounded-sm focus:select-primary"
 						>
 							<option value="">{ i18n.T(ctx, "templates.select_template") }...</option>
 							for _, t := range templates {
@@ -42,31 +44,26 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 							hx-target="#template-preview-content"
 							hx-swap="innerHTML"
 							hx-trigger="click"
-							class="btn-secondary flex-1"
+							class="btn btn-neutral rounded-sm gap-2 flex-1"
 						>
-							<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-							</svg>
+							<i data-lucide="eye"></i>
 							{ i18n.T(ctx, "templates.preview") }
 						</button>
 					</div>
 				</div>
 				<!-- Preview Panel -->
 				<div x-show="showPreview" x-collapse class="mt-4">
-					<div class="border border-white/10 rounded-xl overflow-hidden">
-						<div class="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10">
-							<span class="text-sm font-medium">{ i18n.T(ctx, "templates.preview") }</span>
-							<button type="button" @click="showPreview = false" class="p-1 hover:bg-white/10 rounded transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-								</svg>
+					<div class="border border-base-200 rounded-sm overflow-hidden">
+						<div class="flex items-center justify-between px-4 py-2 bg-base-200/50 border-b border-base-200">
+							<span class="text-sm font-bold">{ i18n.T(ctx, "templates.preview") }</span>
+							<button type="button" @click="showPreview = false" class="btn btn-primary btn-xs btn-circle">
+								<i data-lucide="x"></i>
 							</button>
 						</div>
-						<div id="template-preview-content" class="p-4 bg-white/5 min-h-[200px] max-h-[400px] overflow-y-auto prose prose-invert max-w-none">
-							<p class="text-muted-foreground">{ i18n.T(ctx, "common.loading") }</p>
+						<div id="template-preview-content" class="p-4 bg-base-100 min-h-[200px] max-h-[400px] overflow-y-auto prose max-w-none">
+							<p class="text-base-content/60">{ i18n.T(ctx, "common.loading") }</p>
 						</div>
-						<div class="px-4 py-3 bg-white/5 border-t border-white/10 flex flex-col sm:flex-row gap-2 sm:justify-end">
+						<div class="px-4 py-3 bg-base-200/30 border-t border-base-200 flex flex-col sm:flex-row gap-2 sm:justify-end">
 							<form
 								hx-post={ "/api/cases/" + caseRecord.ID + "/generate" }
 								hx-target="#generated-docs-container"
@@ -78,12 +75,10 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 									type="text"
 									name="name"
 									placeholder={ i18n.T(ctx, "templates.document_name") }
-									class="input-field text-sm flex-1"
+									class="input input-bordered input-sm w-full sm:w-auto rounded-sm focus:input-primary"
 								/>
-								<button type="submit" class="btn-primary text-sm">
-									<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-									</svg>
+								<button type="submit" class="btn btn-primary btn-sm rounded-sm gap-2">
+									<i data-lucide="file-down"></i>
 									{ i18n.T(ctx, "templates.generate_pdf") }
 								</button>
 							</form>
@@ -93,9 +88,9 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 			}
 		</div>
 		<!-- Generated Documents History -->
-		<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
-			<div class="px-4 md:px-6 py-4 border-b border-white/10">
-				<h3 class="font-semibold">{ i18n.T(ctx, "templates.generated_documents") }</h3>
+		<div class="bg-base-100 rounded-sm border border-base-200 overflow-hidden">
+			<div class="px-4 md:px-6 py-4 border-b border-base-200 bg-base-200/30">
+				<h3 class="font-serif font-bold text-base-content">{ i18n.T(ctx, "templates.generated_documents") }</h3>
 			</div>
 			<div id="generated-docs-container">
 				@GeneratedDocumentsTable(ctx, generatedDocs, caseRecord.ID, currentPage, totalPages, limit, total)
@@ -105,7 +100,7 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 }
 
 templ TemplatePreview(ctx context.Context, renderedContent string) {
-	<div class="prose prose-invert max-w-none text-sm">
+	<div class="prose max-w-none text-sm">
 		@templ.Raw(renderedContent)
 	</div>
 }

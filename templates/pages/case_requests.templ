@@ -11,25 +11,27 @@ import (
 
 templ CaseRequests(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/case-requests")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full space-y-6">
 					<!-- Header -->
-					<div class="mb-10">
-						<p class="text-sm text-muted-foreground mb-2">{ i18n.T(ctx, "dashboard.overview") }</p>
-						<h1 class="text-3xl font-bold text-gradient mb-2">{ i18n.T(ctx, "case_requests.title") }</h1>
-						<p class="text-muted-foreground">
+					<div class="mb-8 border-b border-base-300 pb-6">
+						<p class="text-xs font-bold uppercase tracking-widest text-base-content/50 mb-2">{ i18n.T(ctx, "dashboard.overview") }</p>
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "case_requests.title") }</h1>
+						<p class="text-base-content/60 font-sans">
 							{ i18n.T(ctx, "case_requests.description") }
 						</p>
 					</div>
 					<!-- Case Requests Filters -->
-					@partials.CaseRequestFilters(ctx)
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200">
+						@partials.CaseRequestFilters(ctx)
+					</div>
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
-						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+						<span class="loading loading-spinner loading-lg text-primary"></span>
 					</div>
 					<!-- Case Requests Table -->
 					<div
@@ -37,6 +39,7 @@ templ CaseRequests(ctx context.Context, title string, csrfToken string, user *mo
 						hx-get="/api/case-requests"
 						hx-trigger="load, reload-case-requests from:body"
 						hx-indicator="#loading-indicator"
+						class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
 					></div>
 				</div>
 			</main>

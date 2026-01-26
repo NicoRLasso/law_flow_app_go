@@ -8,20 +8,20 @@ import (
 
 templ Header(ctx context.Context, template models.DocumentTemplate) {
 	<!-- Top Bar: Actions -->
-	<div class="glass-panel border-b border-white/10 px-6 py-3 flex items-center justify-between z-20 bg-[#0A0A0B]/90 backdrop-blur-xl">
+	<div class="bg-base-100 border-b border-base-200 px-6 py-3 flex items-center justify-between z-20 shadow-sm">
 		<div class="flex items-center gap-4">
 			<a
 				href="/templates"
-				class="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
+				class="flex items-center gap-2 text-base-content/60 hover:text-primary transition-colors text-sm font-medium"
 			>
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+				<i data-lucide="chevron-left"></i>
 				{ i18n.T(ctx, "templates.return_list") }
 			</a>
-			<div class="h-6 w-px bg-white/10"></div>
+			<div class="h-6 w-px bg-base-300"></div>
 			<div class="flex flex-col">
-				<h2 class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 truncate max-w-[300px]">{ template.Name }</h2>
+				<h2 class="font-serif font-bold text-lg text-base-content truncate max-w-[300px]">{ template.Name }</h2>
 				<div class="flex items-center gap-2">
-					<span class="text-[10px] uppercase tracking-wider font-semibold text-white/40">
+					<span class="text-[10px] uppercase tracking-wider font-bold text-base-content/40">
 						{ template.PageSize } • { template.PageOrientation }
 					</span>
 				</div>
@@ -29,23 +29,23 @@ templ Header(ctx context.Context, template models.DocumentTemplate) {
 		</div>
 		<div class="flex items-center gap-3">
 			<!-- Page Indicator -->
-			<span x-show="viewMode === 'paginated'" class="text-xs font-mono text-white/50 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+			<span x-show="viewMode === 'paginated'" class="text-xs font-mono text-base-content/50 px-3 py-1.5 rounded-sm bg-base-200 border border-base-300">
 				<span x-text={ "`" + i18n.T(ctx, "templates.page") + " ${currentPage} / ${totalPages}`" }></span>
 			</span>
 			<button
 				hx-get={ "/api/templates/" + template.ID + "/metadata/modal" }
 				hx-target="body"
 				hx-swap="beforeend"
-				class="btn-secondary px-3 py-1.5 text-sm font-medium transition-colors"
+				class="btn btn-sm btn-primary"
 			>
 				{ i18n.T(ctx, "templates.edit_metadata") }
 			</button>
 			<button
 				type="button"
 				onclick="saveTemplateContent()"
-				class="px-6 py-2 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white rounded-xl text-sm font-medium shadow-lg shadow-accent/20 hover:shadow-accent/40 transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2"
+				class="btn btn-sm btn-primary rounded-sm gap-2"
 			>
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+				<i data-lucide="save"></i>
 				{ i18n.T(ctx, "common.save") }
 			</button>
 		</div>

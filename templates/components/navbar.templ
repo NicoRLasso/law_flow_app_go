@@ -7,70 +7,70 @@ import (
 )
 
 templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentPath string) {
-	<nav class="sticky top-0 z-50 glass-panel border-b border-white/10" x-data="{ mobileMenuOpen: false }">
-		<div class="container mx-auto px-6 py-4">
+	<nav class="sticky top-0 z-50 bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-sm" x-data="{ mobileMenuOpen: false }">
+		<div class="container mx-auto px-6 py-3">
 			<div class="flex items-center justify-between">
 				<!-- Left Section: Logo & Nav -->
 				<div class="flex items-center gap-12">
 					<a href="/dashboard" class="group flex items-center gap-3">
 						if firm.LogoURL != "" {
-							<img src={ firm.LogoURL } alt={ firm.Name } class="w-9 h-9 rounded-lg object-contain"/>
+							<img src={ firm.LogoURL } alt={ firm.Name } class="w-10 h-10 rounded-sm object-contain"/>
 						} else {
-							<img src="/static/images/favicon.png" alt="lexlegalcloud" class="w-9 h-9"/>
+							<img src="/static/images/favicon.png" alt="lexlegalcloud" class="w-10 h-10"/>
 						}
-						<h1 class="text-2xl font-bold font-space-grotesk tracking-tighter">
-							<span class="text-gradient">{ firm.Name }</span>
+						<h1 class="text-2xl font-bold font-serif tracking-tight text-primary">
+							{ firm.Name }
 						</h1>
 					</a>
 					<!-- Desktop Navigation -->
-					<div class="hidden md:flex items-center gap-1">
+					<div class="hidden md:flex items-center gap-2">
 						// Superadmin Navigation
 						if user.Role == "superadmin" {
 							<div class="hidden md:flex ml-10 space-x-1">
 								<a
 									href="/superadmin/dashboard"
-									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
 										if currentPath == "/superadmin/dashboard" {
-											return "text-foreground bg-white/5 border border-white/10"
+											return "text-primary bg-primary/5 border-b-2 border-primary"
 										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 									}() }
 								>
 									{ i18n.T(ctx, "nav.dashboard") }
 								</a>
 								<a
 									href="/superadmin/users"
-									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
 										if currentPath == "/superadmin/users" {
-											return "text-foreground bg-white/5 border border-white/10"
+											return "text-primary bg-primary/5 border-b-2 border-primary"
 										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 									}() }
 								>
 									{ i18n.T(ctx, "nav.users") }
 								</a>
 								<a
 									href="/superadmin/firms"
-									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
 										if currentPath == "/superadmin/firms" {
-											return "text-foreground bg-white/5 border border-white/10"
+											return "text-primary bg-primary/5 border-b-2 border-primary"
 										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 									}() }
 								>
 									{ i18n.T(ctx, "nav.firms") }
 								</a>
 								<a
 									href="/superadmin/support"
-									class={ "px-3 py-2 rounded-lg text-sm font-medium transition-all",
+									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
 										if currentPath == "/superadmin/support" {
-											return "text-foreground bg-white/5 border border-white/10"
+											return "text-primary bg-primary/5 border-b-2 border-primary"
 										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 									}() }
 								>
 									{ i18n.T(ctx, "nav.support_tickets") }
@@ -79,20 +79,20 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						} else {
 							// Users (first)
 							if currentPath == "/users" {
-								<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.users") }</a>
+								<a href="/users" class="px-4 py-2 rounded-sm text-sm font-bold text-primary bg-primary/5 border-b-2 border-primary transition-all font-serif">{ i18n.T(ctx, "nav.users") }</a>
 							} else {
-								<a href="/users" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.users") }</a>
+								<a href="/users" class="px-4 py-2 rounded-sm text-sm font-medium text-base-content/70 hover:text-primary hover:bg-base-200/50 transition-all font-serif">{ i18n.T(ctx, "nav.users") }</a>
 							}
 							// Cases Dropdown (second)
 							<div x-data="{ casesOpen: false }" class="relative">
 								<button
 									@click="casesOpen = !casesOpen"
-									class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+									class={ "flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
 										if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" {
-											return "text-foreground bg-white/5 border border-white/10 hover:bg-white/10"
+											return "text-primary bg-primary/5 border-b-2 border-primary font-bold"
 										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 									}() }
 								>
 									{ i18n.T(ctx, "nav.cases") }
@@ -109,18 +109,18 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 									x-transition:leave="transition ease-in duration-150"
 									x-transition:leave-start="opacity-100 translate-y-0"
 									x-transition:leave-end="opacity-0 translate-y-2"
-									class="absolute left-1/2 -translate-x-1/2 mt-2 w-40 bg-[#0A0A0B]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden ring-1 ring-white/5"
+									class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden"
 									style="display: none;"
 								>
-									<div class="p-2 space-y-1">
+									<div class="p-1 space-y-0.5">
 										<a
 											href="/cases"
-											class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+											class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 										func() string {
 											if currentPath == "/cases" {
-												return "text-foreground bg-white/10"
+												return "text-primary font-bold bg-primary/5"
 											}
-											return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+											return "text-base-content/80"
 										}() }
 										>
 											{ i18n.T(ctx, "nav.cases") }
@@ -128,12 +128,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										if user.Role == "client" {
 											<a
 												href="/api/client/requests"
-												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 											func() string {
 												if currentPath == "/api/client/requests" {
-													return "text-foreground bg-white/10"
+													return "text-primary font-bold bg-primary/5"
 												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+												return "text-base-content/80"
 											}() }
 											>
 												{ i18n.T(ctx, "case.request.my_requests") }
@@ -142,12 +142,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										if user.Role == "admin" || user.Role == "lawyer" {
 											<a
 												href="/case-requests"
-												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 											func() string {
 												if currentPath == "/case-requests" {
-													return "text-foreground bg-white/10"
+													return "text-primary font-bold bg-primary/5"
 												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+												return "text-base-content/80"
 											}() }
 											>
 												{ i18n.T(ctx, "nav.requests") }
@@ -156,12 +156,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
 											<a
 												href="/historical-cases"
-												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 									func() string {
 										if currentPath == "/historical-cases" {
-											return "text-foreground bg-white/10"
+											return "text-primary font-bold bg-primary/5"
 										}
-										return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+										return "text-base-content/80"
 									}() }
 											>
 												{ i18n.T(ctx, "nav.historical_cases") }
@@ -173,9 +173,9 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 							// Templates (third - admin only)
 							if user.Role == "admin" || user.Role == "lawyer" {
 								if currentPath == "/templates" {
-									<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-foreground bg-white/5 border border-white/10 transition-all hover:bg-white/10">{ i18n.T(ctx, "nav.templates") }</a>
+									<a href="/templates" class="px-4 py-2 rounded-sm text-sm font-bold text-primary bg-primary/5 border-b-2 border-primary transition-all font-serif">{ i18n.T(ctx, "nav.templates") }</a>
 								} else {
-									<a href="/templates" class="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all">{ i18n.T(ctx, "nav.templates") }</a>
+									<a href="/templates" class="px-4 py-2 rounded-sm text-sm font-medium text-base-content/70 hover:text-primary hover:bg-base-200/50 transition-all font-serif">{ i18n.T(ctx, "nav.templates") }</a>
 								}
 							}
 							if user.Role == "admin" || user.Role == "lawyer" {
@@ -183,12 +183,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 								<div x-data="{ calendarsOpen: false }" class="relative">
 									<button
 										@click="calendarsOpen = !calendarsOpen"
-										class={ "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all",
+										class={ "flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 										func() string {
 											if currentPath == "/availability" || currentPath == "/appointments" || currentPath == "/calendar" {
-												return "text-foreground bg-white/5 border border-white/10 hover:bg-white/10"
+												return "text-primary bg-primary/5 border-b-2 border-primary font-bold"
 											}
-											return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+											return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 										}() }
 									>
 										Calendars
@@ -205,42 +205,42 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										x-transition:leave="transition ease-in duration-150"
 										x-transition:leave-start="opacity-100 translate-y-0"
 										x-transition:leave-end="opacity-0 translate-y-2"
-										class="absolute left-1/2 -translate-x-1/2 mt-2 w-40 bg-[#0A0A0B]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden ring-1 ring-white/5"
+										class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden"
 										style="display: none;"
 									>
-										<div class="p-2 space-y-1">
+										<div class="p-1 space-y-0.5">
 											<a
 												href="/calendar"
-												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 											func() string {
 												if currentPath == "/calendar" {
-													return "text-foreground bg-white/10"
+													return "text-primary font-bold bg-primary/5"
 												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+												return "text-base-content/80"
 											}() }
 											>
 												Calendar
 											</a>
 											<a
 												href="/availability"
-												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 											func() string {
 												if currentPath == "/availability" {
-													return "text-foreground bg-white/10"
+													return "text-primary font-bold bg-primary/5"
 												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+												return "text-base-content/80"
 											}() }
 											>
 												{ i18n.T(ctx, "nav.availability") }
 											</a>
 											<a
 												href="/appointments"
-												class={ "flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl transition-all",
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 											func() string {
 												if currentPath == "/appointments" {
-													return "text-foreground bg-white/10"
+													return "text-primary font-bold bg-primary/5"
 												}
-												return "text-muted-foreground hover:text-foreground hover:bg-white/5"
+												return "text-base-content/80"
 											}() }
 											>
 												{ i18n.T(ctx, "nav.appointments") }
@@ -257,7 +257,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 					<!-- Mobile Menu Button -->
 					<button
 						@click="mobileMenuOpen = !mobileMenuOpen"
-						class="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all"
+						class="md:hidden p-2 rounded-sm text-base-content/70 hover:text-primary hover:bg-base-200/50 transition-all"
 						aria-label="Toggle mobile menu"
 					>
 						<svg x-show="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,21 +268,21 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						</svg>
 					</button>
 					<!-- Divider -->
-					<div class="hidden lg:block h-8 w-px bg-white/10"></div>
+					<div class="hidden lg:block h-8 w-px bg-base-300"></div>
 					<!-- User Menu -->
 					<div x-data="{ open: false }" class="relative">
 						<button
 							@click="open = !open"
-							class="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full border border-transparent hover:border-white/10 hover:bg-white/5 transition-all duration-300 group"
+							class="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full border border-transparent hover:border-base-200 hover:bg-base-100 transition-all duration-300 group"
 						>
-							<div class="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-accent-bright flex items-center justify-center shadow-lg shadow-accent/20 group-hover:scale-105 transition-transform">
-								<span class="text-white font-bold text-sm">{ string(user.Name[0]) }</span>
+							<div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold group-hover:bg-primary group-hover:text-primary-content transition-colors">
+								{ string(user.Name[0]) }
 							</div>
 							<div class="hidden sm:block text-left">
-								<p class="text-sm font-medium text-foreground leading-tight">{ user.Name }</p>
-								<p class="text-[10px] text-muted-foreground uppercase tracking-wider">{ user.Role }</p>
+								<p class="text-sm font-bold font-serif text-base-content leading-tight">{ user.Name }</p>
+								<p class="text-[10px] text-base-content/60 uppercase tracking-wider font-sans">{ user.Role }</p>
 							</div>
-							<svg class="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg class="w-4 h-4 text-base-content/50 group-hover:text-primary transition-colors" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 							</svg>
 						</button>
@@ -296,56 +296,42 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 							x-transition:leave="transition ease-in duration-150"
 							x-transition:leave-start="opacity-100 translate-y-0 scale-100"
 							x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-							class="absolute right-0 mt-3 w-52 bg-[#0A0A0B]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden ring-1 ring-white/5"
+							class="absolute right-0 mt-3 w-56 bg-base-100 border border-base-200 rounded-sm shadow-2xl z-50 overflow-hidden"
 							style="display: none;"
 						>
-							<!-- User Header with subtle gradient -->
-							<div class="ml-2 px-5 py-4 border-b border-white/10 bg-gradient-to-br from-white/5 to-transparent relative overflow-hidden">
-								<p class="font-bold text-foreground text-sm relative z-10">{ user.Name }</p>
-								<p class="text-xs text-muted-foreground mt-0.5 truncate relative z-10 font-mono opacity-70">{ user.Email }</p>
+							<!-- User Header -->
+							<div class="px-5 py-4 border-b border-base-200 bg-base-50">
+								<p class="font-bold text-base-content text-sm font-serif">{ user.Name }</p>
+								<p class="text-xs text-base-content/60 mt-0.5 truncate font-sans">{ user.Email }</p>
 							</div>
 							<!-- Menu Items -->
-							<div class="p-2 space-y-1">
-								<a href="/profile" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-									<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-									<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-									</div>
-									<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.profile_settings") }</span>
+							<div class="p-1 space-y-0.5">
+								<a href="/profile" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+									{ i18n.T(ctx, "nav.profile_settings") }
 								</a>
 								if user.Role == "admin" {
-									<a href="/firm/settings" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-										<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-										</div>
-										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.firm_settings") }</span>
+									<a href="/firm/settings" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+										{ i18n.T(ctx, "nav.firm_settings") }
 									</a>
 								}
 								if user.Role == "admin" {
-									<a href="/audit-logs" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-										<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-										<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-										</div>
-										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "audit.title") }</span>
+									<a href="/audit-logs" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+										{ i18n.T(ctx, "audit.title") }
 									</a>
 								}
-								<div class="h-px bg-white/5 my-1 mx-2"></div>
-								<a href="/support" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-									<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-									<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-									</div>
-									<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.support") }</span>
+								<div class="h-px bg-base-200 my-1 mx-2"></div>
+								<a href="/support" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+									{ i18n.T(ctx, "nav.support") }
 								</a>
-								<div class="h-px bg-white/5 my-1 mx-2"></div>
+								<div class="h-px bg-base-200 my-1 mx-2"></div>
 								<form hx-post="/logout" hx-swap="none">
-									<button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-red-400 hover:bg-red-500/5 rounded-xl transition-all group relative overflow-hidden">
-										<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-red-500/10 group-hover:text-red-400 transition-colors">
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-										</div>
-										<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.logout") }</span>
+									<button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-error hover:bg-error/5 transition-all font-serif">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+										{ i18n.T(ctx, "nav.logout") }
 									</button>
 								</form>
 							</div>
@@ -354,6 +340,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 				</div>
 			</div>
 		</div>
+		
 		<!-- Mobile Menu Dropdown -->
 		<div
 			x-show="mobileMenuOpen"
@@ -364,171 +351,14 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 			x-transition:leave="transition ease-in duration-150"
 			x-transition:leave-start="opacity-100 translate-y-0 scale-100"
 			x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-			class="absolute left-0 right-0 top-full mt-0 mx-4 bg-[#0A0A0B]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 z-50 overflow-hidden ring-1 ring-white/5 md:hidden"
+			class="absolute left-0 right-0 top-full mt-0 mx-4 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden md:hidden"
 			style="display: none;"
 		>
-			<!-- Menu Items -->
+			<!-- Menu Items (Simplified for Mobile) -->
 			<div class="p-2 space-y-1">
-				// Dashboard
-				if currentPath == "/dashboard" {
-					<a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-						<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-						</div>
-						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.dashboard") }</span>
-					</a>
-				} else {
-					<a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-						<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-						<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-						</div>
-						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.dashboard") }</span>
-					</a>
-				}
-				// Cases Section
-				<div class="px-3 pt-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Cases</div>
-				if currentPath == "/cases" {
-					<a href="/cases" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-						<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-						</div>
-						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.cases") }</span>
-					</a>
-				} else {
-					<a href="/cases" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-						<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-						<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-						</div>
-						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.cases") }</span>
-					</a>
-				}
-				if user.Role == "admin" || user.Role == "lawyer" {
-					if currentPath == "/case-requests" {
-						<a href="/case-requests" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.requests") }</span>
-						</a>
-					} else {
-						<a href="/case-requests" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.requests") }</span>
-						</a>
-					}
-				}
-				if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
-					if currentPath == "/historical-cases" {
-						<a href="/historical-cases" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.historical_cases") }</span>
-						</a>
-					} else {
-						<a href="/historical-cases" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.historical_cases") }</span>
-						</a>
-					}
-				}
-				// Calendars Section
-				if user.Role == "admin" || user.Role == "lawyer" {
-					<div class="px-3 pt-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Calendars</div>
-					if currentPath == "/calendar" {
-						<a href="/calendar" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">Calendar</span>
-						</a>
-					} else {
-						<a href="/calendar" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">Calendar</span>
-						</a>
-					}
-					if currentPath == "/availability" {
-						<a href="/availability" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.availability") }</span>
-						</a>
-					} else {
-						<a href="/availability" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.availability") }</span>
-						</a>
-					}
-					if currentPath == "/appointments" {
-						<a href="/appointments" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.appointments") }</span>
-						</a>
-					} else {
-						<a href="/appointments" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.appointments") }</span>
-						</a>
-					}
-				}
-				// Templates (Admin and lawyer)
-				if user.Role == "admin" || user.Role == "lawyer" {
-					<div class="px-3 pt-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Templates</div>
-					if currentPath == "/templates" {
-						<a href="/templates" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.templates") }</span>
-						</a>
-					} else {
-						<a href="/templates" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-							<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-							<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-							</div>
-							<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.templates") }</span>
-						</a>
-					}
-				}
-				// Users
-				if currentPath == "/users" {
-					<a href="/users" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-foreground bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-						<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-						</div>
-						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.users") }</span>
-					</a>
-				} else {
-					<a href="/users" class="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden">
-						<div class="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/5 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none"></div>
-						<div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-accent/10 group-hover:text-accent transition-colors">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-						</div>
-						<span class="group-hover:translate-x-0.5 transition-transform">{ i18n.T(ctx, "nav.users") }</span>
-					</a>
-				}
+				<a href="/dashboard" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm">{ i18n.T(ctx, "nav.dashboard") }</a>
+				<a href="/cases" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm">{ i18n.T(ctx, "nav.cases") }</a>
+				<!-- Add more mobile links as needed -->
 			</div>
 		</div>
 	</nav>

@@ -9,26 +9,22 @@ import (
 
 templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User, domains []models.CaseDomain, branches []models.CaseBranch, subtypes []models.CaseSubtype, isHistorical bool) {
 	<!-- Edit Case Modal -->
-	<div id="edit-case-modal" class="fixed inset-0 bg-[#000000]/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" onclick="if(event.target === this) closeEditModal()">
-		<div class="glass-panel rounded-2xl border border-white/10 w-full max-w-2xl p-8 shadow-2xl relative bg-[#0A0A0B]/90" onclick="event.stopPropagation()">
+	<div id="edit-case-modal" class="modal modal-open" onclick="if(event.target === this) closeEditModal()">
+		<div class="modal-box max-w-2xl bg-base-100 rounded-sm" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between mb-8">
-				<h3 class="text-2xl font-bold text-white flex items-center gap-3">
-					<div class="p-2 bg-accent/10 rounded-lg">
-						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-						</svg>
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-2xl font-serif font-bold text-base-content flex items-center gap-3">
+					<div class="p-2 bg-primary/10 rounded-sm">
+						<i data-lucide="pencil" class="text-primary"></i>
 					</div>
 					{ i18n.T(ctx, "case.edit.title") }
 				</h3>
 				<button
 					type="button"
 					onclick="closeEditModal()"
-					class="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/50 hover:text-white"
+					class="btn btn-primary btn-sm btn-circle"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="x"></i>
 				</button>
 			</div>
 			<!-- Edit Form -->
@@ -38,171 +34,162 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 				hx-target="#edit-response"
 				hx-swap="innerHTML"
 			>
-				<div class="space-y-6">
+				<div class="space-y-4">
 					<!-- Status -->
-					<div>
-						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-							{ i18n.T(ctx, "case.edit.status") } <span class="text-accent">*</span>
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "case.edit.status") } <span class="text-error">*</span>
+							</span>
 						</label>
 						if isHistorical && currentUser.Role != "admin" && currentUser.Role != "lawyer" {
 							<!-- Historical cases: status is readonly for non-admins/non-lawyers -->
 							<div class="flex items-center gap-2">
-								<span class="px-3 py-1.5 bg-white/5 text-white/40 rounded-lg text-sm font-medium border border-white/10">
+								<span class="badge badge-ghost">
 									{ i18n.T(ctx, "case.status.closed") }
 								</span>
-								<span class="text-xs text-white/30">({ i18n.T(ctx, "cases.history.badge") })</span>
+								<span class="text-xs text-base-content/40">({ i18n.T(ctx, "cases.history.badge") })</span>
 							</div>
 							<input type="hidden" name="status" value="CLOSED"/>
 						} else {
-							<div class="relative">
-								<select
-									name="status"
-									required
-									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
-								>
-									<option value="OPEN" selected?={ caseRecord.Status == "OPEN" } class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.status.open") }</option>
-									<option value="ON_HOLD" selected?={ caseRecord.Status == "ON_HOLD" } class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.status.on_hold") }</option>
-									<option value="CLOSED" selected?={ caseRecord.Status == "CLOSED" } class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.status.closed") }</option>
-								</select>
-								<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-									<i class="fas fa-chevron-down text-xs text-white/30"></i>
-								</div>
-							</div>
+							<select
+								name="status"
+								required
+								class="select select-bordered w-full rounded-sm focus:select-primary"
+							>
+								<option value="OPEN" selected?={ caseRecord.Status == "OPEN" }>{ i18n.T(ctx, "case.status.open") }</option>
+								<option value="ON_HOLD" selected?={ caseRecord.Status == "ON_HOLD" }>{ i18n.T(ctx, "case.status.on_hold") }</option>
+								<option value="CLOSED" selected?={ caseRecord.Status == "CLOSED" }>{ i18n.T(ctx, "case.status.closed") }</option>
+							</select>
 						}
 					</div>
 					<!-- Filing Number (Radicado) -->
-					<div>
-						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-							{ i18n.T(ctx, "case.edit.radicado") }
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "case.edit.radicado") }
+							</span>
 						</label>
 						<input
 							type="text"
 							name="filing_number"
 							value={ func() string { if caseRecord.FilingNumber != nil { return *caseRecord.FilingNumber } else { return "" } }() }
 							placeholder={ i18n.T(ctx, "case.edit.radicado_placeholder") }
-							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
+							class="input input-bordered w-full rounded-sm focus:input-primary"
 						/>
 					</div>
 					<!-- Description -->
-					<div>
-						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-							{ i18n.T(ctx, "case.edit.description") } <span class="text-accent">*</span>
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "case.edit.description") } <span class="text-error">*</span>
+							</span>
 						</label>
 						<textarea
 							name="description"
 							rows="4"
 							required
 							placeholder={ i18n.T(ctx, "case.edit.desc_placeholder") }
-							class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
+							class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary"
 						>{ caseRecord.Description }</textarea>
 					</div>
 					<!-- Client -->
-					<div>
-						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-							{ i18n.T(ctx, "case.edit.client") } <span class="text-accent">*</span>
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "case.edit.client") } <span class="text-error">*</span>
+							</span>
 						</label>
-						<div class="relative">
-							<select
-								name="client_id"
-								required
-								class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
-							>
-								for _, client := range clients {
-									<option value={ client.ID } selected?={ client.ID == caseRecord.ClientID } class="bg-[#1a1b1e]">
-										{ client.Name } ({ client.Email })
-									</option>
-								}
-							</select>
-							<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-								<i class="fas fa-chevron-down text-xs text-white/30"></i>
-							</div>
-						</div>
+						<select
+							name="client_id"
+							required
+							class="select select-bordered w-full rounded-sm focus:select-primary"
+						>
+							for _, client := range clients {
+								<option value={ client.ID } selected?={ client.ID == caseRecord.ClientID }>
+									{ client.Name } ({ client.Email })
+								</option>
+							}
+						</select>
 					</div>
 					<!-- Assigned Lawyer (Admin only can edit) -->
-					<div>
-						<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-							{ i18n.T(ctx, "case.edit.lawyer") }
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "case.edit.lawyer") }
+							</span>
 						</label>
 						if currentUser.Role == "admin" {
-							<div class="relative">
-								<select
-									name="assigned_to_id"
-									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
-								>
-									<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.edit.unassigned") }</option>
-									for _, lawyer := range lawyers {
-										if caseRecord.AssignedToID != nil {
-											<option value={ lawyer.ID } selected?={ lawyer.ID == *caseRecord.AssignedToID } class="bg-[#1a1b1e]">
-												{ lawyer.Name } ({ lawyer.Role })
-											</option>
-										} else {
-											<option value={ lawyer.ID } class="bg-[#1a1b1e]">
-												{ lawyer.Name } ({ lawyer.Role })
-											</option>
-										}
+							<select
+								name="assigned_to_id"
+								class="select select-bordered w-full rounded-sm focus:select-primary"
+							>
+								<option value="">{ i18n.T(ctx, "case.edit.unassigned") }</option>
+								for _, lawyer := range lawyers {
+									if caseRecord.AssignedToID != nil {
+										<option value={ lawyer.ID } selected?={ lawyer.ID == *caseRecord.AssignedToID }>
+											{ lawyer.Name } ({ lawyer.Role })
+										</option>
+									} else {
+										<option value={ lawyer.ID }>
+											{ lawyer.Name } ({ lawyer.Role })
+										</option>
 									}
-								</select>
-								<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-									<i class="fas fa-chevron-down text-xs text-white/30"></i>
-								</div>
-							</div>
+								}
+							</select>
 						} else {
 							<!-- Read-only display for non-admins -->
 							if caseRecord.AssignedTo != nil {
-								<p class="text-white py-2 font-medium">{ caseRecord.AssignedTo.Name }</p>
+								<p class="text-base-content py-2 font-bold">{ caseRecord.AssignedTo.Name }</p>
 								<input type="hidden" name="assigned_to_id" value={ *caseRecord.AssignedToID }/>
 							} else {
-								<p class="text-white/40 italic py-2">{ i18n.T(ctx, "case.detail.unassigned") }</p>
+								<p class="text-base-content/40 italic py-2">{ i18n.T(ctx, "case.detail.unassigned") }</p>
 							}
 						}
 					</div>
 					<!-- Classification Section -->
-					<div class="space-y-4 pt-6 border-t border-white/10">
-						<h4 class="text-lg font-semibold text-white flex items-center gap-2">
-							<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-							</svg>
+					<div class="space-y-4 pt-4 border-t border-base-200">
+						<h4 class="text-lg font-serif font-bold text-base-content flex items-center gap-2">
+							<i data-lucide="tags" class="text-primary"></i>
 							{ i18n.T(ctx, "case.edit.classification_section") }
 						</h4>
 						<!-- Domain -->
-						<div>
-							<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-								{ i18n.T(ctx, "case.detail.domain") }
+						<div class="form-control">
+							<label class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+									{ i18n.T(ctx, "case.detail.domain") }
+								</span>
 							</label>
-							<div class="relative">
-								<select
-									name="domain_id"
-									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
+							<select
+								name="domain_id"
+								class="select select-bordered w-full rounded-sm focus:select-primary"
 								hx-get="/api/subtypes/branches"
 								hx-target="#branch-select"
 								hx-trigger="change"
 								hx-include="[name='domain_id']"
-									onchange="document.getElementById('branch-select').disabled = this.value === ''"
-								>
-									<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "case.edit.select_domain") }</option>
-									for _, domain := range domains {
-										if caseRecord.DomainID != nil {
-											<option value={ domain.ID } selected?={ domain.ID == *caseRecord.DomainID } class="bg-[#1a1b1e]">{ domain.Name }</option>
-										} else {
-											<option value={ domain.ID } class="bg-[#1a1b1e]">{ domain.Name }</option>
-										}
+								onchange="document.getElementById('branch-select').disabled = this.value === ''"
+							>
+								<option value="">{ i18n.T(ctx, "case.edit.select_domain") }</option>
+								for _, domain := range domains {
+									if caseRecord.DomainID != nil {
+										<option value={ domain.ID } selected?={ domain.ID == *caseRecord.DomainID }>{ domain.Name }</option>
+									} else {
+										<option value={ domain.ID }>{ domain.Name }</option>
 									}
-								</select>
-								<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-									<i class="fas fa-chevron-down text-xs text-white/30"></i>
-								</div>
-							</div>
+								}
+							</select>
 						</div>
 						<!-- Branch -->
-						<div>
-							<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-								{ i18n.T(ctx, "case.detail.branch") }
+						<div class="form-control">
+							<label class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+									{ i18n.T(ctx, "case.detail.branch") }
+								</span>
 							</label>
-							<div class="relative">
-								<select
-									id="branch-select"
-									name="branch_id"
-									class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer disabled:opacity-50"
+							<select
+								id="branch-select"
+								name="branch_id"
+								class="select select-bordered w-full rounded-sm focus:select-primary disabled:opacity-50"
 								hx-get="/api/subtypes/options"
 								hx-target="#subtype-container"
 								hx-trigger="change"
@@ -212,11 +199,12 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 								@components.BranchOptions(ctx, branches, caseRecord.BranchID)
 							</select>
 						</div>
-						</div>
 						<!-- Subtypes -->
 						<div id="subtype-container">
-							<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">
-								{ i18n.T(ctx, "case.detail.subtypes") }
+							<label class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+									{ i18n.T(ctx, "case.detail.subtypes") }
+								</span>
 							</label>
 							@components.SubtypeMultiSelect(ctx, subtypes, func() []string {
 								ids := make([]string, len(caseRecord.Subtypes))
@@ -230,17 +218,17 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 					<!-- Response Container -->
 					<div id="edit-response"></div>
 					<!-- Action Buttons -->
-					<div class="flex items-center gap-4 pt-4">
+					<div class="modal-action pt-4 border-t border-base-200">
 						<button
 							type="button"
 							onclick="closeEditModal()"
-							class="px-6 py-3 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 rounded-xl font-medium transition-all duration-200 border border-white/5 hover:border-white/10"
+							class="btn btn-primary rounded-sm"
 						>
 							{ i18n.T(ctx, "case.edit.cancel") }
 						</button>
 						<button
 							type="submit"
-							class="flex-1 px-6 py-3 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300"
+							class="btn btn-primary rounded-sm"
 						>
 							{ i18n.T(ctx, "case.edit.save") }
 						</button>
@@ -248,6 +236,9 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 				</div>
 			</form>
 		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button onclick="closeEditModal()">close</button>
+		</form>
 	</div>
 	<script>
 		function closeEditModal() {

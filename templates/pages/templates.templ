@@ -10,35 +10,33 @@ import (
 
 templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, categories []models.TemplateCategory) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			@components.Navbar(ctx, user, firm, "/templates")
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full ">
-					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full space-y-6">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-base-300 pb-6 mb-8">
 						<div>
-							<h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">{ i18n.T(ctx, "templates.title") }</h1>
-							<p class="text-white/50 mt-2 text-lg">{ i18n.T(ctx, "templates.description") }</p>
+							<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "templates.title") }</h1>
+							<p class="text-base-content/60 mt-2 font-sans text-lg">{ i18n.T(ctx, "templates.description") }</p>
 						</div>
 						<a
 							href="/templates/new"
-							class="btn-primary flex items-center gap-2 w-full sm:w-auto justify-center px-6 py-3 rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium transition-all duration-300 transform hover:-translate-y-0.5"
+							class="btn btn-primary rounded-sm shadow-md gap-2"
 						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-							</svg>
-							{ i18n.T(ctx, "templates.create") }
+							<i data-lucide="plus"></i>
+							<span>{ i18n.T(ctx, "templates.create") }</span>
 						</a>
 					</div>
 					<!-- Filters -->
-					<div class="glass-panel rounded-2xl p-6 border border-white/10 mb-8 bg-[#0A0A0B]/40">
-						<form id="template-filters-form" class="flex flex-col sm:flex-row gap-6">
-							<div class="flex-1">
-								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "common.search") }</label>
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200">
+						<form id="template-filters-form" class="flex flex-col sm:flex-row gap-6 items-end">
+							<div class="form-control w-full sm:flex-1">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "common.search") }</span>
+								</label>
 								<div class="relative group">
 									<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-										<svg class="h-5 w-5 text-white/30 group-focus-within:text-accent transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-										</svg>
+										<i data-lucide="search" class="text-base-content/40"></i>
 									</div>
 									<input
 										type="text"
@@ -47,42 +45,39 @@ templ TemplatesPage(ctx context.Context, title string, csrfToken string, user *m
 										hx-get="/api/templates"
 										hx-target="#templates-table-container"
 										hx-trigger="keyup changed delay:300ms"
-										class="w-full pl-10 pr-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
+										class="input input-bordered w-full rounded-sm pl-9 focus:input-primary"
 									/>
 								</div>
 							</div>
-							<div class="flex-1 w-full sm:w-64">
-								<label class="block text-xs font-semibold uppercase tracking-wider text-white/40 mb-2">{ i18n.T(ctx, "templates.category") }</label>
-								<div class="relative">
-									<select
-										name="category_id"
-										hx-get="/api/templates"
-										hx-target="#templates-table-container"
-										hx-trigger="change"
-										class="w-full px-4 py-3 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
-									>
-										<option value="" class="bg-[#1a1b1e]">{ i18n.T(ctx, "common.all") }</option>
-										for _, cat := range categories {
-											<option value={ cat.ID } class="bg-[#1a1b1e]">{ cat.Name }</option>
-										}
-									</select>
-									<div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-										<i class="fas fa-chevron-down text-xs text-white/30"></i>
-									</div>
-								</div>
+							<div class="form-control w-full sm:w-64">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "templates.category") }</span>
+								</label>
+								<select
+									name="category_id"
+									hx-get="/api/templates"
+									hx-target="#templates-table-container"
+									hx-trigger="change"
+									class="select select-bordered w-full rounded-sm focus:select-primary"
+								>
+									<option value="">{ i18n.T(ctx, "common.all") }</option>
+									for _, cat := range categories {
+										<option value={ cat.ID }>{ cat.Name }</option>
+									}
+								</select>
 							</div>
 						</form>
 					</div>
 					<!-- Templates Table -->
-					<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-xl bg-[#0A0A0B]/40">
+					<div class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden">
 						<div
 							id="templates-table-container"
 							hx-get="/api/templates"
 							hx-trigger="load"
 							hx-swap="innerHTML"
 						>
-							<div class="p-8 text-center text-muted-foreground">
-								{ i18n.T(ctx, "common.loading") }
+							<div class="flex justify-center py-12">
+								<span class="loading loading-spinner loading-lg text-primary"></span>
 							</div>
 						</div>
 					</div>

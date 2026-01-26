@@ -18,84 +18,66 @@ type SupportContactFormData struct {
 
 templ Support(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, formData SupportContactFormData, successMsg *string, firmUsers []models.User) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			@components.Navbar(ctx, user, firm, "/support")
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
 				<div class="w-full" x-data="{ activeTab: new URLSearchParams(window.location.search).get('tab') || 'faq', sidebarOpen: false }">
 					<!-- Header -->
-					<div class="mb-8">
-						<h1 class="text-3xl font-bold mb-2">{ i18n.T(ctx, "support.title") }</h1>
-						<p class="text-muted-foreground">{ i18n.T(ctx, "support.subtitle") }</p>
+					<div class="mb-8 border-b border-base-300 pb-6">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "support.title") }</h1>
+						<p class="text-base-content/60 font-sans">{ i18n.T(ctx, "support.subtitle") }</p>
 					</div>
 
 					<!-- Layout with Sidebar -->
-					<div class="settings-layout">
+					<div class="flex flex-col md:flex-row gap-8">
 						<!-- Sidebar Navigation -->
-						<aside class="settings-sidebar">
+						<aside class="w-full md:w-64 shrink-0">
 							<!-- Mobile Toggle Button -->
 							<button
 								@click="sidebarOpen = !sidebarOpen"
 								:aria-expanded="sidebarOpen"
-								class="settings-mobile-toggle md:hidden"
+								class="md:hidden w-full flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-sm mb-4"
 							>
-								<span class="flex items-center gap-3">
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-									</svg>
+								<span class="flex items-center gap-3 font-serif font-bold">
+									<i data-lucide="menu"></i>
 									<span x-text={ "activeTab === 'faq' ? '" + i18n.T(ctx, "support.faq.title") + "' : activeTab === 'contact' ? '" + i18n.T(ctx, "support.form.title") + "' : '" + i18n.T(ctx, "support.tickets.title") + "'" }></span>
 								</span>
-								<svg
-									class="w-5 h-5 transition-transform duration-200"
-									:class="{ 'rotate-180': sidebarOpen }"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-								</svg>
+								<i data-lucide="chevron-down" class="transition-transform duration-200" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
 
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav shadow-xl backdrop-blur-xl"
-								:class="{ 'settings-nav-hidden': !sidebarOpen }"
-								x-show="sidebarOpen || window.innerWidth >= 768"
-								x-transition
+								class="bg-base-100 rounded-sm border border-base-200 shadow-sm overflow-hidden"
+								:class="{ 'hidden': !sidebarOpen, 'block': sidebarOpen, 'md:block': true }"
 							>
-								<ul class="space-y-2">
+								<ul class="divide-y divide-base-200">
 									<li>
 										<button
 											@click="activeTab = 'faq'; sidebarOpen = false"
-											:class="activeTab === 'faq' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'faq' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-											</svg>
+											<i data-lucide="help-circle" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "support.faq.title") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'contact'; sidebarOpen = false"
-											:class="activeTab === 'contact' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'contact' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-											</svg>
+											<i data-lucide="mail" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "support.form.title") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'tickets'; sidebarOpen = false"
-											:class="activeTab === 'tickets' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'tickets' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-											</svg>
+											<i data-lucide="ticket" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "support.tickets.title") }</span>
 										</button>
 									</li>
@@ -104,84 +86,50 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 						</aside>
 
 						<!-- Main Content Area -->
-						<div class="settings-content space-y-6">
+						<div class="flex-1 min-w-0">
 							<!-- FAQ Tab -->
 							<div x-show="activeTab === 'faq'" x-transition class="space-y-6">
-								<h2 class="text-xl font-bold mb-4">{ i18n.T(ctx, "support.faq.title") }</h2>
-								<div class="space-y-4" x-data="{ active: null }">
-									<!-- FAQ Item 1 -->
-									<div class="glass-panel border border-white/10 rounded-xl overflow-hidden shadow-xl backdrop-blur-xl">
-										<button
-											@click="active = (active === 1 ? null : 1)"
-											class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-white/5 transition-colors"
-										>
-											<span class="font-medium">{ i18n.T(ctx, "support.faq.q1") }</span>
-											<svg
-												class="w-5 h-5 transform transition-transform duration-200"
-												:class="{ 'rotate-180': active === 1 }"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
+								<div class="bg-base-100 border border-base-200 rounded-sm shadow-sm p-8">
+									<h2 class="text-xl font-serif font-bold mb-6 pb-4 border-b border-base-200">{ i18n.T(ctx, "support.faq.title") }</h2>
+									<div class="space-y-4" x-data="{ active: null }">
+										<!-- FAQ Item 1 -->
+										<div class="border border-base-200 rounded-sm overflow-hidden">
+											<button
+												@click="active = (active === 1 ? null : 1)"
+												class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-base-50 transition-colors bg-base-50/50"
 											>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-											</svg>
-										</button>
-										<div
-											x-show="active === 1"
-											x-collapse
-											class="px-6 pb-4 text-muted-foreground text-sm"
-										>
-											{ i18n.T(ctx, "support.faq.a1") }
+												<span class="font-medium font-serif">{ i18n.T(ctx, "support.faq.q1") }</span>
+												<i data-lucide="chevron-down" class="text-sm transition-transform duration-200" :class="{ 'rotate-180': active === 1 }"></i>
+											</button>
+											<div x-show="active === 1" x-collapse class="px-6 py-4 text-base-content/70 text-sm bg-base-100 border-t border-base-200">
+												{ i18n.T(ctx, "support.faq.a1") }
+											</div>
 										</div>
-									</div>
-									<!-- FAQ Item 2 -->
-									<div class="glass-panel border border-white/10 rounded-xl overflow-hidden shadow-xl backdrop-blur-xl">
-										<button
-											@click="active = (active === 2 ? null : 2)"
-											class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-white/5 transition-colors"
-										>
-											<span class="font-medium">{ i18n.T(ctx, "support.faq.q2") }</span>
-											<svg
-												class="w-5 h-5 transform transition-transform duration-200"
-												:class="{ 'rotate-180': active === 2 }"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
+										<!-- FAQ Item 2 -->
+										<div class="border border-base-200 rounded-sm overflow-hidden">
+											<button
+												@click="active = (active === 2 ? null : 2)"
+												class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-base-50 transition-colors bg-base-50/50"
 											>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-											</svg>
-										</button>
-										<div
-											x-show="active === 2"
-											x-collapse
-											class="px-6 pb-4 text-muted-foreground text-sm"
-										>
-											{ i18n.T(ctx, "support.faq.a2") }
+												<span class="font-medium font-serif">{ i18n.T(ctx, "support.faq.q2") }</span>
+												<i data-lucide="chevron-down" class="text-sm transition-transform duration-200" :class="{ 'rotate-180': active === 2 }"></i>
+											</button>
+											<div x-show="active === 2" x-collapse class="px-6 py-4 text-base-content/70 text-sm bg-base-100 border-t border-base-200">
+												{ i18n.T(ctx, "support.faq.a2") }
+											</div>
 										</div>
-									</div>
-									<!-- FAQ Item 3 -->
-									<div class="glass-panel border border-white/10 rounded-xl overflow-hidden shadow-xl backdrop-blur-xl">
-										<button
-											@click="active = (active === 3 ? null : 3)"
-											class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-white/5 transition-colors"
-										>
-											<span class="font-medium">{ i18n.T(ctx, "support.faq.q3") }</span>
-											<svg
-												class="w-5 h-5 transform transition-transform duration-200"
-												:class="{ 'rotate-180': active === 3 }"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
+										<!-- FAQ Item 3 -->
+										<div class="border border-base-200 rounded-sm overflow-hidden">
+											<button
+												@click="active = (active === 3 ? null : 3)"
+												class="w-full px-6 py-4 flex items-center justify-between text-left focus:outline-none hover:bg-base-50 transition-colors bg-base-50/50"
 											>
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-											</svg>
-										</button>
-										<div
-											x-show="active === 3"
-											x-collapse
-											class="px-6 pb-4 text-muted-foreground text-sm"
-										>
-											{ i18n.T(ctx, "support.faq.a3") }
+												<span class="font-medium font-serif">{ i18n.T(ctx, "support.faq.q3") }</span>
+												<i data-lucide="chevron-down" class="text-sm transition-transform duration-200" :class="{ 'rotate-180': active === 3 }"></i>
+											</button>
+											<div x-show="active === 3" x-collapse class="px-6 py-4 text-base-content/70 text-sm bg-base-100 border-t border-base-200">
+												{ i18n.T(ctx, "support.faq.a3") }
+											</div>
 										</div>
 									</div>
 								</div>
@@ -191,64 +139,73 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 							<div x-show="activeTab === 'contact'" x-transition class="space-y-6">
 
 								<!-- Contact Form -->
-								<div class="glass-panel p-6 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-4">{ i18n.T(ctx, "support.form.title") }</h2>
+								<div class="bg-base-100 border border-base-200 rounded-sm shadow-sm p-8">
+									<h2 class="text-xl font-serif font-bold mb-6 pb-4 border-b border-base-200">{ i18n.T(ctx, "support.form.title") }</h2>
 									if successMsg != nil {
-										<div class="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 flex items-center">
-											<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-											</svg>
+										<div class="mb-6 p-4 rounded-sm bg-success/10 border border-success/20 text-success flex items-center">
+											<i data-lucide="check-circle" class="mr-2"></i>
 											{ *successMsg }
 										</div>
 									}
 									<form method="POST" action="/api/support/contact">
 										<input type="hidden" name="_csrf" value={ csrfToken }/>
-										<div class="space-y-4">
-											<div>
-												<label class="block text-sm font-medium mb-1.5">{ i18n.T(ctx, "support.form.name") }</label>
-												<input
-													type="text"
-													value={ formData.Name }
-													disabled
-													class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-muted-foreground cursor-not-allowed"
-												/>
+										<div class="space-y-6">
+											<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+												<div class="form-control">
+													<label class="label pt-0 pb-1">
+														<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "support.form.name") }</span>
+													</label>
+													<input
+														type="text"
+														value={ formData.Name }
+														disabled
+														class="input input-bordered w-full rounded-sm bg-base-200 text-base-content/60 cursor-not-allowed"
+													/>
+												</div>
+												<div class="form-control">
+													<label class="label pt-0 pb-1">
+														<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "support.form.email") }</span>
+													</label>
+													<input
+														type="email"
+														value={ formData.Email }
+														disabled
+														class="input input-bordered w-full rounded-sm bg-base-200 text-base-content/60 cursor-not-allowed"
+													/>
+												</div>
 											</div>
-											<div>
-												<label class="block text-sm font-medium mb-1.5">{ i18n.T(ctx, "support.form.email") }</label>
-												<input
-													type="email"
-													value={ formData.Email }
-													disabled
-													class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-muted-foreground cursor-not-allowed"
-												/>
-											</div>
-											<div>
-												<label class="block text-sm font-medium mb-1.5">{ i18n.T(ctx, "support.form.subject") }</label>
+											<div class="form-control">
+												<label class="label pt-0 pb-1">
+													<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "support.form.subject") }</span>
+												</label>
 												<input
 													type="text"
 													name="subject"
 													value={ formData.Subject }
-													class={ "w-full bg-white/5 border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all", templ.KV("border-red-500/50 focus:ring-red-500/50", formData.Errors["subject"] != ""), templ.KV("border-white/10", formData.Errors["subject"] == "") }
+													class={ "input input-bordered w-full rounded-sm focus:input-primary transition-all", templ.KV("input-error", formData.Errors["subject"] != "") }
 													placeholder={ i18n.T(ctx, "support.form.subject_placeholder") }
 												/>
 												if formData.Errors["subject"] != "" {
-													<p class="text-xs text-red-400 mt-1">{ formData.Errors["subject"] }</p>
+													<p class="text-xs text-error mt-1">{ formData.Errors["subject"] }</p>
 												}
 											</div>
-											<div>
-												<label class="block text-sm font-medium mb-1.5">{ i18n.T(ctx, "support.form.message") }</label>
+											<div class="form-control">
+												<label class="label pt-0 pb-1">
+													<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "support.form.message") }</span>
+												</label>
 												<textarea
 													name="message"
 													rows="5"
-													class={ "w-full bg-white/5 border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all resize-none", templ.KV("border-red-500/50 focus:ring-red-500/50", formData.Errors["message"] != ""), templ.KV("border-white/10", formData.Errors["message"] == "") }
+													class={ "textarea textarea-bordered w-full rounded-sm focus:textarea-primary transition-all resize-none", templ.KV("textarea-error", formData.Errors["message"] != "") }
 													placeholder={ i18n.T(ctx, "support.form.message_placeholder") }
 												>{ formData.Message }</textarea>
 												if formData.Errors["message"] != "" {
-													<p class="text-xs text-red-400 mt-1">{ formData.Errors["message"] }</p>
+													<p class="text-xs text-error mt-1">{ formData.Errors["message"] }</p>
 												}
 											</div>
-											<div class="pt-2">
-												<button type="submit" class="w-full btn-primary py-2.5 rounded-lg font-medium transition-all hover:scale-[1.02]">
+											<div class="pt-4 flex justify-end">
+												<button type="submit" class="btn btn-primary rounded-sm px-8 gap-2">
+													<i data-lucide="send"></i>
 													{ i18n.T(ctx, "support.form.submit") }
 												</button>
 											</div>
@@ -265,89 +222,91 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 								x-data="{ showResponseModal: false, selectedTicket: null }"
 								@show-response.window="selectedTicket = $event.detail; showResponseModal = true"
 							>
-								<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-									<h2 class="text-xl font-bold">{ i18n.T(ctx, "support.tickets.title") }</h2>
-									
-									<!-- Filters -->
-									<div class="flex flex-wrap gap-2 w-full sm:w-auto">
-										<!-- Status Filter -->
-										<select
-											id="ticket-status-filter"
-											class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-											hx-get="/api/support/tickets"
-											hx-target="#tickets-list"
-											hx-trigger="change"
-											name="status"
-										>
-											<option value="all">{ i18n.T(ctx, "support.tickets.status_all") }</option>
-											<option value="open">{ i18n.T(ctx, "support.tickets.status.open") }</option>
-											<option value="resolved">{ i18n.T(ctx, "support.tickets.status.resolved") }</option>
-											<option value="closed">{ i18n.T(ctx, "support.tickets.status.closed") }</option>
-										</select>
-
-										<!-- User Filter (Admin only) -->
-										if len(firmUsers) > 0 {
+								<div class="bg-base-100 border border-base-200 rounded-sm shadow-sm p-8">
+									<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 pb-4 border-b border-base-200">
+										<h2 class="text-xl font-serif font-bold">{ i18n.T(ctx, "support.tickets.title") }</h2>
+										
+										<!-- Filters -->
+										<div class="flex flex-wrap gap-2 w-full sm:w-auto">
+											<!-- Status Filter -->
 											<select
-												id="ticket-user-filter"
-												class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+												id="ticket-status-filter"
+												class="select select-bordered select-sm rounded-sm focus:select-primary"
 												hx-get="/api/support/tickets"
 												hx-target="#tickets-list"
 												hx-trigger="change"
-												name="user_id"
+												name="status"
 											>
-												<option value="all">{ i18n.T(ctx, "support.tickets.user_all") }</option>
-												for _, u := range firmUsers {
-													<option value={ u.ID }>{ u.Name }</option>
-												}
+												<option value="all">{ i18n.T(ctx, "support.tickets.status_all") }</option>
+												<option value="open">{ i18n.T(ctx, "support.tickets.status.open") }</option>
+												<option value="resolved">{ i18n.T(ctx, "support.tickets.status.resolved") }</option>
+												<option value="closed">{ i18n.T(ctx, "support.tickets.status.closed") }</option>
 											</select>
-										}
-									</div>
-								</div>
 
-								<div
-									id="tickets-list"
-									data-loaded="false"
-									hx-get="/api/support/tickets"
-									hx-trigger="load"
-									hx-include="#ticket-status-filter, #ticket-user-filter"
-									hx-swap="innerHTML"
-								>
-									<div class="glass-panel p-12 rounded-xl border border-white/10 text-center shadow-xl backdrop-blur-xl">
-										<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mx-auto mb-4"></div>
-										<p class="text-muted-foreground">{ i18n.T(ctx, "common.loading") }</p>
+											<!-- User Filter (Admin only) -->
+											if len(firmUsers) > 0 {
+												<select
+													id="ticket-user-filter"
+													class="select select-bordered select-sm rounded-sm focus:select-primary"
+													hx-get="/api/support/tickets"
+													hx-target="#tickets-list"
+													hx-trigger="change"
+													name="user_id"
+												>
+													<option value="all">{ i18n.T(ctx, "support.tickets.user_all") }</option>
+													for _, u := range firmUsers {
+														<option value={ u.ID }>{ u.Name }</option>
+													}
+												</select>
+											}
+										</div>
+									</div>
+
+									<div
+										id="tickets-list"
+										data-loaded="false"
+										hx-get="/api/support/tickets"
+										hx-trigger="load"
+										hx-include="#ticket-status-filter, #ticket-user-filter"
+										hx-swap="innerHTML"
+										class="min-h-[200px]"
+									>
+										<div class="flex justify-center py-12">
+											<span class="loading loading-spinner loading-lg text-primary"></span>
+										</div>
 									</div>
 								</div>
 
 								<!-- Response Modal -->
 								<div
 									x-show="showResponseModal"
-									class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+									class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base-300/80 backdrop-blur-sm"
 									x-transition.opacity
 									style="display: none;"
 								>
 									<div
 										@click.away="showResponseModal = false"
-										class="glass-panel w-full max-w-lg rounded-xl shadow-2xl border border-white/10 overflow-hidden backdrop-blur-xl"
+										class="bg-base-100 w-full max-w-lg rounded-sm shadow-2xl border border-base-200 overflow-hidden"
 										x-transition.scale
 									>
 										<div class="p-6">
-											<div class="flex items-center justify-between mb-4">
-												<h3 class="text-xl font-bold">{ i18n.T(ctx, "nav.ticket_response") }</h3>
-												<button @click="showResponseModal = false" class="text-muted-foreground hover:text-foreground">
-													<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-													</svg>
+											<div class="flex items-center justify-between mb-4 border-b border-base-200 pb-4">
+												<h3 class="text-xl font-serif font-bold text-primary">{ i18n.T(ctx, "nav.ticket_response") }</h3>
+												<button @click="showResponseModal = false" class="btn btn-primary btn-sm btn-square">
+													<i data-lucide="x"></i>
 												</button>
 											</div>
-											<div class="prose prose-invert max-w-none mb-6">
-												<p class="text-foreground whitespace-pre-wrap" x-text="selectedTicket?.response || ''"></p>
-												<div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-sm text-muted-foreground">
+											<div class="prose max-w-none mb-6">
+												<div class="bg-base-200/50 p-4 rounded-sm border border-base-300">
+													<p class="text-base-content whitespace-pre-wrap font-sans" x-text="selectedTicket?.response || ''"></p>
+												</div>
+												<div class="mt-4 flex justify-between items-center text-xs text-base-content/50 uppercase tracking-widest font-bold">
 													<span x-text="selectedTicket?.responded_by?.name || 'Administrator'"></span>
 													<span x-text="selectedTicket?.responded_at ? new Date(selectedTicket.responded_at).toLocaleString() : ''"></span>
 												</div>
 											</div>
-											<div class="flex justify-end">
-												<button @click="showResponseModal = false" class="btn-primary px-4 py-2 rounded-lg">
+											<div class="flex justify-end pt-4 border-t border-base-200">
+												<button @click="showResponseModal = false" class="btn btn-primary rounded-sm">
 													{ i18n.T(ctx, "common.close") }
 												</button>
 											</div>

@@ -9,25 +9,32 @@ import (
 templ UserList(ctx context.Context, users []models.User) {
 	<div class="space-y-4">
 		if len(users) == 0 {
-			<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-8 text-center">
-				<p class="text-muted-foreground">{ i18n.T(ctx, "users.table.empty") }</p>
+			<div class="text-center py-12 bg-base-200/50 border border-base-200 border-dashed rounded-sm">
+				<i data-lucide="users" class="text-4xl text-base-content/30 mb-3"></i>
+				<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "users.table.empty") }</p>
 			</div>
 		} else {
 			for _, user := range users {
-				<div class="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent/50 transition-all duration-300">
+				<div class="bg-base-100 p-6 rounded-sm border border-base-200 hover:border-primary/50 transition-all duration-300">
 					<div class="flex items-center justify-between">
 						<div>
-							<h3 class="text-lg font-bold">{ user.Name }</h3>
-							<p class="text-sm text-muted-foreground">{ user.Email }</p>
-							<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.details.id") }: { user.ID }</p>
+							<h3 class="text-lg font-serif font-bold text-base-content">{ user.Name }</h3>
+							<p class="text-sm text-base-content/60">{ user.Email }</p>
+							<p class="text-xs text-base-content/40 mt-1 font-mono">{ i18n.T(ctx, "settings.details.id") }: { user.ID }</p>
 						</div>
 						<div class="flex items-center space-x-2">
-							<span class="px-3 py-1 bg-accent/20 text-accent rounded-lg text-sm">{ i18n.T(ctx, "users.roles." + user.Role) }</span>
+							<span class="badge badge-primary badge-sm font-bold">{ i18n.T(ctx, "users.roles." + user.Role) }</span>
 						</div>
 					</div>
 					<div class="mt-4 flex space-x-2">
-						<button class="text-sm text-purple-600 hover:text-purple-800 font-medium">{ i18n.T(ctx, "common.edit") }</button>
-						<button class="text-sm text-red-600 hover:text-red-800 font-medium">{ i18n.T(ctx, "common.delete") }</button>
+						<button class="btn btn-info btn-xs gap-1">
+							<i data-lucide="pencil"></i>
+							{ i18n.T(ctx, "common.edit") }
+						</button>
+						<button class="btn btn-error btn-xs gap-1">
+							<i data-lucide="trash-2"></i>
+							{ i18n.T(ctx, "common.delete") }
+						</button>
 					</div>
 				</div>
 			}

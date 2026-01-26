@@ -57,4 +57,4 @@ uploads/
 node_modules/
 
 # CSS Build Output
-static/css/bundle.min.css
+static/css/style.CSS

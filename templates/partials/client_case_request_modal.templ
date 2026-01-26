@@ -4,24 +4,21 @@ import (
 	"context"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
-	"law_flow_app_go/templates/components"
 )
 
 // ClientCaseRequestModal renders the modal for clients to request a new case
 templ ClientCaseRequestModal(ctx context.Context, user *models.User, csrfToken string) {
-	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" id="client-case-request-modal">
-		<div class="bg-card w-full max-w-lg rounded-xl shadow-2xl border border-white/10 m-4 animation-in fade-in zoom-in duration-200">
+	<div class="modal modal-open" id="client-case-request-modal">
+		<div class="modal-box max-w-lg bg-base-100 rounded-sm">
 			<!-- Header -->
-			<div class="flex items-center justify-between p-6 border-b border-white/10">
-				<h3 class="text-xl font-bold">{ i18n.T(ctx, "case.request.title") }</h3>
+			<div class="flex items-center justify-between mb-6">
+				<h3 class="text-xl font-serif font-bold text-base-content">{ i18n.T(ctx, "case.request.title") }</h3>
 				<button
 					type="button"
-					class="text-muted-foreground hover:text-foreground transition-colors"
+					class="btn btn-primary btn-sm btn-circle"
 					onclick="document.getElementById('client-case-request-modal').remove()"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="x"></i>
 				</button>
 			</div>
 			<!-- Body -->
@@ -29,58 +26,76 @@ templ ClientCaseRequestModal(ctx context.Context, user *models.User, csrfToken s
 				hx-post="/api/client/case-request"
 				hx-encoding="multipart/form-data"
 				hx-target="#request-form-response"
-				class="p-6 space-y-6"
+				class="space-y-4"
 			>
 				<input type="hidden" name="_csrf" value={ csrfToken }/>
 				<div id="request-form-response"></div>
 				<!-- Pre-filled User Info (Read-only) -->
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">{ i18n.T(ctx, "users.table.name") }</label>
-						<input type="text" value={ user.Name } disabled class="w-full px-4 py-2 bg-muted/50 border border-white/10 rounded-lg text-muted-foreground cursor-not-allowed"/>
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "users.table.name") }</span>
+						</label>
+						<input type="text" value={ user.Name } disabled class="input input-bordered w-full rounded-sm bg-base-200 cursor-not-allowed"/>
 					</div>
-					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">{ i18n.T(ctx, "users.table.email") }</label>
-						<input type="text" value={ user.Email } disabled class="w-full px-4 py-2 bg-muted/50 border border-white/10 rounded-lg text-muted-foreground cursor-not-allowed"/>
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "users.table.email") }</span>
+						</label>
+						<input type="text" value={ user.Email } disabled class="input input-bordered w-full rounded-sm bg-base-200 cursor-not-allowed"/>
 					</div>
 				</div>
 				<!-- Description -->
-				<div>
-					@components.TextareaWithLabel(
-						i18n.T(ctx, "public.request.case_desc"),
-						"description",
-						i18n.T(ctx, "public.request.case_desc_ph"),
-						4,
-					)
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "public.request.case_desc") }</span>
+					</label>
+					<textarea
+						name="description"
+						placeholder={ i18n.T(ctx, "public.request.case_desc_ph") }
+						rows="4"
+						class="textarea textarea-bordered w-full rounded-sm"
+						required
+					></textarea>
 				</div>
 				<!-- File Upload -->
-				<div>
-					<label class="block text-sm font-medium mb-1">{ i18n.T(ctx, "public.request.support_doc") } <span class="text-muted-foreground font-normal">({ i18n.T(ctx, "common.optional") })</span></label>
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "public.request.support_doc") }
+							<span class="text-base-content/30 font-normal ml-1 normal-case">({ i18n.T(ctx, "common.optional") })</span>
+						</span>
+					</label>
 					<input
 						type="file"
 						name="file"
 						accept=".pdf,application/pdf"
-						class="w-full text-base file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-base file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer"
+						class="file-input file-input-bordered w-full rounded-sm"
 					/>
-					<p class="mt-1 text-xs text-muted-foreground">{ i18n.T(ctx, "public.request.pdf_only") }</p>
+					<label class="label">
+						<span class="label-text-alt text-base-content/50">{ i18n.T(ctx, "public.request.pdf_only") }</span>
+					</label>
 				</div>
 				<!-- Actions -->
-				<div class="flex justify-end gap-3 pt-4 border-t border-white/10">
+				<div class="modal-action pt-4 border-t border-base-200">
 					<button
 						type="button"
-						class="px-4 py-2 text-muted-foreground hover:text-foreground transition-colors"
+						class="btn btn-primary rounded-sm"
 						onclick="document.getElementById('client-case-request-modal').remove()"
 					>
 						{ i18n.T(ctx, "common.cancel") }
 					</button>
 					<button
 						type="submit"
-						class="px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all duration-200"
+						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "public.request.submit_btn") }
 					</button>
 				</div>
 			</form>
 		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button onclick="document.getElementById('client-case-request-modal').remove()">close</button>
+		</form>
 	</div>
 }

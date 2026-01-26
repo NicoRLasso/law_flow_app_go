@@ -1,0 +1,14 @@
+{
+  "name": "law_flow_app_go",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@tailwindcss/cli": "next",
+    "bun-types": "latest",
+    "daisyui": "latest",
+    "tailwindcss": "next"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

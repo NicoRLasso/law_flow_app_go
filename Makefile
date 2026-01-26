@@ -14,14 +14,23 @@ install-deps: ## Install project dependencies
 generate: ## Generate Templ templates
 	$(HOME)/go/bin/templ generate
 
+css: ## Build CSS with Tailwind v4
+	bun x @tailwindcss/cli -i static/css/input.css -o static/css/style.css --minify
+
+css-watch: ## Watch CSS changes
+	bun x @tailwindcss/cli -i static/css/input.css -o static/css/style.css --watch
+
+air:
+	$(HOME)/go/bin/air
+
 dev: generate ## Run with live-reload (requires air)
 	@echo "Starting development servers..."
-	$(HOME)/go/bin/air
+	make -j2 air css-watch
 
 run: generate ## Run the application
 	go run cmd/server/main.go
 
-build: generate ## Build the application
+build: generate css ## Build the application
 	go build -trimpath -o bin/server cmd/server/main.go
 
 clean: ## Clean build artifacts

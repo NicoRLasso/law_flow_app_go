@@ -16,7 +16,7 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 		@keydown.escape.window="open = false; setTimeout(() => { document.getElementById('subtype-modal-container').innerHTML = '' }, 300)"
 	>
 		<div
-			class="bg-background border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-xl"
+			class="bg-base-100 border border-base-200 rounded-sm w-full max-w-md p-6 shadow-xl"
 			@click.away="open = false; setTimeout(() => { document.getElementById('subtype-modal-container').innerHTML = '' }, 300)"
 			x-transition:enter="transition ease-out duration-200"
 			x-transition:enter-start="opacity-0 scale-95"
@@ -27,7 +27,7 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 		>
 			<!-- Header -->
 			<div class="flex items-center justify-between mb-6">
-				<h3 class="text-lg font-semibold text-foreground">
+				<h3 class="text-lg font-serif font-bold text-base-content">
 					if subtype != nil {
 						{ i18n.T(ctx, "settings.classifications.edit_subtype") }
 					} else {
@@ -36,7 +36,7 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 				</h3>
 				<button
 					@click="open = false; setTimeout(() => { document.getElementById('subtype-modal-container').innerHTML = '' }, 300)"
-					class="p-2 text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors"
+					class="btn btn-primary btn-sm btn-circle"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -44,11 +44,11 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 				</button>
 			</div>
 			<!-- Branch Info -->
-			<div class="mb-4 p-3 bg-white/5 rounded-lg">
-				<div class="text-xs text-muted-foreground mb-1">{ i18n.T(ctx, "settings.classifications.branch") }</div>
-				<div class="text-sm font-medium text-foreground flex items-center gap-2">
+			<div class="mb-4 p-3 bg-base-200 rounded-sm">
+				<div class="text-xs text-base-content/60 mb-1">{ i18n.T(ctx, "settings.classifications.branch") }</div>
+				<div class="text-sm font-medium text-base-content flex items-center gap-2">
 					<span>{ branch.Domain.Name }</span>
-					<svg class="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-3 h-3 text-base-content/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
 					</svg>
 					<span>{ branch.Name }</span>
@@ -68,9 +68,11 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 			>
 				<input type="hidden" name="branch_id" value={ branch.ID }/>
 				<!-- Name -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">
-						{ i18n.T(ctx, "settings.classifications.name") } <span class="text-red-500">*</span>
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "settings.classifications.name") } <span class="text-error">*</span>
+						</span>
 					</label>
 					<input
 						type="text"
@@ -79,14 +81,16 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 						if subtype != nil {
 							value={ subtype.Name }
 						}
-						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+						class="input input-bordered w-full rounded-sm"
 						placeholder={ i18n.T(ctx, "settings.classifications.name_placeholder") }
 					/>
 				</div>
 				<!-- Code -->
-				<div x-data>
-					<label class="block text-sm font-medium text-foreground mb-2">
-						{ i18n.T(ctx, "settings.classifications.code") } <span class="text-red-500">*</span>
+				<div class="form-control" x-data>
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "settings.classifications.code") } <span class="text-error">*</span>
+						</span>
 					</label>
 					<input
 						type="text"
@@ -96,20 +100,24 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 							value={ subtype.Code }
 						}
 						@input="$el.value = $el.value.replace(/[^a-zA-Z _]/g, '').replace(/ /g, '_').toUpperCase()"
-						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all font-mono uppercase"
+						class="input input-bordered w-full rounded-sm font-mono uppercase"
 						placeholder="SUBTYPE_CODE"
 					/>
-					<p class="text-xs text-muted-foreground mt-1">{ i18n.T(ctx, "settings.classifications.code_hint") }</p>
+					<label class="label">
+						<span class="label-text-alt text-base-content/50">{ i18n.T(ctx, "settings.classifications.code_hint") }</span>
+					</label>
 				</div>
 				<!-- Description -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">
-						{ i18n.T(ctx, "settings.classifications.description") }
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "settings.classifications.description") }
+						</span>
 					</label>
 					<textarea
 						name="description"
 						rows="2"
-						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all resize-none"
+						class="textarea textarea-bordered w-full rounded-sm resize-none"
 					>
 						if subtype != nil {
 							{ subtype.Description }
@@ -117,17 +125,17 @@ templ SubtypeFormModal(ctx context.Context, subtype *models.CaseSubtype, branch 
 					</textarea>
 				</div>
 				<!-- Actions -->
-				<div class="flex justify-end gap-3 pt-4">
+				<div class="flex justify-end gap-3 pt-4 border-t border-base-200">
 					<button
 						type="button"
 						@click="open = false; setTimeout(() => { document.getElementById('subtype-modal-container').innerHTML = '' }, 300)"
-						class="px-4 py-2 text-foreground hover:bg-white/5 rounded-lg transition-colors"
+						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.cancel") }
 					</button>
 					<button
 						type="submit"
-						class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg transition-colors"
+						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.save") }
 					</button>

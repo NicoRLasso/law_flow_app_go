@@ -8,157 +8,153 @@ import (
 
 // CaseFilters renders the filter controls for cases
 templ CaseFilters(ctx context.Context, user *models.User) {
-	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
-		<form
-			id="cases-filter-form"
-			hx-get="/api/cases"
-			hx-target="#cases-table"
-			hx-trigger="submit"
-			hx-indicator="#loading-indicator"
-		>
-			<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
-				if user.Role == "admin" {
-					@StatusSelect(ctx)
-					@AssignedToSelect(ctx)
-				}
-				@DateFromInput(ctx)
-				@DateToInput(ctx)
-				<!-- Search takes remaining width on desktop, full width on mobile -->
-				@KeywordInput(ctx)
-				<!-- Search Button -->
-				<button
-					type="submit"
-					class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group"
-				>
-					<i class="fas fa-search group-hover:scale-110 transition-transform duration-300"></i>
-					<span>{ i18n.T(ctx, "cases.filters.search_button") }</span>
-				</button>
-			</div>
-		</form>
-	</div>
-}
+	<!-- Filter Form Container -->
+	<form
+		id="cases-filter-form"
+		hx-get="/api/cases"
+		hx-target="#cases-table"
+		hx-trigger="submit"
+		hx-indicator="#loading-indicator"
+		class="flex flex-col xl:flex-row gap-4 items-start xl:items-end w-full"
+	>
+		<!-- Filters Group -->
+		<div class="flex flex-wrap gap-4 w-full">
+			if user.Role == "admin" {
+				@StatusSelect(ctx)
+				@AssignedToSelect(ctx)
+			}
+			@DateFromInput(ctx)
+			@DateToInput(ctx)
+			@KeywordInput(ctx)
+		</div>
 
-// Helper Components for Inputs to avoid duplication
-templ StatusSelect(ctx context.Context) {
-	<div class="flex flex-col gap-1.5 w-full sm:w-auto relative group">
-		<label class="text-xs font-medium text-white/50 ml-1">{ i18n.T(ctx, "cases.filters.status") }</label>
-		<div class="relative">
-			<select
-				class="w-full sm:w-40 pl-3 pr-8 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
-				name="status"
-				id="status-filter"
+		<!-- Search Button -->
+		<div class="w-full xl:w-auto mt-2 xl:mt-0 flex-shrink-0">
+			<button
+				type="submit"
+				class="btn btn-primary w-full xl:w-auto rounded-sm gap-2"
 			>
-				<option value="" class="bg-[#1a1b1e] text-white/70">{ i18n.T(ctx, "cases.filters.all_status") }</option>
-				<option value="OPEN" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.status.open") }</option>
-				<option value="ON_HOLD" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.status.on_hold") }</option>
-				<option value="CLOSED" class="bg-[#1a1b1e]">{ i18n.T(ctx, "cases.status.closed") }</option>
-			</select>
-			<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-				<i class="fas fa-chevron-down text-xs text-white/30"></i>
-			</div>
+				<i data-lucide="search"></i>
+				<span>{ i18n.T(ctx, "cases.filters.search_button") }</span>
+			</button>
 		</div>
-	</div>
-}
-
-templ AssignedToSelect(ctx context.Context) {
-	<div class="flex flex-col gap-1.5 w-full sm:w-auto relative group">
-		<label class="text-xs font-medium text-white/50 ml-1">{ i18n.T(ctx, "cases.filters.assigned_to") }</label>
-		<div class="relative">
-			<select
-				class="w-full sm:w-48 pl-3 pr-8 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 appearance-none transition-all duration-300 hover:border-white/20 cursor-pointer"
-				name="assigned_to"
-				id="assigned-to-filter"
-			>
-				<option value="" class="bg-[#1a1b1e] text-white/70">{ i18n.T(ctx, "cases.filters.all_lawyers") }</option>
-				<!-- Options will be populated via HTMX from /api/lawyers -->
-			</select>
-			<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-				<i class="fas fa-chevron-down text-xs text-white/30"></i>
-			</div>
-		</div>
-	</div>
-}
-
-templ DateFromInput(ctx context.Context) {
-	<div class="flex flex-col gap-1.5 w-full sm:w-auto relative group">
-		<label class="text-xs font-medium text-white/50 ml-1">{ i18n.T(ctx, "cases.filters.from") }</label>
-		<div class="relative">
-			<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-				<i class="fas fa-calendar text-white/30 group-focus-within:text-accent transition-colors"></i>
-			</div>
-			<input
-				type="date"
-				class="w-full sm:w-40 pl-10 pr-4 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
-				name="date_from"
-				id="date-from-filter"
-			/>
-		</div>
-	</div>
-}
-
-templ DateToInput(ctx context.Context) {
-	<div class="flex flex-col gap-1.5 w-full sm:w-auto relative group">
-		<label class="text-xs font-medium text-white/50 ml-1">{ i18n.T(ctx, "cases.filters.to") }</label>
-		<div class="relative">
-			<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-				<i class="fas fa-calendar text-white/30 group-focus-within:text-accent transition-colors"></i>
-			</div>
-			<input
-				type="date"
-				class="w-full sm:w-40 pl-10 pr-4 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
-				name="date_to"
-				id="date-to-filter"
-			/>
-		</div>
-	</div>
-}
-
-templ KeywordInput(ctx context.Context) {
-	<div class="flex flex-col gap-1.5 w-full sm:flex-1 min-w-[200px] relative group">
-		<label class="text-xs font-medium text-white/50 ml-1 sm:hidden md:block">{ i18n.T(ctx, "cases.filters.search_label") }</label>
-		<div class="relative">
-			<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-				<i class="fas fa-search text-white/30 group-focus-within:text-accent transition-colors"></i>
-			</div>
-			<input
-				type="text"
-				placeholder={ i18n.T(ctx, "cases.filters.search_placeholder") }
-				class="w-full pl-10 pr-4 py-2.5 bg-[#0A0A0B]/60 border border-white/10 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-300 hover:border-white/20"
-				name="keyword"
-				id="keyword-filter"
-			/>
-		</div>
-	</div>
+	</form>
 }
 
 // CaseFiltersHistorical renders the filter controls for historical cases (without status filter)
 templ CaseFiltersHistorical(ctx context.Context, user *models.User) {
-	<div class="glass-panel p-3 md:p-4 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
-		<form
-			id="cases-filter-form"
-			hx-get="/api/cases?historical=true"
-			hx-target="#cases-table"
-			hx-trigger="submit"
-			hx-indicator="#loading-indicator"
+	<form
+		id="cases-filter-form"
+		hx-get="/api/cases?historical=true"
+		hx-target="#cases-table"
+		hx-trigger="submit"
+		hx-indicator="#loading-indicator"
+		class="flex flex-col xl:flex-row gap-4 items-start xl:items-end w-full"
+	>
+		<input type="hidden" name="historical" value="true"/>
+		<!-- Filters Group -->
+		<div class="flex flex-wrap gap-4 w-full">
+			if user.Role == "admin" {
+				@AssignedToSelect(ctx)
+			}
+			@DateFromInput(ctx)
+			@DateToInput(ctx)
+			@KeywordInput(ctx)
+		</div>
+
+		<!-- Search Button -->
+		<div class="w-full xl:w-auto mt-2 xl:mt-0 flex-shrink-0">
+			<button
+				type="submit"
+				class="btn btn-primary w-full xl:w-auto rounded-sm gap-2"
+			>
+				<i data-lucide="search"></i>
+				<span>{ i18n.T(ctx, "cases.filters.search_button") }</span>
+			</button>
+		</div>
+	</form>
+}
+
+
+// Helper Components for Inputs to avoid duplication
+templ StatusSelect(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.status") }</span>
+		</label>
+		<select
+			class="select select-bordered select-sm w-full sm:w-40 rounded-sm focus:select-primary"
+			name="status"
+			id="status-filter"
 		>
-			<input type="hidden" name="historical" value="true"/>
-			<div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 sm:items-center">
-				if user.Role == "admin" {
-					@AssignedToSelect(ctx)
-				}
-				@DateFromInput(ctx)
-				@DateToInput(ctx)
-				<!-- Search takes remaining width on desktop, full width on mobile -->
-				@KeywordInput(ctx)
-				<!-- Search Button -->
-				<button
-					type="submit"
-					class="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent text-white font-medium rounded-xl shadow-lg shadow-accent/20 hover:shadow-accent/40 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group"
-				>
-					<i class="fas fa-search group-hover:scale-110 transition-transform duration-300"></i>
-					<span>{ i18n.T(ctx, "cases.filters.search_button") }</span>
-				</button>
+			<option value="">{ i18n.T(ctx, "cases.filters.all_status") }</option>
+			<option value="OPEN">{ i18n.T(ctx, "cases.status.open") }</option>
+			<option value="ON_HOLD">{ i18n.T(ctx, "cases.status.on_hold") }</option>
+			<option value="CLOSED">{ i18n.T(ctx, "cases.status.closed") }</option>
+		</select>
+	</div>
+}
+
+templ AssignedToSelect(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.assigned_to") }</span>
+		</label>
+		<select
+			class="select select-bordered select-sm w-full sm:w-48 rounded-sm focus:select-primary"
+			name="assigned_to"
+			id="assigned-to-filter"
+		>
+			<option value="">{ i18n.T(ctx, "cases.filters.all_lawyers") }</option>
+			<!-- Options will be populated via HTMX from /api/lawyers -->
+		</select>
+	</div>
+}
+
+templ DateFromInput(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.from") }</span>
+		</label>
+		<input
+			type="date"
+			class="input input-bordered input-sm w-full sm:w-40 rounded-sm focus:input-primary"
+			name="date_from"
+			id="date-from-filter"
+		/>
+	</div>
+}
+
+templ DateToInput(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.to") }</span>
+		</label>
+		<input
+			type="date"
+			class="input input-bordered input-sm w-full sm:w-40 rounded-sm focus:input-primary"
+			name="date_to"
+			id="date-to-filter"
+		/>
+	</div>
+}
+
+templ KeywordInput(ctx context.Context) {
+	<div class="form-control w-full sm:flex-1 min-w-[200px]">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.search_label") }</span>
+		</label>
+		<div class="relative">
+			<input
+				type="text"
+				placeholder={ i18n.T(ctx, "cases.filters.search_placeholder") }
+				class="input input-bordered input-sm w-full rounded-sm pl-9 focus:input-primary"
+				name="keyword"
+				id="keyword-filter"
+			/>
+			<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+				<i data-lucide="search" class="text-base-content/40"></i>
 			</div>
-		</form>
+		</div>
 	</div>
 }

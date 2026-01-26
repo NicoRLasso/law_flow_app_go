@@ -10,124 +10,123 @@ import (
 // CaseTable renders the cases table with pagination
 templ CaseTable(ctx context.Context, cases []models.Case, currentPage int, totalPages int, limit int, total int) {
 	if len(cases) == 0 {
-		<div class="glass-panel p-12 rounded-xl border border-white/10 text-center flex flex-col items-center justify-center min-h-[300px]">
-			<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 mx-auto">
-				<i class="fas fa-folder-open text-2xl text-white/20"></i>
+		<div class="text-center py-16 bg-base-50">
+			<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+				<i data-lucide="folder-open" class="text-2xl"></i>
 			</div>
-			<p class="text-white/40 font-medium">{ i18n.T(ctx, "cases.table.empty") }</p>
+			<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "cases.table.empty") }</p>
 		</div>
 	} else {
-		<!-- Table Container with Horizontal Scroll -->
-		<div class="glass-panel rounded-xl border border-white/10 overflow-hidden shadow-2xl backdrop-blur-xl">
-			<div class="overflow-x-auto">
-				<table class="w-full">
-					<thead>
-						<tr class="border-b border-white/5 bg-white/[0.02]">
-							<th class="px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.number") }</th>
-							<th class="px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.title") }</th>
-							<th class="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.client") }</th>
-							<th class="hidden lg:table-cell px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.assigned_to") }</th>
-							<th class="px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.status") }</th>
-							<th class="hidden sm:table-cell px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.opened") }</th>
-							<th class="px-6 py-4 text-left text-xs font-medium text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "cases.table.actions") }</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-white/10">
-						for _, caseRecord := range cases {
-							@CaseRow(ctx, caseRecord)
-						}
-					</tbody>
-				</table>
-			</div>
+		<!-- Table Container -->
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.number") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.title") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.client") }</th>
+						<th class="hidden lg:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.assigned_to") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.status") }</th>
+						<th class="hidden sm:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.opened") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "cases.table.actions") }</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, caseRecord := range cases {
+						@CaseRow(ctx, caseRecord)
+					}
+				</tbody>
+			</table>
 		</div>
 		<!-- Pagination Controls -->
-		@components.Pagination(ctx, components.PaginationData{
-			CurrentPage: currentPage,
-			TotalPages:  totalPages,
-			Limit:       limit,
-			Total:       total,
-			BaseURL:     "/api/cases",
-			Status:      "",
-			Priority:    "",
-			TargetID:    "#cases-table",
-		})
+		<div class="mt-4 p-4 border-t border-base-200">
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: currentPage,
+				TotalPages:  totalPages,
+				Limit:       limit,
+				Total:       total,
+				BaseURL:     "/api/cases",
+				Status:      "",
+				Priority:    "",
+				TargetID:    "#cases-table",
+			})
+		</div>
 	}
 }
 
 // CaseRow renders a single table row for a case
 templ CaseRow(ctx context.Context, caseRecord models.Case) {
-	<tr class="group hover:bg-white/[0.02] transition-colors duration-300 border-b border-white/5 last:border-0">
+	<tr class="hover group">
 		<!-- Case Number -->
-		<td class="px-6 py-4">
-			<span class="text-sm font-medium text-white/90 group-hover:text-white transition-colors">{ caseRecord.CaseNumber }</span>
+		<td>
+			<span class="font-mono text-sm font-bold text-base-content">{ caseRecord.CaseNumber }</span>
 		</td>
 		<!-- Title & Description -->
-		<td class="px-6 py-4">
-			<div class="flex flex-col gap-1">
+		<td>
+			<div class="flex flex-col gap-0.5">
 				if caseRecord.Title != nil {
-					<span class="text-sm font-medium text-white group-hover:text-accent transition-colors">{ *caseRecord.Title }</span>
+					<span class="font-serif font-bold text-base-content group-hover:text-primary transition-colors">{ *caseRecord.Title }</span>
 				}
-				<span class="text-xs text-white/40 line-clamp-1">{ caseRecord.Description }</span>
+				<span class="text-xs text-base-content/50 line-clamp-1">{ caseRecord.Description }</span>
 			</div>
 		</td>
 		<!-- Client -->
-		<td class="hidden md:table-cell px-6 py-4">
+		<td class="hidden md:table-cell">
 			if caseRecord.Client.ID != "" {
 				<div class="flex items-center gap-2">
-					<div class="w-6 h-6 rounded-full bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center text-[10px] text-white/70">
-						{ string([]rune(caseRecord.Client.Name)[0]) }
+					<div class="avatar placeholder">
+						<div class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center">
+							<span class="text-[10px] font-bold">{ string([]rune(caseRecord.Client.Name)[0]) }</span>
+						</div>
 					</div>
-					<span class="text-sm text-white/70">{ caseRecord.Client.Name }</span>
+					<span class="text-sm text-base-content/70">{ caseRecord.Client.Name }</span>
 				</div>
 			} else {
-				<span class="text-sm text-white/30 italic">{ i18n.T(ctx, "common.na") }</span>
+				<span class="text-sm text-base-content/30 italic">{ i18n.T(ctx, "common.na") }</span>
 			}
 		</td>
 		<!-- Assigned To -->
-		<td class="hidden lg:table-cell px-6 py-4">
+		<td class="hidden lg:table-cell">
 			if caseRecord.AssignedTo != nil {
 				<div class="flex items-center gap-2">
-					<div class="w-6 h-6 rounded-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center text-[10px] text-accent">
-						{ string([]rune(caseRecord.AssignedTo.Name)[0]) }
+					<div class="avatar placeholder">
+						<div class="bg-secondary/10 text-secondary rounded-full w-6 h-6 flex items-center justify-center">
+							<span class="text-[10px] font-bold">{ string([]rune(caseRecord.AssignedTo.Name)[0]) }</span>
+						</div>
 					</div>
-					<span class="text-sm text-white/70">{ caseRecord.AssignedTo.Name }</span>
+					<span class="text-sm text-base-content/70">{ caseRecord.AssignedTo.Name }</span>
 				</div>
 			} else {
-				<span class="text-sm text-white/30 italic">{ i18n.T(ctx, "cases.table.unassigned") }</span>
+				<span class="text-sm text-base-content/30 italic">{ i18n.T(ctx, "cases.table.unassigned") }</span>
 			}
 		</td>
 		<!-- Status -->
-		<td class="px-6 py-4">
+		<td>
 			@CaseStatusBadge(ctx, caseRecord.Status)
 		</td>
 		<!-- Opened -->
-		<td class="hidden sm:table-cell px-6 py-4">
-			<span class="text-xs text-white/40 font-mono">
+		<td class="hidden sm:table-cell">
+			<span class="text-xs text-base-content/50 font-mono">
 				{ formatRelativeTime(caseRecord.OpenedAt) }
 			</span>
 		</td>
 		<!-- Actions -->
-		<td class="px-6 py-4">
-			<div class="flex items-center gap-2">
-				<a
-					href={ templ.SafeURL("/cases/" + caseRecord.ID) }
-					class="px-3 md:px-4 py-2 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5"
-					title="View Details"
-				>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-					</svg>
-					<span class="hidden sm:inline">{ i18n.T(ctx, "cases.table.details") }</span>
-				</a>
-			</div>
+		<td>
+			<a
+				href={ templ.SafeURL("/cases/" + caseRecord.ID) }
+				class="btn btn-outline btn-secondary btn-sm gap-1"
+				title="View Details"
+			>
+				<i data-lucide="eye"></i>
+				<span class="hidden sm:inline">{ i18n.T(ctx, "cases.table.details") }</span>
+			</a>
 		</td>
 	</tr>
 }
 
 // CaseStatusBadge renders a status badge for cases
 templ CaseStatusBadge(ctx context.Context, status string) {
-	<span class={ "px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-wider border backdrop-blur-md shadow-sm", getCaseStatusClass(status) }>
+	<span class={ "badge badge-sm font-bold", getCaseStatusClass(status) }>
 		{ getCaseStatusLabel(ctx, status) }
 	</span>
 }
@@ -136,13 +135,13 @@ templ CaseStatusBadge(ctx context.Context, status string) {
 func getCaseStatusClass(status string) string {
 	switch status {
 	case "OPEN":
-		return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10"
+		return "badge-success text-white"
 	case "ON_HOLD":
-		return "bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-amber-500/10"
+		return "badge-warning"
 	case "CLOSED":
-		return "bg-white/5 text-white/40 border border-white/10"
+		return "badge-ghost"
 	default:
-		return "bg-white/5 text-white/60 border border-white/10"
+		return "badge-ghost"
 	}
 }
 

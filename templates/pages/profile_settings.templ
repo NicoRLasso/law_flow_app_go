@@ -10,78 +10,66 @@ import (
 
 templ ProfileSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/profile")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full " x-data="{ activeTab: 'profile', sidebarOpen: false }">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full" x-data="{ activeTab: 'profile', sidebarOpen: false }">
 					<!-- Header -->
-					<div class="text-center mb-6 md:mb-8 settings-page-header">
-						<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "settings.profile.title") }</h1>
-						<p class="text-muted-foreground mt-1">{ i18n.T(ctx, "settings.profile.desc") }</p>
+					<div class="mb-8 border-b border-base-300 pb-6">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "settings.profile.title") }</h1>
+						<p class="text-base-content/60 mt-2 font-sans">{ i18n.T(ctx, "settings.profile.desc") }</p>
 					</div>
 					<!-- Layout with Sidebar -->
-					<div class="settings-layout">
+					<div class="flex flex-col md:flex-row gap-8">
 						<!-- Sidebar Navigation -->
-						<aside class="settings-sidebar">
+						<aside class="w-full md:w-64 shrink-0">
 							<!-- Mobile Toggle Button -->
 							<button
 								@click="sidebarOpen = !sidebarOpen"
 								:aria-expanded="sidebarOpen"
-								class="settings-mobile-toggle md:hidden"
+								class="md:hidden w-full flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-sm mb-4"
 							>
-								<span class="flex items-center gap-3">
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-									</svg>
+								<span class="flex items-center gap-3 font-serif font-bold">
+									<i data-lucide="menu"></i>
 									<span x-text={ "activeTab === 'profile' ? '" + i18n.T(ctx, "settings.tabs.profile") + "' : activeTab === 'security' ? '" + i18n.T(ctx, "settings.tabs.security") + "' : '" + i18n.T(ctx, "settings.tabs.account") + "'" }></span>
 								</span>
-								<svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-								</svg>
+								<i data-lucide="chevron-down" class="transition-transform duration-200" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
 							<!-- Navigation Menu -->
 							<nav
-								class="glass-panel rounded-2xl p-4 border border-white/10 settings-nav shadow-xl backdrop-blur-xl"
-								:class="{ 'settings-nav-hidden': !sidebarOpen }"
-								x-show="sidebarOpen || window.innerWidth >= 768"
-								x-transition
+								class="bg-base-100 rounded-sm border border-base-200 shadow-sm overflow-hidden"
+								:class="{ 'hidden': !sidebarOpen, 'block': sidebarOpen, 'md:block': true }"
 							>
-								<ul class="space-y-2">
+								<ul class="divide-y divide-base-200">
 									<li>
 										<button
 											@click="activeTab = 'profile'; sidebarOpen = false"
-											:class="activeTab === 'profile' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'profile' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-											</svg>
+											<i data-lucide="user" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.tabs.profile") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'security'; sidebarOpen = false"
-											:class="activeTab === 'security' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'security' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-											</svg>
+											<i data-lucide="lock" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.tabs.security") }</span>
 										</button>
 									</li>
 									<li>
 										<button
 											@click="activeTab = 'account'; sidebarOpen = false"
-											:class="activeTab === 'account' ? 'bg-accent text-white' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'"
-											class="w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-3"
+											:class="activeTab === 'account' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
 										>
-											<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-											</svg>
+											<i data-lucide="info" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "settings.tabs.account") }</span>
 										</button>
 									</li>
@@ -89,91 +77,99 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 							</nav>
 						</aside>
 						<!-- Main Content Area -->
-						<div class="settings-content space-y-6">
+						<div class="flex-1 min-w-0">
 							<!-- Profile Tab -->
 							<div x-show="activeTab === 'profile'" x-transition class="space-y-6">
 								<!-- Profile Information Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-										</svg>
+								<div class="bg-base-100 rounded-sm p-8 border border-base-200 shadow-sm">
+									<h2 class="text-xl font-serif font-bold mb-6 flex items-center gap-2 pb-4 border-b border-base-200">
+										<i data-lucide="user" class="text-primary"></i>
 										{ i18n.T(ctx, "settings.profile.info_title") }
 									</h2>
 									<form
 										hx-put="/api/profile"
 										hx-target="#profile-message"
 										hx-swap="innerHTML"
-										class="space-y-4"
+										class="space-y-6"
 									>
-										<!-- Name -->
-										<div>
-											<label for="name" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.profile.name") } <span class="text-red-500">*</span>
-											</label>
-											<input
-												type="text"
-												id="name"
-												name="name"
-												value={ user.Name }
-												required
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-										</div>
-										<!-- Email -->
-										<div>
-											<label for="email" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.profile.email") } <span class="text-red-500">*</span>
-											</label>
-											<input
-												type="email"
-												id="email"
-												name="email"
-												value={ user.Email }
-												required
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-										</div>
-										<!-- Language -->
-										<div>
-											<label for="language" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.profile.language") } <span class="text-red-500">*</span>
-											</label>
-											<div class="relative">
-												<select
-													id="language"
-													name="language"
-													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-												>
-													<option value="en" selected?={ user.Language == "en" }>English 🇺🇸</option>
-													<option value="es" selected?={ user.Language == "es" }>Español 🇪🇸</option>
-												</select>
-												<div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-muted-foreground">
-													<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-														<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-													</svg>
-												</div>
+										<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+											<!-- Name -->
+											<div class="form-control">
+												<label for="name" class="label pt-0 pb-1">
+													<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.profile.name") } <span class="text-error">*</span></span>
+												</label>
+												<input
+													type="text"
+													id="name"
+													name="name"
+													value={ user.Name }
+													required
+													class="input input-bordered w-full rounded-sm focus:input-primary"
+												/>
+											</div>
+											<!-- Email -->
+											<div class="form-control">
+												<label for="email" class="label pt-0 pb-1">
+													<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.profile.email") } <span class="text-error">*</span></span>
+												</label>
+												<input
+													type="email"
+													id="email"
+													name="email"
+													value={ user.Email }
+													required
+													class="input input-bordered w-full rounded-sm focus:input-primary"
+												/>
 											</div>
 										</div>
-										<!-- Phone Number -->
-										<div>
-											<label for="phone_number" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.profile.phone") }
+										<!-- Language -->
+										<div class="form-control">
+											<label for="language" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.profile.language") } <span class="text-error">*</span></span>
 											</label>
-											<input
-												type="tel"
-												id="phone_number"
-												name="phone_number"
-												if user.PhoneNumber != nil {
-													value={ *user.PhoneNumber }
-												}
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
+											<select
+												id="language"
+												name="language"
+												class="select select-bordered w-full rounded-sm focus:select-primary"
+											>
+												<option value="en" selected?={ user.Language == "en" }>English 🇺🇸</option>
+												<option value="es" selected?={ user.Language == "es" }>Español 🇪🇸</option>
+											</select>
 										</div>
-										<!-- Address -->
-										<div>
-											<label for="address" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.profile.address") }
+										<!-- Phone Number & Address -->
+										<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+											<div class="form-control">
+												<label for="phone_number" class="label pt-0 pb-1">
+													<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.profile.phone") }</span>
+												</label>
+												<input
+													type="tel"
+													id="phone_number"
+													name="phone_number"
+													if user.PhoneNumber != nil {
+														value={ *user.PhoneNumber }
+													}
+													class="input input-bordered w-full rounded-sm focus:input-primary"
+												/>
+											</div>
+											<div class="form-control">
+												<label for="document_number" class="label pt-0 pb-1">
+													<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.profile.doc_number") }</span>
+												</label>
+												<input
+													type="text"
+													id="document_number"
+													name="document_number"
+													if user.DocumentNumber != nil {
+														value={ *user.DocumentNumber }
+													}
+													class="input input-bordered w-full rounded-sm focus:input-primary"
+												/>
+											</div>
+										</div>
+										<div class="form-control">
+											<label for="address" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.profile.address") }</span>
 											</label>
 											<input
 												type="text"
@@ -182,35 +178,15 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 												if user.Address != nil {
 													value={ *user.Address }
 												}
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-											/>
-										</div>
-										<!-- Document Number -->
-										<div>
-											<label for="document_number" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.profile.doc_number") }
-											</label>
-											<input
-												type="text"
-												id="document_number"
-												name="document_number"
-												if user.DocumentNumber != nil {
-													value={ *user.DocumentNumber }
-												}
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+												class="input input-bordered w-full rounded-sm focus:input-primary"
 											/>
 										</div>
 										<!-- Message Container -->
 										<div id="profile-message"></div>
 										<!-- Submit Button -->
-										<div class="flex justify-end pt-4">
-											<button
-												type="submit"
-												class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
-											>
-												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-												</svg>
+										<div class="flex justify-end pt-4 border-t border-base-200">
+											<button type="submit" class="btn btn-primary rounded-sm gap-2">
+												<i data-lucide="save"></i>
 												<span>{ i18n.T(ctx, "settings.profile.save_btn") }</span>
 											</button>
 										</div>
@@ -220,55 +196,46 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 							<!-- Security Tab -->
 							<div x-show="activeTab === 'security'" x-transition class="space-y-6">
 								<!-- Password Change Card -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-										</svg>
+								<div class="bg-base-100 rounded-sm p-8 border border-base-200 shadow-sm">
+									<h2 class="text-xl font-serif font-bold mb-6 flex items-center gap-2 pb-4 border-b border-base-200">
+										<i data-lucide="lock" class="text-primary"></i>
 										{ i18n.T(ctx, "settings.security.title") }
 									</h2>
 									<form
 										hx-post="/api/profile/password"
 										hx-target="#password-message"
 										hx-swap="innerHTML"
-										class="space-y-4"
+										class="space-y-6"
 										x-data="{ resetForm() { this.$el.reset(); } }"
 										@password-changed.window="resetForm()"
 									>
 										<!-- Current Password -->
-										<div>
-											<label for="current_password" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.security.current_pass") } <span class="text-red-500">*</span>
+										<div class="form-control">
+											<label for="current_password" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.security.current_pass") } <span class="text-error">*</span></span>
 											</label>
 											<input
 												type="password"
 												id="current_password"
 												name="current_password"
 												required
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+												class="input input-bordered w-full rounded-sm focus:input-primary"
 											/>
 										</div>
 										<!-- New Password -->
-										<div>
-											<label for="new_password" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.security.new_pass") } <span class="text-red-500">*</span>
+										<div class="form-control">
+											<label for="new_password" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.security.new_pass") } <span class="text-error">*</span></span>
 											</label>
 											<div
 												x-data="{ 
 												password: '', 
 												strength: 0,
 												get color() {
-													if (this.strength <= 1) return 'bg-red-500';
-													if (this.strength <= 2) return 'bg-yellow-500';
-													if (this.strength <= 3) return 'bg-blue-500';
-													return 'bg-green-500';
-												},
-												get label() {
-													if (this.strength == 0) return '';
-													if (this.strength <= 1) return 'Weak';
-													if (this.strength <= 2) return 'Fair';
-													if (this.strength <= 3) return 'Good';
-													return 'Strong';
+													if (this.strength <= 1) return 'bg-error';
+													if (this.strength <= 2) return 'bg-warning';
+													if (this.strength <= 3) return 'bg-info';
+													return 'bg-success';
 												},
 												checkStrength() {
 													let score = 0;
@@ -288,41 +255,35 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 													minlength="12"
 													x-model="password"
 													@input="checkStrength()"
-													class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+													class="input input-bordered w-full rounded-sm focus:input-primary"
 												/>
 												<!-- Strength Meter Bar -->
-												<div class="h-1.5 w-full bg-white/10 rounded-full mt-3 overflow-hidden" x-show="password.length > 0" x-transition>
-													<div class="h-full transition-all duration-300 rounded-full" :class="color" :style="'width: ' + (strength * 25) + '%'"></div>
-												</div>
+												<progress class="progress w-full mt-3" :class="color" :value="strength * 25" max="100" x-show="password.length > 0" x-transition></progress>
 												<!-- Requirements List -->
-												<div class="mt-3 space-y-1">
-													<p class="text-xs text-muted-foreground flex items-center gap-2" :class="password.length >= 12 ? 'text-green-500' : ''">
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="password.length >= 12"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="password.length < 12"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+												<div class="mt-3 grid grid-cols-2 gap-1">
+													<p class="text-xs flex items-center gap-2" :class="password.length >= 12 ? 'text-success' : 'text-base-content/50'">
+														<i class="fas" :class="password.length >= 12 ? 'fa-check-circle' : 'fa-circle text-xs'"></i>
 														Min 12 characters
 													</p>
-													<p class="text-xs text-muted-foreground flex items-center gap-2" :class="password.match(/[A-Z]/) && password.match(/[a-z]/) ? 'text-green-500' : ''">
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="password.match(/[A-Z]/) && password.match(/[a-z]/)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!(password.match(/[A-Z]/) && password.match(/[a-z]/))"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+													<p class="text-xs flex items-center gap-2" :class="password.match(/[A-Z]/) && password.match(/[a-z]/) ? 'text-success' : 'text-base-content/50'">
+														<i class="fas" :class="password.match(/[A-Z]/) && password.match(/[a-z]/) ? 'fa-check-circle' : 'fa-circle text-xs'"></i>
 														Upper & lowercase
 													</p>
-													<p class="text-xs text-muted-foreground flex items-center gap-2" :class="password.match(/[0-9]/) ? 'text-green-500' : ''">
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="password.match(/[0-9]/)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!password.match(/[0-9]/)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+													<p class="text-xs flex items-center gap-2" :class="password.match(/[0-9]/) ? 'text-success' : 'text-base-content/50'">
+														<i class="fas" :class="password.match(/[0-9]/) ? 'fa-check-circle' : 'fa-circle text-xs'"></i>
 														Number
 													</p>
-													<p class="text-xs text-muted-foreground flex items-center gap-2" :class="password.match(/[^A-Za-z0-9]/) ? 'text-green-500' : ''">
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="password.match(/[^A-Za-z0-9]/)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-														<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!password.match(/[^A-Za-z0-9]/)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+													<p class="text-xs flex items-center gap-2" :class="password.match(/[^A-Za-z0-9]/) ? 'text-success' : 'text-base-content/50'">
+														<i class="fas" :class="password.match(/[^A-Za-z0-9]/) ? 'fa-check-circle' : 'fa-circle text-xs'"></i>
 														Special character
 													</p>
 												</div>
 											</div>
 										</div>
 										<!-- Confirm Password -->
-										<div>
-											<label for="confirm_password" class="block text-sm font-medium text-foreground mb-2">
-												{ i18n.T(ctx, "settings.security.confirm_pass") } <span class="text-red-500">*</span>
+										<div class="form-control">
+											<label for="confirm_password" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.security.confirm_pass") } <span class="text-error">*</span></span>
 											</label>
 											<input
 												type="password"
@@ -330,20 +291,15 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 												name="confirm_password"
 												required
 												minlength="8"
-												class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+												class="input input-bordered w-full rounded-sm focus:input-primary"
 											/>
 										</div>
 										<!-- Message Container -->
 										<div id="password-message"></div>
 										<!-- Submit Button -->
-										<div class="flex justify-end pt-4">
-											<button
-												type="submit"
-												class="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2"
-											>
-												<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-												</svg>
+										<div class="flex justify-end pt-4 border-t border-base-200">
+											<button type="submit" class="btn btn-primary rounded-sm gap-2">
+												<i data-lucide="key"></i>
 												<span>{ i18n.T(ctx, "settings.security.change_btn") }</span>
 											</button>
 										</div>
@@ -353,29 +309,27 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 							<!-- Account Info Tab -->
 							<div x-show="activeTab === 'account'" x-transition class="space-y-6">
 								<!-- Account Info -->
-								<div class="glass-panel rounded-xl p-6 border border-white/10 shadow-xl backdrop-blur-xl">
-									<h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-										<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-										</svg>
+								<div class="bg-base-100 rounded-sm p-8 border border-base-200 shadow-sm">
+									<h2 class="text-xl font-serif font-bold mb-6 flex items-center gap-2 pb-4 border-b border-base-200">
+										<i data-lucide="info" class="text-primary"></i>
 										{ i18n.T(ctx, "settings.account.title") }
 									</h2>
-									<div class="space-y-3 text-sm">
-										<div class="flex justify-between py-2 border-b border-white/5">
-											<span class="text-muted-foreground">{ i18n.T(ctx, "settings.account.role") }</span>
-											<span class="font-medium text-foreground uppercase">{ user.Role }</span>
+									<div class="space-y-0 text-sm divide-y divide-base-200">
+										<div class="flex justify-between py-4">
+											<span class="text-base-content/60 uppercase tracking-widest text-xs font-bold">{ i18n.T(ctx, "settings.account.role") }</span>
+											<span class="font-bold text-base-content uppercase badge badge-ghost badge-sm">{ user.Role }</span>
 										</div>
-										<div class="flex justify-between py-2 border-b border-white/5">
-											<span class="text-muted-foreground">{ i18n.T(ctx, "settings.account.status") }</span>
+										<div class="flex justify-between py-4">
+											<span class="text-base-content/60 uppercase tracking-widest text-xs font-bold">{ i18n.T(ctx, "settings.account.status") }</span>
 											if user.IsActive {
-												<span class="px-2 py-1 bg-green-500/10 text-green-400 rounded-lg text-xs font-medium">{ i18n.T(ctx, "users.filters.active") }</span>
+												<span class="badge badge-success badge-sm text-white">{ i18n.T(ctx, "users.filters.active") }</span>
 											} else {
-												<span class="px-2 py-1 bg-red-500/10 text-red-400 rounded-lg text-xs font-medium">{ i18n.T(ctx, "users.filters.inactive") }</span>
+												<span class="badge badge-error badge-sm text-white">{ i18n.T(ctx, "users.filters.inactive") }</span>
 											}
 										</div>
-										<div class="flex justify-between py-2">
-											<span class="text-muted-foreground">{ i18n.T(ctx, "settings.account.firm") }</span>
-											<span class="font-medium text-foreground">{ firm.Name }</span>
+										<div class="flex justify-between py-4">
+											<span class="text-base-content/60 uppercase tracking-widest text-xs font-bold">{ i18n.T(ctx, "settings.account.firm") }</span>
+											<span class="font-serif font-bold text-base-content">{ firm.Name }</span>
 										</div>
 									</div>
 								</div>

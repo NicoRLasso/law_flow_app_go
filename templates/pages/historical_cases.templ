@@ -11,17 +11,17 @@ import (
 
 templ HistoricalCases(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/historical-cases")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full space-y-6">
 					<!-- Header -->
-					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-base-300 pb-6 mb-8">
 						<div>
-							<h1 class="text-2xl md:text-3xl font-bold tracking-tight">{ i18n.T(ctx, "cases.history.page_title") }</h1>
-							<p class="text-muted-foreground mt-1">
+							<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "cases.history.page_title") }</h1>
+							<p class="text-base-content/60 mt-2 font-sans">
 								{ i18n.T(ctx, "cases.history.page_description") }
 							</p>
 						</div>
@@ -30,20 +30,20 @@ templ HistoricalCases(ctx context.Context, title string, csrfToken string, user 
 								hx-get="/api/cases/history/new"
 								hx-target="body"
 								hx-swap="beforeend"
-								class="inline-flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-lg shadow-accent/20"
+								class="btn btn-primary rounded-sm shadow-md gap-2"
 							>
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-								</svg>
-								{ i18n.T(ctx, "cases.history.add_button") }
+								<i data-lucide="plus"></i>
+								<span>{ i18n.T(ctx, "cases.history.add_button") }</span>
 							</button>
 						}
 					</div>
 					<!-- Case Filters (without status filter for historical cases) -->
-					@partials.CaseFiltersHistorical(ctx, user)
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200">
+						@partials.CaseFiltersHistorical(ctx, user)
+					</div>
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
-						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+						<span class="loading loading-spinner loading-lg text-primary"></span>
 					</div>
 					<!-- Historical Cases Table -->
 					<div
@@ -51,6 +51,7 @@ templ HistoricalCases(ctx context.Context, title string, csrfToken string, user 
 						hx-get="/api/cases?historical=true"
 						hx-trigger="load, reload-cases from:body"
 						hx-indicator="#loading-indicator"
+						class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
 					></div>
 				</div>
 			</main>

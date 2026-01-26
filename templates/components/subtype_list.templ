@@ -10,17 +10,19 @@ import (
 templ SubtypeManager(ctx context.Context, domains []models.CaseDomain) {
 	<div class="space-y-6" id="subtype-manager">
 		<!-- Filters Card -->
-		<div class="glass-panel rounded-2xl p-6 border border-white/10">
+		<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm p-6">
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{ selectedDomain: '' }">
 				<!-- Domain Select -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">
-						{ i18n.T(ctx, "settings.classifications.domain") }
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "settings.classifications.domain") }
+						</span>
 					</label>
 					<select
 						name="domain_id"
 						x-model="selectedDomain"
-						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+						class="select select-bordered w-full rounded-sm"
 						hx-get="/api/subtypes/branches"
 						hx-target="#branch-select"
 						hx-trigger="change"
@@ -32,14 +34,16 @@ templ SubtypeManager(ctx context.Context, domains []models.CaseDomain) {
 					</select>
 				</div>
 				<!-- Branch Select (Loaded dynamically) -->
-				<div>
-					<label class="block text-sm font-medium text-foreground mb-2">
-						{ i18n.T(ctx, "settings.classifications.branch") }
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "settings.classifications.branch") }
+						</span>
 					</label>
 					<select
 						id="branch-select"
 						name="branch_id"
-						class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all disabled:opacity-50"
+						class="select select-bordered w-full rounded-sm disabled:opacity-50"
 						:disabled="!selectedDomain"
 						disabled
 						hx-get="/api/subtypes/list"
@@ -53,7 +57,7 @@ templ SubtypeManager(ctx context.Context, domains []models.CaseDomain) {
 		</div>
 		<!-- Subtypes List Container -->
 		<div id="subtypes-list-container">
-			<div class="text-center py-12 text-muted-foreground bg-white/[0.02] rounded-2xl border border-dashed border-white/10">
+			<div class="text-center py-12 text-base-content/60 bg-base-100 rounded-sm border border-dashed border-base-300">
 				{ i18n.T(ctx, "settings.classifications.select_branch_hint") }
 			</div>
 		</div>
@@ -71,7 +75,7 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 				hx-get={ "/api/subtypes/new?branch_id=" + branchID }
 				hx-target="#subtype-modal-container"
 				hx-swap="innerHTML"
-				class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+				class="btn btn-primary rounded-sm gap-2"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -81,48 +85,48 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 		</div>
 		<!-- List/Table -->
 		if len(subtypes) > 0 {
-			<div class="glass-panel rounded-xl border border-white/10 overflow-hidden">
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm overflow-hidden">
 				<div class="overflow-x-auto">
-					<table class="w-full text-left text-sm">
-						<thead class="bg-white/5 border-b border-white/10 text-muted-foreground uppercase text-xs">
-							<tr>
-								<th class="px-6 py-4 font-semibold">{ i18n.T(ctx, "settings.classifications.name") }</th>
-								<th class="px-6 py-4 font-semibold">{ i18n.T(ctx, "settings.classifications.code") }</th>
-								<th class="px-6 py-4 font-semibold text-center">{ i18n.T(ctx, "settings.classifications.active") }</th>
-								<th class="px-6 py-4 font-semibold text-right">{ i18n.T(ctx, "common.actions") }</th>
+					<table class="table w-full">
+						<thead>
+							<tr class="bg-base-200/50">
+								<th class="text-xs font-bold uppercase tracking-wider text-base-content/60">{ i18n.T(ctx, "settings.classifications.name") }</th>
+								<th class="text-xs font-bold uppercase tracking-wider text-base-content/60">{ i18n.T(ctx, "settings.classifications.code") }</th>
+								<th class="text-xs font-bold uppercase tracking-wider text-base-content/60 text-center">{ i18n.T(ctx, "settings.classifications.active") }</th>
+								<th class="text-xs font-bold uppercase tracking-wider text-base-content/60 text-right">{ i18n.T(ctx, "common.actions") }</th>
 							</tr>
 						</thead>
-						<tbody class="divide-y divide-white/5">
+						<tbody>
 							for _, subtype := range subtypes {
-								<tr class="hover:bg-white/[0.02] transition-colors">
-									<td class="px-6 py-4 font-medium text-foreground">
+								<tr class="hover">
+									<td class="font-medium text-base-content">
 										{ subtype.Name }
 										if subtype.IsSystem {
-											<span class="ml-2 px-1.5 py-0.5 text-xs bg-blue-500/20 text-blue-400 rounded">{ i18n.T(ctx, "settings.classifications.system_badge") }</span>
+											<span class="ml-2 badge badge-sm badge-info">{ i18n.T(ctx, "settings.classifications.system_badge") }</span>
 										}
 									</td>
-									<td class="px-6 py-4 font-mono text-xs">{ subtype.Code }</td>
-									<td class="px-6 py-4 text-center">
+									<td class="font-mono text-xs">{ subtype.Code }</td>
+									<td class="text-center">
 										if subtype.IsActive {
-											<span class="px-2 py-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-full text-xs font-medium">
+											<span class="badge badge-sm badge-success">
 												{ i18n.T(ctx, "settings.classifications.active") }
 											</span>
 										} else {
-											<span class="px-2 py-1 bg-gray-500/20 text-gray-400 border border-gray-500/30 rounded-full text-xs font-medium">
+											<span class="badge badge-sm badge-ghost">
 												{ i18n.T(ctx, "settings.classifications.inactive") }
 											</span>
 										}
 									</td>
-									<td class="px-6 py-4 text-right">
-										<div class="flex items-center justify-end gap-2">
+									<td class="text-right">
+										<div class="flex items-center justify-end gap-1">
 											<!-- Toggle Active -->
 											<button
 												hx-patch={ "/api/subtypes/" + subtype.ID + "/toggle-active" }
 												hx-target="#subtypes-list-container"
 												hx-swap="innerHTML"
-												class={ "p-1.5 rounded-lg transition-colors", 
-													templ.KV("text-green-400 hover:bg-green-500/10", subtype.IsActive),
-													templ.KV("text-gray-400 hover:bg-gray-500/10", !subtype.IsActive) }
+												class={ "btn btn-primary btn-sm btn-circle",
+													templ.KV("text-success", subtype.IsActive),
+													templ.KV("text-base-content/40", !subtype.IsActive) }
 												title={ i18n.T(ctx, "settings.classifications.toggle_status") }
 											>
 												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +138,7 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 												hx-get={ "/api/subtypes/" + subtype.ID + "/view" }
 												hx-target="#subtype-modal-container"
 												hx-swap="innerHTML"
-												class="p-1.5 text-muted-foreground hover:text-accent hover:bg-white/10 rounded-lg transition-colors"
+												class="btn btn-primary btn-sm btn-circle"
 												title={ i18n.T(ctx, "common.view") }
 											>
 												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +151,7 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 													hx-get={ "/api/subtypes/" + subtype.ID + "/edit" }
 													hx-target="#subtype-modal-container"
 													hx-swap="innerHTML"
-													class="p-1.5 text-muted-foreground hover:text-accent hover:bg-white/10 rounded-lg transition-colors"
+													class="btn btn-primary btn-sm btn-circle"
 													title={ i18n.T(ctx, "common.edit") }
 												>
 													<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +163,7 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 													hx-target="#subtypes-list-container"
 													hx-swap="innerHTML"
 													hx-confirm={ i18n.T(ctx, "settings.classifications.delete_confirm") }
-													class="p-1.5 text-muted-foreground hover:text-red-400 hover:bg-white/10 rounded-lg transition-colors"
+													class="btn btn-error btn-sm btn-circle"
 													title={ i18n.T(ctx, "common.delete") }
 												>
 													<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,7 +180,7 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 				</div>
 			</div>
 		} else {
-			<div class="text-center py-8 text-muted-foreground">
+			<div class="text-center py-8 text-base-content/60">
 				{ i18n.T(ctx, "settings.classifications.no_subtypes") }
 			</div>
 		}
@@ -186,9 +190,9 @@ templ SubtypesTable(ctx context.Context, subtypes []models.CaseSubtype, branchID
 // SubtypeCheckboxes renders a list of checkboxes for subtypes
 templ SubtypeCheckboxes(ctx context.Context, subtypes []models.CaseSubtype, selectedIDs []string) {
 	if len(subtypes) > 0 {
-		<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-white/5 border border-white/10 rounded-lg">
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-base-200 border border-base-300 rounded-sm">
 			for _, subtype := range subtypes {
-				<label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-white/5 rounded">
+				<label class="flex items-center gap-2 cursor-pointer p-1 hover:bg-base-100 rounded-sm">
 					<input
 						type="checkbox"
 						name="subtype_ids[]"
@@ -201,28 +205,28 @@ templ SubtypeCheckboxes(ctx context.Context, subtypes []models.CaseSubtype, sele
 							}
 							return false
 						}() }
-						class="w-4 h-4 rounded border-white/20 bg-white/5 text-accent focus:ring-accent focus:ring-offset-0"
+						class="checkbox checkbox-sm checkbox-primary"
 					/>
 					<span class="text-sm">{ subtype.Name }</span>
 				</label>
 			}
 		</div>
 	} else {
-		<p class="text-sm text-muted-foreground italic px-2">{ i18n.T(ctx, "settings.classifications.no_subtypes") }</p>
+		<p class="text-sm text-base-content/60 italic px-2">{ i18n.T(ctx, "settings.classifications.no_subtypes") }</p>
 	}
 }
 
 // SubtypeViewModal renders a read-only view of a subtype
 templ SubtypeViewModal(ctx context.Context, subtype models.CaseSubtype) {
 	<div id="subtype-view-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" style="z-index: 9999;" onclick="if(event.target === this) closeSubtypeViewModal()">
-		<div class="glass-panel rounded-xl border border-white/10 w-full max-w-2xl p-6" onclick="event.stopPropagation()">
+		<div class="card bg-base-100 border border-base-200 rounded-sm w-full max-w-2xl p-6" onclick="event.stopPropagation()">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-6">
-				<h3 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "settings.classifications.subtype_details") }</h3>
+				<h3 class="text-2xl font-bold font-serif text-base-content">{ i18n.T(ctx, "settings.classifications.subtype_details") }</h3>
 				<button
 					type="button"
 					onclick="closeSubtypeViewModal()"
-					class="p-2 hover:bg-white/5 rounded-lg transition-all duration-200"
+					class="btn btn-primary btn-sm btn-circle"
 				>
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -234,47 +238,47 @@ templ SubtypeViewModal(ctx context.Context, subtype models.CaseSubtype) {
 				<!-- Basic Info -->
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">
+						<label class="block text-sm font-medium text-base-content/60 mb-1">
 							{ i18n.T(ctx, "settings.classifications.name") }
 						</label>
-						<p class="text-foreground text-lg font-semibold">{ subtype.Name }</p>
+						<p class="text-base-content text-lg font-semibold">{ subtype.Name }</p>
 					</div>
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">
+						<label class="block text-sm font-medium text-base-content/60 mb-1">
 							{ i18n.T(ctx, "settings.classifications.code") }
 						</label>
-						<p class="font-mono text-foreground">{ subtype.Code }</p>
+						<p class="font-mono text-base-content">{ subtype.Code }</p>
 					</div>
 				</div>
 				<!-- Context Info -->
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">
+						<label class="block text-sm font-medium text-base-content/60 mb-1">
 							{ i18n.T(ctx, "settings.classifications.domain") }
 						</label>
-						<p class="text-foreground">{ subtype.Branch.Domain.Name }</p>
+						<p class="text-base-content">{ subtype.Branch.Domain.Name }</p>
 					</div>
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">
+						<label class="block text-sm font-medium text-base-content/60 mb-1">
 							{ i18n.T(ctx, "settings.classifications.branch") }
 						</label>
-						<p class="text-foreground">{ subtype.Branch.Name }</p>
+						<p class="text-base-content">{ subtype.Branch.Name }</p>
 					</div>
 				</div>
 				<!-- Details -->
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">
+						<label class="block text-sm font-medium text-base-content/60 mb-1">
 							{ i18n.T(ctx, "settings.classifications.active") }
 						</label>
 						if subtype.IsActive {
-							<span class="text-green-400 flex items-center gap-1">
-								<span class="w-2 h-2 rounded-full bg-green-400"></span>
+							<span class="text-success flex items-center gap-1">
+								<span class="w-2 h-2 rounded-full bg-success"></span>
 								{ i18n.T(ctx, "settings.classifications.active") }
 							</span>
 						} else {
-							<span class="text-gray-400 flex items-center gap-1">
-								<span class="w-2 h-2 rounded-full bg-gray-400"></span>
+							<span class="text-base-content/60 flex items-center gap-1">
+								<span class="w-2 h-2 rounded-full bg-base-content/40"></span>
 								{ i18n.T(ctx, "settings.classifications.inactive") }
 							</span>
 						}
@@ -283,30 +287,30 @@ templ SubtypeViewModal(ctx context.Context, subtype models.CaseSubtype) {
 				<!-- Description -->
 				if subtype.Description != "" {
 					<div>
-						<label class="block text-sm font-medium text-muted-foreground mb-1">
+						<label class="block text-sm font-medium text-base-content/60 mb-1">
 							{ i18n.T(ctx, "settings.classifications.description") }
 						</label>
-						<p class="text-foreground whitespace-pre-wrap">{ subtype.Description }</p>
+						<p class="text-base-content whitespace-pre-wrap">{ subtype.Description }</p>
 					</div>
 				}
 				<!-- System Badge -->
 				if subtype.IsSystem {
-					<div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 flex items-start gap-3">
-						<svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="alert alert-info rounded-sm">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 						</svg>
 						<div>
-							<p class="text-sm font-medium text-blue-400">{ i18n.T(ctx, "settings.classifications.system_badge") }</p>
-							<p class="text-sm text-blue-400/80">{ i18n.T(ctx, "settings.classifications.cannot_delete_system") }</p>
+							<p class="text-sm font-medium">{ i18n.T(ctx, "settings.classifications.system_badge") }</p>
+							<p class="text-sm opacity-80">{ i18n.T(ctx, "settings.classifications.cannot_delete_system") }</p>
 						</div>
 					</div>
 				}
 				<!-- Close Button -->
-				<div class="flex justify-end pt-4 border-t border-white/10">
+				<div class="flex justify-end pt-4 border-t border-base-200">
 					<button
 						type="button"
 						onclick="closeSubtypeViewModal()"
-						class="px-6 py-2 bg-white/5 text-foreground hover:bg-white/10 rounded-lg font-semibold transition-all duration-200"
+						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.close") }
 					</button>

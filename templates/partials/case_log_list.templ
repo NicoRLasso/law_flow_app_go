@@ -11,102 +11,93 @@ import (
 templ CaseLogList(ctx context.Context, logs []models.CaseLog, caseID string, currentPage int, totalPages int, limit int, total int) {
 	<div id="case-logs-container">
 		if len(logs) == 0 {
-			<div class="glass-panel p-12 rounded-xl border border-white/10 text-center">
-				<div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-					<svg class="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-					</svg>
+			<div class="text-center py-16 bg-base-50 border border-base-200 border-dashed rounded-sm">
+				<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+					<i data-lucide="book" class="text-2xl"></i>
 				</div>
-				<p class="text-xl font-medium text-foreground mb-2">{ i18n.T(ctx, "bitacora.empty") }</p>
-				<p class="text-muted-foreground">{ i18n.T(ctx, "bitacora.create_first_hint") }</p>
+				<p class="text-xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "bitacora.empty") }</p>
+				<p class="text-base-content/60">{ i18n.T(ctx, "bitacora.create_first_hint") }</p>
 			</div>
 		} else {
-			<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden bg-[#0A0A0B]/40">
-				<div class="overflow-x-auto">
-					<table class="w-full">
-						<thead>
-							<tr class="border-b border-white/10 bg-white/5">
-								<th class="px-6 py-4 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "bitacora.occurred_at") }</th>
-								<th class="px-6 py-4 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "bitacora.entry_type") }</th>
-								<th class="px-6 py-4 text-left text-xs font-semibold text-white/40 uppercase tracking-wider w-1/3">{ i18n.T(ctx, "bitacora.title_label") }</th>
-								<th class="px-6 py-4 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">{ i18n.T(ctx, "common.actions") }</th>
+			<div class="overflow-x-auto">
+				<table class="table w-full">
+					<thead>
+						<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+							<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "bitacora.occurred_at") }</th>
+							<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "bitacora.entry_type") }</th>
+							<th class="font-serif font-bold uppercase tracking-wider w-1/3">{ i18n.T(ctx, "bitacora.title_label") }</th>
+							<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "common.actions") }</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, log := range logs {
+							<tr class="hover">
+								<!-- Date -->
+								<td class="font-mono text-sm text-base-content whitespace-nowrap">
+									{ log.OccurredAt.Format("Jan 02, 2006 15:04") }
+								</td>
+								<!-- Type -->
+								<td>
+									<span class={ "badge badge-sm font-bold", getLogTypeBadgeClass(log.EntryType) }>
+										{ i18n.T(ctx, "bitacora.types." + log.EntryType) }
+									</span>
+								</td>
+								<!-- Title & Snippet -->
+								<td>
+									<div class="flex flex-col">
+										<span class="font-bold text-base-content">{ log.Title }</span>
+										<span class="text-xs text-base-content/50 line-clamp-1">{ log.Content }</span>
+									</div>
+								</td>
+								<!-- Actions -->
+								<td>
+									<div class="flex items-center gap-1">
+										<button
+											class="btn btn-primary btn-xs"
+											hx-get={ "/api/cases/" + caseID + "/logs/" + log.ID + "/view" }
+											hx-target="#log-entry-modal-container"
+											hx-swap="innerHTML"
+											title={ i18n.T(ctx, "common.view") }
+										>
+											<i data-lucide="eye"></i>
+										</button>
+										<button
+											class="btn btn-primary btn-xs"
+											hx-get={ "/api/cases/" + caseID + "/logs/" + log.ID }
+											hx-target="#log-entry-modal-container"
+											hx-swap="innerHTML"
+											title={ i18n.T(ctx, "common.edit") }
+										>
+											<i data-lucide="pencil"></i>
+										</button>
+										<button
+											class="btn btn-error btn-xs"
+											{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "bitacora.delete_confirm_title") + "', message: '" + i18n.T(ctx, "bitacora.delete_confirm") + "', confirmUrl: '/api/cases/" + caseID + "/logs/" + log.ID + "', target: '#case-logs-container', swap: 'outerHTML' }, this)" }... }
+											title={ i18n.T(ctx, "common.delete") }
+										>
+											<i data-lucide="trash-2"></i>
+										</button>
+									</div>
+								</td>
 							</tr>
-						</thead>
-						<tbody class="divide-y divide-white/10">
-							for _, log := range logs {
-								<tr class="hover:bg-white/5 transition-colors duration-200">
-									<!-- Date -->
-									<td class="px-6 py-4 text-sm text-white/90 whitespace-nowrap">
-										{ log.OccurredAt.Format("Jan 02, 2006 15:04") }
-									</td>
-									<!-- Type -->
-									<td class="px-6 py-4">
-										<span class={ "px-2.5 py-1 rounded-full text-xs font-medium transition-all", getLogTypeBadgeClass(log.EntryType) }>
-											{ i18n.T(ctx, "bitacora.types." + log.EntryType) }
-										</span>
-									</td>
-									<!-- Title & Snippet -->
-									<td class="px-6 py-4">
-										<div class="flex flex-col">
-											<span class="text-sm font-semibold text-foreground">{ log.Title }</span>
-											<span class="text-xs text-muted-foreground line-clamp-1">{ log.Content }</span>
-										</div>
-									</td>
-									<!-- Actions -->
-									<td class="px-6 py-4">
-										<div class="flex items-center gap-2">
-											<button
-												class="p-2 hover:bg-white/10 rounded-lg text-foreground transition-colors"
-												hx-get={ "/api/cases/" + caseID + "/logs/" + log.ID + "/view" }
-												hx-target="#log-entry-modal-container"
-												hx-swap="innerHTML"
-												title={ i18n.T(ctx, "common.view") }
-											>
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-												</svg>
-											</button>
-											<button
-												class="p-2 hover:bg-white/10 rounded-lg text-foreground transition-colors"
-												hx-get={ "/api/cases/" + caseID + "/logs/" + log.ID }
-												hx-target="#log-entry-modal-container"
-												hx-swap="innerHTML"
-												title={ i18n.T(ctx, "common.edit") }
-											>
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-												</svg>
-											</button>
-											<button
-												class="p-2 hover:bg-red-500/10 text-red-400 rounded-lg transition-colors"
-												{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "bitacora.delete_confirm_title") + "', message: '" + i18n.T(ctx, "bitacora.delete_confirm") + "', confirmUrl: '/api/cases/" + caseID + "/logs/" + log.ID + "', target: '#case-logs-container', swap: 'outerHTML' }, this)" }... }
-												title={ i18n.T(ctx, "common.delete") }
-											>
-												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-												</svg>
-											</button>
-										</div>
-									</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
+						}
+					</tbody>
+				</table>
 			</div>
 		}
 
 		if len(logs) > 0 {
-			@components.Pagination(ctx, components.PaginationData{
-				CurrentPage: currentPage,
-				TotalPages:  totalPages,
-				Limit:       limit,
-				Total:       total,
-				BaseURL:     fmt.Sprintf("/api/cases/%s/logs", caseID),
-				TargetID:    "#case-logs-container",
-				IncludeID:   "#case-logs-filters",
-			})
+			<div class="mt-4 p-4 border-t border-base-200">
+				@components.Pagination(ctx, components.PaginationData{
+					CurrentPage: currentPage,
+					TotalPages:  totalPages,
+					Limit:       limit,
+					Total:       total,
+					BaseURL:     fmt.Sprintf("/api/cases/%s/logs", caseID),
+					TargetID:    "#case-logs-container",
+					IncludeID:   "#case-logs-filters",
+				})
+			</div>
 		}
 	</div>
 }

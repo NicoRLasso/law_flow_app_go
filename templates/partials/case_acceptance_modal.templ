@@ -10,7 +10,7 @@ import (
 templ CaseAcceptanceModal(ctx context.Context, request models.CaseRequest) {
 	<div
 		id="case-acceptance-modal"
-		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+		class="modal modal-open"
 		x-data="{ 
 			currentStep: 1,
 			isNewClient: false,
@@ -25,47 +25,25 @@ templ CaseAcceptanceModal(ctx context.Context, request models.CaseRequest) {
 			else if (url.includes('/accept/lawyer')) currentStep = 3;
 			else if (url.includes('/accept/classification')) currentStep = 4;
 		"
-		x-show="true"
-		x-transition:enter="transition ease-out duration-300"
-		x-transition:enter-start="opacity-0"
-		x-transition:enter-end="opacity-100"
-		x-transition:leave="transition ease-in duration-200"
-		x-transition:leave-start="opacity-100"
-		x-transition:leave-end="opacity-0"
 		@keydown.escape.window="document.getElementById('case-acceptance-modal').remove()"
-		@click.self="document.getElementById('case-acceptance-modal').remove()"
 	>
-		<div
-			class="glass-panel rounded-2xl border border-white/10 max-w-4xl w-full max-h-[90vh] shadow-2xl flex flex-col"
-			x-show="true"
-			x-transition:enter="transition ease-out duration-300"
-			x-transition:enter-start="opacity-0 scale-95"
-			x-transition:enter-end="opacity-100 scale-100"
-			x-transition:leave="transition ease-in duration-200"
-			x-transition:leave-start="opacity-100 scale-100"
-			x-transition:leave-end="opacity-0 scale-95"
-			@click.stop
-		>
+		<div class="modal-box max-w-4xl bg-base-100 rounded-sm max-h-[90vh] flex flex-col">
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between p-6 border-b border-white/10">
+			<div class="flex items-center justify-between mb-4">
 				<div class="flex items-center gap-4">
-					<div class="p-3 bg-accent/10 rounded-xl">
-						<svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
+					<div class="p-3 bg-primary/10 rounded-sm">
+						<i data-lucide="check-circle" class="text-primary text-xl"></i>
 					</div>
 					<div>
-						<h2 class="text-2xl font-bold text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.title") }</h2>
-						<p class="text-sm text-muted-foreground">{ request.Name }</p>
+						<h2 class="text-2xl font-serif font-bold text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.title") }</h2>
+						<p class="text-sm text-base-content/50">{ request.Name }</p>
 					</div>
 				</div>
 				<button
-					class="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200"
+					class="btn btn-primary btn-sm btn-circle"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
-					<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="x"></i>
 				</button>
 			</div>
 			<!-- Step Indicator -->
@@ -76,83 +54,59 @@ templ CaseAcceptanceModal(ctx context.Context, request models.CaseRequest) {
 				@ClientReviewStep(ctx, request)
 			</div>
 		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button onclick="document.getElementById('case-acceptance-modal').remove()">close</button>
+		</form>
 	</div>
 }
 
 // StepIndicator shows the progress through the 4 steps
 templ StepIndicator(ctx context.Context) {
-	<div class="px-6 py-4 border-b border-white/10">
-		<div class="flex items-center justify-between max-w-2xl mx-auto">
-			<!-- Step 1 -->
-			<div class="flex items-center flex-1">
-				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 1">1</div>
-					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 1">1</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 1">{ i18n.T(ctx, "case_requests.accept_modal.step1") }</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 1">{ i18n.T(ctx, "case_requests.accept_modal.step1") }</span>
-				</div>
-				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 1 ? 'bg-accent' : 'bg-white/10'"></div>
-			</div>
-			<!-- Step 2 -->
-			<div class="flex items-center flex-1">
-				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 2">2</div>
-					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 2">2</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 2">{ i18n.T(ctx, "case_requests.accept_modal.step2") }</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 2">{ i18n.T(ctx, "case_requests.accept_modal.step2") }</span>
-				</div>
-				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 2 ? 'bg-accent' : 'bg-white/10'"></div>
-			</div>
-			<!-- Step 3 -->
-			<div class="flex items-center flex-1">
-				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 3">3</div>
-					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 3">3</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 3">{ i18n.T(ctx, "case_requests.accept_modal.step3") }</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 3">{ i18n.T(ctx, "case_requests.accept_modal.step3") }</span>
-				</div>
-				<div class="flex-1 h-0.5 mx-2" :class="currentStep > 3 ? 'bg-accent' : 'bg-white/10'"></div>
-			</div>
-			<!-- Step 4 -->
-			<div class="flex items-center">
-				<div class="flex items-center gap-2">
-					<div class="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-semibold" x-show="currentStep >= 4">4</div>
-					<div class="w-8 h-8 rounded-full bg-white/10 text-muted-foreground flex items-center justify-center text-sm" x-show="currentStep < 4">4</div>
-					<span class="text-sm font-medium text-foreground hidden sm:inline" x-show="currentStep >= 4">{ i18n.T(ctx, "case_requests.accept_modal.step4") }</span>
-					<span class="text-sm text-muted-foreground hidden sm:inline" x-show="currentStep < 4">{ i18n.T(ctx, "case_requests.accept_modal.step4") }</span>
-				</div>
-			</div>
-		</div>
+	<div class="mb-6">
+		<ul class="steps steps-horizontal w-full">
+			<li class="step" :class="currentStep >= 1 ? 'step-primary' : ''">
+				<span class="text-xs hidden sm:inline">{ i18n.T(ctx, "case_requests.accept_modal.step1") }</span>
+			</li>
+			<li class="step" :class="currentStep >= 2 ? 'step-primary' : ''">
+				<span class="text-xs hidden sm:inline">{ i18n.T(ctx, "case_requests.accept_modal.step2") }</span>
+			</li>
+			<li class="step" :class="currentStep >= 3 ? 'step-primary' : ''">
+				<span class="text-xs hidden sm:inline">{ i18n.T(ctx, "case_requests.accept_modal.step3") }</span>
+			</li>
+			<li class="step" :class="currentStep >= 4 ? 'step-primary' : ''">
+				<span class="text-xs hidden sm:inline">{ i18n.T(ctx, "case_requests.accept_modal.step4") }</span>
+			</li>
+		</ul>
 	</div>
 }
 
 // ClientReviewStep shows the client information from the request
 templ ClientReviewStep(ctx context.Context, request models.CaseRequest) {
-	<div class="p-6">
-		<h3 class="text-lg font-semibold text-foreground mb-4">{ i18n.T(ctx, "case_requests.accept_modal.review_client_title") }</h3>
+	<div class="p-4">
+		<h3 class="text-lg font-serif font-bold text-base-content mb-4">{ i18n.T(ctx, "case_requests.accept_modal.review_client_title") }</h3>
 		<form
 			id="client-review-form"
 			hx-post={ "/api/case-requests/" + request.ID + "/accept/client" }
 			hx-target="#acceptance-step-container"
 			hx-swap="innerHTML"
 		>
-			<div class="glass-panel p-6 rounded-xl border border-white/5 space-y-4">
+			<div class="bg-base-200/50 rounded-sm border border-base-200 p-4 space-y-4">
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div>
-						<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.accept_modal.client_info.name") }</label>
-						<p class="text-base text-foreground font-medium">{ request.Name }</p>
+					<div class="space-y-1">
+						<label class="text-xs font-bold uppercase tracking-wider text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.client_info.name") }</label>
+						<p class="text-base-content font-bold">{ request.Name }</p>
 					</div>
-					<div>
-						<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.accept_modal.client_info.email") }</label>
-						<p class="text-base text-foreground font-medium">{ request.Email }</p>
+					<div class="space-y-1">
+						<label class="text-xs font-bold uppercase tracking-wider text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.client_info.email") }</label>
+						<p class="text-base-content font-bold">{ request.Email }</p>
 					</div>
-					<div>
-						<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.accept_modal.client_info.phone") }</label>
-						<p class="text-base text-foreground font-medium">{ request.Phone }</p>
+					<div class="space-y-1">
+						<label class="text-xs font-bold uppercase tracking-wider text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.client_info.phone") }</label>
+						<p class="text-base-content font-bold">{ request.Phone }</p>
 					</div>
-					<div>
-						<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.accept_modal.client_info.document") }</label>
-						<p class="text-base text-foreground font-medium">
+					<div class="space-y-1">
+						<label class="text-xs font-bold uppercase tracking-wider text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.client_info.document") }</label>
+						<p class="text-base-content font-bold">
 							if request.DocumentTypeOption != nil {
 								{ request.DocumentTypeOption.Label } - { request.DocumentNumber }
 							} else {
@@ -161,61 +115,59 @@ templ ClientReviewStep(ctx context.Context, request models.CaseRequest) {
 						</p>
 					</div>
 				</div>
-				<div>
-					<label class="text-xs font-semibold text-muted-foreground/70 uppercase tracking-wider">{ i18n.T(ctx, "case_requests.accept_modal.client_info.description") }</label>
-					<p class="text-base text-foreground leading-relaxed whitespace-pre-wrap">{ request.Description }</p>
+				<div class="space-y-1">
+					<label class="text-xs font-bold uppercase tracking-wider text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.client_info.description") }</label>
+					<p class="text-base-content whitespace-pre-wrap">{ request.Description }</p>
 				</div>
 			</div>
 			<!-- Client Role Selection -->
 			<div class="mt-6">
-				<h4 class="text-base font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.client_role_title") }</h4>
-				<p class="text-sm text-muted-foreground mb-4">{ i18n.T(ctx, "case_requests.accept_modal.client_role_description") }</p>
+				<h4 class="text-base font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "case_requests.accept_modal.client_role_title") }</h4>
+				<p class="text-sm text-base-content/50 mb-4">{ i18n.T(ctx, "case_requests.accept_modal.client_role_description") }</p>
 				<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-					<label class="glass-panel p-4 rounded-lg border border-white/5 hover:border-accent/50 cursor-pointer transition-all duration-200 flex items-center gap-4">
+					<label class="bg-base-200/50 p-4 rounded-sm border border-base-200 hover:border-primary/50 cursor-pointer transition-all flex items-center gap-4 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
 						<input
 							type="radio"
 							name="client_role"
 							value="DEMANDANTE"
-							class="w-5 h-5 text-accent focus:ring-accent focus:ring-2"
+							class="radio radio-primary"
 							required
 						/>
 						<div class="flex-1">
-							<span class="font-medium text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante") }</span>
-							<span class="block text-sm text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante_desc") }</span>
+							<span class="font-bold text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante") }</span>
+							<span class="block text-sm text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante_desc") }</span>
 						</div>
 					</label>
-					<label class="glass-panel p-4 rounded-lg border border-white/5 hover:border-accent/50 cursor-pointer transition-all duration-200 flex items-center gap-4">
+					<label class="bg-base-200/50 p-4 rounded-sm border border-base-200 hover:border-primary/50 cursor-pointer transition-all flex items-center gap-4 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
 						<input
 							type="radio"
 							name="client_role"
 							value="DEMANDADO"
-							class="w-5 h-5 text-accent focus:ring-accent focus:ring-2"
+							class="radio radio-primary"
 							required
 						/>
 						<div class="flex-1">
-							<span class="font-medium text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado") }</span>
-							<span class="block text-sm text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado_desc") }</span>
+							<span class="font-bold text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado") }</span>
+							<span class="block text-sm text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado_desc") }</span>
 						</div>
 					</label>
 				</div>
 			</div>
 			<!-- Footer -->
-			<div class="flex items-center justify-end gap-3 mt-6">
+			<div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-base-200">
 				<button
 					type="button"
-					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					class="btn btn-primary rounded-sm"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
-					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+					class="btn btn-primary rounded-sm gap-2"
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.next_lawyer") }
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-					</svg>
+					<i data-lucide="arrow-right"></i>
 				</button>
 			</div>
 		</form>
@@ -224,13 +176,13 @@ templ ClientReviewStep(ctx context.Context, request models.CaseRequest) {
 
 // LawyerSelectionStep shows the lawyer selection interface
 templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClient bool, request models.CaseRequest, clientRole string) {
-	<div class="p-6">
+	<div class="p-4">
 		<div class="flex items-center justify-between mb-4">
-			<h3 class="text-lg font-semibold text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.assign_lawyer_title") }</h3>
+			<h3 class="text-lg font-serif font-bold text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.assign_lawyer_title") }</h3>
 			if isNewClient {
-				<span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">{ i18n.T(ctx, "case_requests.accept_modal.client_status.new") }</span>
+				<span class="badge badge-success">{ i18n.T(ctx, "case_requests.accept_modal.client_status.new") }</span>
 			} else {
-				<span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-semibold">{ i18n.T(ctx, "case_requests.accept_modal.client_status.existing") }</span>
+				<span class="badge badge-info">{ i18n.T(ctx, "case_requests.accept_modal.client_status.existing") }</span>
 			}
 		</div>
 		<form
@@ -242,51 +194,49 @@ templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClien
 			<input type="hidden" name="client_role" value={ clientRole }/>
 			<div class="space-y-3 max-h-96 overflow-y-auto">
 				if len(lawyers) == 0 {
-					<div class="glass-panel p-8 rounded-xl border border-white/5 text-center">
-						<p class="text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.no_lawyers") }</p>
-						<a href="/users" class="text-accent hover:underline text-sm mt-2 inline-block">{ i18n.T(ctx, "case_requests.accept_modal.go_to_users") }</a>
+					<div class="bg-base-200/50 p-8 rounded-sm border border-base-200 text-center">
+						<p class="text-base-content/60">{ i18n.T(ctx, "case_requests.accept_modal.no_lawyers") }</p>
+						<a href="/users" class="link link-primary text-sm mt-2 inline-block">{ i18n.T(ctx, "case_requests.accept_modal.go_to_users") }</a>
 					</div>
 				} else {
 					for _, lawyer := range lawyers {
-						<label class="glass-panel p-4 rounded-lg border border-white/5 hover:border-accent/50 cursor-pointer transition-all duration-200 flex items-center gap-4">
+						<label class="bg-base-200/50 p-4 rounded-sm border border-base-200 hover:border-primary/50 cursor-pointer transition-all flex items-center gap-4 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
 							<input
 								type="radio"
 								name="lawyer_id"
 								value={ lawyer.ID }
-								class="w-4 h-4 text-accent focus:ring-accent focus:ring-2"
+								class="radio radio-primary"
 								required
 							/>
 							<div class="flex-1">
 								<div class="flex items-center gap-2">
-									<span class="font-medium text-foreground">{ lawyer.Name }</span>
-									<span class="px-2 py-0.5 bg-accent/20 text-accent rounded text-xs">{ lawyer.Role }</span>
+									<span class="font-bold text-base-content">{ lawyer.Name }</span>
+									<span class="badge badge-ghost badge-sm">{ lawyer.Role }</span>
 								</div>
-								<span class="text-sm text-muted-foreground">{ lawyer.Email }</span>
+								<span class="text-sm text-base-content/50">{ lawyer.Email }</span>
 							</div>
 						</label>
 					}
 				}
 			</div>
 			<!-- Footer -->
-			<div class="flex items-center justify-end gap-3 mt-6">
+			<div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-base-200">
 				<button
 					type="button"
-					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					class="btn btn-primary rounded-sm"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
-					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+					class="btn btn-primary rounded-sm gap-2"
 					if len(lawyers) == 0 {
 						disabled
 					}
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.next_class") }
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-					</svg>
+					<i data-lucide="arrow-right"></i>
 				</button>
 			</div>
 		</form>
@@ -295,8 +245,8 @@ templ LawyerSelectionStep(ctx context.Context, lawyers []models.User, isNewClien
 
 // ClassificationStep shows the classification selection interface
 templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, request models.CaseRequest, lawyerID string, clientRole string) {
-	<div class="p-6">
-		<h3 class="text-lg font-semibold text-foreground mb-4">{ i18n.T(ctx, "case_requests.accept_modal.classification_title") }</h3>
+	<div class="p-4">
+		<h3 class="text-lg font-serif font-bold text-base-content mb-4">{ i18n.T(ctx, "case_requests.accept_modal.classification_title") }</h3>
 		<form
 			id="classification-form"
 			hx-post={ "/api/case-requests/" + request.ID + "/accept/classification" }
@@ -308,8 +258,10 @@ templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, reque
 			<input type="hidden" name="client_role" value={ clientRole }/>
 			<div class="space-y-4">
 				<!-- Domain Selection -->
-				<div>
-					<label class="text-sm font-medium text-foreground mb-2 block">{ i18n.T(ctx, "case_requests.accept_modal.classification.domain") }</label>
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "case_requests.accept_modal.classification.domain") }</span>
+					</label>
 					<select
 						name="domain_id"
 						x-model="selectedDomain"
@@ -324,7 +276,7 @@ templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, reque
 								branches = [];
 							}
 						"
-						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
 					>
 						<option value="">{ i18n.T(ctx, "case_requests.accept_modal.classification.skip_domain") }</option>
 						for _, domain := range domains {
@@ -333,8 +285,10 @@ templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, reque
 					</select>
 				</div>
 				<!-- Branch Selection -->
-				<div x-show="branches.length > 0">
-					<label class="text-sm font-medium text-foreground mb-2 block">{ i18n.T(ctx, "case_requests.accept_modal.classification.branch") }</label>
+				<div x-show="branches.length > 0" class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "case_requests.accept_modal.classification.branch") }</span>
+					</label>
 					<select
 						name="branch_id"
 						x-model="selectedBranch"
@@ -347,7 +301,7 @@ templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, reque
 								subtypes = [];
 							}
 						"
-						class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
 					>
 						<option value="">{ i18n.T(ctx, "case_requests.accept_modal.classification.select_branch") }</option>
 						<template x-for="branch in branches" :key="branch.id">
@@ -356,40 +310,40 @@ templ ClassificationStep(ctx context.Context, domains []models.CaseDomain, reque
 					</select>
 				</div>
 				<!-- Subtype Selection -->
-				<div x-show="subtypes.length > 0">
-					<label class="text-sm font-medium text-foreground mb-2 block">{ i18n.T(ctx, "case_requests.accept_modal.classification.subtypes") }</label>
-					<div class="glass-panel p-4 rounded-lg border border-white/5 max-h-48 overflow-y-auto space-y-2">
+				<div x-show="subtypes.length > 0" class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "case_requests.accept_modal.classification.subtypes") }</span>
+					</label>
+					<div class="bg-base-200/50 rounded-sm border border-base-200 max-h-48 overflow-y-auto p-2 space-y-1">
 						<template x-for="subtype in subtypes" :key="subtype.id">
-							<label class="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded">
+							<label class="label cursor-pointer justify-start gap-3 hover:bg-primary/5 p-2 rounded-sm">
 								<input
 									type="checkbox"
 									name="subtype_ids[]"
 									:value="subtype.id"
-									class="w-4 h-4 text-accent focus:ring-accent focus:ring-2"
+									class="checkbox checkbox-primary checkbox-sm"
 								/>
-								<span class="text-sm text-foreground" x-text="subtype.name"></span>
+								<span class="label-text" x-text="subtype.name"></span>
 							</label>
 						</template>
 					</div>
 				</div>
 			</div>
 			<!-- Footer -->
-			<div class="flex items-center justify-end gap-3 mt-6">
+			<div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-base-200">
 				<button
 					type="button"
-					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					class="btn btn-primary rounded-sm"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
-					class="px-6 py-2.5 bg-accent hover:bg-accent/80 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+					class="btn btn-primary rounded-sm gap-2"
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.next_review") }
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-					</svg>
+					<i data-lucide="arrow-right"></i>
 				</button>
 			</div>
 		</form>
@@ -411,48 +365,48 @@ templ ReviewConfirmStep(
 	lawyerID string,
 	clientRole string,
 ) {
-	<div class="p-6">
-		<h3 class="text-lg font-semibold text-foreground mb-4">{ i18n.T(ctx, "case_requests.accept_modal.review_confirm_title") }</h3>
+	<div class="p-4">
+		<h3 class="text-lg font-serif font-bold text-base-content mb-4">{ i18n.T(ctx, "case_requests.accept_modal.review_confirm_title") }</h3>
 		<div class="space-y-4">
 			<!-- Client Info -->
-			<div class="glass-panel p-4 rounded-lg border border-white/5">
+			<div class="bg-base-200/50 p-4 rounded-sm border border-base-200">
 				<div class="flex items-center justify-between mb-2">
-					<h4 class="font-semibold text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.client_label") }</h4>
+					<h4 class="font-serif font-bold text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.client_label") }</h4>
 					if isNewClient {
-						<span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold">{ i18n.T(ctx, "case_requests.accept_modal.client_status.new") }</span>
+						<span class="badge badge-success badge-sm">{ i18n.T(ctx, "case_requests.accept_modal.client_status.new") }</span>
 					} else {
-						<span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-semibold">{ i18n.T(ctx, "case_requests.accept_modal.client_status.existing") }</span>
+						<span class="badge badge-info badge-sm">{ i18n.T(ctx, "case_requests.accept_modal.client_status.existing") }</span>
 					}
 				</div>
-				<p class="text-sm text-foreground">{ request.Name } ({ request.Email })</p>
+				<p class="text-sm text-base-content">{ request.Name } ({ request.Email })</p>
 			</div>
 			<!-- Client Role Info -->
-			<div class="glass-panel p-4 rounded-lg border border-white/5">
-				<h4 class="font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.client_role_label") }</h4>
+			<div class="bg-base-200/50 p-4 rounded-sm border border-base-200">
+				<h4 class="font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "case_requests.accept_modal.client_role_label") }</h4>
 				if clientRole == "DEMANDANTE" {
-					<p class="text-sm text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante") }</p>
+					<p class="text-sm text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.role_demandante") }</p>
 				} else {
-					<p class="text-sm text-foreground">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado") }</p>
+					<p class="text-sm text-base-content">{ i18n.T(ctx, "case_requests.accept_modal.role_demandado") }</p>
 				}
 			</div>
 			<!-- Lawyer Info -->
-			<div class="glass-panel p-4 rounded-lg border border-white/5">
-				<h4 class="font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.assigned_lawyer_label") }</h4>
-				<p class="text-sm text-foreground">{ lawyer.Name } ({ lawyer.Email })</p>
+			<div class="bg-base-200/50 p-4 rounded-sm border border-base-200">
+				<h4 class="font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "case_requests.accept_modal.assigned_lawyer_label") }</h4>
+				<p class="text-sm text-base-content">{ lawyer.Name } ({ lawyer.Email })</p>
 			</div>
 			<!-- Classification Info -->
 			if domain != nil || branch != nil || len(subtypes) > 0 {
-				<div class="glass-panel p-4 rounded-lg border border-white/5">
-					<h4 class="font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.classification_label") }</h4>
-					<div class="space-y-1 text-sm text-foreground">
+				<div class="bg-base-200/50 p-4 rounded-sm border border-base-200">
+					<h4 class="font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "case_requests.accept_modal.classification_label") }</h4>
+					<div class="space-y-1 text-sm text-base-content">
 						if domain != nil {
-							<p><span class="text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.classification.domain") }:</span> { domain.Name }</p>
+							<p><span class="text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.classification.domain") }:</span> { domain.Name }</p>
 						}
 						if branch != nil {
-							<p><span class="text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.classification.branch") }:</span> { branch.Name }</p>
+							<p><span class="text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.classification.branch") }:</span> { branch.Name }</p>
 						}
 						if len(subtypes) > 0 {
-							<p class="text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.classification.subtypes") }:</p>
+							<p class="text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.classification.subtypes") }:</p>
 							<ul class="list-disc list-inside ml-2">
 								for _, subtype := range subtypes {
 									<li>{ subtype.Name }</li>
@@ -462,9 +416,9 @@ templ ReviewConfirmStep(
 					</div>
 				</div>
 			} else {
-				<div class="glass-panel p-4 rounded-lg border border-white/5">
-					<h4 class="font-semibold text-foreground mb-2">{ i18n.T(ctx, "case_requests.accept_modal.classification_label") }</h4>
-					<p class="text-sm text-muted-foreground">{ i18n.T(ctx, "case_requests.accept_modal.no_classification") }</p>
+				<div class="bg-base-200/50 p-4 rounded-sm border border-base-200">
+					<h4 class="font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "case_requests.accept_modal.classification_label") }</h4>
+					<p class="text-sm text-base-content/50">{ i18n.T(ctx, "case_requests.accept_modal.no_classification") }</p>
 				</div>
 			}
 		</div>
@@ -482,21 +436,19 @@ templ ReviewConfirmStep(
 				<input type="hidden" name="subtype_ids[]" value={ subtypeID }/>
 			}
 			<!-- Footer -->
-			<div class="flex items-center justify-end gap-3 mt-6">
+			<div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-base-200">
 				<button
 					type="button"
-					class="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-foreground rounded-lg text-sm font-medium transition-all duration-200"
+					class="btn btn-primary rounded-sm"
 					@click="document.getElementById('case-acceptance-modal').remove()"
 				>
 					{ i18n.T(ctx, "case_requests.accept_modal.cancel") }
 				</button>
 				<button
 					type="submit"
-					class="px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+					class="btn btn-success rounded-sm gap-2"
 				>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-					</svg>
+					<i data-lucide="check"></i>
 					{ i18n.T(ctx, "case_requests.accept_modal.create_case") }
 				</button>
 			</div>

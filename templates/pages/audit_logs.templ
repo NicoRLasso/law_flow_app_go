@@ -10,40 +10,41 @@ import (
 
 templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, i18n.T(ctx, "audit.title"), "", nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/audit-logs")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="w-full">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full space-y-6">
 					<!-- Header -->
-					<div class="flex justify-between items-center">
-						<h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+					<div class="border-b border-base-300 pb-6 mb-8">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">
 							{ i18n.T(ctx, "audit.title") }
 						</h1>
+						<p class="text-base-content/60 mt-2 font-sans">View and track system activities and changes.</p>
 					</div>
 					<!-- Filters Card -->
-					<div class="glass-panel p-4 rounded-xl border border-white/10 shadow-xl backdrop-blur-xl">
-						<form hx-get="/api/audit-logs" hx-target="#audit-logs-table" hx-trigger="submit, change from:#filter-form" id="filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200">
+						<form hx-get="/api/audit-logs" hx-target="#audit-logs-table" hx-trigger="submit, change from:#filter-form" id="filter-form" class="grid grid-cols-1 md:grid-cols-4 gap-6">
 							<!-- Date Range -->
-							<div>
-								<label class="block text-sm font-medium text-muted-foreground mb-1">
-									{ i18n.T(ctx, "audit.filters.dateFrom") }
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "audit.filters.dateFrom") }</span>
 								</label>
-								<input type="date" name="date_from" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"/>
+								<input type="date" name="date_from" class="input input-bordered w-full rounded-sm focus:input-primary"/>
 							</div>
-							<div>
-								<label class="block text-sm font-medium text-muted-foreground mb-1">
-									{ i18n.T(ctx, "audit.filters.dateTo") }
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "audit.filters.dateTo") }</span>
 								</label>
-								<input type="date" name="date_to" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"/>
+								<input type="date" name="date_to" class="input input-bordered w-full rounded-sm focus:input-primary"/>
 							</div>
 							<!-- Resource Type Filter -->
-							<div>
-								<label class="block text-sm font-medium text-muted-foreground mb-1">
-									{ i18n.T(ctx, "audit.filters.resourceType") }
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "audit.filters.resourceType") }</span>
 								</label>
-								<select name="resource_type" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent">
+								<select name="resource_type" class="select select-bordered w-full rounded-sm focus:select-primary">
 									<option value="">{ i18n.T(ctx, "common.all") }</option>
 									<option value="Case">{ i18n.T(ctx, "audit.resources.case") }</option>
 									<option value="User">{ i18n.T(ctx, "audit.resources.user") }</option>
@@ -59,11 +60,11 @@ templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
 								</select>
 							</div>
 							<!-- Action Filter -->
-							<div>
-								<label class="block text-sm font-medium text-muted-foreground mb-1">
-									{ i18n.T(ctx, "audit.filters.action") }
+							<div class="form-control">
+								<label class="label pt-0 pb-1">
+									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "audit.filters.action") }</span>
 								</label>
-								<select name="action" class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent">
+								<select name="action" class="select select-bordered w-full rounded-sm focus:select-primary">
 									<option value="">{ i18n.T(ctx, "common.all") }</option>
 									<option value="CREATE">{ i18n.T(ctx, "audit.actions.create") }</option>
 									<option value="UPDATE">{ i18n.T(ctx, "audit.actions.update") }</option>
@@ -76,22 +77,25 @@ templ AuditLogs(ctx context.Context, user *models.User, firm *models.Firm) {
 								</select>
 							</div>
 							<!-- Search -->
-							<div class="md:col-span-4">
-								<input
-									type="text"
-									name="search"
-									placeholder={ i18n.T(ctx, "audit.filters.searchPlaceholder") }
-									class="w-full rounded-md border-white/10 bg-white/5 text-foreground focus:ring-accent focus:border-accent"
-									hx-trigger="keyup changed delay:300ms"
-								/>
+							<div class="md:col-span-4 form-control">
+								<div class="relative">
+									<i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40"></i>
+									<input
+										type="text"
+										name="search"
+										placeholder={ i18n.T(ctx, "audit.filters.searchPlaceholder") }
+										class="input input-bordered w-full rounded-sm pl-10 focus:input-primary"
+										hx-trigger="keyup changed delay:300ms"
+									/>
+								</div>
 							</div>
 						</form>
 					</div>
 					<!-- Audit Logs Table -->
-					<div id="audit-logs-table" hx-get="/api/audit-logs" hx-trigger="load">
+					<div id="audit-logs-table" hx-get="/api/audit-logs" hx-trigger="load" class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden">
 						<!-- Loading indicator -->
-						<div class="flex justify-center py-8">
-							<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+						<div class="flex justify-center py-12">
+							<span class="loading loading-spinner loading-lg text-primary"></span>
 						</div>
 					</div>
 				</div>

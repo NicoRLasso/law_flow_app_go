@@ -8,30 +8,15 @@ import (
 templ MetadataModal(ctx context.Context, template models.DocumentTemplate, categories []models.TemplateCategory) {
 	<div
 		id="metadata-modal"
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+		class="modal modal-open"
 		x-data="{ show: false }"
 		x-init="$nextTick(() => show = true)"
 	>
-		<div
-			id="metadata-modal-content"
-			class="relative w-full max-w-3xl"
-			:class="show ? 'opacity-100' : 'opacity-0'"
-		>
-			<!-- Close Button -->
-			<button
-				type="button"
-				onclick="document.getElementById('metadata-modal').remove()"
-				class="absolute -top-12 right-0 p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-			>
-				<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-			</button>
-			<!-- Reusing the Form -->
+		<div class="modal-box max-w-3xl bg-base-100 rounded-sm" :class="show ? 'opacity-100' : 'opacity-0'">
 			@TemplateMetadataForm(ctx, template, categories, false)
 		</div>
-		<!-- Click outside to close -->
-		<div
-			class="absolute inset-0 -z-10"
-			onclick="document.getElementById('metadata-modal').remove()"
-		></div>
+		<form method="dialog" class="modal-backdrop">
+			<button onclick="document.getElementById('metadata-modal').remove()">close</button>
+		</form>
 	</div>
 }

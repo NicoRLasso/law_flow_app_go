@@ -11,27 +11,27 @@ import (
 
 templ Users(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/users")
 			<!-- Main Content -->
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-center">
-				<div class="space-y-6">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full space-y-6">
 					<!-- Header -->
 					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
 						<div>
-							<p class="text-sm text-muted-foreground mb-2">{ i18n.T(ctx, "dashboard.overview") }</p>
-							<h1 class="text-3xl font-bold text-gradient">{ i18n.T(ctx, "users.title") }</h1>
-							<p class="text-muted-foreground mt-2">{ i18n.T(ctx, "users.description") }</p>
+							<p class="text-sm font-bold uppercase tracking-widest text-primary mb-2">{ i18n.T(ctx, "dashboard.overview") }</p>
+							<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "users.title") }</h1>
+							<p class="text-base-content/80 mt-2 font-sans">{ i18n.T(ctx, "users.description") }</p>
 						</div>
 						if user.Role == "admin" {
 							<button
-								class="px-5 py-3 bg-accent hover:bg-accent/90 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 w-full sm:w-auto justify-center shadow-lg shadow-accent/20"
+								class="btn btn-primary rounded-sm shadow-md"
 								hx-get="/api/users/new"
 								hx-target="body"
 								hx-swap="beforeend"
 							>
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
 								</svg>
 								<span>{ i18n.T(ctx, "users.add_user") }</span>
@@ -39,10 +39,12 @@ templ Users(ctx context.Context, title string, csrfToken string, user *models.Us
 						}
 					</div>
 					<!-- User Filters -->
-					@partials.UserFilters(ctx)
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200">
+						@partials.UserFilters(ctx)
+					</div>
 					<!-- Loading indicator -->
 					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
-						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+						<span class="loading loading-spinner loading-lg text-primary"></span>
 					</div>
 					<!-- Users Table -->
 					<div
@@ -50,6 +52,7 @@ templ Users(ctx context.Context, title string, csrfToken string, user *models.Us
 						hx-get="/api/users/list"
 						hx-trigger="load, reload-users from:body"
 						hx-indicator="#loading-indicator"
+						class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
 					></div>
 				</div>
 			</main>

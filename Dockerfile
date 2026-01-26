@@ -3,22 +3,33 @@
 # Go build stage - use Debian for glibc compatibility with runtime
 FROM golang:1.24-bookworm AS builder
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev curl unzip && rm -rf /var/lib/apt/lists/*
 
 # Install templ CLI
 RUN go install github.com/a-h/templ/cmd/templ@latest
 
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV BUN_INSTALL="/root/.bun"
+ENV PATH="$BUN_INSTALL/bin:$PATH"
+
 WORKDIR /app
 
+# Copy Go and Node dependency files
 COPY go.mod go.sum ./
+COPY package.json bun.lockb* ./
+
+# Install dependencies (Go and Bun)
 RUN go mod download
+RUN bun install
 
 COPY . .
 
-
-
 # Generate templ files
 RUN templ generate
+
+# Build CSS with Tailwind v4
+RUN bun x @tailwindcss/cli -i static/css/input.css -o static/css/style.css --minify
 
 # Build with CGO for SQLite (uses cached dependencies)
 RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go

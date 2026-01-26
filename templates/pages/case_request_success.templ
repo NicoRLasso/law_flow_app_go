@@ -9,74 +9,58 @@ import (
 
 templ CaseRequestSuccess(ctx context.Context, csrfToken string, firm models.Firm) {
 	@layouts.Base(ctx, i18n.T(ctx, "public.success.title")+" - "+firm.Name, csrfToken, nil) {
-		<main class="min-h-screen flex items-center justify-center relative overflow-hidden">
-			<!-- Background effects -->
-			<div class="absolute inset-0 z-0">
-				<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px] animate-pulse"></div>
-				<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white/5 rounded-full blur-[120px]"></div>
-			</div>
-			<div class="w-full max-w-2xl relative z-10 px-6">
+		<main class="min-h-screen flex items-center justify-center bg-base-200 py-12 px-4">
+			<div class="w-full max-w-2xl">
 				<!-- Success Card -->
-				<div class="glass-panel p-12 rounded-xl border border-white/10 text-center shadow-xl backdrop-blur-xl">
+				<div class="bg-base-100 p-8 md:p-12 rounded-sm border border-base-200 text-center shadow-lg">
 					<!-- Success Icon -->
-					<div class="w-20 h-20 mx-auto mb-6 rounded-full bg-green-500/20 flex items-center justify-center">
-						<svg class="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-						</svg>
+					<div class="w-20 h-20 mx-auto mb-6 rounded-full bg-success/10 flex items-center justify-center">
+						<i data-lucide="check" class="text-4xl text-success"></i>
 					</div>
 					<!-- Success Message -->
-					<h1 class="text-3xl md:text-4xl font-bold mb-4">{ i18n.T(ctx, "public.success.header") }</h1>
-					<p class="text-lg text-muted-foreground mb-8">
-						{ i18n.T(ctx, "public.success.thank_you") } <span class="text-foreground font-semibold">{ firm.Name }</span>
+					<h1 class="text-3xl md:text-4xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "public.success.header") }</h1>
+					<p class="text-lg text-base-content/70 mb-8 font-sans">
+						{ i18n.T(ctx, "public.success.thank_you") } <span class="text-base-content font-bold font-serif">{ firm.Name }</span>
 					</p>
 					<!-- Details -->
-					<div class="glass-panel p-6 rounded-xl border border-white/10 mb-8 text-left shadow-xl backdrop-blur-xl">
-						<h2 class="text-lg font-semibold mb-4 text-center">{ i18n.T(ctx, "public.success.next_steps") }</h2>
-						<ul class="space-y-3 text-muted-foreground">
-							<li class="flex items-start gap-3">
-								<svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-								</svg>
-								<span>{ i18n.T(ctx, "public.success.step1") }</span>
+					<div class="bg-base-200/50 p-6 rounded-sm border border-base-300 mb-8 text-left">
+						<h2 class="text-lg font-serif font-bold mb-4 text-center text-base-content">{ i18n.T(ctx, "public.success.next_steps") }</h2>
+						<ul class="steps steps-vertical w-full text-left">
+							<li class="step step-primary">
+								<span class="text-base-content/80">{ i18n.T(ctx, "public.success.step1") }</span>
 							</li>
-							<li class="flex items-start gap-3">
-								<svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-								</svg>
-								<span>{ i18n.T(ctx, "public.success.step2") }</span>
+							<li class="step step-primary">
+								<span class="text-base-content/80">{ i18n.T(ctx, "public.success.step2") }</span>
 							</li>
-							<li class="flex items-start gap-3">
-								<svg class="w-5 h-5 text-accent mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-								</svg>
-								<span>{ i18n.T(ctx, "public.success.step3") }</span>
+							<li class="step">
+								<span class="text-base-content/80">{ i18n.T(ctx, "public.success.step3") }</span>
 							</li>
 						</ul>
 					</div>
 					<!-- Contact Info -->
-					<div class="text-sm text-muted-foreground mb-8">
+					<div class="text-sm text-base-content/60 mb-8">
 						<p>{ i18n.T(ctx, "public.success.need_help") }</p>
 						if firm.Phone != "" {
 							<p class="mt-2">
-								{ i18n.T(ctx, "public.success.call_us") } <a href={ templ.URL("tel:" + firm.Phone) } class="text-accent hover:underline">{ firm.Phone }</a>
+								{ i18n.T(ctx, "public.success.call_us") } <a href={ templ.URL("tel:" + firm.Phone) } class="link link-primary font-bold">{ firm.Phone }</a>
 							</p>
 						}
 						if firm.InfoEmail != "" {
 							<p class="mt-1">
-								{ i18n.T(ctx, "public.success.email_us") } <a href={ templ.URL("mailto:" + firm.InfoEmail) } class="text-accent hover:underline">{ firm.InfoEmail }</a>
+								{ i18n.T(ctx, "public.success.email_us") } <a href={ templ.URL("mailto:" + firm.InfoEmail) } class="link link-primary font-bold">{ firm.InfoEmail }</a>
 							</p>
 						}
 					</div>
 					<!-- Action Button -->
 					<a
 						href={ templ.URL("/firm/" + firm.Slug + "/request") }
-						class="inline-block bg-white/5 hover:bg-white/10 border border-white/10 text-foreground font-medium py-3 px-8 rounded-xl transition-all duration-300 hover:scale-105"
+						class="btn btn-primary btn-sm"
 					>
 						{ i18n.T(ctx, "public.success.another_request") }
 					</a>
 				</div>
 				<!-- Footer Note -->
-				<p class="text-center text-xs text-muted-foreground mt-6">
+				<p class="text-center text-xs text-base-content/50 mt-6">
 					{ i18n.T(ctx, "public.success.close_note") }
 				</p>
 			</div>

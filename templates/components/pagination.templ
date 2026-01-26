@@ -22,9 +22,9 @@ type PaginationData struct {
 // Pagination renders pagination controls
 templ Pagination(ctx context.Context, data PaginationData) {
 	if data.TotalPages > 1 {
-		<div class="flex items-center justify-between mt-6 px-4 py-3 glass-panel rounded-xl border border-white/10">
+		<div class="flex items-center justify-between mt-6 px-4 py-3 bg-base-100 rounded-sm border border-base-200">
 			<!-- Pagination Info -->
-			<div class="text-sm text-muted-foreground">
+			<div class="text-sm text-base-content/60">
 				{ i18n.T(ctx, "common.pagination.showing", map[string]interface{}{
 					"start": fmt.Sprintf("%d", (data.CurrentPage-1)*data.Limit+1),
 					"end":   fmt.Sprintf("%d", min(data.CurrentPage*data.Limit, data.Total)),
@@ -42,14 +42,14 @@ templ Pagination(ctx context.Context, data PaginationData) {
 							hx-include={ data.IncludeID }
 						}
 						hx-swap="innerHTML"
-						class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium"
+						class="btn btn-sm btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.pagination.previous") }
 					</button>
 				} else {
 					<button
 						disabled
-						class="px-3 py-2 rounded-lg bg-white/5 text-muted-foreground cursor-not-allowed text-sm font-medium opacity-50"
+						class="btn btn-sm btn-primary rounded-sm btn-disabled"
 					>
 						{ i18n.T(ctx, "common.pagination.previous") }
 					</button>
@@ -58,10 +58,10 @@ templ Pagination(ctx context.Context, data PaginationData) {
 				<div class="flex items-center gap-1">
 					for _, pageNum := range getPaginationRange(data.CurrentPage, data.TotalPages) {
 						if pageNum == -1 {
-							<span class="px-2 text-muted-foreground">...</span>
+							<span class="px-2 text-base-content/60">...</span>
 						} else if pageNum == data.CurrentPage {
 							<button
-								class="px-3 py-2 rounded-lg bg-accent text-accent-foreground font-semibold text-sm min-w-[40px]"
+								class="btn btn-sm btn-primary rounded-sm min-w-[40px]"
 							>
 								{ fmt.Sprintf("%d", pageNum) }
 							</button>
@@ -73,7 +73,7 @@ templ Pagination(ctx context.Context, data PaginationData) {
 									hx-include={ data.IncludeID }
 								}
 								hx-swap="innerHTML"
-								class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium min-w-[40px]"
+								class="btn btn-sm btn-primary rounded-sm min-w-[40px]"
 							>
 								{ fmt.Sprintf("%d", pageNum) }
 							</button>
@@ -89,14 +89,14 @@ templ Pagination(ctx context.Context, data PaginationData) {
 							hx-include={ data.IncludeID }
 						}
 						hx-swap="innerHTML"
-						class="px-3 py-2 rounded-lg bg-white/5 text-foreground hover:bg-white/10 transition-all duration-200 text-sm font-medium"
+						class="btn btn-sm btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.pagination.next") }
 					</button>
 				} else {
 					<button
 						disabled
-						class="px-3 py-2 rounded-lg bg-white/5 text-muted-foreground cursor-not-allowed text-sm font-medium opacity-50"
+						class="btn btn-sm btn-primary rounded-sm btn-disabled"
 					>
 						{ i18n.T(ctx, "common.pagination.next") }
 					</button>

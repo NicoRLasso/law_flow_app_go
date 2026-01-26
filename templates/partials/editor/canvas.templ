@@ -8,11 +8,11 @@ import (
 templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 	<!-- Editor Canvas -->
 	<div
-		class="flex-1 overflow-auto relative bg-[#18181b] cursor-default"
+		class="flex-1 overflow-auto relative bg-base-300 cursor-default"
 		id="editor-scroller"
 		@scroll="updateCurrentPage()"
 	>
-		<div class="flex justify-center py-8 px-4 min-w-fit">
+		<div class="flex justify-center py-12 px-4 min-w-fit">
 			<div
 				class="relative"
 				id="editor-wrapper"
@@ -25,12 +25,12 @@ templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 						:style="`top: ${(page - 1) * (pageHeight + pageGap)}px; height: ${pageHeight}px;`"
 					>
 						<!-- Shadow -->
-						<div class="absolute inset-0 bg-black/50 translate-x-4 translate-y-4 rounded-sm blur-sm"></div>
+						<div class="absolute inset-0 bg-base-content/5 translate-x-1 translate-y-1 rounded-sm blur-sm"></div>
 						<!-- White page background -->
-						<div class="absolute inset-0 bg-white rounded-sm shadow-2xl"></div>
+						<div class="absolute inset-0 bg-white border border-base-200 rounded-sm shadow-xl"></div>
 						<!-- Page number -->
-						<div class="absolute -top-8 left-0 text-xs font-mono text-white/40 tracking-wider">
-							<span x-text="`Page ${page}`"></span>
+						<div class="absolute -top-6 -right-6 text-xs font-mono font-bold text-base-content/30 tracking-wider">
+							<span x-text="`${page}`"></span>
 						</div>
 					</div>
 				</template>
@@ -49,6 +49,6 @@ templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 			</div>
 		</div>
 		<!-- Bottom padding -->
-		<div class="h-16"></div>
+		<div class="h-32"></div>
 	</div>
 }

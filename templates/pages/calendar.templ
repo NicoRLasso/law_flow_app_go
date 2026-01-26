@@ -10,33 +10,36 @@ import (
 
 templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, csrfToken string, aptTypes []models.AppointmentType) {
 	@layouts.Base(ctx, "Calendar", csrfToken, nil) {
-		<div class="min-h-screen bg-background">
+		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/calendar")
-			<main class="container mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col">
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex flex-col">
 				<!-- Header Section -->
-				<div class="mb-10">
-					<h1 class="text-3xl font-bold text-gradient mb-2">{ i18n.T(ctx, "calendar.title") }</h1>
-					<p class="text-muted-foreground">{ i18n.T(ctx, "calendar.description") }</p>
+				<div class="mb-8 border-b border-base-300 pb-6">
+					<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "calendar.title") }</h1>
+					<p class="text-base-content/60 font-sans">{ i18n.T(ctx, "calendar.description") }</p>
 				</div>
 				<!-- Calendar Container -->
-				<div class="rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/[0.08] overflow-hidden p-6">
-					<div
-						id="calendar"
-						class="calendar-container"
-						data-locale={ i18n.GetLocale(ctx) }
-						data-label-client={ i18n.T(ctx, "calendar.events.client") }
-						data-label-lawyer={ i18n.T(ctx, "calendar.events.lawyer") }
-						data-label-status={ i18n.T(ctx, "calendar.events.status") }
-					></div>
+				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+					<div class="card-body p-0 sm:p-4">
+						<div
+							id="calendar"
+							class="calendar-container font-sans"
+							data-locale={ i18n.GetLocale(ctx) }
+							data-label-client={ i18n.T(ctx, "calendar.events.client") }
+							data-label-lawyer={ i18n.T(ctx, "calendar.events.lawyer") }
+							data-label-status={ i18n.T(ctx, "calendar.events.status") }
+						></div>
+					</div>
 				</div>
 				<!-- Legend -->
 				if len(aptTypes) > 0 {
-					<div class="flex flex-wrap gap-x-4 gap-y-2 mt-4">
+					<div class="flex flex-wrap gap-x-6 gap-y-3 mt-6 bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm">
+						<span class="text-xs font-bold uppercase tracking-widest text-base-content/40 self-center mr-2">Legend:</span>
 						for _, t := range aptTypes {
 							<div class="flex items-center gap-2">
 								<div class="w-3 h-3 rounded-full flex-shrink-0" style={ "background-color: " + t.Color }></div>
-								<span class="text-sm text-muted-foreground">{ t.Name }</span>
+								<span class="text-sm font-medium text-base-content/70">{ t.Name }</span>
 							</div>
 						}
 					</div>
@@ -46,87 +49,85 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 		<!-- Event Detail Modal -->
 		<div
 			id="event-detail-modal"
-			class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4"
+			class="fixed inset-0 bg-base-300/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4"
 		>
-			<div class="glass-panel rounded-xl sm:rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden">
+			<div class="bg-base-100 rounded-sm border border-base-200 shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
 				<!-- Header -->
-				<div class="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
-					<h2 id="modal-event-title" class="text-lg sm:text-xl font-bold text-foreground truncate pr-4"></h2>
+				<div class="flex items-center justify-between p-6 border-b border-base-200 bg-base-50">
+					<h2 id="modal-event-title" class="text-xl font-serif font-bold text-primary truncate pr-4"></h2>
 					<button
 						onclick="closeEventModal()"
-						class="p-1.5 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
+						class="btn btn-sm btn-circle btn-primary"
 					>
-						<svg class="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-						</svg>
+						<i data-lucide="x"></i>
 					</button>
 				</div>
 				<!-- Body -->
-				<div class="p-4 sm:p-6 space-y-4">
+				<div class="p-6 space-y-6 overflow-y-auto">
 					<!-- Time -->
-					<div class="flex items-start gap-3">
-						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
+					<div class="flex items-start gap-4">
+						<div class="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center flex-shrink-0 text-primary">
+							<i data-lucide="clock"></i>
+						</div>
 						<div>
-							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.modal.time") }</p>
-							<p id="modal-event-time" class="text-sm text-foreground"></p>
+							<p class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1">{ i18n.T(ctx, "calendar.modal.time") }</p>
+							<p id="modal-event-time" class="text-base font-medium text-base-content"></p>
 						</div>
 					</div>
 					<!-- Client -->
-					<div class="flex items-start gap-3">
-						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-						</svg>
+					<div class="flex items-start gap-4">
+						<div class="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center flex-shrink-0 text-primary">
+							<i data-lucide="user"></i>
+						</div>
 						<div>
-							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.events.client") }</p>
-							<p id="modal-event-client" class="text-sm text-foreground"></p>
+							<p class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1">{ i18n.T(ctx, "calendar.events.client") }</p>
+							<p id="modal-event-client" class="text-base font-medium text-base-content"></p>
 						</div>
 					</div>
 					<!-- Lawyer -->
-					<div class="flex items-start gap-3">
-						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-						</svg>
+					<div class="flex items-start gap-4">
+						<div class="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center flex-shrink-0 text-primary">
+							<i data-lucide="scale"></i>
+						</div>
 						<div>
-							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.events.lawyer") }</p>
-							<p id="modal-event-lawyer" class="text-sm text-foreground"></p>
+							<p class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1">{ i18n.T(ctx, "calendar.events.lawyer") }</p>
+							<p id="modal-event-lawyer" class="text-base font-medium text-base-content"></p>
 						</div>
 					</div>
 					<!-- Status -->
-					<div class="flex items-start gap-3">
-						<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
+					<div class="flex items-start gap-4">
+						<div class="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center flex-shrink-0 text-primary">
+							<i data-lucide="info"></i>
+						</div>
 						<div>
-							<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.events.status") }</p>
-							<p id="modal-event-status" class="text-sm text-foreground"></p>
+							<p class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1">{ i18n.T(ctx, "calendar.events.status") }</p>
+							<p id="modal-event-status" class="badge badge-lg font-bold rounded-sm"></p>
 						</div>
 					</div>
 					<!-- Notes (if available) -->
 					<div id="modal-notes-container" class="hidden">
-						<div class="flex items-start gap-3">
-							<svg class="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-							</svg>
+						<div class="flex items-start gap-4">
+							<div class="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center flex-shrink-0 text-primary">
+								<i data-lucide="sticky-note"></i>
+							</div>
 							<div>
-								<p class="text-xs text-muted-foreground">{ i18n.T(ctx, "calendar.modal.notes") }</p>
-								<p id="modal-event-notes" class="text-sm text-foreground"></p>
+								<p class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1">{ i18n.T(ctx, "calendar.modal.notes") }</p>
+								<p id="modal-event-notes" class="text-base font-serif italic text-base-content/80 bg-base-50 p-3 rounded-sm border border-base-200"></p>
 							</div>
 						</div>
 					</div>
 				</div>
 				<!-- Footer -->
-				<div class="flex items-center justify-between p-4 sm:p-6 border-t border-white/10">
+				<div class="flex items-center justify-between p-6 border-t border-base-200 bg-base-50 gap-4">
 					<button
 						onclick="cancelEvent()"
-						class="px-4 py-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all duration-200"
+						class="btn btn-error btn-outline btn-sm rounded-sm"
 					>
 						{ i18n.T(ctx, "common.cancel") }
 					</button>
 					<button
 						onclick="closeEventModal()"
-						class="px-4 py-2 bg-white/5 text-foreground hover:bg-white/10 rounded-lg text-sm font-medium transition-all duration-200"
+						class="btn btn-primary btn-sm rounded-sm"
 					>
 						{ i18n.T(ctx, "calendar.modal.close") }
 					</button>
@@ -149,7 +150,19 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 				document.getElementById('modal-event-title').textContent = event.title;
 				document.getElementById('modal-event-client').textContent = props.clientName || '-';
 				document.getElementById('modal-event-lawyer').textContent = props.lawyer || '-';
-				document.getElementById('modal-event-status').textContent = props.status || '-';
+				
+				const statusEl = document.getElementById('modal-event-status');
+				statusEl.textContent = props.status || '-';
+				// Reset classes
+				statusEl.className = 'badge badge-lg font-bold rounded-sm';
+				// Add active status class
+				if (props.status === 'Scheduled' || props.status === 'Confirmed') {
+					statusEl.classList.add('badge-success', 'text-white');
+				} else if (props.status === 'Cancelled') {
+					statusEl.classList.add('badge-error', 'text-white');
+				} else {
+					statusEl.classList.add('badge-neutral', 'text-white');
+				}
 
 				// Format time
 				const startTime = event.start ? event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
@@ -200,11 +213,10 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 					closeEventModal();
 					// Refresh calendar events without reloading page
 					var calendarEl = document.getElementById('calendar');
-					var calendar = calendarEl._fullCalendar; // Hacky but works if we assign it
+					var calendar = calendarEl._fullCalendar; 
 					if (calendar) {
 						calendar.refetchEvents();
 					} else {
-						// Fallback if we can't get instance
 						window.location.reload();
 					}
 				})
@@ -225,12 +237,10 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 			});
 
 			document.addEventListener('DOMContentLoaded', function() {
-				console.log('Calendar page loaded, initializing FullCalendar...');
 				
 				try {
 					var calendarEl = document.getElementById('calendar');
 					if (!calendarEl) {
-						console.error('Calendar element not found!');
 						return;
 					}
 
@@ -263,7 +273,7 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 						initialView: getInitialView(),
 						locale: locale,
 						headerToolbar: getToolbarConfig(),
-						themeSystem: 'standard',
+						themeSystem: 'standard', // Use standard theme so we can override with CSS variables
 						height: '100%',
 						slotMinTime: '08:00:00',
 						slotMaxTime: '20:00:00',
@@ -284,9 +294,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 						},
 						eventClick: function(info) {
 							openEventModal(info.event);
-						},
-						eventDidMount: function(info) {
-							// console.log('Event mounted:', info.event.title);
 						}
 					});
 					
@@ -294,55 +301,98 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 					calendarEl._fullCalendar = calendar;
 					
 					calendar.render();
-					console.log('FullCalendar rendered with locale:', locale);
 				} catch (e) {
 					console.error('CRITICAL ERROR initializing calendar:', e);
-					alert('Failed to initialize calendar: ' + e.message);
 				}
 			});
 		</script>
 		<style>
-			/* FullCalendar Dark Mode Overrides */
+			/* FullCalendar Theme Overrides for Light/Premium UI */
 			:root {
-				--fc-page-bg-color: transparent;
-				--fc-neutral-bg-color: rgba(255,255,255,0.05);
-				--fc-neutral-text-color: #e2e8f0;
-				--fc-border-color: rgba(255,255,255,0.1);
+				--fc-page-bg-color: #ffffff;
+				--fc-neutral-bg-color: #f8fafc; /* base-50/100ish */
+				--fc-neutral-text-color: #334155; /* slate-700 */
+				--fc-border-color: #e2e8f0; /* slate-200 */
 				
-				--fc-button-text-color: #fff;
-				--fc-button-bg-color: rgba(255,255,255,0.05);
-				--fc-button-border-color: rgba(255,255,255,0.1);
-				--fc-button-hover-bg-color: rgba(255,255,255,0.1);
-				--fc-button-hover-border-color: rgba(255,255,255,0.1);
-				--fc-button-active-bg-color: rgba(255,255,255,0.15);
-				--fc-button-active-border-color: rgba(255,255,255,0.1);
+				--fc-button-text-color: #0f172a; /* primary-content approx */
+				--fc-button-bg-color: #ffffff;
+				--fc-button-border-color: #cbd5e1;
+				--fc-button-hover-bg-color: #f1f5f9;
+				--fc-button-hover-border-color: #94a3b8;
+				--fc-button-active-bg-color: #e2e8f0;
+				--fc-button-active-border-color: #64748b;
 				
-				--fc-event-bg-color: #3B82F6;
-				--fc-event-border-color: #3B82F6;
+				--fc-event-bg-color: #0f172a; /* primary color */
+				--fc-event-border-color: #0f172a;
 				--fc-event-text-color: #fff;
-				--fc-event-selected-overlay-color: rgba(0, 0, 0, 0.25);
+				--fc-event-selected-overlay-color: rgba(0, 0, 0, 0.1);
 				
-				--fc-today-bg-color: rgba(255,255,255,0.08);
-				--fc-now-indicator-color: #ef4444;
+				--fc-today-bg-color: rgba(15, 23, 42, 0.03); /* primary/3 */
+				--fc-now-indicator-color: #ef4444; /* error color */
 			}
 			
-			.fc-theme-standard .fc-scrollgrid {
-				border: 1px solid var(--fc-border-color);
+			.fc {
+				font-family: 'Inter', sans-serif;
 			}
-			
-			.fc-col-header-cell-cushion, .fc-timegrid-slot-label-cushion {
-				color: var(--fc-neutral-text-color);
-			}
-			
+
 			.fc .fc-toolbar-title {
-				color: white;
+				font-family: 'Playfair Display', serif;
+				font-weight: 700;
+				color: #0f172a; /* primary */
+			}
+
+			.fc-col-header-cell-cushion {
+				color: #0f172a; /* primary */
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				font-size: 0.75rem;
+				padding-top: 1rem;
+				padding-bottom: 1rem;
+			}
+			
+			.fc-timegrid-slot-label-cushion {
+				font-family: 'Inter', sans-serif;
+				font-weight: 500;
+				color: #64748b;
+			}
+
+			/* Rounded corners and shadows for events */
+			.fc-event {
+				border: none !important;
+				border-radius: 4px;
+				box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+				padding: 2px 4px;
+				font-weight: 500;
+			}
+
+			/* Buttons style override to match daisyUI btn-outline */
+			.fc .fc-button-primary {
+				background-color: transparent;
+				border-color: #cbd5e1;
+				color: #0f172a;
+				border-radius: 0.25rem; /* rounded-sm */
+				text-transform: uppercase;
+				font-weight: 600;
+				font-size: 0.75rem;
+				letter-spacing: 0.05em;
+				transition: all 0.2s;
+			}
+			.fc .fc-button-primary:hover {
+				background-color: #f1f5f9;
+				border-color: #94a3b8;
+			}
+			.fc .fc-button-primary:not(:disabled).fc-button-active {
+				background-color: #0f172a;
+				border-color: #0f172a;
+				color: #ffffff;
 			}
 
 			/* Responsive Calendar Container */
 			.calendar-container {
 				height: calc(100dvh - 280px);
 				min-height: 400px;
-				max-height: 600px;
+				max-height: 800px;
 			}
 
 			@media (min-width: 640px) {
@@ -362,7 +412,7 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 
 			@media (min-width: 1024px) {
 				.calendar-container {
-					height: calc(100vh - 200px);
+					height: calc(100vh - 240px);
 					min-height: 600px;
 				}
 			}
@@ -389,31 +439,16 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 					font-size: 0.75rem;
 				}
 				.fc .fc-timegrid-axis {
-					width: 45px !important;
+					width: 40px !important;
 				}
 				.fc .fc-timegrid-slot-label {
 					font-size: 0.625rem;
 				}
 				.fc .fc-col-header-cell-cushion {
-					font-size: 0.75rem;
-					padding: 0.375rem 0.25rem;
+					font-size: 0.7rem;
 				}
 				.fc-event {
-					font-size: 0.625rem !important;
-				}
-				.fc-scroller {
-					-webkit-overflow-scrolling: touch;
-				}
-			}
-
-			/* Touch-friendly */
-			@media (pointer: coarse) {
-				.fc-event {
-					min-height: 28px;
-				}
-				.fc .fc-button {
-					min-height: 36px;
-					min-width: 36px;
+					font-size: 0.65rem !important;
 				}
 			}
 		</style>
