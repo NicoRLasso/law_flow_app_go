@@ -132,9 +132,7 @@ func PublicCaseRequestPostHandler(c echo.Context) error {
 
 	// Resolve document type code to UUID
 	var documentTypeID *string
-	var docTypeOption models.ChoiceOption
-	if err := db.DB.Where("firm_id = ? AND category = ? AND code = ?", firm.ID, "document_type", documentType).
-		First(&docTypeOption).Error; err == nil {
+	if docTypeOption, err := services.GetChoiceOptionByCode(db.DB, firm.ID, "document_type", documentType); err == nil {
 		documentTypeID = &docTypeOption.ID
 	}
 

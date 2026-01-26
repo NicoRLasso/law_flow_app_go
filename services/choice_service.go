@@ -23,6 +23,20 @@ func GetChoiceOptions(db *gorm.DB, firmID string, categoryKey string) ([]models.
 	return options, err
 }
 
+// GetChoiceOptionByCode fetches a specific choice option by its firm, category key and code
+func GetChoiceOptionByCode(db *gorm.DB, firmID string, categoryKey string, code string) (models.ChoiceOption, error) {
+	var option models.ChoiceOption
+
+	err := db.
+		Joins("JOIN choice_categories ON choice_categories.id = choice_options.category_id").
+		Where("choice_categories.firm_id = ?", firmID).
+		Where("choice_categories.key = ?", categoryKey).
+		Where("choice_options.code = ?", code).
+		First(&option).Error
+
+	return option, err
+}
+
 // ValidateChoiceOption validates that a choice option exists for a firm and category
 func ValidateChoiceOption(db *gorm.DB, firmID string, categoryKey string, code string) bool {
 	var count int64
@@ -63,6 +77,12 @@ func SeedDefaultChoices(db *gorm.DB, firmID string, country string) error {
 
 // seedPriorityChoices seeds priority level options (applicable to all countries)
 func seedPriorityChoices(db *gorm.DB, firmID string, country string) error {
+	// Check if already exists
+	var existing models.ChoiceCategory
+	if err := db.Where("firm_id = ? AND key = ?", firmID, "priority").First(&existing).Error; err == nil {
+		return nil // Already seeded
+	}
+
 	// Create priority category
 	category := models.ChoiceCategory{
 		FirmID:   firmID,
@@ -97,6 +117,12 @@ func seedPriorityChoices(db *gorm.DB, firmID string, country string) error {
 
 // seedColombianDocumentTypes seeds Colombian document type options
 func seedColombianDocumentTypes(db *gorm.DB, firmID string, country string) error {
+	// Check if already exists
+	var existing models.ChoiceCategory
+	if err := db.Where("firm_id = ? AND key = ?", firmID, "document_type").First(&existing).Error; err == nil {
+		return nil // Already seeded
+	}
+
 	// Create document type category
 	category := models.ChoiceCategory{
 		FirmID:   firmID,
