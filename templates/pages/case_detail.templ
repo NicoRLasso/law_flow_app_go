@@ -2,6 +2,7 @@ package pages
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -196,7 +197,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							}
 						</div>
 					</div>
-					<script>
+					<script nonce={ middleware.GetNonce(ctx) }>
 						function openUploadModal() {
 							const modal = document.getElementById('upload-document-modal');
 							modal.classList.remove('hidden');
@@ -362,7 +363,11 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 											if user.Role == "admin" {
 												<button
 													type="button"
-													{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "case.detail.remove_collaborator") + "', message: '" + i18n.T(ctx, "case.detail.remove_collaborator_confirm") + "', confirmUrl: '/api/cases/" + caseRecord.ID + "/collaborators/" + collab.ID + "', target: '#collaborator-response', swap: 'innerHTML' }, this)" }... }
+													@click="openConfirmationModalFromData($el)"
+													data-confirm-title={ i18n.T(ctx, "case.detail.remove_collaborator") }
+													data-confirm-message={ i18n.T(ctx, "case.detail.remove_collaborator_confirm") }
+													data-confirm-url={ "/api/cases/" + caseRecord.ID + "/collaborators/" + collab.ID }
+													data-confirm-target="#collaborator-response"
 													class="text-base-content/30 hover:text-error transition-colors"
 												>
 													<i data-lucide="x"></i>
@@ -483,7 +488,7 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 				<!-- Upload Button -->
 				<button
 					type="button"
-					onclick="openUploadModal()"
+					@click="openUploadModal()"
 					class="btn btn-primary btn-sm rounded-sm shadow-sm"
 				>
 					<i data-lucide="upload" class="mr-2"></i>
@@ -493,7 +498,7 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 		</div>
 		<!-- Document Filters -->
 		<div class="bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm mb-6">
-			<form id="case-doc-filters-form" class="flex flex-col md:flex-row gap-4" onsubmit="return false;">
+			<form id="case-doc-filters-form" class="flex flex-col md:flex-row gap-4" @submit.prevent>
 				<!-- Keyword Search -->
 				<div class="flex-1 w-full relative">
 					<i data-lucide="search" class="absolute left-3 top-3 text-base-content/30"></i>
@@ -524,7 +529,7 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 					<!-- Apply Filter Button -->
 					<button
 						type="button"
-						onclick="filterDocuments()"
+						@click="filterDocuments()"
 						class="btn btn-neutral rounded-sm"
 					>
 						{ i18n.T(ctx, "case.detail.filter.apply") }
@@ -548,7 +553,7 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 			</div>
 		</div>
 	</div>
-	<script>
+	<script nonce={ middleware.GetNonce(ctx) }>
 		function filterDocuments() {
 			const keyword = document.getElementById('doc-keyword').value;
 			const docType = document.getElementById('doc-type').value;
@@ -602,8 +607,8 @@ func getCaseStatusLabel(ctx context.Context, status string) string {
 // UploadDocumentModal renders the document upload modal
 templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 	<!-- Upload Document Modal -->
-	<div id="upload-document-modal" class="hidden fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" onclick="if(event.target === this) closeUploadModal()">
-		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl p-8 shadow-2xl relative" onclick="event.stopPropagation()">
+	<div id="upload-document-modal" class="hidden fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" x-data="{ close() { const modal = document.getElementById('upload-document-modal'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; document.getElementById('upload-form').reset(); } } }" @click.self="close()">
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl p-8 shadow-2xl relative">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
 				<h3 class="text-2xl font-serif font-bold text-base-content">
@@ -611,7 +616,7 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 				</h3>
 				<button
 					type="button"
-					onclick="closeUploadModal()"
+					@click="close()"
 					class="btn btn-sm btn-circle btn-primary"
 				>
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -698,7 +703,7 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 					<div class="flex items-center gap-4 pt-4 border-t border-base-200">
 						<button
 							type="button"
-							onclick="closeUploadModal()"
+							@click="close()"
 							class="btn btn-primary rounded-sm"
 						>
 							{ i18n.T(ctx, "case.document.upload.cancel") }

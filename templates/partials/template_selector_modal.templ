@@ -12,7 +12,7 @@ templ TemplateSelectorModal(ctx context.Context, caseID string, templates []mode
 		id="template-selector-modal"
 		class="modal modal-open"
 		style="z-index: 9999;"
-		x-data={ "{ selectedTemplate: '', showPreview: false, previewLoading: false, caseId: '" + caseID + "' }" }
+		x-data={ "{ selectedTemplate: '', showPreview: false, previewLoading: false, caseId: '" + caseID + "', close() { const modal = document.getElementById('template-selector-modal'); if (modal) { modal.classList.remove('modal-open'); setTimeout(() => modal.remove(), 200); } } }" }
 	>
 		<div class="modal-box max-w-4xl max-h-[90vh] bg-base-100 rounded-sm flex flex-col">
 			<!-- Modal Header -->
@@ -23,7 +23,7 @@ templ TemplateSelectorModal(ctx context.Context, caseID string, templates []mode
 				</div>
 				<button
 					type="button"
-					onclick="closeTemplateSelectorModal()"
+					@click="close()"
 					class="btn btn-primary btn-sm btn-circle"
 				>
 					<i data-lucide="x"></i>
@@ -127,7 +127,7 @@ templ TemplateSelectorModal(ctx context.Context, caseID string, templates []mode
 			}
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="closeTemplateSelectorModal()">close</button>
+			<button @click="close()">close</button>
 		</form>
 	</div>
 }

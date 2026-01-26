@@ -1,16 +1,18 @@
 package partials
 
 import (
+	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"strconv"
 	"time"
 )
 
-templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bool) {
+templ CaseLogModal(ctx context.Context, log models.CaseLog, documents []models.CaseDocument, isNew bool) {
 	<!-- Case Log Modal -->
-	<div id="log-entry-modal" class="modal modal-open" onclick="if(event.target === this) closeLogModal()">
-		<div class="modal-box max-w-2xl bg-base-100 rounded-sm" onclick="event.stopPropagation()">
+	<div id="log-entry-modal" class="modal modal-open" x-data="{ close() { document.getElementById('log-entry-modal')?.remove() } }" @click.self="close()">
+		<div class="modal-box max-w-2xl bg-base-100 rounded-sm">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-6">
 				<div class="flex items-center gap-3">
@@ -25,7 +27,7 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 				</div>
 				<button
 					type="button"
-					onclick="closeLogModal()"
+					@click="close()"
 					class="btn btn-primary btn-sm btn-circle"
 				>
 					<i data-lucide="x"></i>
@@ -42,7 +44,7 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 				}
 				hx-target="#case-logs-container"
 				hx-swap="innerHTML"
-				hx-on::after-request="if(event.detail.successful) closeLogModal()"
+				hx-on::after-request="if(event.detail.successful) document.getElementById('log-entry-modal')?.remove()"
 			>
 				<div class="space-y-4">
 					<!-- Title Row -->
@@ -186,7 +188,7 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 					<div class="modal-action">
 						<button
 							type="button"
-							onclick="closeLogModal()"
+							@click="close()"
 							class="btn btn-primary rounded-sm"
 						>
 							{ i18n.T(ctx, "common.cancel") }
@@ -206,18 +208,11 @@ templ CaseLogModal(log models.CaseLog, documents []models.CaseDocument, isNew bo
 			</form>
 		</div>
 	</div>
-	<script>
+	<script nonce={ middleware.GetNonce(ctx) }>
         setTimeout(() => {
             const titleInput = document.querySelector('input[name="title"]');
             if (titleInput) titleInput.focus();
         }, 100);
-
-        function closeLogModal() {
-             const modal = document.getElementById('log-entry-modal');
-             if (modal) {
-                 modal.remove();
-             }
-        }
     </script>
 }
 
@@ -236,9 +231,9 @@ func formatDateTimeDisplay(t *time.Time) string {
 }
 
 // CaseLogViewModal renders a read-only view of a log entry
-templ CaseLogViewModal(log models.CaseLog) {
-	<div id="log-entry-modal" class="modal modal-open" onclick="if(event.target === this) closeLogModal()">
-		<div class="modal-box max-w-2xl bg-base-100 rounded-sm" onclick="event.stopPropagation()">
+templ CaseLogViewModal(ctx context.Context, log models.CaseLog) {
+	<div id="log-entry-modal" class="modal modal-open" x-data="{ close() { document.getElementById('log-entry-modal')?.remove() } }" @click.self="close()">
+		<div class="modal-box max-w-2xl bg-base-100 rounded-sm">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-6">
 				<div class="flex items-center gap-3">
@@ -249,7 +244,7 @@ templ CaseLogViewModal(log models.CaseLog) {
 				</div>
 				<button
 					type="button"
-					onclick="closeLogModal()"
+					@click="close()"
 					class="btn btn-primary btn-sm btn-circle"
 				>
 					<i data-lucide="x"></i>
@@ -335,7 +330,7 @@ templ CaseLogViewModal(log models.CaseLog) {
 				<div class="modal-action">
 					<button
 						type="button"
-						onclick="closeLogModal()"
+						@click="close()"
 						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.close") }
@@ -344,14 +339,6 @@ templ CaseLogViewModal(log models.CaseLog) {
 			</div>
 		</div>
 	</div>
-	<script>
-        function closeLogModal() {
-             const modal = document.getElementById('log-entry-modal');
-             if (modal) {
-                 modal.remove();
-             }
-        }
-    </script>
 }
 
 func getLogTypeBadgeClassView(entryType string) string {

@@ -16,7 +16,7 @@ templ MetadataModal(ctx context.Context, template models.DocumentTemplate, categ
 			@TemplateMetadataForm(ctx, template, categories, false)
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('metadata-modal').remove()">close</button>
+			<button @click="document.getElementById('metadata-modal').remove()">close</button>
 		</form>
 	</div>
 }

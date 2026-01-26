@@ -2,6 +2,7 @@ package partials
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 )
@@ -11,8 +12,10 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 	<div
 		id="case-party-modal"
 		class="modal modal-open"
+		x-data="{ close() { document.getElementById('case-party-modal')?.remove() } }"
+		@click.self="close()"
 	>
-		<div class="modal-box max-w-lg bg-base-100 rounded-sm" onclick="event.stopPropagation()">
+		<div class="modal-box max-w-lg bg-base-100 rounded-sm">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-6">
 				<div class="flex items-center gap-3">
@@ -27,7 +30,7 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 				</div>
 				<button
 					type="button"
-					onclick="closeCasePartyModal()"
+					@click="close()"
 					class="btn btn-primary btn-sm btn-circle"
 				>
 					<i data-lucide="x"></i>
@@ -154,7 +157,7 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 				<div class="modal-action pt-4 border-t border-base-200">
 					<button
 						type="button"
-						onclick="closeCasePartyModal()"
+						@click="close()"
 						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "case.detail.parties.modal.cancel_btn") }
@@ -169,15 +172,10 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="closeCasePartyModal()">close</button>
+			<button @click="close()">close</button>
 		</form>
 	</div>
-	<script>
-		function closeCasePartyModal() {
-			const modal = document.getElementById('case-party-modal');
-			if (modal) {
-				modal.remove();
-			}
-		}
+	<script nonce={ middleware.GetNonce(ctx) }>
+		// Logic migrated to Alpine
 	</script>
 }

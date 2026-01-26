@@ -18,7 +18,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 						{ i18n.T(ctx, "firm.setup.create_title") }
 					}
 				</h3>
-				<button onclick="document.getElementById('modal-container').innerHTML = ''" class="btn btn-ghost btn-sm btn-circle">
+				<button @click="document.getElementById('modal-container').innerHTML = ''" class="btn btn-ghost btn-sm btn-circle">
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
 				</button>
 			</div>
@@ -139,7 +139,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 				<div class="modal-action border-t border-base-200 pt-6 mt-8">
 					<button
 						type="button"
-						onclick="document.getElementById('modal-container').innerHTML = ''"
+						@click="document.getElementById('modal-container').innerHTML = ''"
 						class="btn btn-ghost"
 					>
 						{ i18n.T(ctx, "common.cancel") }
@@ -157,7 +157,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 				</div>
 			</form>
 		</div>
-		<form method="dialog" class="modal-backdrop" onclick="document.getElementById('modal-container').innerHTML = ''">
+		<form method="dialog" class="modal-backdrop" @click="document.getElementById('modal-container').innerHTML = ''">
 			<button>close</button>
 		</form>
 	</div>

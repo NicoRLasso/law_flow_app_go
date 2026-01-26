@@ -132,7 +132,7 @@ templ CaseDocumentRow(ctx context.Context, doc models.CaseDocument, caseID strin
 						data-doc-id={ doc.ID }
 						data-case-id={ caseID }
 						data-file-name={ doc.FileOriginalName }
-						onclick="openPDFViewerModal(this.getAttribute('data-doc-id'), this.getAttribute('data-case-id'), this.getAttribute('data-file-name'))"
+						@click="openPDFViewerModal($el.getAttribute('data-doc-id'), $el.getAttribute('data-case-id'), $el.getAttribute('data-file-name'))"
 					>
 						<i data-lucide="search"></i>
 					</button>
@@ -147,7 +147,7 @@ templ CaseDocumentRow(ctx context.Context, doc models.CaseDocument, caseID strin
 					data-confirm-method="DELETE"
 					data-confirm-target="closest tr"
 					data-confirm-swap="delete"
-					onclick="openConfirmationModalFromData(this)"
+					@click="openConfirmationModalFromData($el)"
 				>
 					<i data-lucide="trash-2"></i>
 				</button>

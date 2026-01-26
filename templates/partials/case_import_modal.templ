@@ -110,7 +110,7 @@ templ CaseImportModal(ctx context.Context) {
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('import-cases-modal').remove()">close</button>
+			<button @click="document.getElementById('import-cases-modal').remove()">close</button>
 		</form>
 	</div>
 }

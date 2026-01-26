@@ -278,7 +278,7 @@ templ DeleteConfirmModal(ctx context.Context, user models.User) {
 				<button
 					type="button"
 					class="btn btn-primary rounded-sm"
-					onclick="document.getElementById('delete-confirm-modal').remove()"
+					@click="document.getElementById('delete-confirm-modal').remove()"
 				>
 					{ i18n.T(ctx, "users.delete_modal.cancel") }
 				</button>
@@ -294,7 +294,7 @@ templ DeleteConfirmModal(ctx context.Context, user models.User) {
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('delete-confirm-modal').remove()">close</button>
+			<button @click="document.getElementById('delete-confirm-modal').remove()">close</button>
 		</form>
 	</div>
 }

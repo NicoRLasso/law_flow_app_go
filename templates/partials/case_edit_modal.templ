@@ -2,6 +2,7 @@ package partials
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -9,8 +10,8 @@ import (
 
 templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []models.User, lawyers []models.User, currentUser *models.User, domains []models.CaseDomain, branches []models.CaseBranch, subtypes []models.CaseSubtype, isHistorical bool) {
 	<!-- Edit Case Modal -->
-	<div id="edit-case-modal" class="modal modal-open" onclick="if(event.target === this) closeEditModal()">
-		<div class="modal-box max-w-2xl bg-base-100 rounded-sm" onclick="event.stopPropagation()">
+	<div id="edit-case-modal" class="modal modal-open" x-data="{ close() { const container = document.getElementById('edit-case-modal-container'); if (container) container.innerHTML = '' } }" @click.self="close()">
+		<div class="modal-box max-w-2xl bg-base-100 rounded-sm">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-6">
 				<h3 class="text-2xl font-serif font-bold text-base-content flex items-center gap-3">
@@ -21,7 +22,7 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 				</h3>
 				<button
 					type="button"
-					onclick="closeEditModal()"
+					@click="close()"
 					class="btn btn-primary btn-sm btn-circle"
 				>
 					<i data-lucide="x"></i>
@@ -167,7 +168,7 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 								hx-target="#branch-select"
 								hx-trigger="change"
 								hx-include="[name='domain_id']"
-								onchange="document.getElementById('branch-select').disabled = this.value === ''"
+								@change="document.getElementById('branch-select').disabled = $el.value === ''"
 							>
 								<option value="">{ i18n.T(ctx, "case.edit.select_domain") }</option>
 								for _, domain := range domains {
@@ -221,7 +222,7 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 					<div class="modal-action pt-4 border-t border-base-200">
 						<button
 							type="button"
-							onclick="closeEditModal()"
+							@click="close()"
 							class="btn btn-primary rounded-sm"
 						>
 							{ i18n.T(ctx, "case.edit.cancel") }
@@ -237,15 +238,10 @@ templ CaseEditModal(ctx context.Context, caseRecord models.Case, clients []model
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="closeEditModal()">close</button>
+			<button @click="close()">close</button>
 		</form>
 	</div>
-	<script>
-		function closeEditModal() {
-			const modal = document.getElementById('edit-case-modal-container');
-			if (modal) {
-				modal.innerHTML = '';
-			}
-		}
+	<script nonce={ middleware.GetNonce(ctx) }>
+		// We can keep this if needed for other external things, but the logic is now in Alpine
 	</script>
 }

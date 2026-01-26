@@ -226,7 +226,7 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('create-case-modal').remove()">close</button>
+			<button @click="document.getElementById('create-case-modal').remove()">close</button>
 		</form>
 	</div>
 }

@@ -2,6 +2,7 @@ package components
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/services"
 	"law_flow_app_go/services/i18n"
 	"strconv"
@@ -126,7 +127,7 @@ templ SearchBox(ctx context.Context) {
 		</div>
 	</div>
 	<!-- Keyboard Shortcut -->
-	<script>
+	<script nonce={ middleware.GetNonce(ctx) }>
 		document.addEventListener('keydown', function(e) {
 			if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
 				e.preventDefault();
@@ -150,7 +151,7 @@ templ SearchResults(ctx context.Context, results []services.SearchResult, query 
 			<p class="text-sm font-medium">{ i18n.T(ctx, "search.no_results") }</p>
 			<p class="text-xs opacity-60 mt-1">{ i18n.T(ctx, "search.no_results_hint") }</p>
 		</div>
-		<script>
+		<script nonce={ middleware.GetNonce(ctx) }>
 			if (typeof lucide !== 'undefined') {
 				lucide.createIcons();
 			}
@@ -222,7 +223,7 @@ templ SearchResults(ctx context.Context, results []services.SearchResult, query 
 			</a>
 		</div>
 		<!-- Re-init lucide icons -->
-		<script>
+		<script nonce={ middleware.GetNonce(ctx) }>
 			if (typeof lucide !== 'undefined') {
 				lucide.createIcons();
 			}

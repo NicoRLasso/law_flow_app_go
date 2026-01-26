@@ -26,7 +26,7 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 				</div>
 				<button
 					class="btn btn-primary btn-sm btn-circle"
-					onclick="document.getElementById('user-modal').remove()"
+					@click="document.getElementById('user-modal').remove()"
 				>
 					<i data-lucide="x"></i>
 				</button>
@@ -144,7 +144,7 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 					<button
 						type="button"
 						class="btn btn-primary rounded-sm"
-						onclick="document.getElementById('user-modal').remove()"
+						@click="document.getElementById('user-modal').remove()"
 					>
 						{ i18n.T(ctx, "users.modal.cancel") }
 					</button>
@@ -162,7 +162,7 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('user-modal').remove()">close</button>
+			<button @click="document.getElementById('user-modal').remove()">close</button>
 		</form>
 	</div>
 }

@@ -22,7 +22,7 @@ templ TemplateCloneModal(ctx context.Context, template models.DocumentTemplate, 
 				</div>
 				<button
 					type="button"
-					onclick="document.getElementById('clone-modal').remove()"
+					@click="document.getElementById('clone-modal').remove()"
 					class="btn btn-primary btn-sm btn-circle"
 				>
 					<i data-lucide="x"></i>
@@ -80,7 +80,7 @@ templ TemplateCloneModal(ctx context.Context, template models.DocumentTemplate, 
 				<div class="modal-action pt-4 border-t border-base-200">
 					<button
 						type="button"
-						onclick="document.getElementById('clone-modal').remove()"
+						@click="document.getElementById('clone-modal').remove()"
 						class="btn btn-primary rounded-sm"
 					>
 						{ i18n.T(ctx, "common.cancel") }
@@ -96,7 +96,7 @@ templ TemplateCloneModal(ctx context.Context, template models.DocumentTemplate, 
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('clone-modal').remove()">close</button>
+			<button @click="document.getElementById('clone-modal').remove()">close</button>
 		</form>
 	</div>
 }

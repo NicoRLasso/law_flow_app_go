@@ -181,7 +181,7 @@ func GetSubtypeViewHandler(c echo.Context) error {
 		return c.String(http.StatusNotFound, i18n.T(ctx, "common.not_found"))
 	}
 
-	return components.SubtypeViewModal(ctx, subtype).Render(c.Request().Context(), c.Response().Writer)
+	return components.SubtypeViewModal(ctx, subtype).Render(ctx, c.Response().Writer)
 }
 
 // CreateSubtypeHandler creates a new subtype

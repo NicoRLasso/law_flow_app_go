@@ -2,20 +2,21 @@ package components
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/services/i18n"
 )
 
 templ ConfirmationModal(ctx context.Context) {
 	<!-- Confirmation Modal -->
-	<div id="confirmation-modal" class="hidden fixed inset-0 z-[100]" role="dialog" aria-modal="true">
+	<div id="confirmation-modal" class="hidden fixed inset-0 z-[100]" role="dialog" aria-modal="true" x-data="{ close() { document.getElementById('confirmation-modal').classList.add('hidden'); confirmationModalTriggerElement = null; } }">
 		<!-- Backdrop -->
-		<div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeConfirmationModal()"></div>
+		<div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" @click="close()"></div>
 		<div class="fixed inset-0 z-10 overflow-y-auto">
 			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
 				<!-- Modal Content -->
 				<div
 					class="relative transform overflow-hidden rounded-sm bg-base-100 border border-base-200 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
-					onclick="event.stopPropagation()"
+					@click.stop
 				>
 					<div class="px-6 py-6">
 						<div class="flex items-start gap-4 mb-4">
@@ -36,7 +37,7 @@ templ ConfirmationModal(ctx context.Context) {
 						<div class="flex items-center justify-end gap-3 mt-6">
 							<button
 								type="button"
-								onclick="closeConfirmationModal()"
+								@click="close()"
 								class="btn btn-primary rounded-sm"
 							>
 								{ i18n.T(ctx, "common.cancel") }
@@ -54,7 +55,7 @@ templ ConfirmationModal(ctx context.Context) {
 			</div>
 		</div>
 	</div>
-	<script>
+	<script nonce={ middleware.GetNonce(ctx) }>
 		let confirmationModalTriggerElement = null;
 
 		function openConfirmationModal(options, triggerElement) {
@@ -109,7 +110,8 @@ templ ConfirmationModal(ctx context.Context) {
 		}
 
 		function closeConfirmationModal() {
-			document.getElementById('confirmation-modal').classList.add('hidden');
+			const modal = document.getElementById('confirmation-modal');
+			if (modal) modal.classList.add('hidden');
 			confirmationModalTriggerElement = null;
 		}
 	</script>

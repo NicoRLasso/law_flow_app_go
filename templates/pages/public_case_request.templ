@@ -2,6 +2,7 @@ package pages
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/layouts"
@@ -9,7 +10,7 @@ import (
 
 templ PublicCaseRequest(ctx context.Context, csrfToken string, firm models.Firm, documentTypes []models.ChoiceOption, priorities []models.ChoiceOption, turnstileSiteKey string) {
 	@layouts.WebsiteLayout(ctx, i18n.T(ctx, "public.request.title")+" - "+firm.Name, csrfToken, nil) {
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer nonce={ middleware.GetNonce(ctx) }></script>
 		<main class="min-h-screen relative bg-base-100 py-8 lg:py-12">
 			<!-- Background effects -->
 			<div class="absolute inset-0 z-0 bg-base-200/30"></div>

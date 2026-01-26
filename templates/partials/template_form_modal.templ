@@ -2,6 +2,7 @@ package partials
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 )
@@ -246,40 +247,40 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('template-modal-container').innerHTML = ''">close</button>
+			<button @click='open = false; setTimeout(() => document.getElementById("template-modal-container").innerHTML = "", 200)'>close</button>
 		</form>
 	</div>
-	@templ.Raw(`<script>
+	<script nonce={ middleware.GetNonce(ctx) }>
 		function templateEditor() {
 			return {
-				content: document.getElementById('template-editor')?.innerHTML || '',
+				content: document.getElementById("template-editor")?.innerHTML || "",
 				updateContent(html) {
 					this.content = html;
 				},
 				formatBold() {
-					document.execCommand('bold', false, null);
+					document.execCommand("bold", false, null);
 				},
 				formatItalic() {
-					document.execCommand('italic', false, null);
+					document.execCommand("italic", false, null);
 				},
 				formatHeading() {
-					document.execCommand('formatBlock', false, 'h2');
+					document.execCommand("formatBlock", false, "h2");
 				},
 				formatParagraph() {
-					document.execCommand('formatBlock', false, 'p');
+					document.execCommand("formatBlock", false, "p");
 				},
 				formatList() {
-					document.execCommand('insertUnorderedList', false, null);
+					document.execCommand("insertUnorderedList", false, null);
 				},
 				insertVariable(variable) {
-					const editor = document.getElementById('template-editor');
+					const editor = document.getElementById("template-editor");
 					editor.focus();
-					document.execCommand('insertText', false, '{{' + variable + '}}');
+					document.execCommand("insertText", false, "{{" + variable + "}}");
 					this.content = editor.innerHTML;
 				}
 			}
 		}
-	</script>`)
+	</script>
 }
 
 func safeStringFromPtr(s *string) string {

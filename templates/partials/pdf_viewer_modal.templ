@@ -12,9 +12,10 @@ templ PDFViewerModal(ctx context.Context, caseRecord models.Case) {
 		id="pdf-viewer-modal"
 		class="hidden fixed inset-0 bg-base-300/95 backdrop-blur-md flex items-center justify-center p-4"
 		style="z-index: 9999; display: none;"
-		onclick="if(event.target === this) closePDFViewerModal()"
+		x-data="{ close() { const modal = document.getElementById('pdf-viewer-modal'); const embed = document.getElementById('pdf-embed'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; if (embed) embed.src = ''; } } }"
+		@click.self="close()"
 	>
-		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-6xl h-full flex flex-col shadow-2xl" onclick="event.stopPropagation()">
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-6xl h-full flex flex-col shadow-2xl">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between px-6 py-4 border-b border-base-200 bg-base-100">
 				<div class="flex items-center gap-3">
@@ -25,7 +26,7 @@ templ PDFViewerModal(ctx context.Context, caseRecord models.Case) {
 				</div>
 				<button
 					type="button"
-					onclick="closePDFViewerModal()"
+					@click="close()"
 					class="btn btn-primary btn-sm btn-circle"
 					title={ i18n.T(ctx, "case.document.viewer.close_tooltip") }
 				>

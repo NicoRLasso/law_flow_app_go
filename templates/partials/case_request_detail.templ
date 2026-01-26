@@ -246,7 +246,7 @@ templ CaseRequestDetailModal(ctx context.Context, request models.CaseRequest) {
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('case-request-detail-modal').remove()">close</button>
+			<button @click="show = false; setTimeout(() => document.getElementById('case-request-detail-modal').remove(), 300)">close</button>
 		</form>
 		<!-- Rejection Modal -->
 		<div

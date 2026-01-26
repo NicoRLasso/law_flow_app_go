@@ -37,10 +37,10 @@ func GetJudicialProcessViewHandler(c echo.Context) error {
 			// Return empty state or basic info if filing number exists
 			var kase models.Case
 			if err := db.DB.Select("id, filing_number").First(&kase, "id = ?", caseID).Error; err == nil {
-				component := partials.JudicialProcessView(nil, kase.FilingNumber, 1, 1, false) // 1, 1 defaults
+				component := partials.JudicialProcessView(c.Request().Context(), nil, kase.FilingNumber, 1, 1, false) // 1, 1 defaults
 				return component.Render(c.Request().Context(), c.Response().Writer)
 			}
-			component := partials.JudicialProcessView(nil, nil, 1, 1, false)
+			component := partials.JudicialProcessView(c.Request().Context(), nil, nil, 1, 1, false)
 			return component.Render(c.Request().Context(), c.Response().Writer)
 		}
 		return c.String(http.StatusInternalServerError, "Error loading judicial process data")
@@ -78,6 +78,6 @@ func GetJudicialProcessViewHandler(c echo.Context) error {
 	// Check if this is a pagination request (explicit page param) to keep Actions tab open
 	showActions := c.QueryParam("page") != ""
 
-	component := partials.JudicialProcessView(&jp, &jp.Radicado, page, totalPages, showActions)
+	component := partials.JudicialProcessView(c.Request().Context(), &jp, &jp.Radicado, page, totalPages, showActions)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

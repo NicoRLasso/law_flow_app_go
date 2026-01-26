@@ -95,7 +95,7 @@ func GetCaseLogFormHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Error fetching documents")
 	}
 
-	return render(c, partials.CaseLogModal(models.CaseLog{CaseID: caseID}, documents, true)) // true = isNew
+	return render(c, partials.CaseLogModal(c.Request().Context(), models.CaseLog{CaseID: caseID}, documents, true)) // true = isNew
 }
 
 // CreateCaseLogHandler handles the creation of a new log entry
@@ -186,7 +186,7 @@ func GetCaseLogHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Error fetching documents")
 	}
 
-	return render(c, partials.CaseLogModal(logEntry, documents, false)) // false = isNew
+	return render(c, partials.CaseLogModal(c.Request().Context(), logEntry, documents, false)) // false = isNew
 }
 
 // GetCaseLogViewHandler returns a read-only view modal for a specific log entry
@@ -199,7 +199,7 @@ func GetCaseLogViewHandler(c echo.Context) error {
 		return c.String(http.StatusNotFound, "Log entry not found")
 	}
 
-	return render(c, partials.CaseLogViewModal(logEntry))
+	return render(c, partials.CaseLogViewModal(c.Request().Context(), logEntry))
 }
 
 // helper to fetch logs and render the table

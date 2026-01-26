@@ -2,6 +2,7 @@ package pages
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -187,7 +188,7 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 				</div>
 			</div>
 		</div>
-		<script>
+		<script nonce={ middleware.GetNonce(ctx) }>
 			function appointmentPage() {
 				return {
 					showCreateModal: false,

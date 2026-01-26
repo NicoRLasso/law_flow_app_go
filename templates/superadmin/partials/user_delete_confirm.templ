@@ -29,7 +29,7 @@ templ UserDeleteConfirmModal(ctx context.Context, user *models.User) {
 			<div class="modal-action">
 				<button
 					type="button"
-					onclick="document.getElementById('modal-container').innerHTML = ''"
+					@click="document.getElementById('modal-container').innerHTML = ''"
 					class="btn btn-ghost"
 				>
 					{ i18n.T(ctx, "superadmin.users.delete_modal.cancel") }
@@ -45,7 +45,7 @@ templ UserDeleteConfirmModal(ctx context.Context, user *models.User) {
 				</button>
 			</div>
 		</div>
-		<form method="dialog" class="modal-backdrop" onclick="document.getElementById('modal-container').innerHTML = ''">
+		<form method="dialog" class="modal-backdrop" @click="document.getElementById('modal-container').innerHTML = ''">
 			<button>close</button>
 		</form>
 	</div>

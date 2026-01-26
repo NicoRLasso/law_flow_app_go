@@ -468,7 +468,7 @@ templ CaseHistoryModal(ctx context.Context, clients []models.User, lawyers []mod
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
-			<button onclick="document.getElementById('case-history-modal').remove()">close</button>
+			<button @click="document.getElementById('case-history-modal').remove()">close</button>
 		</form>
 	</div>
 }
