@@ -40,19 +40,19 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 				});
 			</script>
 		</head>
-		<body class="bg-background text-foreground">
-			<!-- Ambient Gradient Blobs -->
-			<div class="ambient-blobs" aria-hidden="true">
+		<body class="min-h-screen bg-base-200 text-base-content font-sans">
+			<!-- Ambient Gradient Blobs (Optional: Keep for luxury feel but ensure they don't clash) -->
+			<div class="ambient-blobs opacity-30" aria-hidden="true">
 				<div class="blob blob-1"></div>
 				<div class="blob blob-2"></div>
 				<div class="blob blob-3"></div>
 				<div class="blob blob-4"></div>
 			</div>
-			<div class="min-h-screen bg-background">
+			<div class="min-h-screen flex flex-col">
 				<!-- Superadmin Navbar -->
 				@Navbar(ctx, user, currentPath)
 				<!-- Main Content -->
-				<main class="w-full mx-auto px-6 py-8">
+				<main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-all duration-300">
 					{ children... }
 				</main>
 				<div id="modal-container"></div>

@@ -8,74 +8,76 @@ import (
 
 templ Support(ctx context.Context, title string, csrfToken string, user *models.User, tickets []models.SupportTicket) {
 	@Layout(ctx, title, csrfToken, user, "/superadmin/support") {
-		<div class="flex items-center justify-between mb-8">
+		<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
 			<div>
-				<h1 class="text-3xl font-bold mb-2">{ i18n.T(ctx, "superadmin.support.title") }</h1>
-				<p class="text-muted-foreground">{ i18n.T(ctx, "superadmin.support.subtitle") }</p>
+				<h2 class="text-4xl font-extrabold tracking-tight text-base-content">{ i18n.T(ctx, "superadmin.support.title") }</h2>
+				<p class="mt-2 text-lg text-base-content/60">{ i18n.T(ctx, "superadmin.support.subtitle") }</p>
 			</div>
 		</div>
-		<div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+
+		<div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
 			<div class="overflow-x-auto">
-				<table class="w-full">
-					<thead>
-						<tr class="border-b border-white/10 bg-white/5">
-							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.status") }</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.subject") }</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.user") }</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.date") }</th>
-							<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "support.table.message") }</th>
-							<th class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">{ i18n.T(ctx, "common.actions") }</th>
+				<table class="table table-md w-full">
+					<thead class="bg-base-200/50 text-base-content uppercase text-xs font-bold ring-1 ring-base-200">
+						<tr>
+							<th class="rounded-tl-xl">{ i18n.T(ctx, "support.table.status") }</th>
+							<th>{ i18n.T(ctx, "support.table.subject") }</th>
+							<th>{ i18n.T(ctx, "support.table.user") }</th>
+							<th>{ i18n.T(ctx, "support.table.date") }</th>
+							<th>{ i18n.T(ctx, "support.table.message") }</th>
+							<th class="rounded-tr-xl text-right">{ i18n.T(ctx, "common.actions") }</th>
 						</tr>
 					</thead>
-					<tbody class="divide-y divide-white/10">
+					<tbody class="divide-y divide-base-200">
 						if len(tickets) == 0 {
 							<tr>
-								<td colspan="6" class="px-6 py-8 text-center text-muted-foreground">
+								<td colspan="6" class="py-12 text-center text-base-content/40 italic">
 									{ i18n.T(ctx, "support.table.empty") }
 								</td>
 							</tr>
 						} else {
 							for _, ticket := range tickets {
-								<tr class="hover:bg-white/5 transition-colors">
-									<td class="px-6 py-4 whitespace-nowrap">
+								<tr class="hover:bg-base-200/50 transition-all group">
+									<td>
 										switch ticket.Status {
 											case "resolved":
-												<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-500">
+												<div class="badge badge-success badge-sm font-bold truncate">
 													{ i18n.T(ctx, "support.status.resolved") }
-												</span>
+												</div>
 											case "in_progress":
-												<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-500">
+												<div class="badge badge-warning badge-sm font-bold truncate">
 													{ i18n.T(ctx, "support.status.in_progress") }
-												</span>
+												</div>
 											case "closed":
-												<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/20 text-gray-500">
+												<div class="badge badge-neutral badge-sm font-bold truncate">
 													{ i18n.T(ctx, "support.status.closed") }
-												</span>
+												</div>
 											default:
-												<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-500">
+												<div class="badge badge-info badge-sm font-bold truncate">
 													{ i18n.T(ctx, "support.status.open") }
-												</span>
+												</div>
 										}
 									</td>
-									<td class="px-6 py-4 whitespace-nowrap font-medium">{ ticket.Subject }</td>
-									<td class="px-6 py-4 whitespace-nowrap">
+									<td class="font-bold text-base-content">{ ticket.Subject }</td>
+									<td>
 										<div class="flex flex-col">
-											<span class="text-sm font-medium">{ ticket.User.Name }</span>
-											<span class="text-xs text-muted-foreground">{ ticket.User.Email }</span>
+											<span class="text-sm font-bold text-base-content">{ ticket.User.Name }</span>
+											<span class="text-[10px] text-base-content/60 font-mono italic">{ ticket.User.Email }</span>
 										</div>
 									</td>
-									<td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-										{ ticket.CreatedAt.Format("02 Jan 2006 15:04") }
+									<td class="text-sm font-medium">
+										{ ticket.CreatedAt.Format("02 Jan 2006") }
+										<div class="text-[10px] opacity-40 font-mono italic">{ ticket.CreatedAt.Format("15:04") }</div>
 									</td>
-									<td class="px-6 py-4">
-										<p class="text-sm text-muted-foreground line-clamp-2 max-w-xs" title={ ticket.Message }>{ ticket.Message }</p>
+									<td>
+										<p class="text-xs text-base-content/60 line-clamp-2 max-w-[200px]" title={ ticket.Message }>
+											{ ticket.Message }
+										</p>
 									</td>
-									<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-										<div class="flex items-center justify-end gap-2">
-											<a href={ templ.SafeURL("/superadmin/support/" + ticket.ID) } class="text-muted-foreground hover:text-foreground transition-colors">
-												{ i18n.T(ctx, "action.view") }
-											</a>
-										</div>
+									<td class="text-right">
+										<a href={ templ.SafeURL("/superadmin/support/" + ticket.ID) } class="btn btn-ghost btn-sm btn-square text-primary hover:bg-primary/10">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+										</a>
 									</td>
 								</tr>
 							}

@@ -21,186 +21,181 @@ templ Dashboard(
 ) {
 	@Layout(ctx, title, csrfToken, user, currentPath) {
 		<!-- Header -->
-		<div class="mb-8 flex items-center justify-between">
-			<div>
-				<h2 class="text-3xl font-bold mb-2 font-space-grotesk tracking-tight">Superadmin Dashboard</h2>
-				<p class="text-muted-foreground">Overview of system status and recent activity.</p>
-			</div>
-			<div class="flex gap-3"></div>
+		<div class="mb-10">
+			<h2 class="text-4xl font-extrabold tracking-tight text-base-content lg:text-5xl">Dashboard</h2>
+			<p class="mt-2 text-lg text-base-content/60">System overview and real-time activity metrics.</p>
 		</div>
+
 		<!-- Stats Grid -->
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+		<div class="stats stats-vertical lg:stats-horizontal shadow bg-base-100 w-full mb-10 border border-base-200">
 			<!-- Total Firms -->
-			<div class="glass-panel p-6 rounded-2xl border border-white/10 relative overflow-hidden group">
-				<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-					<svg class="w-16 h-16 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+			<div class="stat">
+				<div class="stat-figure text-primary">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
 				</div>
-				<div class="relative z-10">
-					<div class="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center mb-4">
-						<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-					</div>
-					<h3 class="text-3xl font-bold mb-1 font-space-grotesk">{ strconv.FormatInt(totalFirms, 10) }</h3>
-					<p class="text-sm text-muted-foreground font-medium">Total Firms</p>
-				</div>
+				<div class="stat-title italic">Total Firms</div>
+				<div class="stat-value text-primary">{ strconv.FormatInt(totalFirms, 10) }</div>
+				<div class="stat-desc text-success">Updated just now</div>
 			</div>
+			
 			<!-- Total Users -->
-			<div class="glass-panel p-6 rounded-2xl border border-white/10 relative overflow-hidden group">
-				<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-					<svg class="w-16 h-16 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+			<div class="stat">
+				<div class="stat-figure text-secondary">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
 				</div>
-				<div class="relative z-10">
-					<div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
-						<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-					</div>
-					<h3 class="text-3xl font-bold mb-1 font-space-grotesk">{ strconv.FormatInt(totalUsers, 10) }</h3>
-					<p class="text-sm text-muted-foreground font-medium">Total Users</p>
-				</div>
+				<div class="stat-title italic">Total Users</div>
+				<div class="stat-value text-secondary">{ strconv.FormatInt(totalUsers, 10) }</div>
+				<div class="stat-desc">Across all firms</div>
 			</div>
+			
 			<!-- Active Users -->
-			<div class="glass-panel p-6 rounded-2xl border border-white/10 relative overflow-hidden group">
-				<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-					<svg class="w-16 h-16 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+			<div class="stat">
+				<div class="stat-figure text-accent">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 				</div>
-				<div class="relative z-10">
-					<div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
-						<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-					</div>
-					<h3 class="text-3xl font-bold mb-1 font-space-grotesk">{ strconv.FormatInt(activeUsers, 10) }</h3>
-					<p class="text-sm text-muted-foreground font-medium">Active Users</p>
-				</div>
+				<div class="stat-title italic">Active Now</div>
+				<div class="stat-value text-accent">{ strconv.FormatInt(activeUsers, 10) }</div>
+				<div class="stat-desc">Currently registered</div>
 			</div>
+
 			<!-- Pending Setup -->
-			<div class="glass-panel p-6 rounded-2xl border border-white/10 relative overflow-hidden group">
-				<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-					<svg class="w-16 h-16 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+			<div class="stat">
+				<div class="stat-figure text-warning">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
 				</div>
-				<div class="relative z-10">
-					<div class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-4">
-						<svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-					</div>
-					<h3 class="text-3xl font-bold mb-1 font-space-grotesk">{ strconv.FormatInt(pendingUsers, 10) }</h3>
-					<p class="text-sm text-muted-foreground font-medium">Pending Setup</p>
-				</div>
+				<div class="stat-title italic">Pending</div>
+				<div class="stat-value text-warning">{ strconv.FormatInt(pendingUsers, 10) }</div>
+				<div class="stat-desc">Awaiting setup</div>
 			</div>
 		</div>
+
 		<!-- Quick Actions -->
-		<div class="mb-8">
-			<h3 class="text-lg font-bold mb-4 font-space-grotesk">Quick Actions</h3>
-			<div class="flex gap-4">
-				<a href="/superadmin/users" class="px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl transition-all flex items-center gap-3">
-					<div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-						<svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-					</div>
-					<span class="font-medium">Manage Users</span>
+		<div class="mb-10">
+			<h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+				<span class="w-1 h-6 bg-primary rounded-full"></span>
+				Quick Actions
+			</h3>
+			<div class="flex flex-wrap gap-3">
+				<a href="/superadmin/users" class="btn btn-outline btn-primary gap-2">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+					Manage Users
 				</a>
-				<a href="/superadmin/firms" class="px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl transition-all flex items-center gap-3">
-					<div class="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
-						<svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-					</div>
-					<span class="font-medium">Manage Firms</span>
+				<a href="/superadmin/firms" class="btn btn-outline btn-secondary gap-2">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+					Manage Firms
 				</a>
 				<button
 					hx-get="/superadmin/users/new"
 					hx-target="#modal-container"
 					hx-swap="innerHTML"
-					class="px-5 py-3 bg-white/5 border border-white/10 hover:bg-white/10 rounded-xl transition-all flex items-center gap-3"
+					class="btn btn-primary gap-2"
 				>
-					<div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
-						<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-					</div>
-					<span class="font-medium">Create User</span>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+					Create User
 				</button>
 			</div>
 		</div>
+
 		<!-- Recent Activity -->
 		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 			<!-- Recent Firms -->
-			<div class="glass-panel p-6 rounded-2xl border border-white/10">
-				<div class="flex items-center justify-between mb-6">
-					<h3 class="text-xl font-bold font-space-grotesk">Recent Firms</h3>
-					<a href="/superadmin/firms" class="text-xs font-medium text-accent hover:text-accent/80 transition-colors">View All</a>
-				</div>
-				if len(recentFirms) == 0 {
-					<div class="text-center py-8 text-muted-foreground text-sm">No firms created yet.</div>
-				} else {
-					<div class="space-y-3">
-						for _, firm := range recentFirms {
-							<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all">
-								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-accent/20 to-purple-600/20 flex items-center justify-center font-bold text-accent text-sm">
-										if len(firm.Name) > 0 {
-											{ string(firm.Name[0]) }
+			<div class="card bg-base-100 shadow-xl border border-base-200">
+				<div class="card-body">
+					<div class="flex items-center justify-between mb-2">
+						<h3 class="card-title text-base-content underline decoration-primary decoration-2 underline-offset-4">Recent Firms</h3>
+						<a href="/superadmin/firms" class="link link-primary link-hover text-xs font-bold uppercase tracking-tighter">View All</a>
+					</div>
+					<div class="divider mt-0 mb-4 opacity-10"></div>
+					if len(recentFirms) == 0 {
+						<div class="text-center py-8 text-base-content/50 italic text-sm">No firms created yet.</div>
+					} else {
+						<div class="space-y-4">
+							for _, firm := range recentFirms {
+								<div class="flex items-center justify-between p-4 rounded-xl bg-base-200/30 hover:bg-base-200 transition-all border border-base-200/50 group">
+									<div class="flex items-center gap-4">
+										<div class="avatar placeholder">
+											<div class="bg-primary text-primary-content rounded-xl w-12 h-12 shadow-lg group-hover:scale-105 transition-transform">
+												if len(firm.Name) > 0 {
+													<span class="text-lg font-bold">{ string(firm.Name[0]) }</span>
+												} else {
+													<span class="text-lg font-bold">?</span>
+												}
+											</div>
+										</div>
+										<div>
+											<p class="font-bold text-base-content">
+												if firm.Name != "" {
+													{ firm.Name }
+												} else {
+													<span class="italic text-base-content/40">Unnamed Firm</span>
+												}
+											</p>
+											<p class="text-xs text-base-content/60 font-medium">{ firm.City }, { firm.Country }</p>
+										</div>
+									</div>
+									<div class="text-right">
+										<p class="text-[10px] font-mono opacity-50 mb-1">{ firm.CreatedAt.Format("2006-01-02") }</p>
+										if firm.IsActive {
+											<div class="badge badge-success badge-xs gap-1">active</div>
 										} else {
-											?
+											<div class="badge badge-error badge-xs gap-1">inactive</div>
 										}
 									</div>
-									<div>
-										<p class="font-medium text-sm text-foreground">
-											if firm.Name != "" {
-												{ firm.Name }
-											} else {
-												<span class="italic text-muted-foreground">Unnamed Firm</span>
-											}
-										</p>
-										<p class="text-xs text-muted-foreground">{ firm.City }, { firm.Country }</p>
-									</div>
 								</div>
-								<div class="text-right">
-									<p class="text-xs text-muted-foreground">{ firm.CreatedAt.Format("Jan 02, 2006") }</p>
-									if firm.IsActive {
-										<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-500/10 text-green-400 mt-1">Active</span>
-									} else {
-										<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-500/10 text-red-400 mt-1">Inactive</span>
-									}
-								</div>
-							</div>
-						}
-					</div>
-				}
+							}
+						</div>
+					}
+				</div>
 			</div>
+
 			<!-- Recent Users -->
-			<div class="glass-panel p-6 rounded-2xl border border-white/10">
-				<div class="flex items-center justify-between mb-6">
-					<h3 class="text-xl font-bold font-space-grotesk">Recent Users</h3>
-					<a href="/superadmin/users" class="text-xs font-medium text-accent hover:text-accent/80 transition-colors">View All</a>
-				</div>
-				if len(recentUsers) == 0 {
-					<div class="text-center py-8 text-muted-foreground text-sm">No users created yet.</div>
-				} else {
-					<div class="space-y-3">
-						for _, u := range recentUsers {
-							<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all">
-								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-600/20 flex items-center justify-center font-bold text-blue-400 text-sm">
-										if len(u.Name) > 0 {
-											{ string(u.Name[0]) }
-										} else {
-											?
-										}
-									</div>
-									<div>
-										<p class="font-medium text-sm text-foreground">
-											if u.Name != "" {
-												{ u.Name }
-											} else {
-												<span class="italic text-muted-foreground">Unnamed User</span>
-											}
-										</p>
-										<p class="text-xs text-muted-foreground">{ u.Email }</p>
-									</div>
-								</div>
-								<div class="text-right">
-									if u.Firm != nil {
-										<p class="text-xs font-medium text-foreground">{ u.Firm.Name }</p>
-									} else {
-										<p class="text-xs text-yellow-400 italic">No Firm</p>
-									}
-									<p class="text-[10px] text-muted-foreground mt-0.5">{ u.Role }</p>
-								</div>
-							</div>
-						}
+			<div class="card bg-base-100 shadow-xl border border-base-200">
+				<div class="card-body">
+					<div class="flex items-center justify-between mb-2">
+						<h3 class="card-title text-base-content underline decoration-secondary decoration-2 underline-offset-4">Recent Users</h3>
+						<a href="/superadmin/users" class="link link-secondary link-hover text-xs font-bold uppercase tracking-tighter">View All</a>
 					</div>
-				}
+					<div class="divider mt-0 mb-4 opacity-10"></div>
+					if len(recentUsers) == 0 {
+						<div class="text-center py-8 text-base-content/50 italic text-sm">No users created yet.</div>
+					} else {
+						<div class="space-y-4">
+							for _, u := range recentUsers {
+								<div class="flex items-center justify-between p-4 rounded-xl bg-base-200/30 hover:bg-base-200 transition-all border border-base-200/50 group">
+									<div class="flex items-center gap-4">
+										<div class="avatar placeholder">
+											<div class="bg-secondary text-secondary-content rounded-xl w-12 h-12 shadow-lg group-hover:scale-105 transition-transform">
+												if len(u.Name) > 0 {
+													<span class="text-lg font-bold">{ string(u.Name[0]) }</span>
+												} else {
+													<span class="text-lg font-bold">?</span>
+												}
+											</div>
+										</div>
+										<div>
+											<p class="font-bold text-base-content">
+												if u.Name != "" {
+													{ u.Name }
+												} else {
+													<span class="italic text-base-content/40">Unnamed User</span>
+												}
+											</p>
+											<p class="text-xs text-base-content/60 font-medium truncate max-w-[150px]">{ u.Email }</p>
+										</div>
+									</div>
+									<div class="text-right">
+										if u.Firm != nil {
+											<p class="text-xs font-bold text-primary mb-1">{ u.Firm.Name }</p>
+										} else {
+											<p class="text-[10px] text-warning italic mb-1">Freelancer</p>
+										}
+										<div class="badge badge-outline badge-xs opacity-50">{ u.Role }</div>
+									</div>
+								</div>
+							}
+						</div>
+					}
+				</div>
 			</div>
 		</div>
 	}

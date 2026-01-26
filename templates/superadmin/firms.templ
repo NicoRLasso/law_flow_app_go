@@ -16,64 +16,74 @@ templ FirmsPage(
 	firms []models.Firm,
 ) {
 	@Layout(ctx, title, csrfToken, user, currentPath) {
-		<div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+		<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
 			<div>
-				<h2 class="text-3xl font-bold mb-2 font-space-grotesk tracking-tight">{ i18n.T(ctx, "superadmin.dashboard.manage_firms") }</h2>
-				<p class="text-muted-foreground">{ i18n.T(ctx, "superadmin.dashboard.manage_firms") }</p>
+				<h2 class="text-4xl font-extrabold tracking-tight text-base-content">{ i18n.T(ctx, "superadmin.dashboard.manage_firms") }</h2>
+				<p class="mt-2 text-lg text-base-content/60">{ i18n.T(ctx, "superadmin.dashboard.manage_firms") }</p>
 			</div>
 			<button
 				hx-get="/superadmin/firms/new"
 				hx-target="#modal-container"
 				hx-swap="innerHTML"
-				class="px-5 py-2.5 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white font-medium rounded-xl transition-all shadow-lg shadow-accent/20 flex items-center gap-2"
+				class="btn btn-primary shadow-lg shadow-primary/20"
 			>
-				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+				<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
 				{ i18n.T(ctx, "firm.setup.create_title") }
 			</button>
 		</div>
+
 		<!-- Filters & Search -->
 		<div
 			x-data="{ 
 			search: '', 
 			status: '',
 			updateFilters() {
-				// Construct query string
-				let params = new URLSearchParams();
-				if (this.search) params.append('search', this.search);
-				if (this.status) params.append('status', this.status);
-				
-				// Trigger HTMX request
-				htmx.ajax('GET', '/superadmin/firms/list?' + params.toString(), '#firms-table-container');
+				htmx.ajax('GET', '/superadmin/firms/list' + (this.search || this.status ? '?' : '') + new URLSearchParams({
+					...(this.search && {search: this.search}),
+					...(this.status && {status: this.status})
+				}).toString(), '#firms-table-container');
 			}
 		}"
-			class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4"
+			class="card bg-base-100 shadow-sm border border-base-200 mb-8"
 		>
-			<!-- Search -->
-			<div class="relative md:col-span-2">
-				<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-				<input
-					type="text"
-					x-model="search"
-					@input.debounce.300ms="updateFilters()"
-					placeholder={ i18n.T(ctx, "common.search_placeholder") }
-					class="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all"
-				/>
-			</div>
-			<!-- Status Filter -->
-			<div>
-				<select
-					x-model="status"
-					@change="updateFilters()"
-					class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-foreground focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all appearance-none"
-				>
-					<option value="">{ i18n.T(ctx, "superadmin.users.status_filter.all") }</option>
-					<option value="active">{ i18n.T(ctx, "superadmin.users.status_filter.active") }</option>
-					<option value="inactive">{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }</option>
-				</select>
+			<div class="card-body p-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+				<!-- Search -->
+				<div class="md:col-span-2 form-control w-full">
+					<label class="label py-1">
+						<span class="label-text-alt font-bold uppercase opacity-50">Search Firms</span>
+					</label>
+					<div class="relative">
+						<input
+							type="text"
+							x-model="search"
+							@input.debounce.300ms="updateFilters()"
+							placeholder={ i18n.T(ctx, "common.search_placeholder") }
+							class="input input-bordered w-full pl-10 focus:input-primary transition-all"
+						/>
+						<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+					</div>
+				</div>
+
+				<!-- Status Filter -->
+				<div class="form-control w-full">
+					<label class="label py-1">
+						<span class="label-text-alt font-bold uppercase opacity-50">Filter by Status</span>
+					</label>
+					<select
+						x-model="status"
+						@change="updateFilters()"
+						class="select select-bordered w-full focus:select-primary transition-all"
+					>
+						<option value="">{ i18n.T(ctx, "superadmin.users.status_filter.all") }</option>
+						<option value="active">{ i18n.T(ctx, "superadmin.users.status_filter.active") }</option>
+						<option value="inactive">{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }</option>
+					</select>
+				</div>
 			</div>
 		</div>
+
 		<!-- Firms Table Container -->
-		<div id="firms-table-container" class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+		<div id="firms-table-container" class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
 			@superadmin_partials.FirmsTable(ctx, firms)
 		</div>
 	}
