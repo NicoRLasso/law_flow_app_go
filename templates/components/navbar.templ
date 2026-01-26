@@ -252,8 +252,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						}
 					</div>
 				</div>
-				<!-- Right Section: Firm & Profile -->
+				<!-- Right Section: Search & Profile -->
 				<div class="flex items-center gap-4">
+					<!-- Global Search (hidden for clients and superadmin) -->
+					if user.Role != "client" && user.Role != "superadmin" {
+						@SearchBox(ctx)
+					}
 					<!-- Mobile Menu Button -->
 					<button
 						@click="mobileMenuOpen = !mobileMenuOpen"

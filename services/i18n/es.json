@@ -1613,6 +1613,17 @@
         "new": "Nuevo Valor"
     }
   },
+  "search": {
+    "placeholder": "Buscar casos, notas, documentos...",
+    "no_results": "No se encontraron resultados",
+    "no_results_hint": "Intenta con otras palabras clave",
+    "view_all_results": "Ver todos los resultados",
+    "searching": "Buscando...",
+    "match_in_case": "Encontrado en caso",
+    "match_in_log": "Encontrado en notas",
+    "match_in_document": "Encontrado en documento",
+    "match_in_party": "Encontrado en contraparte"
+  },
   "email": {
     "subject": {
       "welcome": "¡Bienvenido a la App LexLegalCloud!",

@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   entrypoint = "./tmp/main"
-  cmd = "go build -o ./tmp/main ./cmd/server"
+  cmd = "CGO_ENABLED=1 go build -tags fts5 -o ./tmp/main ./cmd/server"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin", "db", "static", "node_modules", "uploads"]
   exclude_file = []

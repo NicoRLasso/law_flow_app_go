@@ -1613,8 +1613,18 @@
         "old": "Old Value",
         "new": "New Value"
     }
-  }
-  ,
+  },
+  "search": {
+    "placeholder": "Search cases, notes, documents...",
+    "no_results": "No results found",
+    "no_results_hint": "Try different keywords",
+    "view_all_results": "View all results",
+    "searching": "Searching...",
+    "match_in_case": "Found in case",
+    "match_in_log": "Found in notes",
+    "match_in_document": "Found in document",
+    "match_in_party": "Found in opposing party"
+  },
   "email": {
     "subject": {
       "welcome": "Welcome to LexLegalCloud App!",

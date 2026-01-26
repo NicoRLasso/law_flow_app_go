@@ -28,10 +28,10 @@ dev: generate ## Run with live-reload (requires air)
 	make -j2 air css-watch
 
 run: generate ## Run the application
-	go run cmd/server/main.go
+	CGO_ENABLED=1 go run -tags "fts5" cmd/server/main.go
 
 build: generate css ## Build the application
-	go build -trimpath -o bin/server cmd/server/main.go
+	CGO_ENABLED=1 go build -tags "fts5" -trimpath -o bin/server cmd/server/main.go
 
 clean: ## Clean build artifacts
 	rm -rf bin/

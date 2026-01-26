@@ -44,9 +44,22 @@ func main() {
 	defer db.Close()
 
 	// Run migrations
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
+
+	// Initialize FTS5 search index
+	if err := services.InitializeFTS5(db.DB); err != nil {
+		log.Printf("[WARNING] Failed to initialize FTS5: %v", err)
+	}
+
+	// Migrate existing data to FTS5 index if needed
+	if err := services.MigrateFTSData(db.DB); err != nil {
+		log.Printf("[WARNING] Failed to migrate FTS5 data: %v", err)
+	}
+
+	// Initialize search service
+	handlers.InitSearchService()
 
 	// Seed superadmin user from environment variables
 	if err := services.SeedSuperadminFromEnv(db.DB); err != nil {
@@ -431,6 +444,13 @@ func main() {
 
 		// Case Routes Configuration
 
+		// Search API (Admin, Lawyer, Staff - not clients)
+		searchRoutes := protected.Group("/api")
+		searchRoutes.Use(middleware.RequireRole("admin", "lawyer", "staff"))
+		{
+			searchRoutes.GET("/search", handlers.SearchCasesHandler)
+		}
+
 		// 1. Client Accessible Case Routes (Admin, Lawyer, Client) - STRICTLY for viewing list and documents
 		clientCaseRoutes := protected.Group("/api/cases")
 		clientCaseRoutes.Use(middleware.RequireRole("admin", "lawyer", "client"))
@@ -442,6 +462,9 @@ func main() {
 			clientCaseRoutes.POST("/:id/documents/upload", handlers.UploadCaseDocumentHandler)
 			clientCaseRoutes.GET("/:id/documents/:docId/download", handlers.DownloadCaseDocumentHandler)
 			clientCaseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
+
+			// Judicial Process View
+			clientCaseRoutes.GET("/:id/judicial-view", handlers.GetJudicialProcessViewHandler)
 		}
 
 		// Client Case Request Routes (Authenticated Clients)
@@ -579,8 +602,11 @@ func main() {
 
 	// Start background jobs
 	go func() {
-		// Run immediately on startup (for demo/testing)
+		// Run appointment reminders immediately on startup (for demo/testing)
 		jobs.SendAppointmentReminders(cfg)
+
+		// Start Judicial Update Job
+		jobs.StartJudicialUpdateJob()
 
 		// Then run every hour
 		ticker := time.NewTicker(1 * time.Hour)
