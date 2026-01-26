@@ -2,12 +2,13 @@ package superadmin
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 )
 
 templ Layout(ctx context.Context, title string, csrfToken string, user *models.User, currentPath string) {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang="en" data-theme="light">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -15,27 +16,55 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 			<title>{ title }</title>
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
-			<!-- Google Fonts - Inter -->
+			
+			<!-- Google Fonts: Playfair Display (Serif) & Lato (Sans) -->
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
+			
 			<!-- CSS Bundle -->
-			<link rel="stylesheet" href="/static/css/bundle.min.css"/>
+			<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+			
+			<!-- Lucide Icons -->
+			<script src="https://unpkg.com/lucide@latest" nonce={ middleware.GetNonce(ctx) }></script>
+			
 			<!-- HTMX -->
-			<script src="https://unpkg.com/htmx.org@2.0.0"></script>
+			<script src="https://unpkg.com/htmx.org@2.0.0" defer nonce={ middleware.GetNonce(ctx) }></script>
+			
+			<!-- Alpine.js Plugins -->
+			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			<script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			
 			<!-- Alpine.js -->
-			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-			<!-- CSRF Configuration for HTMX -->
-			<script>
+			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			
+			<!-- Custom Scripts -->
+			<script src="/static/js/app.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+
+			<!-- CSRF Configuration -->
+			<script nonce={ middleware.GetNonce(ctx) }>
 				document.addEventListener('DOMContentLoaded', function() {
 					document.body.addEventListener('htmx:configRequest', function(event) {
 						const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 						event.detail.headers['X-CSRF-Token'] = csrfToken;
 					});
 					
+					// Initialize Lucide icons
+					if (typeof lucide !== 'undefined') {
+						lucide.createIcons();
+					}
+					
+					// Re-initialize after HTMX swaps
+					document.body.addEventListener('htmx:afterSwap', function() {
+						if (typeof lucide !== 'undefined') {
+							lucide.createIcons();
+						}
+					});
+
 					// Listen for server-triggered modal close
 					document.body.addEventListener('closeModal', function() {
-						document.getElementById('modal-container').innerHTML = '';
+						const modal = document.getElementById('modal-container');
+						if (modal) modal.innerHTML = '';
 					});
 				});
 			</script>

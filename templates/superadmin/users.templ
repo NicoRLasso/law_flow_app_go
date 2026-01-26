@@ -19,14 +19,14 @@ templ UsersPage(
 	@Layout(ctx, title, csrfToken, user, currentPath) {
 		<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
 			<div>
-				<h2 class="text-4xl font-extrabold tracking-tight text-base-content">{ i18n.T(ctx, "superadmin.users.title") }</h2>
-				<p class="mt-2 text-lg text-base-content/60">{ i18n.T(ctx, "superadmin.users.subtitle") }</p>
+				<h2 class="text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "superadmin.users.title") }</h2>
+				<p class="mt-2 text-lg text-base-content/60 font-sans">{ i18n.T(ctx, "superadmin.users.subtitle") }</p>
 			</div>
 			<button
 				hx-get="/superadmin/users/new"
 				hx-target="#modal-container"
 				hx-swap="innerHTML"
-				class="btn btn-primary shadow-lg shadow-primary/20"
+				class="btn btn-primary shadow-lg shadow-primary/20 rounded-sm font-sans uppercase tracking-wider text-xs font-bold"
 			>
 				<svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
 				{ i18n.T(ctx, "superadmin.users.create_user") }
@@ -50,7 +50,7 @@ templ UsersPage(
 				htmx.ajax('GET', '/superadmin/users/list' + (params.toString() ? '?' : '') + params.toString(), '#users-table-container');
 			}
 		}"
-			class="card bg-base-100 shadow-sm border border-base-200 mb-8"
+			class="card bg-base-100 shadow-sm border border-base-200 mb-8 rounded-sm"
 		>
 			<div class="card-body p-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
 				<!-- Search -->
@@ -64,7 +64,7 @@ templ UsersPage(
 							x-model="search"
 							@input.debounce.300ms="updateFilters()"
 							placeholder={ i18n.T(ctx, "superadmin.users.search_placeholder") }
-							class="input input-bordered w-full pl-10 focus:input-primary transition-all"
+							class="input input-bordered w-full pl-10 focus:input-primary transition-all rounded-sm"
 						/>
 						<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
 					</div>
@@ -78,7 +78,7 @@ templ UsersPage(
 					<select
 						x-model="role"
 						@change="updateFilters()"
-						class="select select-bordered w-full focus:select-primary transition-all"
+						class="select select-bordered w-full focus:select-primary transition-all rounded-sm"
 					>
 						<option value="">{ i18n.T(ctx, "superadmin.users.role_filter.all") }</option>
 						<option value="superadmin">{ i18n.T(ctx, "superadmin.users.role_filter.superadmin") }</option>
@@ -97,7 +97,7 @@ templ UsersPage(
 					<select
 						x-model="firm"
 						@change="updateFilters()"
-						class="select select-bordered w-full focus:select-primary transition-all"
+						class="select select-bordered w-full focus:select-primary transition-all rounded-sm"
 					>
 						<option value="">{ i18n.T(ctx, "superadmin.users.firm_filter.all") }</option>
 						<option value="none">{ i18n.T(ctx, "superadmin.users.firm_filter.none") }</option>
@@ -115,7 +115,7 @@ templ UsersPage(
 					<select
 						x-model="status"
 						@change="updateFilters()"
-						class="select select-bordered w-full focus:select-primary transition-all"
+						class="select select-bordered w-full focus:select-primary transition-all rounded-sm"
 					>
 						<option value="">{ i18n.T(ctx, "superadmin.users.status_filter.all") }</option>
 						<option value="active">{ i18n.T(ctx, "superadmin.users.status_filter.active") }</option>
@@ -126,7 +126,7 @@ templ UsersPage(
 		</div>
 
 		<!-- Users Table Container -->
-		<div id="users-table-container" class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
+		<div id="users-table-container" class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden rounded-sm">
 			@superadmin_partials.UsersTable(ctx, users)
 		</div>
 	}

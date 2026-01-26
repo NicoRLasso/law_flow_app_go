@@ -8,10 +8,10 @@ import (
 
 templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 	<div class="modal modal-open">
-		<div class="modal-box max-w-2xl border border-base-200 shadow-2xl p-0">
+		<div class="modal-box max-w-2xl border border-base-200 shadow-2xl p-0 rounded-sm">
 			<!-- Modal Header -->
 			<div class="px-6 py-4 border-b border-base-200 flex items-center justify-between bg-base-100">
-				<h3 class="text-xl font-bold">
+				<h3 class="text-xl font-serif font-bold">
 					if firm.ID != "" {
 						{ i18n.T(ctx, "superadmin.dashboard.manage_firms") } - { i18n.T(ctx, "common.edit") }
 					} else {
@@ -45,7 +45,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 							name="name"
 							value={ firm.Name }
 							required
-							class="input input-bordered w-full focus:input-primary transition-all"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
 							placeholder="Acme Legal Corp"
 						/>
 					</div>
@@ -60,7 +60,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 							name="billing_email"
 							value={ firm.BillingEmail }
 							required
-							class="input input-bordered w-full focus:input-primary transition-all"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
 							placeholder="billing@example.com"
 						/>
 					</div>
@@ -73,7 +73,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 							type="email"
 							name="noreply_email"
 							value={ firm.NoreplyEmail }
-							class="input input-bordered w-full focus:input-primary transition-all"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
 							placeholder="noreply@example.com"
 						/>
 					</div>
@@ -88,7 +88,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 							name="country"
 							value={ firm.Country }
 							required
-							class="input input-bordered w-full focus:input-primary transition-all"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
 							placeholder="United States"
 						/>
 					</div>
@@ -101,7 +101,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 							type="text"
 							name="city"
 							value={ firm.City }
-							class="input input-bordered w-full focus:input-primary transition-all"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
 							placeholder="New York"
 						/>
 					</div>
@@ -116,7 +116,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 							type="text"
 							name="address"
 							value={ firm.Address }
-							class="input input-bordered w-full focus:input-primary transition-all"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
 							placeholder="123 Legal Avenue, Suite 100"
 						/>
 					</div>
@@ -128,7 +128,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 						</label>
 						<select
 							name="is_active"
-							class="select select-bordered w-full focus:select-primary transition-all font-bold"
+							class="select select-bordered w-full focus:select-primary transition-all font-bold rounded-sm"
 						>
 							<option value="true" selected?={ firm.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.active") }</option>
 							<option value="false" selected?={ !firm.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.inactive") }</option>
@@ -146,7 +146,7 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 					</button>
 					<button
 						type="submit"
-						class="btn btn-primary px-8 shadow-lg shadow-primary/20 font-bold"
+						class="btn btn-primary px-8 shadow-lg shadow-primary/20 font-bold uppercase tracking-widest rounded-sm"
 					>
 						if firm.ID != "" {
 							{ i18n.T(ctx, "common.save") }

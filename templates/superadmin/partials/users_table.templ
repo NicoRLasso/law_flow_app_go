@@ -12,12 +12,12 @@ templ UsersTable(ctx context.Context, users []models.User) {
 		<table class="table table-md w-full">
 			<thead class="bg-base-200/50 text-base-content uppercase text-xs font-bold ring-1 ring-base-200">
 				<tr>
-					<th class="rounded-tl-xl">{ i18n.T(ctx, "superadmin.users.table.user") }</th>
+					<th class="rounded-tl-sm">{ i18n.T(ctx, "superadmin.users.table.user") }</th>
 					<th>{ i18n.T(ctx, "superadmin.users.table.role") }</th>
 					<th>{ i18n.T(ctx, "superadmin.users.table.status") }</th>
 					<th>{ i18n.T(ctx, "superadmin.users.table.firm") }</th>
 					<th>{ i18n.T(ctx, "superadmin.users.table.joined") }</th>
-					<th class="rounded-tr-xl text-right">{ i18n.T(ctx, "superadmin.users.table.actions") }</th>
+					<th class="rounded-tr-sm text-right">{ i18n.T(ctx, "superadmin.users.table.actions") }</th>
 				</tr>
 			</thead>
 			<tbody class="divide-y divide-base-200">
@@ -33,12 +33,12 @@ templ UsersTable(ctx context.Context, users []models.User) {
 							<td>
 								<div class="flex items-center gap-4">
 									<div class="avatar placeholder">
-										<div class="bg-secondary text-secondary-content rounded-xl w-10 h-10 shadow-sm font-bold">
+										<div class="bg-secondary text-secondary-content rounded-sm w-10 h-10 shadow-sm font-bold font-serif">
 											{ string(user.Name[0]) }
 										</div>
 									</div>
 									<div>
-										<div class="font-bold text-base-content">{ user.Name }</div>
+										<div class="font-bold text-base-content font-serif">{ user.Name }</div>
 										<div class="text-xs text-base-content/60 font-medium">{ user.Email }</div>
 									</div>
 								</div>
@@ -52,12 +52,12 @@ templ UsersTable(ctx context.Context, users []models.User) {
 								if user.IsActive {
 									<div class="badge badge-success badge-sm py-2 gap-1 font-bold">
 										<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-										{ i18n.T(ctx, "superadmin.users.status_filter.active") }
+										<span class="uppercase tracking-wider text-[10px]">{ i18n.T(ctx, "superadmin.users.status_filter.active") }</span>
 									</div>
 								} else {
 									<div class="badge badge-error badge-sm py-2 gap-1 font-bold">
 										<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-										{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }
+										<span class="uppercase tracking-wider text-[10px]">{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }</span>
 									</div>
 								}
 							</td>

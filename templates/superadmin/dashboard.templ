@@ -21,66 +21,79 @@ templ Dashboard(
 ) {
 	@Layout(ctx, title, csrfToken, user, currentPath) {
 		<!-- Header -->
-		<div class="mb-10">
-			<h2 class="text-4xl font-extrabold tracking-tight text-base-content lg:text-5xl">Dashboard</h2>
-			<p class="mt-2 text-lg text-base-content/60">System overview and real-time activity metrics.</p>
+		<div class="mb-10 border-b border-base-content/10 pb-6">
+			<p class="text-sm font-bold tracking-widest text-primary uppercase mb-2 font-sans">Overview</p>
+			<h2 class="text-4xl font-serif font-bold text-base-content lg:text-5xl">Superadmin Dashboard</h2>
+			<p class="mt-2 text-lg text-base-content/60 font-sans max-w-2xl">System overview and real-time activity metrics.</p>
 		</div>
 
 		<!-- Stats Grid -->
-		<div class="stats stats-vertical lg:stats-horizontal shadow bg-base-100 w-full mb-10 border border-base-200">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 			<!-- Total Firms -->
-			<div class="stat">
-				<div class="stat-figure text-primary">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
+				<div class="card-body p-6">
+					<div class="flex items-center justify-between mb-4">
+						<div class="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+						</div>
+					</div>
+					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(totalFirms, 10) }</h3>
+					<p class="text-sm text-base-content/60">Total Firms</p>
 				</div>
-				<div class="stat-title italic">Total Firms</div>
-				<div class="stat-value text-primary">{ strconv.FormatInt(totalFirms, 10) }</div>
-				<div class="stat-desc text-success">Updated just now</div>
 			</div>
 			
 			<!-- Total Users -->
-			<div class="stat">
-				<div class="stat-figure text-secondary">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
+				<div class="card-body p-6">
+					<div class="flex items-center justify-between mb-4">
+						<div class="w-12 h-12 rounded-sm bg-secondary/10 flex items-center justify-center text-secondary">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+						</div>
+					</div>
+					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(totalUsers, 10) }</h3>
+					<p class="text-sm text-base-content/60">Total Users</p>
 				</div>
-				<div class="stat-title italic">Total Users</div>
-				<div class="stat-value text-secondary">{ strconv.FormatInt(totalUsers, 10) }</div>
-				<div class="stat-desc">Across all firms</div>
 			</div>
 			
 			<!-- Active Users -->
-			<div class="stat">
-				<div class="stat-figure text-accent">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
+				<div class="card-body p-6">
+					<div class="flex items-center justify-between mb-4">
+						<div class="w-12 h-12 rounded-sm bg-accent/10 flex items-center justify-center text-accent">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						</div>
+					</div>
+					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(activeUsers, 10) }</h3>
+					<p class="text-sm text-base-content/60">Active Now</p>
 				</div>
-				<div class="stat-title italic">Active Now</div>
-				<div class="stat-value text-accent">{ strconv.FormatInt(activeUsers, 10) }</div>
-				<div class="stat-desc">Currently registered</div>
 			</div>
 
 			<!-- Pending Setup -->
-			<div class="stat">
-				<div class="stat-figure text-warning">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
+				<div class="card-body p-6">
+					<div class="flex items-center justify-between mb-4">
+						<div class="w-12 h-12 rounded-sm bg-warning/10 flex items-center justify-center text-warning">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+						</div>
+					</div>
+					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(pendingUsers, 10) }</h3>
+					<p class="text-sm text-base-content/60">Pending Setup</p>
 				</div>
-				<div class="stat-title italic">Pending</div>
-				<div class="stat-value text-warning">{ strconv.FormatInt(pendingUsers, 10) }</div>
-				<div class="stat-desc">Awaiting setup</div>
 			</div>
 		</div>
 
 		<!-- Quick Actions -->
 		<div class="mb-10">
-			<h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+			<h3 class="text-xl font-serif font-bold mb-4 flex items-center gap-2">
 				<span class="w-1 h-6 bg-primary rounded-full"></span>
 				Quick Actions
 			</h3>
 			<div class="flex flex-wrap gap-3">
-				<a href="/superadmin/users" class="btn btn-outline btn-primary gap-2">
+				<a href="/superadmin/users" class="btn btn-primary btn-outline gap-2 rounded-sm font-sans uppercase tracking-wider text-xs font-bold">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
 					Manage Users
 				</a>
-				<a href="/superadmin/firms" class="btn btn-outline btn-secondary gap-2">
+				<a href="/superadmin/firms" class="btn btn-secondary btn-outline gap-2 rounded-sm font-sans uppercase tracking-wider text-xs font-bold">
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
 					Manage Firms
 				</a>
@@ -88,7 +101,7 @@ templ Dashboard(
 					hx-get="/superadmin/users/new"
 					hx-target="#modal-container"
 					hx-swap="innerHTML"
-					class="btn btn-primary gap-2"
+					class="btn btn-primary gap-2 rounded-sm font-sans uppercase tracking-wider text-xs font-bold shadow-lg shadow-primary/20"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
 					Create User
@@ -97,33 +110,34 @@ templ Dashboard(
 		</div>
 
 		<!-- Recent Activity -->
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
 			<!-- Recent Firms -->
-			<div class="card bg-base-100 shadow-xl border border-base-200">
-				<div class="card-body">
-					<div class="flex items-center justify-between mb-2">
-						<h3 class="card-title text-base-content underline decoration-primary decoration-2 underline-offset-4">Recent Firms</h3>
-						<a href="/superadmin/firms" class="link link-primary link-hover text-xs font-bold uppercase tracking-tighter">View All</a>
-					</div>
-					<div class="divider mt-0 mb-4 opacity-10"></div>
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">
+				<div class="border-b border-base-200 p-6 flex justify-between items-center bg-base-50/50">
+					<h3 class="font-serif font-bold text-lg text-base-content">Recent Firms</h3>
+					<a href="/superadmin/firms" class="text-sm text-primary hover:text-primary-focus font-semibold uppercase tracking-wider text-xs">
+						View All &rarr;
+					</a>
+				</div>
+				<div class="p-0">
 					if len(recentFirms) == 0 {
-						<div class="text-center py-8 text-base-content/50 italic text-sm">No firms created yet.</div>
+						<div class="text-center py-12 text-base-content/50 italic text-sm">No firms created yet.</div>
 					} else {
-						<div class="space-y-4">
+						<div class="divide-y divide-base-200">
 							for _, firm := range recentFirms {
-								<div class="flex items-center justify-between p-4 rounded-xl bg-base-200/30 hover:bg-base-200 transition-all border border-base-200/50 group">
+								<div class="flex items-center justify-between p-4 hover:bg-base-50 transition-colors group">
 									<div class="flex items-center gap-4">
 										<div class="avatar placeholder">
-											<div class="bg-primary text-primary-content rounded-xl w-12 h-12 shadow-lg group-hover:scale-105 transition-transform">
+											<div class="bg-primary text-primary-content rounded-sm w-10 h-10 shadow-sm group-hover:scale-105 transition-transform font-serif font-bold">
 												if len(firm.Name) > 0 {
-													<span class="text-lg font-bold">{ string(firm.Name[0]) }</span>
+													<span>{ string(firm.Name[0]) }</span>
 												} else {
-													<span class="text-lg font-bold">?</span>
+													<span>?</span>
 												}
 											</div>
 										</div>
 										<div>
-											<p class="font-bold text-base-content">
+											<p class="font-bold text-base-content font-serif">
 												if firm.Name != "" {
 													{ firm.Name }
 												} else {
@@ -136,9 +150,9 @@ templ Dashboard(
 									<div class="text-right">
 										<p class="text-[10px] font-mono opacity-50 mb-1">{ firm.CreatedAt.Format("2006-01-02") }</p>
 										if firm.IsActive {
-											<div class="badge badge-success badge-xs gap-1">active</div>
+											<div class="badge badge-success badge-xs gap-1 font-bold">active</div>
 										} else {
-											<div class="badge badge-error badge-xs gap-1">inactive</div>
+											<div class="badge badge-error badge-xs gap-1 font-bold">inactive</div>
 										}
 									</div>
 								</div>
@@ -149,31 +163,32 @@ templ Dashboard(
 			</div>
 
 			<!-- Recent Users -->
-			<div class="card bg-base-100 shadow-xl border border-base-200">
-				<div class="card-body">
-					<div class="flex items-center justify-between mb-2">
-						<h3 class="card-title text-base-content underline decoration-secondary decoration-2 underline-offset-4">Recent Users</h3>
-						<a href="/superadmin/users" class="link link-secondary link-hover text-xs font-bold uppercase tracking-tighter">View All</a>
-					</div>
-					<div class="divider mt-0 mb-4 opacity-10"></div>
+			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">
+				<div class="border-b border-base-200 p-6 flex justify-between items-center bg-base-50/50">
+					<h3 class="font-serif font-bold text-lg text-base-content">Recent Users</h3>
+					<a href="/superadmin/users" class="text-sm text-secondary hover:text-secondary-focus font-semibold uppercase tracking-wider text-xs">
+						View All &rarr;
+					</a>
+				</div>
+				<div class="p-0">
 					if len(recentUsers) == 0 {
-						<div class="text-center py-8 text-base-content/50 italic text-sm">No users created yet.</div>
+						<div class="text-center py-12 text-base-content/50 italic text-sm">No users created yet.</div>
 					} else {
-						<div class="space-y-4">
+						<div class="divide-y divide-base-200">
 							for _, u := range recentUsers {
-								<div class="flex items-center justify-between p-4 rounded-xl bg-base-200/30 hover:bg-base-200 transition-all border border-base-200/50 group">
+								<div class="flex items-center justify-between p-4 hover:bg-base-50 transition-colors group">
 									<div class="flex items-center gap-4">
 										<div class="avatar placeholder">
-											<div class="bg-secondary text-secondary-content rounded-xl w-12 h-12 shadow-lg group-hover:scale-105 transition-transform">
+											<div class="bg-secondary text-secondary-content rounded-sm w-10 h-10 shadow-sm group-hover:scale-105 transition-transform font-bold font-serif">
 												if len(u.Name) > 0 {
-													<span class="text-lg font-bold">{ string(u.Name[0]) }</span>
+													<span>{ string(u.Name[0]) }</span>
 												} else {
-													<span class="text-lg font-bold">?</span>
+													<span>?</span>
 												}
 											</div>
 										</div>
 										<div>
-											<p class="font-bold text-base-content">
+											<p class="font-bold text-base-content font-serif">
 												if u.Name != "" {
 													{ u.Name }
 												} else {
@@ -189,7 +204,7 @@ templ Dashboard(
 										} else {
 											<p class="text-[10px] text-warning italic mb-1">Freelancer</p>
 										}
-										<div class="badge badge-outline badge-xs opacity-50">{ u.Role }</div>
+										<div class="badge badge-outline badge-xs opacity-50 uppercase tracking-tighter">{ u.Role }</div>
 									</div>
 								</div>
 							}

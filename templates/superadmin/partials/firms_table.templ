@@ -12,12 +12,12 @@ templ FirmsTable(ctx context.Context, firms []models.Firm) {
 		<table class="table table-md w-full">
 			<thead class="bg-base-200/50 text-base-content uppercase text-xs font-bold ring-1 ring-base-200">
 				<tr>
-					<th class="rounded-tl-xl">{ i18n.T(ctx, "firm.info_title") }</th>
+					<th class="rounded-tl-sm">{ i18n.T(ctx, "firm.info_title") }</th>
 					<th>{ i18n.T(ctx, "firm.setup.country") } / { i18n.T(ctx, "firm.setup.city") }</th>
 					<th>{ i18n.T(ctx, "superadmin.users.table.status") }</th>
 					<th>{ i18n.T(ctx, "superadmin.dashboard.total_users") }</th>
 					<th>{ i18n.T(ctx, "superadmin.users.table.joined") }</th>
-					<th class="rounded-tr-xl text-right">{ i18n.T(ctx, "superadmin.users.table.actions") }</th>
+					<th class="rounded-tr-sm text-right">{ i18n.T(ctx, "superadmin.users.table.actions") }</th>
 				</tr>
 			</thead>
 			<tbody class="divide-y divide-base-200">
@@ -33,12 +33,12 @@ templ FirmsTable(ctx context.Context, firms []models.Firm) {
 							<td>
 								<div class="flex items-center gap-4">
 									<div class="avatar placeholder">
-										<div class="bg-primary text-primary-content rounded-xl w-10 h-10 shadow-sm font-bold">
+										<div class="bg-primary text-primary-content rounded-sm w-10 h-10 shadow-sm font-bold font-serif">
 											{ string(firm.Name[0]) }
 										</div>
 									</div>
 									<div>
-										<div class="font-bold text-base-content">{ firm.Name }</div>
+										<div class="font-bold text-base-content font-serif">{ firm.Name }</div>
 										<div class="text-xs text-base-content/60 font-medium">{ firm.BillingEmail }</div>
 									</div>
 								</div>
@@ -51,12 +51,12 @@ templ FirmsTable(ctx context.Context, firms []models.Firm) {
 								if firm.IsActive {
 									<div class="badge badge-success badge-sm py-2 gap-1 font-bold">
 										<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-										{ i18n.T(ctx, "superadmin.users.status_filter.active") }
+										<span class="uppercase tracking-wider text-[10px]">{ i18n.T(ctx, "superadmin.users.status_filter.active") }</span>
 									</div>
 								} else {
 									<div class="badge badge-error badge-sm py-2 gap-1 font-bold">
 										<span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-										{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }
+										<span class="uppercase tracking-wider text-[10px]">{ i18n.T(ctx, "superadmin.users.status_filter.inactive") }</span>
 									</div>
 								}
 							</td>

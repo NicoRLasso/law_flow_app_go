@@ -16,7 +16,7 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 					</svg>
 				</a>
 				<div>
-					<h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-base-content">{ ticket.Subject }</h1>
+					<h1 class="text-3xl lg:text-4xl font-serif font-bold tracking-tight text-base-content">{ ticket.Subject }</h1>
 					<div class="flex items-center gap-3 mt-2">
 						switch ticket.Status {
 							case "resolved":
@@ -50,7 +50,7 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 				if ticket.Status == "open" {
 					<form method="POST" action={ templ.SafeURL("/superadmin/support/" + ticket.ID + "/take") }>
 						<input type="hidden" name="_csrf" value={ csrfToken }/>
-						<button type="submit" class="btn btn-primary shadow-lg shadow-primary/20">
+						<button type="submit" class="btn btn-primary shadow-lg shadow-primary/20 rounded-sm font-sans uppercase tracking-wider text-xs font-bold">
 							{ i18n.T(ctx, "action.take_ticket") }
 						</button>
 					</form>
@@ -59,7 +59,7 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 				<!-- Status Select -->
 				<form method="POST" action={ templ.SafeURL("/superadmin/support/" + ticket.ID + "/status") } class="flex items-center">
 					<input type="hidden" name="_csrf" value={ csrfToken }/>
-					<select name="status" onchange="this.form.submit()" class="select select-bordered select-sm focus:select-primary font-bold">
+					<select name="status" onchange="this.form.submit()" class="select select-bordered select-sm focus:select-primary font-bold rounded-sm">
 						<option value="open" selected?={ ticket.Status == "open" }>{ i18n.T(ctx, "support.status.open") }</option>
 						<option value="in_progress" selected?={ ticket.Status == "in_progress" }>{ i18n.T(ctx, "support.status.in_progress") }</option>
 						<option value="resolved" selected?={ ticket.Status == "resolved" }>{ i18n.T(ctx, "support.status.resolved") }</option>
@@ -73,10 +73,10 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 			<!-- Ticket Details & Conversation -->
 			<div class="lg:col-span-2 space-y-8">
 				<!-- Original Message -->
-				<div class="card bg-base-100 shadow-xl border border-base-200">
+				<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">
 					<div class="card-body p-6 lg:p-10">
 						<div class="flex items-center justify-between mb-6">
-							<h3 class="card-title text-base-content underline decoration-primary decoration-4 underline-offset-8">{ i18n.T(ctx, "support.message") }</h3>
+							<h3 class="card-title text-base-content underline decoration-primary decoration-4 underline-offset-8 font-serif">{ i18n.T(ctx, "support.message") }</h3>
 							<div class="badge badge-outline opacity-40 lowercase font-mono italic">by { ticket.User.Name }</div>
 						</div>
 						<div class="prose prose-sm max-w-none text-base-content/80 whitespace-pre-wrap leading-relaxed">
@@ -87,7 +87,7 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 
 				<!-- Response if exists -->
 				if ticket.Response != nil && *ticket.Response != "" {
-					<div class="card bg-primary/5 shadow-inner border border-primary/10">
+					<div class="card bg-primary/5 shadow-inner border border-primary/10 rounded-sm">
 						<div class="card-body p-6 lg:p-10">
 							<div class="flex items-center justify-between mb-6">
 								<h3 class="card-title text-primary italic">{ i18n.T(ctx, "nav.ticket_response") }</h3>
@@ -109,21 +109,21 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 
 				<!-- Reply Form -->
 				if ticket.Status != "closed" && ticket.Status != "resolved" {
-					<div class="card bg-base-100 shadow-2xl border border-base-200 overflow-hidden ring-1 ring-base-200">
+					<div class="card bg-base-100 shadow-2xl border border-base-200 overflow-hidden ring-1 ring-base-200 rounded-sm">
 						<div class="card-body p-6 lg:p-10">
-							<h3 class="card-title text-base-content mb-4">{ i18n.T(ctx, "action.reply") }</h3>
+							<h3 class="card-title text-base-content mb-4 font-serif">{ i18n.T(ctx, "action.reply") }</h3>
 							<form method="POST" action={ templ.SafeURL("/superadmin/support/" + ticket.ID + "/reply") }>
 								<input type="hidden" name="_csrf" value={ csrfToken }/>
 								<div class="form-control gap-6">
 									<textarea
 										name="response"
 										rows="8"
-										class="textarea textarea-bordered focus:textarea-primary transition-all text-base leading-relaxed bg-base-200/50"
+										class="textarea textarea-bordered focus:textarea-primary transition-all text-base leading-relaxed bg-base-200/50 rounded-sm"
 										placeholder={ i18n.T(ctx, "support.form.message_placeholder") }
 										required
 									></textarea>
 									<div class="card-actions justify-end mt-2">
-										<button type="submit" class="btn btn-primary px-10 shadow-lg shadow-primary/20 font-bold uppercase tracking-widest btn-md">
+										<button type="submit" class="btn btn-primary px-10 shadow-lg shadow-primary/20 font-bold uppercase tracking-widest btn-md rounded-sm">
 											{ i18n.T(ctx, "action.reply") }
 										</button>
 									</div>
@@ -136,15 +136,15 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 
 			<!-- Sidebar -->
 			<div class="space-y-8">
-				<div class="card bg-base-100 shadow-xl border border-base-200">
+				<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">
 					<div class="card-body p-6">
-						<h3 class="card-title text-base-content mb-6 pb-2 border-b border-base-200 uppercase text-xs tracking-widest opacity-50">
+						<h3 class="card-title text-base-content mb-6 pb-2 border-b border-base-200 uppercase text-xs tracking-widest opacity-50 font-sans">
 							{ i18n.T(ctx, "support.user_info") }
 						</h3>
 						<div class="space-y-6">
 							<div>
 								<p class="text-[10px] font-bold uppercase opacity-40 mb-1">{ i18n.T(ctx, "support.field.name") }</p>
-								<p class="font-extrabold text-base-content">{ ticket.User.Name }</p>
+								<p class="font-serif font-bold text-base-content">{ ticket.User.Name }</p>
 							</div>
 							<div>
 								<p class="text-[10px] font-bold uppercase opacity-40 mb-1">{ i18n.T(ctx, "support.field.email") }</p>

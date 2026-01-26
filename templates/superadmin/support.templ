@@ -10,22 +10,22 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 	@Layout(ctx, title, csrfToken, user, "/superadmin/support") {
 		<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
 			<div>
-				<h2 class="text-4xl font-extrabold tracking-tight text-base-content">{ i18n.T(ctx, "superadmin.support.title") }</h2>
-				<p class="mt-2 text-lg text-base-content/60">{ i18n.T(ctx, "superadmin.support.subtitle") }</p>
+				<h2 class="text-4xl font-serif font-bold text-base-content">{ i18n.T(ctx, "superadmin.support.title") }</h2>
+				<p class="mt-2 text-lg text-base-content/60 font-sans">{ i18n.T(ctx, "superadmin.support.subtitle") }</p>
 			</div>
 		</div>
 
-		<div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden">
+		<div class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden rounded-sm">
 			<div class="overflow-x-auto">
 				<table class="table table-md w-full">
 					<thead class="bg-base-200/50 text-base-content uppercase text-xs font-bold ring-1 ring-base-200">
 						<tr>
-							<th class="rounded-tl-xl">{ i18n.T(ctx, "support.table.status") }</th>
+							<th class="rounded-tl-sm">{ i18n.T(ctx, "support.table.status") }</th>
 							<th>{ i18n.T(ctx, "support.table.subject") }</th>
 							<th>{ i18n.T(ctx, "support.table.user") }</th>
 							<th>{ i18n.T(ctx, "support.table.date") }</th>
 							<th>{ i18n.T(ctx, "support.table.message") }</th>
-							<th class="rounded-tr-xl text-right">{ i18n.T(ctx, "common.actions") }</th>
+							<th class="rounded-tr-sm text-right">{ i18n.T(ctx, "common.actions") }</th>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-base-200">
@@ -58,10 +58,10 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 												</div>
 										}
 									</td>
-									<td class="font-bold text-base-content">{ ticket.Subject }</td>
+									<td class="font-bold text-base-content font-serif">{ ticket.Subject }</td>
 									<td>
 										<div class="flex flex-col">
-											<span class="text-sm font-bold text-base-content">{ ticket.User.Name }</span>
+											<span class="text-sm font-bold text-base-content font-serif">{ ticket.User.Name }</span>
 											<span class="text-[10px] text-base-content/60 font-mono italic">{ ticket.User.Email }</span>
 										</div>
 									</td>
