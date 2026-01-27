@@ -58,3 +58,4 @@ node_modules/
 
 # CSS Build Output
 static/css/style.CSS
+middleware/static/

@@ -43,7 +43,7 @@ clean: ## Clean build artifacts
 	find . -name "*_templ.go" -delete
 
 unit-test: ## Run tests
-	go test -v -tags fts5 $(ARGS) $$(go list ./... | grep -vE 'templates|static|models|db|config')
+	go test -tags fts5 $(ARGS) $$(go list ./... | grep -vE 'templates|static|models|db|config') -cover 
 
 fmt: ## Format code
 	go fmt ./...
