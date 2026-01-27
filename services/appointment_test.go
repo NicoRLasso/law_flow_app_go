@@ -17,7 +17,7 @@ import (
 // I'll assume `setupTestDB` is available or I will redefine a local version `setupAppointmentTestDB` to avoid conflicts if it's not.
 
 func setupAppointmentTestDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

@@ -13,7 +13,7 @@ import (
 
 // Reusing setupTestDB from other tests if available, but declaring here for standalone correctness
 func setupAuditTestDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

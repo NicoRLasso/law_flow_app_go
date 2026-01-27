@@ -12,7 +12,7 @@ import (
 
 // Reusing setupTestDB pattern (locally scoped to avoid conflicts if parallel)
 func setupAuthTestDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
