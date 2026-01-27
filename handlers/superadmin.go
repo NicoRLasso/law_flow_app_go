@@ -10,6 +10,7 @@ import (
 	"law_flow_app_go/templates/superadmin"
 	superadmin_partials "law_flow_app_go/templates/superadmin/partials"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -185,7 +186,7 @@ func SuperadminCreateUserHandler(c echo.Context) error {
 
 	user := &models.User{
 		Name:     name,
-		Email:    email,
+		Email:    strings.ToLower(strings.TrimSpace(email)),
 		Password: hashedPassword,
 		Role:     role,
 		IsActive: isActive,
@@ -234,7 +235,7 @@ func SuperadminUpdateUser(c echo.Context) error {
 	}
 
 	user.Name = c.FormValue("name")
-	user.Email = c.FormValue("email")
+	user.Email = strings.ToLower(strings.TrimSpace(c.FormValue("email")))
 	user.Role = c.FormValue("role")
 	user.IsActive = c.FormValue("is_active") == "true"
 
@@ -359,7 +360,7 @@ func SuperadminGetFirmsListHTMX(c echo.Context) error {
 
 // SuperadminGetFirmFormNew renders the create firm modal
 func SuperadminGetFirmFormNew(c echo.Context) error {
-	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{})
+	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{}, "")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -371,7 +372,7 @@ func SuperadminGetFirmFormEdit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
 	}
 
-	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm)
+	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, "")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -385,7 +386,16 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 
 	// Basic Validation
 	if name == "" || billingEmail == "" || country == "" {
-		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Name, billing email and country are required</div>")
+		component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{
+			Name:         name,
+			BillingEmail: billingEmail,
+			NoreplyEmail: c.FormValue("noreply_email"),
+			Country:      country,
+			City:         c.FormValue("city"),
+			Address:      c.FormValue("address"),
+			IsActive:     c.FormValue("is_active") == "true",
+		}, "Name, billing email and country are required")
+		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
 	firm := &models.Firm{
@@ -399,13 +409,31 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 	}
 
 	if err := db.DB.Create(firm).Error; err != nil {
-		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to create firm: "+err.Error()+"</div>")
+		component := superadmin_partials.FirmDetailModal(c.Request().Context(), firm, "Failed to create firm: "+err.Error())
+		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
 	services.LogSecurityEvent("SUPERADMIN_FIRM_CREATED", currentUser.ID, "Created firm: "+firm.ID)
 
+	// Return OOB swap for table update + trigger close modal
 	c.Response().Header().Set("HX-Trigger", "closeModal")
-	return SuperadminGetFirmsListHTMX(c)
+
+	// Fetch updated firms list for OOB swap
+	// Refactor SuperadminGetFirmsListHTMX logic or call it?
+	// SuperadminGetFirmsListHTMX writes to response directly. We need to wrap it.
+	// We can't easily wrap the output of SuperadminGetFirmsListHTMX because it writes 200 OK headers.
+	// We should manually render the table here wrapped in OOB div.
+
+	var firms []models.Firm
+	if err := db.DB.Model(&models.Firm{}).Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	c.Response().Writer.Write([]byte("<div id='firms-table-container' hx-swap-oob='true'>"))
+	component := superadmin_partials.FirmsTable(c.Request().Context(), firms)
+	err := component.Render(c.Request().Context(), c.Response().Writer)
+	c.Response().Writer.Write([]byte("</div>"))
+	return err
 }
 
 // SuperadminUpdateFirm updates a firm
@@ -427,17 +455,25 @@ func SuperadminUpdateFirm(c echo.Context) error {
 	firm.IsActive = c.FormValue("is_active") == "true"
 
 	if err := db.DB.Save(&firm).Error; err != nil {
-		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to update firm: "+err.Error()+"</div>")
+		component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, "Failed to update firm: "+err.Error())
+		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
 	services.LogSecurityEvent("SUPERADMIN_FIRM_UPDATED", currentUser.ID, "Updated firm: "+firm.ID)
 
-	// Return updated list, relying on client-side modal removal (like user update)
-	// But unlike user updated, we are replacing the LIST only.
-	// We need to close the modal too.
+	// Return OOB swap for table update + trigger close modal
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 
-	return SuperadminGetFirmsListHTMX(c)
+	var firms []models.Firm
+	if err := db.DB.Model(&models.Firm{}).Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
+	}
+
+	c.Response().Writer.Write([]byte("<div id='firms-table-container' hx-swap-oob='true'>"))
+	component := superadmin_partials.FirmsTable(c.Request().Context(), firms)
+	err := component.Render(c.Request().Context(), c.Response().Writer)
+	c.Response().Writer.Write([]byte("</div>"))
+	return err
 }
 
 // SuperadminToggleFirmActive toggles firm status

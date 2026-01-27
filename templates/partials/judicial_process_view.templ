@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filingNumber *string, currentPage int, totalPages int, showActions bool) {
+templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filingNumber *string, currentPage int, totalPages int, activeTab string) {
 	<div class="space-y-6" id="judicial_process_view">
 		if jp == nil {
 			<div class="bg-base-100 p-8 rounded-sm border border-base-200 text-center">
@@ -38,22 +38,29 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 			</div>
 		} else {
 			<!-- Sub-Navigation Tabs -->
-			<div x-data={ fmt.Sprintf("{ activeTab: '%s' }", func() string { if showActions { return "actions" }; return "overview" }()) }>
-				<div role="tablist" class="tabs tabs-bordered mb-6">
-					<a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'overview' }" @click="activeTab = 'overview'">Resumen</a>
-					<a role="tab" class="tab" :class="{ 'tab-active': activeTab === 'actions' }" @click="activeTab = 'actions'">Actuaciones</a>
+			<div x-data={ fmt.Sprintf("{ activeTab: '%s' }", activeTab) }>
+				<div role="tablist" class="tabs tabs-bordered mb-6 w-full flex-nowrap overflow-x-auto">
+					<a role="tab" class="tab h-12 flex-1 md:flex-none uppercase font-bold text-xs tracking-wider" :class="{ 'tab-active border-primary text-primary': activeTab === 'overview' }" @click="activeTab = 'overview'">Resumen</a>
+					<a role="tab" class="tab h-12 flex-1 md:flex-none uppercase font-bold text-xs tracking-wider" :class="{ 'tab-active border-primary text-primary': activeTab === 'actions' }" @click="activeTab = 'actions'">Actuaciones</a>
 				</div>
 
 				<!-- Tab Content: Overview -->
-				<div id="tab-overview" x-show="activeTab === 'overview'" class="sub-tab-content">
+				<div
+					id="tab-overview"
+					x-show="activeTab === 'overview'"
+					class="sub-tab-content"
+					if activeTab != "overview" {
+						style="display: none;"
+					}
+				>
 				<!-- Process Summary Card -->
 				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 					<div class="card-body p-6">
-						<div class="flex items-center justify-between mb-4 border-b border-base-200 pb-2">
+						<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-base-200 pb-2">
 							<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest">
 								{ i18n.T(ctx, "judicial.process_info") }
 							</h2>
-							<span class="badge badge-outline font-mono">{ jp.Radicado }</span>
+							<span class="badge badge-outline font-mono self-start sm:self-auto">{ jp.Radicado }</span>
 						</div>
 						
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -80,8 +87,9 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 						if val := getString(jp.Details, "subject"); val != "" {
 							<div class="mt-6 pt-4 border-t border-base-200">
 								<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-3">{ i18n.T(ctx, "judicial.subjects") }</h3>
-								<div class="overflow-x-auto border border-base-200 rounded-sm">
-									<table class="table table-sm w-full">
+								<div class="border border-base-200 rounded-sm">
+									<!-- Desktop Table -->
+									<table class="hidden md:table table table-sm w-full">
 										<thead class="bg-base-50">
 											<tr>
 												<th class="w-1/3">Tipo</th>
@@ -99,6 +107,17 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 											}
 										</tbody>
 									</table>
+									<!-- Mobile List -->
+									<div class="md:hidden divide-y divide-base-200">
+										for _, sub := range splitSubjects(val) {
+											if role, name := parseSubject(sub); role != "" {
+												<div class="p-3">
+													<div class="font-bold text-xs uppercase text-base-content/50 mb-1">{ role }</div>
+													<div class="font-medium text-sm text-base-content">{ name }</div>
+												</div>
+											}
+										}
+									</div>
 								</div>
 							</div>
 						}
@@ -114,7 +133,15 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 			</div>
 
 			<!-- Tab Content: Actions -->
-			<div id="tab-actions" x-show="activeTab === 'actions'" class="sub-tab-content" x-cloak>
+			<div
+				id="tab-actions"
+				x-show="activeTab === 'actions'"
+				class="sub-tab-content"
+				if activeTab != "actions" {
+					style="display: none;"
+				}
+				x-cloak
+			>
 				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 					<div class="card-body p-0"> <!-- No padding for table to flush edges -->
 						<div class="p-6 border-b border-base-200 flex justify-between items-center">
@@ -129,7 +156,8 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 						if len(jp.Actions) == 0 {
 							<p class="text-center text-base-content/50 italic py-8">{ i18n.T(ctx, "judicial.no_actions") }</p>
 						} else {
-							<div class="overflow-x-auto">
+							<!-- Desktop Table View -->
+							<div class="hidden md:block overflow-x-auto">
 								<table class="table table-sm">
 									<thead class="bg-base-200/50">
 										<tr>
@@ -142,28 +170,28 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 									<tbody>
 										for _, action := range jp.Actions {
 											<tr class="hover">
-												<td class="whitespace-nowrap font-mono text-xs">
-													<div>{ action.ActionDate.Format("02/01/2006") }</div>
+												<td class="whitespace-nowrap font-mono text-xs align-top pt-3">
+													<div class="font-bold">{ action.ActionDate.Format("02/01/2006") }</div>
 													if t := getTime(action.Metadata, "registration_date"); !t.IsZero() {
 														<div class="text-[10px] text-base-content/40" title={ i18n.T(ctx, "judicial.registered") }>reg: { t.Format("02/01") }</div>
 													}
 												</td>
-												<td>
-													<div class="font-bold text-xs">{ action.Type }</div>
+												<td class="align-top pt-3">
+													<div class="font-bold text-xs text-primary">{ action.Type }</div>
 												</td>
-												<td class="text-xs whitespace-pre-wrap min-w-[300px]">
+												<td class="text-xs whitespace-pre-wrap min-w-[300px] align-top pt-3">
 													if action.Annotation != "" {
 														{ action.Annotation }
 													} else {
 														<span class="text-base-content/30 italic">Sin anotación</span>
 													}
 												</td>
-												<td class="text-xs">
+												<td class="text-xs align-top pt-3">
 													if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
 														if tEnd := getTime(action.Metadata, "final_date"); !tEnd.IsZero() {
-															<div class="flex flex-col">
-																<span>Inicia: { tStart.Format("02/01/06") }</span>
-																<span>Vence: { tEnd.Format("02/01/06") }</span>
+															<div class="flex flex-col gap-1">
+																<div class="badge badge-sm badge-ghost font-mono text-[10px] whitespace-nowrap">Ini: { tStart.Format("02/01/06") }</div>
+																<div class="badge badge-sm badge-outline font-mono text-[10px] whitespace-nowrap">Fin: { tEnd.Format("02/01/06") }</div>
 															</div>
 														}
 													} else {
@@ -175,13 +203,58 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 									</tbody>
 								</table>
 							</div>
+
+							<!-- Mobile Card View -->
+							<div class="md:hidden divide-y divide-base-200">
+								for _, action := range jp.Actions {
+									<div class="p-4 flex flex-col gap-3">
+										<div class="flex items-start justify-between">
+											<div class="flex flex-col">
+												<span class="font-mono font-bold text-sm">{ action.ActionDate.Format("02/01/2006") }</span>
+												if t := getTime(action.Metadata, "registration_date"); !t.IsZero() {
+													<span class="text-[10px] text-base-content/40">reg: { t.Format("02/01/2006") }</span>
+												}
+											</div>
+											if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
+												<div class="badge badge-sm badge-warning badge-outline text-[10px]">Con Términos</div>
+											}
+										</div>
+										
+										<div>
+											<h4 class="font-bold text-sm text-primary mb-1">{ action.Type }</h4>
+											<p class="text-sm text-base-content/80 whitespace-pre-wrap">
+												if action.Annotation != "" {
+													{ action.Annotation }
+												} else {
+													<span class="text-base-content/40 italic">Sin anotación</span>
+												}
+											</p>
+										</div>
+
+										if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
+											if tEnd := getTime(action.Metadata, "final_date"); !tEnd.IsZero() {
+												<div class="bg-base-50 p-2 rounded text-xs flex gap-4 border border-base-200">
+													<div class="flex flex-col">
+														<span class="uppercase font-bold text-[10px] text-base-content/40">Inicia</span>
+														<span class="font-mono">{ tStart.Format("02/01/06") }</span>
+													</div>
+													<div class="flex flex-col">
+														<span class="uppercase font-bold text-[10px] text-base-content/40">Vence</span>
+														<span class="font-mono font-bold text-error">{ tEnd.Format("02/01/06") }</span>
+													</div>
+												</div>
+											}
+										}
+									</div>
+								}
+							</div>
 						}
 
 						if totalPages > 1 {
 							<div class="flex justify-center p-4 border-t border-base-200 mt-2 gap-2">
 								if currentPage > 1 {
 									<button 
-										hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d", jp.CaseID, currentPage-1))) }
+										hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d&tab=actions", jp.CaseID, currentPage-1))) }
 										hx-target="#judicial_process_view"
 										hx-swap="outerHTML"
 										class="btn btn-sm btn-outline">
@@ -191,7 +264,7 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 								<button class="btn btn-sm btn-disabled">{ fmt.Sprintf("%d", currentPage) }</button>
 								if currentPage < totalPages {
 									<button 
-										hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d", jp.CaseID, currentPage+1))) }
+										hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d&tab=actions", jp.CaseID, currentPage+1))) }
 										hx-target="#judicial_process_view"
 										hx-swap="outerHTML"
 										class="btn btn-sm btn-outline">

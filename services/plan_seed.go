@@ -36,7 +36,7 @@ func SeedDefaultPlans(db *gorm.DB) error {
 			Name:             "Starter",
 			Tier:             models.PlanTierStarter,
 			Description:      "Perfect for small law firms",
-			PriceMonthly:     3000, // $30/month
+			PriceMonthly:     3000,  // $30/month
 			PriceYearly:      30000, // $300/year (2 months free)
 			MaxUsers:         5,
 			MaxStorageBytes:  5 * GB, // 5 GB
@@ -52,7 +52,7 @@ func SeedDefaultPlans(db *gorm.DB) error {
 			Name:             "Professional",
 			Tier:             models.PlanTierProfessional,
 			Description:      "For growing law firms with more needs",
-			PriceMonthly:     5000, // $50/month
+			PriceMonthly:     5000,  // $50/month
 			PriceYearly:      50000, // $500/year (2 months free)
 			MaxUsers:         10,
 			MaxStorageBytes:  10 * GB, // 10 GB
@@ -68,7 +68,7 @@ func SeedDefaultPlans(db *gorm.DB) error {
 			Name:             "Enterprise",
 			Tier:             models.PlanTierEnterprise,
 			Description:      "For large firms with high-volume needs",
-			PriceMonthly:     12000, // $120/month
+			PriceMonthly:     12000,  // $120/month
 			PriceYearly:      120000, // $1200/year (2 months free)
 			MaxUsers:         15,
 			MaxStorageBytes:  20 * GB, // 20 GB
@@ -110,7 +110,7 @@ func SeedDefaultAddOns(db *gorm.DB) error {
 			PriceMonthly:  1500, // $15/month
 			PriceOneTime:  0,
 			IsRecurring:   true,
-			IsActive:      true,
+			IsActive:      false,
 			DisplayOrder:  1,
 		},
 		{
@@ -122,7 +122,7 @@ func SeedDefaultAddOns(db *gorm.DB) error {
 			PriceMonthly:  1000,   // $10/month
 			PriceOneTime:  0,
 			IsRecurring:   true,
-			IsActive:      true,
+			IsActive:      false,
 			DisplayOrder:  2,
 		},
 		{
@@ -134,7 +134,7 @@ func SeedDefaultAddOns(db *gorm.DB) error {
 			PriceMonthly:  1000, // $10/month
 			PriceOneTime:  0,
 			IsRecurring:   true,
-			IsActive:      true,
+			IsActive:      false,
 			DisplayOrder:  3,
 		},
 		{
@@ -146,7 +146,7 @@ func SeedDefaultAddOns(db *gorm.DB) error {
 			PriceMonthly:  0,
 			PriceOneTime:  2000, // $20 one-time
 			IsRecurring:   false,
-			IsActive:      true,
+			IsActive:      false,
 			DisplayOrder:  4,
 		},
 	}

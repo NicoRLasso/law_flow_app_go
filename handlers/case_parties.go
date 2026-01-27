@@ -97,7 +97,8 @@ func AddCasePartyHandler(c echo.Context) error {
 	}
 
 	if email != "" {
-		party.Email = &email
+		emailLower := strings.ToLower(email)
+		party.Email = &emailLower
 	}
 	if phone != "" {
 		party.Phone = &phone
@@ -185,7 +186,8 @@ func UpdateCasePartyHandler(c echo.Context) error {
 	party.Name = name
 
 	if email != "" {
-		party.Email = &email
+		emailLower := strings.ToLower(email)
+		party.Email = &emailLower
 	} else {
 		party.Email = nil
 	}

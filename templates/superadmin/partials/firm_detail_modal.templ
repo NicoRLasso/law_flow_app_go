@@ -6,22 +6,20 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
-	<div class="modal modal-open">
-		<div class="modal-box max-w-2xl border border-base-200 shadow-2xl p-0 rounded-sm">
-			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-base-200 flex items-center justify-between bg-base-100">
-				<h3 class="text-xl font-serif font-bold">
-					if firm.ID != "" {
-						{ i18n.T(ctx, "superadmin.dashboard.manage_firms") } - { i18n.T(ctx, "common.edit") }
-					} else {
-						{ i18n.T(ctx, "firm.setup.create_title") }
-					}
-				</h3>
-				<button @click="document.getElementById('modal-container').innerHTML = ''" class="btn btn-ghost btn-sm btn-circle">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-				</button>
-			</div>
+templ FirmDetailModal(ctx context.Context, firm *models.Firm, errorMessage string) {
+	<div class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-base-300/80 backdrop-blur-sm">
+		<div class="bg-base-100 border border-base-200 rounded-sm w-full max-w-[95vw] md:max-w-2xl p-4 sm:p-6 md:p-8 shadow-xl relative max-h-[90vh] overflow-y-auto" @click.away="document.getElementById('modal-container').innerHTML = ''">
+			<button @click="document.getElementById('modal-container').innerHTML = ''" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-base-content/40 hover:text-base-content transition-colors">
+				<svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+			</button>
+
+			<h3 class="text-xl sm:text-2xl font-serif font-bold text-primary mb-4 sm:mb-6 pr-8">
+				if firm.ID != "" {
+					{ i18n.T(ctx, "superadmin.dashboard.manage_firms") } - { i18n.T(ctx, "common.edit") }
+				} else {
+					{ i18n.T(ctx, "firm.setup.create_title") }
+				}
+			</h3>
 
 			<form
 				if firm.ID != "" {
@@ -29,106 +27,122 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 				} else {
 					hx-post="/superadmin/firms"
 				}
-				hx-target="#firms-table-container"
+				hx-target="#modal-container"
 				hx-swap="innerHTML"
 				hx-disabled-elt="find button[type='submit']"
-				class="p-8 space-y-6"
+				class="space-y-4 sm:space-y-6"
 			>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				if errorMessage != "" {
+					<div role="alert" class="alert alert-error rounded-sm p-3 flex items-center gap-3 text-sm">
+						<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+						<span class="font-bold">{ errorMessage }</span>
+					</div>
+				}
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 					<!-- Name -->
-					<div class="col-span-2 form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "firm.info.name") }</span>
-						</label>
-						<input
-							type="text"
-							name="name"
-							value={ firm.Name }
-							required
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
-							placeholder="Acme Legal Corp"
-						/>
+					<div class="md:col-span-2">
+						<div class="form-control w-full flex flex-col gap-1.5">
+							<label class="label px-0 pb-1">
+								<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">{ i18n.T(ctx, "firm.info.name") }</span>
+							</label>
+							<input
+								type="text"
+								name="name"
+								value={ firm.Name }
+								required
+								class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
+								placeholder="Acme Legal Corp"
+							/>
+						</div>
 					</div>
 
 					<!-- Emails -->
-					<div class="form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "firm.info.billing_email") }</span>
+					<div class="form-control w-full flex flex-col gap-1.5">
+						<label class="label px-0 pb-1">
+							<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">{ i18n.T(ctx, "firm.info.billing_email") }</span>
 						</label>
 						<input
 							type="email"
 							name="billing_email"
 							value={ firm.BillingEmail }
 							required
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
 							placeholder="billing@example.com"
 						/>
 					</div>
-					<div class="form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "firm.info.noreply_email") }</span>
-							<span class="label-text-alt opacity-50">{ i18n.T(ctx, "common.optional") }</span>
+					<div class="form-control w-full flex flex-col gap-1.5">
+						<label class="label px-0 pb-1">
+							<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">
+								{ i18n.T(ctx, "firm.info.noreply_email") }
+								<span class="ml-1 opacity-70 font-normal normal-case">({ i18n.T(ctx, "common.optional") })</span>
+							</span>
 						</label>
 						<input
 							type="email"
 							name="noreply_email"
 							value={ firm.NoreplyEmail }
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
 							placeholder="noreply@example.com"
 						/>
 					</div>
 
 					<!-- Location -->
-					<div class="form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "firm.info.country") }</span>
+					<div class="form-control w-full flex flex-col gap-1.5">
+						<label class="label px-0 pb-1">
+							<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">{ i18n.T(ctx, "firm.info.country") }</span>
 						</label>
 						<input
 							type="text"
 							name="country"
 							value={ firm.Country }
 							required
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
 							placeholder="United States"
 						/>
 					</div>
-					<div class="form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "firm.info.city") }</span>
-							<span class="label-text-alt opacity-50">{ i18n.T(ctx, "common.optional") }</span>
+					<div class="form-control w-full flex flex-col gap-1.5">
+						<label class="label px-0 pb-1">
+							<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">
+								{ i18n.T(ctx, "firm.info.city") }
+								<span class="ml-1 opacity-70 font-normal normal-case">({ i18n.T(ctx, "common.optional") })</span>
+							</span>
 						</label>
 						<input
 							type="text"
 							name="city"
 							value={ firm.City }
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
+							class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
 							placeholder="New York"
 						/>
 					</div>
 
 					<!-- Address -->
-					<div class="col-span-2 form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "firm.info.address") }</span>
-							<span class="label-text-alt opacity-50">{ i18n.T(ctx, "common.optional") }</span>
-						</label>
-						<input
-							type="text"
-							name="address"
-							value={ firm.Address }
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm"
-							placeholder="123 Legal Avenue, Suite 100"
-						/>
+					<div class="md:col-span-2">
+						<div class="form-control w-full flex flex-col gap-1.5">
+							<label class="label px-0 pb-1">
+								<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">
+									{ i18n.T(ctx, "firm.info.address") }
+									<span class="ml-1 opacity-70 font-normal normal-case">({ i18n.T(ctx, "common.optional") })</span>
+								</span>
+							</label>
+							<input
+								type="text"
+								name="address"
+								value={ firm.Address }
+								class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
+								placeholder="123 Legal Avenue, Suite 100"
+							/>
+						</div>
 					</div>
 
 					<!-- Status -->
-					<div class="form-control w-full">
-						<label class="label">
-							<span class="label-text font-bold">{ i18n.T(ctx, "superadmin.users.modal.status") }</span>
+					<div class="form-control w-full flex flex-col gap-1.5">
+						<label class="label px-0 pb-1">
+							<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">{ i18n.T(ctx, "superadmin.users.modal.status") }</span>
 						</label>
 						<select
 							name="is_active"
-							class="select select-bordered w-full focus:select-primary transition-all font-bold rounded-sm"
+							class="select select-bordered w-full focus:select-primary transition-all rounded-sm font-sans"
 						>
 							<option value="true" selected?={ firm.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.active") }</option>
 							<option value="false" selected?={ !firm.IsActive }>{ i18n.T(ctx, "superadmin.users.modal.inactive") }</option>
@@ -136,17 +150,17 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 					</div>
 				</div>
 
-				<div class="modal-action border-t border-base-200 pt-6 mt-8">
+				<div class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-4 sm:pt-6 border-t border-base-200 mt-2">
 					<button
 						type="button"
 						@click="document.getElementById('modal-container').innerHTML = ''"
-						class="btn btn-ghost"
+						class="btn btn-ghost rounded-sm font-bold uppercase tracking-widest text-xs w-full sm:w-auto"
 					>
 						{ i18n.T(ctx, "common.cancel") }
 					</button>
 					<button
 						type="submit"
-						class="btn btn-primary px-8 shadow-lg shadow-primary/20 font-bold uppercase tracking-widest rounded-sm"
+						class="btn btn-primary rounded-sm font-bold uppercase tracking-widest text-xs w-full sm:w-auto sm:min-w-[120px] shadow-lg shadow-primary/20"
 					>
 						if firm.ID != "" {
 							{ i18n.T(ctx, "common.save") }
@@ -157,8 +171,5 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm) {
 				</div>
 			</form>
 		</div>
-		<form method="dialog" class="modal-backdrop" @click="document.getElementById('modal-container').innerHTML = ''">
-			<button>close</button>
-		</form>
 	</div>
 }

@@ -26,8 +26,8 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
 				<div class="w-full" x-data="{ activeTab: 'summary', sidebarOpen: false }">
 					<!-- Header with Back Button -->
-					<div class="flex items-center justify-between mb-8">
-						<div class="flex items-center gap-6">
+					<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
+						<div class="flex items-start sm:items-center gap-4 md:gap-6">
 							<a
 								href={ templ.SafeURL(func() string {
 	if caseRecord.IsHistorical {
@@ -36,7 +36,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 		return "/cases"
 	}
 }()) }
-								class="btn btn-circle btn-primary btn-sm"
+								class="btn btn-circle btn-primary btn-sm mt-1 sm:mt-0"
 								title={ i18n.T(ctx, "common.back") }
 							>
 								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,17 +44,17 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 								</svg>
 							</a>
 							<div>
-								<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-1">{ i18n.T(ctx, "case.detail.title") }</h1>
-								<div class="flex items-center gap-3 text-sm font-sans">
+								<h1 class="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-base-content mb-1 leading-tight">{ i18n.T(ctx, "case.detail.title") }</h1>
+								<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-sans">
 									if caseRecord.FilingNumber != nil {
-										<span class="font-bold text-primary">{ *caseRecord.FilingNumber }</span>
-										<span class="text-base-content/30">•</span>
+										<span class="font-bold text-primary whitespace-nowrap">{ *caseRecord.FilingNumber }</span>
+										<span class="text-base-content/30 hidden sm:inline">•</span>
 									}
 									<span class="text-base-content/60">{ i18n.T(ctx, "case.detail.case_number") }: <span class="font-mono text-base-content/80">{ caseRecord.CaseNumber }</span></span>
 								</div>
 							</div>
 						</div>
-						<div class="flex items-center gap-4">
+						<div class="flex items-center gap-3 pl-[3.25rem] sm:pl-0">
 							@CaseStatusBadge(ctx, caseRecord.Status)
 							if user.Role != "client" {
 								<button
@@ -73,7 +73,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 						</div>
 					</div>
 					<!-- Layout with Sidebar -->
-					<div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 items-start">
+					<div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 md:gap-8 items-start">
 						<!-- Sidebar Navigation -->
 						<aside class="w-full">
 							<!-- Mobile Toggle Button -->
@@ -263,7 +263,7 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 // CaseResumenTab renders the summary tab content
 templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.User) {
 	<!-- Case Information Grid -->
-	<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 		<!-- Left Column -->
 		<div class="space-y-8">
 			<!-- Case Information -->
@@ -608,7 +608,7 @@ func getCaseStatusLabel(ctx context.Context, status string) string {
 templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 	<!-- Upload Document Modal -->
 	<div id="upload-document-modal" class="hidden fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" x-data="{ close() { const modal = document.getElementById('upload-document-modal'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; document.getElementById('upload-form').reset(); } } }" @click.self="close()">
-		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl p-8 shadow-2xl relative">
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl relative">
 			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
 				<h3 class="text-2xl font-serif font-bold text-base-content">

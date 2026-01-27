@@ -37,10 +37,10 @@ func GetJudicialProcessViewHandler(c echo.Context) error {
 			// Return empty state or basic info if filing number exists
 			var kase models.Case
 			if err := db.DB.Select("id, filing_number").First(&kase, "id = ?", caseID).Error; err == nil {
-				component := partials.JudicialProcessView(c.Request().Context(), nil, kase.FilingNumber, 1, 1, false) // 1, 1 defaults
+				component := partials.JudicialProcessView(c.Request().Context(), nil, kase.FilingNumber, 1, 1, "overview") // Default overview
 				return component.Render(c.Request().Context(), c.Response().Writer)
 			}
-			component := partials.JudicialProcessView(c.Request().Context(), nil, nil, 1, 1, false)
+			component := partials.JudicialProcessView(c.Request().Context(), nil, nil, 1, 1, "overview")
 			return component.Render(c.Request().Context(), c.Response().Writer)
 		}
 		return c.String(http.StatusInternalServerError, "Error loading judicial process data")
@@ -55,9 +55,6 @@ func GetJudicialProcessViewHandler(c echo.Context) error {
 		totalPages = 1
 	}
 
-	// Parse page param manually to avoid import mess if possible, but strconv is standard.
-	// I'll do a separate import step.
-	// For now, let's hardcode parsing or assume I'll add imports.
 	bindPage := new(struct {
 		Page int `query:"page"`
 	})
@@ -75,9 +72,15 @@ func GetJudicialProcessViewHandler(c echo.Context) error {
 
 	jp.Actions = actions
 
-	// Check if this is a pagination request (explicit page param) to keep Actions tab open
-	showActions := c.QueryParam("page") != ""
+	// Determine active tab
+	activeTab := "overview"
+	if c.QueryParam("tab") == "actions" {
+		activeTab = "actions"
+	} else if c.QueryParam("page") != "" {
+		// If page is present but no specific tab, default to actions contextually
+		activeTab = "actions"
+	}
 
-	component := partials.JudicialProcessView(c.Request().Context(), &jp, &jp.Radicado, page, totalPages, showActions)
+	component := partials.JudicialProcessView(c.Request().Context(), &jp, &jp.Radicado, page, totalPages, activeTab)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

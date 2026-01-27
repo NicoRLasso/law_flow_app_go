@@ -58,7 +58,7 @@ func UpdateProfileHandler(c echo.Context) error {
 
 	// Update fields
 	user.Name = name
-	user.Email = email
+	user.Email = strings.ToLower(email)
 	user.Language = language
 
 	// Handle optional fields

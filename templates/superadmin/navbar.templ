@@ -8,20 +8,20 @@ import (
 
 templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 	<div class="navbar bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-sm sticky top-0 z-50 px-4 sm:px-8" x-data="{ mobileMenuOpen: false }">
-		<div class="navbar-start">
+		<div class="navbar-start flex-1 min-w-0">
 			<!-- Mobile Menu Button -->
-			<div class="dropdown md:hidden">
-				<label tabindex="0" class="btn btn-ghost btn-circle" @click="mobileMenuOpen = !mobileMenuOpen">
+			<div class="dropdown md:hidden flex-shrink-0">
+				<button type="button" class="btn btn-ghost btn-circle btn-sm sm:btn-md" @click="mobileMenuOpen = !mobileMenuOpen">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
 					</svg>
-				</label>
+				</button>
 			</div>
-			<a href="/superadmin/dashboard" class="flex items-center gap-2 px-2">
-				<span class="text-xl font-bold font-serif tracking-tighter text-primary">
+			<a href="/superadmin/dashboard" class="flex items-center gap-1 sm:gap-2 px-1 sm:px-2 min-w-0">
+				<span class="text-base sm:text-xl font-bold font-serif tracking-tighter text-primary truncate">
 					{ i18n.T(ctx, "app.name") }
 				</span>
-				<div class="badge badge-outline badge-sm uppercase tracking-widest opacity-70">Superadmin</div>
+				<div class="badge badge-outline badge-xs sm:badge-sm uppercase tracking-widest opacity-70 hidden sm:inline-flex flex-shrink-0">Superadmin</div>
 			</a>
 		</div>
 
@@ -43,6 +43,11 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 					</a>
 				</li>
 				<li>
+					<a href="/superadmin/addons" class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif", templ.KV("active bg-primary/10 text-primary font-bold border-b-2 border-primary", currentPath == "/superadmin/addons") }>
+						Add-ons
+					</a>
+				</li>
+				<li>
 					<a href="/superadmin/support" class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif", templ.KV("active bg-primary/10 text-primary font-bold border-b-2 border-primary", currentPath == "/superadmin/support") }>
 						Support
 					</a>
@@ -50,19 +55,19 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 			</ul>
 		</div>
 
-		<div class="navbar-end">
+		<div class="navbar-end flex-shrink-0">
 			<div class="dropdown dropdown-end">
-				<label tabindex="0" class="btn btn-ghost btn-circle avatar online">
-					<div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-						<div class="bg-primary text-primary-content flex items-center justify-center w-full h-full text-lg font-bold font-serif">
+				<label tabindex="0" class="btn btn-ghost btn-circle btn-sm sm:btn-md avatar online">
+					<div class="w-8 sm:w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1 sm:ring-offset-2">
+						<div class="bg-primary text-primary-content flex items-center justify-center w-full h-full text-sm sm:text-lg font-bold font-serif">
 							{ string(user.Name[0]) }
 						</div>
 					</div>
 				</label>
-				<ul tabindex="0" class="mt-3 z-[1] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-sm w-52 border border-base-200">
-					<li class="menu-title px-4 py-2 border-b border-base-200 bg-base-50 rounded-t-sm">
-						<span class="font-bold text-base-content font-serif text-sm">{ user.Name }</span>
-						<span class="text-xs text-base-content/60 font-mono italic">{ user.Email }</span>
+				<ul tabindex="0" class="mt-3 z-[1] p-2 shadow-xl menu menu-sm dropdown-content bg-base-100 rounded-sm border border-base-200">
+					<li class="menu-title px-4 py-2 border-b border-base-200 bg-base-50 rounded-t-sm overflow-hidden">
+						<span class="block font-bold text-base-content font-serif text-sm truncate max-w-full">{ user.Name }</span>
+						<span class="block text-xs text-base-content/60 font-mono italic truncate max-w-full">{ user.Email }</span>
 					</li>
 					<li class="mt-2">
 						<form hx-post="/logout" hx-swap="none" class="w-full">
@@ -87,6 +92,7 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 				<li><a href="/superadmin/dashboard" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/dashboard") }>Dashboard</a></li>
 				<li><a href="/superadmin/users" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/users") }>Users</a></li>
 				<li><a href="/superadmin/firms" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/firms") }>Firms</a></li>
+				<li><a href="/superadmin/addons" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/addons") }>Add-ons</a></li>
 				<li><a href="/superadmin/support" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/support") }>Support</a></li>
 			</ul>
 		</div>

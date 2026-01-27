@@ -10,6 +10,7 @@ import (
 	"law_flow_app_go/templates/partials"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -111,7 +112,7 @@ func CreateUser(c echo.Context) error {
 
 	// Read form values
 	user.Name = c.FormValue("name")
-	user.Email = c.FormValue("email")
+	user.Email = strings.ToLower(strings.TrimSpace(c.FormValue("email")))
 	user.Password = c.FormValue("password")
 	user.Role = c.FormValue("role")
 
@@ -272,7 +273,7 @@ func UpdateUser(c echo.Context) error {
 
 	// Read form values
 	name := c.FormValue("name")
-	email := c.FormValue("email")
+	email := strings.ToLower(strings.TrimSpace(c.FormValue("email")))
 	role := c.FormValue("role")
 	isActiveStr := c.FormValue("is_active")
 

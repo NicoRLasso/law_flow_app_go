@@ -69,3 +69,35 @@ func SuperadminUpdateFirmSubscriptionHandler(c echo.Context) error {
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetFirmsListHTMX(c)
 }
+
+// SuperadminToggleAddOnActiveHandler toggles the active status of an add-on
+func SuperadminToggleAddOnActiveHandler(c echo.Context) error {
+	id := c.Param("id")
+	var addon models.PlanAddOn
+	if err := db.DB.First(&addon, "id = ?", id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Add-on not found")
+	}
+
+	addon.IsActive = !addon.IsActive
+	if err := db.DB.Save(&addon).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update add-on")
+	}
+
+	// Re-render the add-on row or the whole table - but here we return standard 200 OK
+	// Ideally we should return the updated row.
+	// For simplicity, let's redirect to the list which is already an HTMX optimized replacement?
+	// The AddOnsPageHandler renders the full page.
+	// We should probably just return the updated AddOnsPage or just the row if we had a partial.
+	// Since we don't have a partial for a single row readily available as a standalone component without refactoring,
+	// let's re-render the whole page or redirect. Active/Inactive usually just requires a simple toggle update.
+	//
+	// Better approach: Re-fetch list and render the page content again or a partial table if it existed.
+	// But `AddOnsPage` is a full page.
+	// Let's reload the page for now using HX-Refresh or similar, or just re-render the page function which includes the layout.
+	// OR better: Create a Partial for the Addons Table?
+	// For now, let's just trigger a full reload or use the existing page handler logic to return full HTML which HTMX can parse if `hx-select` is used,
+	// OR just set HX-Refresh: true.
+
+	c.Response().Header().Set("HX-Refresh", "true")
+	return c.NoContent(http.StatusOK)
+}

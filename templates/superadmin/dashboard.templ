@@ -31,53 +31,53 @@ templ Dashboard(
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 			<!-- Total Firms -->
 			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-				<div class="card-body p-6">
-					<div class="flex items-center justify-between mb-4">
-						<div class="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-						</div>
+				<div class="card-body p-5 flex flex-row items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
 					</div>
-					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(totalFirms, 10) }</h3>
-					<p class="text-sm text-base-content/60">Total Firms</p>
+					<div>
+						<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ strconv.FormatInt(totalFirms, 10) }</h3>
+						<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">Total Firms</p>
+					</div>
 				</div>
 			</div>
 			
 			<!-- Total Users -->
 			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-				<div class="card-body p-6">
-					<div class="flex items-center justify-between mb-4">
-						<div class="w-12 h-12 rounded-sm bg-secondary/10 flex items-center justify-center text-secondary">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-						</div>
+				<div class="card-body p-5 flex flex-row items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
 					</div>
-					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(totalUsers, 10) }</h3>
-					<p class="text-sm text-base-content/60">Total Users</p>
+					<div>
+						<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ strconv.FormatInt(totalUsers, 10) }</h3>
+						<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">Total Users</p>
+					</div>
 				</div>
 			</div>
 			
 			<!-- Active Users -->
 			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-				<div class="card-body p-6">
-					<div class="flex items-center justify-between mb-4">
-						<div class="w-12 h-12 rounded-sm bg-accent/10 flex items-center justify-center text-accent">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-						</div>
+				<div class="card-body p-5 flex flex-row items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 					</div>
-					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(activeUsers, 10) }</h3>
-					<p class="text-sm text-base-content/60">Active Now</p>
+					<div>
+						<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ strconv.FormatInt(activeUsers, 10) }</h3>
+						<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">Active Now</p>
+					</div>
 				</div>
 			</div>
 
 			<!-- Pending Setup -->
 			<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-				<div class="card-body p-6">
-					<div class="flex items-center justify-between mb-4">
-						<div class="w-12 h-12 rounded-sm bg-warning/10 flex items-center justify-center text-warning">
-							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-						</div>
+				<div class="card-body p-5 flex flex-row items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center text-warning shrink-0">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
 					</div>
-					<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ strconv.FormatInt(pendingUsers, 10) }</h3>
-					<p class="text-sm text-base-content/60">Pending Setup</p>
+					<div>
+						<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ strconv.FormatInt(pendingUsers, 10) }</h3>
+						<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">Pending Setup</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -128,7 +128,7 @@ templ Dashboard(
 								<div class="flex items-center justify-between p-4 hover:bg-base-50 transition-colors group">
 									<div class="flex items-center gap-4">
 										<div class="avatar placeholder">
-											<div class="bg-primary text-primary-content rounded-sm w-10 h-10 shadow-sm group-hover:scale-105 transition-transform font-serif font-bold">
+											<div class="bg-primary text-primary-content rounded-full w-10 h-10 shadow-sm group-hover:scale-105 transition-transform font-serif font-bold flex items-center justify-center">
 												if len(firm.Name) > 0 {
 													<span>{ string(firm.Name[0]) }</span>
 												} else {
@@ -136,15 +136,15 @@ templ Dashboard(
 												}
 											</div>
 										</div>
-										<div>
-											<p class="font-bold text-base-content font-serif">
+										<div class="min-w-0 flex-1">
+											<p class="font-bold text-base-content font-serif truncate">
 												if firm.Name != "" {
 													{ firm.Name }
 												} else {
 													<span class="italic text-base-content/40">Unnamed Firm</span>
 												}
 											</p>
-											<p class="text-xs text-base-content/60 font-medium">{ firm.City }, { firm.Country }</p>
+											<p class="text-xs text-base-content/60 font-medium truncate">{ firm.City }, { firm.Country }</p>
 										</div>
 									</div>
 									<div class="text-right">
@@ -179,7 +179,7 @@ templ Dashboard(
 								<div class="flex items-center justify-between p-4 hover:bg-base-50 transition-colors group">
 									<div class="flex items-center gap-4">
 										<div class="avatar placeholder">
-											<div class="bg-secondary text-secondary-content rounded-sm w-10 h-10 shadow-sm group-hover:scale-105 transition-transform font-bold font-serif">
+											<div class="bg-secondary text-secondary-content rounded-full w-10 h-10 shadow-sm group-hover:scale-105 transition-transform font-bold font-serif flex items-center justify-center">
 												if len(u.Name) > 0 {
 													<span>{ string(u.Name[0]) }</span>
 												} else {
@@ -187,15 +187,15 @@ templ Dashboard(
 												}
 											</div>
 										</div>
-										<div>
-											<p class="font-bold text-base-content font-serif">
+										<div class="min-w-0 flex-1">
+											<p class="font-bold text-base-content font-serif truncate">
 												if u.Name != "" {
 													{ u.Name }
 												} else {
 													<span class="italic text-base-content/40">Unnamed User</span>
 												}
 											</p>
-											<p class="text-xs text-base-content/60 font-medium truncate max-w-[150px]">{ u.Email }</p>
+											<p class="text-xs text-base-content/60 font-medium truncate">{ u.Email }</p>
 										</div>
 									</div>
 									<div class="text-right">

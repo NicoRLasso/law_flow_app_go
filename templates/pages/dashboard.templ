@@ -33,32 +33,32 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 					<!-- Stat Card 1: Active Cases -->
 					<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-						<div class="card-body p-6">
-							<div class="flex items-center justify-between mb-4">
-								<div class="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center text-primary">
-									<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-								</div>
+						<div class="card-body p-5 flex flex-row items-center gap-4">
+							<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
 							</div>
-							<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ fmt.Sprintf("%d", stats.ActiveCases) }</h3>
-							if user.Role == "client" {
-								<p class="text-sm text-base-content/60">{ i18n.T(ctx, "dashboard.stats.my_active_cases") }</p>
-							} else {
-								<p class="text-sm text-base-content/60">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
-							}
+							<div>
+								<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ fmt.Sprintf("%d", stats.ActiveCases) }</h3>
+								if user.Role == "client" {
+									<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">{ i18n.T(ctx, "dashboard.stats.my_active_cases") }</p>
+								} else {
+									<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">{ i18n.T(ctx, "dashboard.stats.active_cases") }</p>
+								}
+							</div>
 						</div>
 					</div>
 					
 					<!-- Stat Card 2: Total Clients (Hidden for Clients) -->
 					if user.Role != "client" {
 						<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-							<div class="card-body p-6">
-								<div class="flex items-center justify-between mb-4">
-									<div class="w-12 h-12 rounded-sm bg-secondary/10 flex items-center justify-center text-secondary">
-										<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-									</div>
+							<div class="card-body p-5 flex flex-row items-center gap-4">
+								<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+									<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
 								</div>
-								<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ fmt.Sprintf("%d", stats.TotalClients) }</h3>
-								<p class="text-sm text-base-content/60">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
+								<div>
+									<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ fmt.Sprintf("%d", stats.TotalClients) }</h3>
+									<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">{ i18n.T(ctx, "dashboard.stats.total_clients") }</p>
+								</div>
 							</div>
 						</div>
 					}
@@ -66,33 +66,33 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 					<!-- Stat Card 3: Completed Monthly (Hidden for Clients) -->
 					if user.Role != "client" {
 						<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-							<div class="card-body p-6">
-								<div class="flex items-center justify-between mb-4">
-									<div class="w-12 h-12 rounded-sm bg-success/10 flex items-center justify-center text-success">
-										<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-									</div>
+							<div class="card-body p-5 flex flex-row items-center gap-4">
+								<div class="w-12 h-12 rounded-full bg-success/10 flex items-center justify-center text-success shrink-0">
+									<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 								</div>
-								<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ fmt.Sprintf("%d", stats.CompletedMonthly) }</h3>
-								<p class="text-sm text-base-content/60">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
+								<div>
+									<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ fmt.Sprintf("%d", stats.CompletedMonthly) }</h3>
+									<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">{ i18n.T(ctx, "dashboard.stats.completed_monthly") }</p>
+								</div>
 							</div>
 						</div>
 					}
 					
 					<!-- Stat Card 4: Pending Tasks / Appointments -->
 					<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
-						<div class="card-body p-6">
-							<div class="flex items-center justify-between mb-4">
-								<div class="w-12 h-12 rounded-sm bg-warning/10 flex items-center justify-center text-warning">
-									<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-								</div>
-								<span class="text-xs font-bold px-2 py-1 rounded bg-warning/20 text-warning uppercase tracking-wider">{ i18n.T(ctx, "dashboard.stats.urgent_label") }</span>
+						<div class="card-body p-5 flex flex-row items-center gap-4">
+							<div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center text-warning shrink-0 relative">
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+								<span class="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full border-2 border-base-100"></span>
 							</div>
-							<h3 class="text-4xl font-serif font-bold mb-1 text-base-content">{ fmt.Sprintf("%d", stats.PendingTasks) }</h3>
-							if user.Role == "client" {
-								<p class="text-sm text-base-content/60">{ i18n.T(ctx, "dashboard.stats.my_upcoming_appointments") }</p>
-							} else {
-								<p class="text-sm text-base-content/60">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
-							}
+							<div>
+								<h3 class="text-3xl font-serif font-bold text-base-content leading-none">{ fmt.Sprintf("%d", stats.PendingTasks) }</h3>
+								if user.Role == "client" {
+									<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">{ i18n.T(ctx, "dashboard.stats.my_upcoming_appointments") }</p>
+								} else {
+									<p class="text-xs font-bold uppercase tracking-wider opacity-60 mt-1">{ i18n.T(ctx, "dashboard.stats.pending_tasks") }</p>
+								}
+							</div>
 						</div>
 					</div>
 				</div>

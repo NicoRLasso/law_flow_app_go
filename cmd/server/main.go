@@ -74,6 +74,9 @@ func main() {
 	// Initialize storage (R2 or local filesystem)
 	services.InitializeStorage(cfg)
 
+	// Initialize asset versions for cache busting
+	middleware.InitAssetVersions()
+
 	// Check sensitive configuration
 	checkSensitiveConfig(cfg)
 
@@ -321,6 +324,7 @@ func main() {
 		superadminRoutes.GET("/addons", handlers.SuperadminAddOnsPageHandler)
 		superadminRoutes.PUT("/firms/:id/subscription", handlers.SuperadminUpdateFirmSubscriptionHandler)
 		superadminRoutes.GET("/firms/:id/subscription", handlers.SuperadminGetFirmSubscriptionForm)
+		superadminRoutes.PATCH("/addons/:id/toggle-active", handlers.SuperadminToggleAddOnActiveHandler)
 	}
 
 	// Protected routes (authentication + firm required)

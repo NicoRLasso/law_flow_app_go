@@ -23,7 +23,7 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
 			
 			<!-- CSS Bundle -->
-			<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+			<link href={ "/static/css/style.css?v=" + middleware.GetCSSVersion(ctx) } rel="stylesheet" type="text/css" />
 			
 			<!-- Lucide Icons -->
 			<script src="https://unpkg.com/lucide@latest" nonce={ middleware.GetNonce(ctx) }></script>

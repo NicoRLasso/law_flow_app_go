@@ -359,10 +359,82 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 			style="display: none;"
 		>
 			<!-- Menu Items (Simplified for Mobile) -->
-			<div class="p-2 space-y-1">
-				<a href="/dashboard" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm">{ i18n.T(ctx, "nav.dashboard") }</a>
-				<a href="/cases" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm">{ i18n.T(ctx, "nav.cases") }</a>
-				<!-- Add more mobile links as needed -->
+			<div class="p-2 space-y-1 overflow-y-auto max-h-[80vh]">
+				if user.Role == "superadmin" {
+					<a href="/superadmin/dashboard" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						{ i18n.T(ctx, "nav.dashboard") }
+					</a>
+					<a href="/superadmin/users" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						{ i18n.T(ctx, "nav.users") }
+					</a>
+					<a href="/superadmin/firms" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						{ i18n.T(ctx, "nav.firms") }
+					</a>
+					<a href="/superadmin/support" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						{ i18n.T(ctx, "nav.support_tickets") }
+					</a>
+				} else {
+					<a href="/users" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						{ i18n.T(ctx, "nav.users") }
+					</a>
+					
+					<!-- Mobile Cases Section -->
+					<div x-data="{ casesExpanded: false }" class="space-y-1">
+						<button @click="casesExpanded = !casesExpanded" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+							<span>{ i18n.T(ctx, "nav.cases") }</span>
+							<svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': casesExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+						<div x-show="casesExpanded" class="pl-4 space-y-1" style="display: none;">
+							<a href="/cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+								{ i18n.T(ctx, "nav.cases") }
+							</a>
+							if user.Role == "client" {
+								<a href="/api/client/requests" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									{ i18n.T(ctx, "case.request.my_requests") }
+								</a>
+							}
+							if user.Role == "admin" || user.Role == "lawyer" {
+								<a href="/case-requests" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									{ i18n.T(ctx, "nav.requests") }
+								</a>
+							}
+							if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+								<a href="/historical-cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									{ i18n.T(ctx, "nav.historical_cases") }
+								</a>
+							}
+						</div>
+					</div>
+
+					if user.Role == "admin" || user.Role == "lawyer" {
+						<a href="/templates" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+							{ i18n.T(ctx, "nav.templates") }
+						</a>
+						
+						<!-- Mobile Calendars Section -->
+						<div x-data="{ calendarsExpanded: false }" class="space-y-1">
+							<button @click="calendarsExpanded = !calendarsExpanded" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+								<span>Calendars</span>
+								<svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': calendarsExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
+							<div x-show="calendarsExpanded" class="pl-4 space-y-1" style="display: none;">
+								<a href="/calendar" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									Calendar
+								</a>
+								<a href="/availability" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									{ i18n.T(ctx, "nav.availability") }
+								</a>
+								<a href="/appointments" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									{ i18n.T(ctx, "nav.appointments") }
+								</a>
+							</div>
+						</div>
+					}
+				}
 			</div>
 		</div>
 	</nav>
