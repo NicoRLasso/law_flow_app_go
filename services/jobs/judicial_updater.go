@@ -18,7 +18,7 @@ func StartJudicialUpdateJob() {
 		// Run immediately on startup (non-blocking) - wait 10 seconds for server to settle
 		time.Sleep(10 * time.Second)
 		log.Println("[JOB] Starting initial judicial process update...")
-		UpdateAllJudicialProcesses()
+		UpdateAllJudicialProcesses(db.DB)
 
 		// Schedule nightly run (every 24 hours)
 		ticker := time.NewTicker(24 * time.Hour)
@@ -26,16 +26,16 @@ func StartJudicialUpdateJob() {
 
 		for range ticker.C {
 			log.Println("[JOB] Starting scheduled judicial process update...")
-			UpdateAllJudicialProcesses()
+			UpdateAllJudicialProcesses(db.DB)
 		}
 	}()
 }
 
 // UpdateAllJudicialProcesses iterates through relevant cases and updates them
-func UpdateAllJudicialProcesses() {
+func UpdateAllJudicialProcesses(database *gorm.DB) {
 	// 1. Find all Open Cases with a Filing Number (Radicado) and preload Firm to get Country
 	var cases []models.Case
-	if err := db.DB.Preload("Firm").Where("status = ? AND filing_number IS NOT NULL AND filing_number != ''", models.CaseStatusOpen).Find(&cases).Error; err != nil {
+	if err := database.Preload("Firm").Where("status = ? AND filing_number IS NOT NULL AND filing_number != ''", models.CaseStatusOpen).Find(&cases).Error; err != nil {
 		log.Printf("[JOB] Error fetching cases for update: %v", err)
 		return
 	}
@@ -44,7 +44,7 @@ func UpdateAllJudicialProcesses() {
 
 	for _, c := range cases {
 		// Process each case sequentially
-		if err := processCase(db.DB, c); err != nil {
+		if err := processCase(database, c); err != nil {
 			log.Printf("[JOB] Error updating case %s (Radicado: %s): %v", c.CaseNumber, *c.FilingNumber, err)
 		} else {
 			log.Printf("[JOB] Successfully checked/updated case %s", c.CaseNumber)
@@ -55,11 +55,11 @@ func UpdateAllJudicialProcesses() {
 }
 
 // UpdateSingleCase triggers a judicial process update for a specific case
-func UpdateSingleCase(caseID string) error {
+func UpdateSingleCase(database *gorm.DB, caseID string) error {
 	log.Printf("[JOB] UpdateSingleCase called for caseID: %s", caseID)
 	var c models.Case
 	// Need to preload Firm to get Country
-	if err := db.DB.Preload("Firm").Where("id = ?", caseID).First(&c).Error; err != nil {
+	if err := database.Preload("Firm").Where("id = ?", caseID).First(&c).Error; err != nil {
 		return err
 	}
 
@@ -68,7 +68,7 @@ func UpdateSingleCase(caseID string) error {
 		return errors.New("case has no filing number")
 	}
 
-	return processCase(db.DB, c)
+	return processCase(database, c)
 }
 
 func processCase(database *gorm.DB, c models.Case) error {

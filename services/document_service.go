@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"log"
 	"os"
@@ -86,9 +85,9 @@ func copyFile(src, dst string) error {
 }
 
 // GetCaseDocuments retrieves all documents for a case
-func GetCaseDocuments(caseID string) ([]models.CaseDocument, error) {
+func GetCaseDocuments(db *gorm.DB, caseID string) ([]models.CaseDocument, error) {
 	var documents []models.CaseDocument
-	if err := db.DB.Where("case_id = ?", caseID).
+	if err := db.Where("case_id = ?", caseID).
 		Preload("UploadedBy").
 		Order("created_at DESC").
 		Find(&documents).Error; err != nil {
@@ -111,10 +110,10 @@ func GetDocumentPath(document *models.CaseDocument) string {
 }
 
 // DeleteCaseDocument soft deletes a case document and removes the physical file
-func DeleteCaseDocument(documentID string, userID string, firmID string) error {
+func DeleteCaseDocument(db *gorm.DB, documentID string, userID string, firmID string) error {
 	// First find the document to get the file path
 	var document models.CaseDocument
-	if err := db.DB.Where("id = ? AND firm_id = ?", documentID, firmID).First(&document).Error; err != nil {
+	if err := db.Where("id = ? AND firm_id = ?", documentID, firmID).First(&document).Error; err != nil {
 		return fmt.Errorf("document not found: %w", err)
 	}
 
@@ -129,7 +128,7 @@ func DeleteCaseDocument(documentID string, userID string, firmID string) error {
 	}
 
 	// Delete from database
-	result := db.DB.Delete(&document)
+	result := db.Delete(&document)
 	if result.Error != nil {
 		return fmt.Errorf("failed to delete document: %w", result.Error)
 	}

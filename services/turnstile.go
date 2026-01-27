@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var turnstileVerifyURL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+
 type TurnstileResponse struct {
 	Success     bool      `json:"success"`
 	ChallengeTS time.Time `json:"challenge_ts"`
@@ -21,7 +23,7 @@ func VerifyTurnstileToken(token, secretKey, ip string) (bool, error) {
 		return false, fmt.Errorf("missing token or secret key")
 	}
 
-	resp, err := http.PostForm("https://challenges.cloudflare.com/turnstile/v0/siteverify", url.Values{
+	resp, err := http.PostForm(turnstileVerifyURL, url.Values{
 		"secret":   {secretKey},
 		"response": {token},
 		"remoteip": {ip},

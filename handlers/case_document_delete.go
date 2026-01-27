@@ -52,7 +52,7 @@ func DeleteCaseDocumentHandler(c echo.Context) error {
 	deletedFileSize := document.FileSize
 
 	// Perform deletion
-	if err := services.DeleteCaseDocument(docID, currentUser.ID, currentFirm.ID); err != nil {
+	if err := services.DeleteCaseDocument(db.DB, docID, currentUser.ID, currentFirm.ID); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to delete document</div>`)
 		}

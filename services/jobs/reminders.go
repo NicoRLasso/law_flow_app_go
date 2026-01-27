@@ -2,15 +2,16 @@ package jobs
 
 import (
 	"law_flow_app_go/config"
-	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"log"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // SendAppointmentReminders checks for appointments tomorrow and sends reminders
-func SendAppointmentReminders(cfg *config.Config) {
+func SendAppointmentReminders(database *gorm.DB, cfg *config.Config) {
 	log.Println("Starting appointment reminder job...")
 
 	// Calculate time range for appointments starting tomorrow (next 24-48 hours window)
@@ -24,7 +25,7 @@ func SendAppointmentReminders(cfg *config.Config) {
 	// 1. Scheduled or Confirmed
 	// 2. StartTime between tomorrowStart and tomorrowEnd
 	// 3. ReminderSentAt is NULL
-	err := db.DB.Preload("Lawyer").Preload("Firm").Preload("AppointmentType").Preload("Client").
+	err := database.Preload("Lawyer").Preload("Firm").Preload("AppointmentType").Preload("Client").
 		Where("status IN (?)", []string{models.AppointmentStatusScheduled, models.AppointmentStatusConfirmed}).
 		Where("start_time >= ? AND start_time <= ?", tomorrowStart, tomorrowEnd).
 		Where("reminder_sent_at IS NULL").
@@ -71,7 +72,7 @@ func SendAppointmentReminders(cfg *config.Config) {
 
 		// Update ReminderSentAt
 		now := time.Now().UTC()
-		db.DB.Model(&apt).Update("reminder_sent_at", now)
+		database.Model(&apt).Update("reminder_sent_at", now)
 		log.Printf("Sent reminder for appointment %s", apt.ID)
 	}
 

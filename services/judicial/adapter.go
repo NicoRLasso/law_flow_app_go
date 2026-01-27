@@ -56,8 +56,20 @@ func NewBaseService() BaseService {
 	}
 }
 
+var providers = make(map[string]Provider)
+
+// RegisterProvider allows manual registration of a provider (useful for testing)
+func RegisterProvider(countryCode string, p Provider) {
+	providers[countryCode] = p
+}
+
 // GetProvider returns the correct implementation based on country code
 func GetProvider(countryCode string) (Provider, error) {
+	// Check registry first (for mocks)
+	if p, ok := providers[countryCode]; ok {
+		return p, nil
+	}
+
 	switch countryCode {
 	case "CO", "Colombia", "colombia":
 		return NewColombiaService(), nil

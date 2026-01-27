@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const ColombiaBaseURL = "https://consultaprocesos.ramajudicial.gov.co:448/api/v2"
+var ColombiaBaseURL = "https://consultaprocesos.ramajudicial.gov.co:448/api/v2"
 
 // ColombiaService implements Provider for Colombia
 type ColombiaService struct {

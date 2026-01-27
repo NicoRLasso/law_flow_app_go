@@ -127,11 +127,13 @@ func createCasesTriggers(db *gorm.DB) error {
 		   OR OLD.case_number IS NOT NEW.case_number
 		   OR OLD.filing_number IS NOT NEW.filing_number
 		   OR OLD.client_id IS NOT NEW.client_id
+		   OR (OLD.deleted_at IS NULL AND NEW.deleted_at IS NOT NULL)
 		BEGIN
 			DELETE FROM cases_fts WHERE rowid = (
 				SELECT rowid FROM cases_fts_mapping WHERE case_id = OLD.id
 			);
 
+			-- Only re-insert if NOT deleted
 			INSERT INTO cases_fts (
 				rowid, case_id, firm_id, case_number, case_title,
 				case_description, filing_number, client_name, party_name, log_content, document_content
@@ -148,8 +150,14 @@ func createCasesTriggers(db *gorm.DB) error {
 				COALESCE((SELECT name FROM case_parties WHERE case_id = NEW.id LIMIT 1), ''),
 				COALESCE((SELECT GROUP_CONCAT(COALESCE(title, '') || ' ' || COALESCE(content, ''), ' ') FROM case_logs WHERE case_id = NEW.id AND deleted_at IS NULL), ''),
 				COALESCE((SELECT GROUP_CONCAT(COALESCE(description, '') || ' ' || file_original_name, ' ') FROM case_documents WHERE case_id = NEW.id AND deleted_at IS NULL), '')
-			FROM cases_fts_mapping m WHERE m.case_id = NEW.id;
+			FROM cases_fts_mapping m 
+			WHERE m.case_id = NEW.id 
+			AND NEW.deleted_at IS NULL;
 
+			-- If it was soft-deleted, we might want to also clean up mapping or keep it?
+			-- RebuildFTSIndex excludes deleted_at IS NULL makers.
+			-- For triggers, if it's soft-deleted, we already deleted from cases_fts.
+			
 			UPDATE cases_fts_mapping SET last_updated = CURRENT_TIMESTAMP WHERE case_id = NEW.id;
 		END
 	`).Error

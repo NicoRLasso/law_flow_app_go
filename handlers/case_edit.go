@@ -372,7 +372,7 @@ func UpdateCaseHandler(c echo.Context) error {
 			time.Sleep(1 * time.Second)
 			log.Printf("[HANDLER] Starting async update for CaseID: %s", id)
 			fmt.Println(">> [DEBUG] Goroutine started for CaseID:", id) // Force stdout
-			if err := jobs.UpdateSingleCase(id); err != nil {
+			if err := jobs.UpdateSingleCase(db.DB, id); err != nil {
 				log.Printf("[HANDLER] Async update failed for CaseID %s: %v", id, err)
 				fmt.Printf(">> [DEBUG] UpdateSingleCase failed: %v\n", err)
 			} else {
