@@ -249,11 +249,11 @@ func main() {
 	// Public routes (no authentication required)
 	e.GET("/", handlers.LandingHandler)
 	e.GET("/login", handlers.LoginHandler)
-	e.POST("/login", handlers.LoginPostHandler)
+	e.POST("/login", handlers.LoginPostHandler, middleware.LoginRateLimiter.Middleware())
 	e.GET("/forgot-password", handlers.ForgotPasswordHandler)
-	e.POST("/forgot-password", handlers.ForgotPasswordPostHandler)
+	e.POST("/forgot-password", handlers.ForgotPasswordPostHandler, middleware.PasswordResetRateLimiter.Middleware())
 	e.GET("/reset-password", handlers.ResetPasswordHandler)
-	e.POST("/reset-password", handlers.ResetPasswordPostHandler)
+	e.POST("/reset-password", handlers.ResetPasswordPostHandler, middleware.PasswordResetRateLimiter.Middleware())
 
 	// Website Static Pages (Footer)
 	e.GET("/about", handlers.WebsiteAboutHandler)
@@ -263,11 +263,11 @@ func main() {
 	e.GET("/terms", handlers.WebsiteTermsHandler)
 	e.GET("/cookies", handlers.WebsiteCookiesHandler)
 	e.GET("/compliance", handlers.WebsiteComplianceHandler)
-	e.POST("/api/website/contact", handlers.WebsiteContactSubmitHandler)
+	e.POST("/api/website/contact", handlers.WebsiteContactSubmitHandler, middleware.PublicFormRateLimiter.Middleware())
 
 	// Public case request routes (no authentication)
 	e.GET("/firm/:slug/request", handlers.PublicCaseRequestHandler)
-	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler)
+	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler, middleware.PublicFormRateLimiter.Middleware())
 	e.GET("/firm/:slug/request/success", handlers.PublicCaseRequestSuccessHandler)
 
 	// Firm setup routes (authenticated but no firm required)

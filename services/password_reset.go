@@ -88,9 +88,9 @@ func ValidateResetToken(db *gorm.DB, token string) (*models.User, error) {
 
 // ResetPassword resets a user's password using a valid token
 func ResetPassword(db *gorm.DB, token string, newPassword string) error {
-	// Validate password strength
-	if len(newPassword) < 8 {
-		return fmt.Errorf("password must be at least 8 characters long")
+	// Validate password strength using comprehensive policy
+	if err := ValidatePassword(newPassword); err != nil {
+		return err
 	}
 
 	// Validate token and get user

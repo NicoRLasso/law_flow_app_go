@@ -25,6 +25,7 @@ type User struct {
 	// Security / Lockout
 	FailedLoginAttempts int        `gorm:"default:0" json:"-"`
 	LockoutUntil        *time.Time `json:"-"`
+	LockoutCount        int        `gorm:"default:0" json:"-"` // Tracks lockout occurrences for exponential backoff
 
 	// Optional personal information
 	Address        *string `json:"address,omitempty"`

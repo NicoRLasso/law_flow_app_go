@@ -1,11 +1,18 @@
 package config
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/joho/godotenv"
+)
+
+const (
+	// MinSessionSecretLength is the minimum required length for session secret in production
+	MinSessionSecretLength = 32
 )
 
 type Config struct {
@@ -41,10 +48,22 @@ func Load() *Config {
 		log.Println("No .env file found, using system environment variables")
 	}
 
+	environment := getEnv("ENVIRONMENT", "development")
+	sessionSecret := getEnv("SESSION_SECRET", "")
+
+	// Validate session secret - this will fatal in production if invalid
+	ValidateSessionSecret(sessionSecret, environment)
+
+	// In development, generate a secure secret if none provided
+	if sessionSecret == "" && environment != "production" {
+		sessionSecret = GenerateSecureSecret()
+		log.Println("[INFO] Generated temporary session secret for development. Set SESSION_SECRET env var for persistence.")
+	}
+
 	return &Config{
 		ServerPort:         getEnv("SERVER_PORT", "8080"),
 		DBPath:             getEnv("DB_PATH", "db/app.db"),
-		Environment:        getEnv("ENVIRONMENT", "development"),
+		Environment:        environment,
 		UploadDir:          getEnv("UPLOAD_DIR", "static/uploads"),
 		ResendAPIKey:       getEnv("RESEND_API_KEY", ""),
 		EmailFrom:          getEnv("EMAIL_FROM", "noreply@lexlegalcloud.org"),
@@ -52,7 +71,7 @@ func Load() *Config {
 		EmailTestMode:      getEnvBool("EMAIL_TEST_MODE", true), // Default true for safety
 		AllowedOrigins:     strings.Split(getEnv("ALLOWED_ORIGINS", "*"), ","),
 		AppURL:             getEnv("APP_URL", "http://localhost:8080"),
-		SessionSecret:      getEnv("SESSION_SECRET", ""),
+		SessionSecret:      sessionSecret,
 		TursoDatabaseURL:   getEnv("TURSO_DATABASE_URL", ""),
 		TursoAuthToken:     getEnv("TURSO_AUTH_TOKEN", ""),
 		TurnstileSiteKey:   getEnv("TURNSTILE_SITE_KEY", ""),
@@ -88,4 +107,47 @@ func getEnvBool(key string, defaultValue bool) bool {
 	default:
 		return defaultValue
 	}
+}
+
+// ValidateSessionSecret validates the session secret meets security requirements
+// In production, it must be at least 32 bytes and not a known insecure default
+func ValidateSessionSecret(secret string, environment string) error {
+	// Known insecure defaults that must be rejected
+	insecureDefaults := []string{
+		"dev-secret-change-in-production",
+		"change-me",
+		"secret",
+		"development",
+		"test",
+		"",
+	}
+
+	for _, insecure := range insecureDefaults {
+		if strings.EqualFold(secret, insecure) {
+			if environment == "production" {
+				log.Fatal("[CRITICAL] SESSION_SECRET is set to an insecure default value. Generate a secure random secret with: openssl rand -base64 32")
+			}
+			log.Printf("[WARNING] SESSION_SECRET is set to an insecure default value. This is acceptable only in development.")
+			return nil
+		}
+	}
+
+	if environment == "production" {
+		if len(secret) < MinSessionSecretLength {
+			log.Fatalf("[CRITICAL] SESSION_SECRET must be at least %d characters in production (current: %d). Generate with: openssl rand -base64 32", MinSessionSecretLength, len(secret))
+		}
+	}
+
+	return nil
+}
+
+// GenerateSecureSecret generates a cryptographically secure random secret
+// This is used only for development when no secret is provided
+func GenerateSecureSecret() string {
+	bytes := make([]byte, 32)
+	if _, err := rand.Read(bytes); err != nil {
+		log.Printf("[WARNING] Failed to generate secure secret: %v", err)
+		return ""
+	}
+	return base64.StdEncoding.EncodeToString(bytes)
 }
