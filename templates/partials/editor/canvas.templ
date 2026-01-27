@@ -14,9 +14,9 @@ templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 	>
 		<div class="flex justify-center py-12 px-4 min-w-fit">
 			<div
-				class="relative"
+				class="relative transition-transform duration-200 ease-out origin-top"
 				id="editor-wrapper"
-				:style="`width: ${pageWidth}px;`"
+				:style="`width: ${pageWidth}px; transform: scale(${zoomLevel});`"
 			>
 				<!-- Page backgrounds (visual only) -->
 				<template x-for="page in totalPages" :key="'bg-' + page">
@@ -38,7 +38,7 @@ templ Canvas(ctx context.Context, template models.DocumentTemplate) {
 				<div
 					id="editor-content"
 					contenteditable="true"
-					class="relative text-black outline-none text-[12pt] font-serif leading-relaxed z-10"
+					class="editor-content relative text-black outline-none text-[12pt] font-serif leading-relaxed z-10"
 					:style="`width: ${pageWidth}px; min-height: ${pageHeight}px; padding: ${pagePadding}px; box-sizing: border-box;`"
 					style={ GetPaperStyle(template) }
 					@keydown="handleKeydown($event)"

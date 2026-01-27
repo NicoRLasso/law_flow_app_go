@@ -2,6 +2,7 @@ package company
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/layouts"
@@ -63,7 +64,7 @@ templ Contact(ctx context.Context, title string, csrfToken string, seo *models.S
 				<!-- Left Side - Promotional Content -->
 				<div class="text-center lg:text-left self-center">
 					<div class="mb-10">
-						<img src="/static/images/favicon.png" alt="lexlegalcloud Logo" class="w-24 h-24 mx-auto lg:mx-0 opacity-90"/>
+						<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="lexlegalcloud Logo" class="w-24 h-24 mx-auto lg:mx-0 opacity-90"/>
 					</div>
 					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight">
 						{ i18n.T(ctx, "pages.contact.title") }

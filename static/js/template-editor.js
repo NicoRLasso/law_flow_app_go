@@ -12,6 +12,7 @@ function templateEditor(configuredPageHeight = 1056) {
         ...createFormattingBehavior(),
         ...createPagingBehavior(),
         ...createAutoPagingBehavior(),
+        ...createZoomBehavior(),
 
         // Shared state
         debounceTimer: null,

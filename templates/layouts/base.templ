@@ -70,7 +70,7 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				@templ.Raw(generateJSONLD(seo, middleware.GetNonce(ctx)))
 			}
 			<!-- Favicon -->
-			<link rel="icon" type="image/png" href="/static/images/favicon.png"/>
+			<link rel="icon" type="image/png" href={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) }/>
 			<!-- Google Fonts: Playfair Display (Serif) & Lato (Sans) -->
 			<link rel="preconnect" href="https://fonts.googleapis.com">
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -104,8 +104,8 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 				});
 			</script>
 			<!-- Custom JavaScript -->
-			<script src="/static/js/marquee.js" defer nonce={ middleware.GetNonce(ctx) }></script>
-			<script src="/static/js/app.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			<script src={ "/static/js/marquee.js?v=" + middleware.GetMarqueeJSVersion(ctx) } defer nonce={ middleware.GetNonce(ctx) }></script>
+			<script src={ "/static/js/app.js?v=" + middleware.GetAppJSVersion(ctx) } defer nonce={ middleware.GetNonce(ctx) }></script>
 		</head>
 		<body class="bg-background text-foreground">
 

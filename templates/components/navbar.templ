@@ -2,6 +2,7 @@ package components
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 )
@@ -16,7 +17,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 						if firm.LogoURL != "" {
 							<img src={ firm.LogoURL } alt={ firm.Name } class="w-10 h-10 rounded-sm object-contain"/>
 						} else {
-							<img src="/static/images/favicon.png" alt="lexlegalcloud" class="w-10 h-10"/>
+							<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="lexlegalcloud" class="w-10 h-10"/>
 						}
 						<h1 class="text-2xl font-bold font-serif tracking-tight text-primary">
 							{ firm.Name }

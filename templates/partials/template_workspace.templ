@@ -9,7 +9,7 @@ import (
 templ TemplateWorkspace(ctx context.Context, template models.DocumentTemplate) {
 	<div
 		id="template-workspace"
-		class="flex flex-col h-[calc(100vh-140px)]"
+		class="flex flex-col h-full overflow-hidden"
 		x-data={ "templateEditor(" + editor.GetPageHeight(template) + ")" }
 		x-init="init()"
 		@click="showContextMenu = false; openDropdown = ''"

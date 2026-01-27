@@ -217,7 +217,8 @@ func main() {
 		return func(c echo.Context) error {
 			// Set Cache-Control headers before calling the next handler
 			if cfg.Environment == "production" {
-				c.Response().Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+				// 1 month cache for static assets (with cache busting via asset versions)
+				c.Response().Header().Set("Cache-Control", "public, max-age=2592000")
 			} else {
 				// 1 hour for development to help with testing but not be too sticky
 				c.Response().Header().Set("Cache-Control", "public, max-age=3600")

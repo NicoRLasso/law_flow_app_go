@@ -2,6 +2,7 @@ package layouts
 
 import (
 	"context"
+	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -26,7 +27,7 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 						</button>
 					</div>
 					<a href="/" class="btn btn-ghost text-2xl font-serif font-bold tracking-tight text-primary normal-case gap-2">
-						<img src="/static/images/favicon.png" alt="Logo" class="w-8 h-8" />
+						<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="Logo" class="w-8 h-8" />
 						{ i18n.T(ctx, "app.name") }
 					</a>
 				</div>

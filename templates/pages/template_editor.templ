@@ -10,13 +10,17 @@ import (
 
 templ TemplateEditor(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, template models.DocumentTemplate, categories []models.TemplateCategory, isNew bool) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-base-200">
-			@components.Navbar(ctx, user, firm, "/templates")
+		<div class="h-screen flex flex-col overflow-hidden bg-base-200">
+			<div class="flex-none">
+				@components.Navbar(ctx, user, firm, "/templates")
+			</div>
 			<!-- Editor Root Container for HTMX Swaps -->
-			<main class="w-full" id="template-editor-root">
+			<main class="flex-1 relative w-full overflow-hidden" id="template-editor-root">
 				if isNew {
-					<div class="container mx-auto px-4 py-8 md:py-12">
-						@partials.TemplateMetadataForm(ctx, template, categories, true)
+					<div class="h-full overflow-y-auto">
+						<div class="container mx-auto px-4 py-8 md:py-12">
+							@partials.TemplateMetadataForm(ctx, template, categories, true)
+						</div>
 					</div>
 				} else {
 					@partials.TemplateWorkspace(ctx, template)
