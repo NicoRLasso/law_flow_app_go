@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
@@ -16,7 +17,7 @@ func GetAppointmentTypesHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "User not found")
 	}
 
-	types, err := services.GetAppointmentTypes(*user.FirmID)
+	types, err := services.GetAppointmentTypes(db.DB, *user.FirmID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch appointment types")
 	}
@@ -31,7 +32,7 @@ func GetActiveAppointmentTypesHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized, "User not found")
 	}
 
-	types, err := services.GetActiveAppointmentTypes(*user.FirmID)
+	types, err := services.GetActiveAppointmentTypes(db.DB, *user.FirmID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch appointment types")
 	}
@@ -80,7 +81,7 @@ func CreateAppointmentTypeHandler(c echo.Context) error {
 		IsActive:        true,
 	}
 
-	if err := services.CreateAppointmentType(aptType); err != nil {
+	if err := services.CreateAppointmentType(db.DB, aptType); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create appointment type")
 	}
 
@@ -95,7 +96,7 @@ func UpdateAppointmentTypeHandler(c echo.Context) error {
 	}
 
 	id := c.Param("id")
-	aptType, err := services.GetAppointmentTypeByID(id)
+	aptType, err := services.GetAppointmentTypeByID(db.DB, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Appointment type not found")
 	}
@@ -138,11 +139,11 @@ func UpdateAppointmentTypeHandler(c echo.Context) error {
 		updates["is_active"] = *req.IsActive
 	}
 
-	if err := services.UpdateAppointmentType(id, updates); err != nil {
+	if err := services.UpdateAppointmentType(db.DB, id, updates); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update appointment type")
 	}
 
-	aptType, _ = services.GetAppointmentTypeByID(id)
+	aptType, _ = services.GetAppointmentTypeByID(db.DB, id)
 	return c.JSON(http.StatusOK, aptType)
 }
 
@@ -154,7 +155,7 @@ func DeleteAppointmentTypeHandler(c echo.Context) error {
 	}
 
 	id := c.Param("id")
-	aptType, err := services.GetAppointmentTypeByID(id)
+	aptType, err := services.GetAppointmentTypeByID(db.DB, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Appointment type not found")
 	}
@@ -164,7 +165,7 @@ func DeleteAppointmentTypeHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
 	}
 
-	if err := services.DeleteAppointmentType(id); err != nil {
+	if err := services.DeleteAppointmentType(db.DB, id); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete appointment type")
 	}
 

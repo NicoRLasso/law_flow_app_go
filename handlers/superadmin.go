@@ -200,7 +200,7 @@ func SuperadminCreateUserHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to create user. Email might be taken.</div>")
 	}
 
-	services.LogSecurityEvent("SUPERADMIN_USER_CREATED", currentUser.ID, "Created user: "+user.ID)
+	services.LogSecurityEvent(db.DB, "SUPERADMIN_USER_CREATED", currentUser.ID, "Created user: "+user.ID)
 
 	// Send welcome email asynchronously
 	cfg := c.Get("config").(*config.Config)
@@ -258,7 +258,7 @@ func SuperadminUpdateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "<div class='text-red-400'>Failed to update user</div>")
 	}
 
-	services.LogSecurityEvent("SUPERADMIN_USER_UPDATED", currentUser.ID, "Updated user: "+user.ID)
+	services.LogSecurityEvent(db.DB, "SUPERADMIN_USER_UPDATED", currentUser.ID, "Updated user: "+user.ID)
 
 	// Return updated list + close modal via OOB
 	c.Response().Header().Set("HX-Trigger", "closeModal")
@@ -301,7 +301,7 @@ func SuperadminDeleteUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete user")
 	}
 
-	services.LogSecurityEvent("SUPERADMIN_USER_DELETED", currentUser.ID, "Deleted user: "+id)
+	services.LogSecurityEvent(db.DB, "SUPERADMIN_USER_DELETED", currentUser.ID, "Deleted user: "+id)
 
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetUsersListHTMX(c)
@@ -413,7 +413,7 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
-	services.LogSecurityEvent("SUPERADMIN_FIRM_CREATED", currentUser.ID, "Created firm: "+firm.ID)
+	services.LogSecurityEvent(db.DB, "SUPERADMIN_FIRM_CREATED", currentUser.ID, "Created firm: "+firm.ID)
 
 	// Return OOB swap for table update + trigger close modal
 	c.Response().Header().Set("HX-Trigger", "closeModal")
@@ -459,7 +459,7 @@ func SuperadminUpdateFirm(c echo.Context) error {
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
-	services.LogSecurityEvent("SUPERADMIN_FIRM_UPDATED", currentUser.ID, "Updated firm: "+firm.ID)
+	services.LogSecurityEvent(db.DB, "SUPERADMIN_FIRM_UPDATED", currentUser.ID, "Updated firm: "+firm.ID)
 
 	// Return OOB swap for table update + trigger close modal
 	c.Response().Header().Set("HX-Trigger", "closeModal")
@@ -511,7 +511,7 @@ func SuperadminDeleteFirm(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete firm")
 	}
 
-	services.LogSecurityEvent("SUPERADMIN_FIRM_DELETED", currentUser.ID, "Deleted firm: "+id)
+	services.LogSecurityEvent(db.DB, "SUPERADMIN_FIRM_DELETED", currentUser.ID, "Deleted firm: "+id)
 
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 	return SuperadminGetFirmsListHTMX(c)

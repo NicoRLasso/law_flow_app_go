@@ -98,7 +98,7 @@ func UpdateProfileHandler(c echo.Context) error {
 	middleware.SetLanguageCookie(c, user.Language)
 
 	// Log security event
-	services.LogSecurityEvent("PROFILE_UPDATED", user.ID, "User updated their profile")
+	services.LogSecurityEvent(db.DB, "PROFILE_UPDATED", user.ID, "User updated their profile")
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {
@@ -179,7 +179,7 @@ func ChangePasswordHandler(c echo.Context) error {
 	}
 
 	// Log security event
-	services.LogSecurityEvent("PASSWORD_CHANGED", user.ID, "User changed their password")
+	services.LogSecurityEvent(db.DB, "PASSWORD_CHANGED", user.ID, "User changed their password")
 
 	// Check if this is an HTMX request
 	if c.Request().Header.Get("HX-Request") == "true" {

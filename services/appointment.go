@@ -2,15 +2,16 @@ package services
 
 import (
 	"errors"
-	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // CreateAppointment creates a new appointment after checking for conflicts
-func CreateAppointment(apt *models.Appointment) error {
+func CreateAppointment(db *gorm.DB, apt *models.Appointment) error {
 	// Check for conflicts before creating
-	hasConflict, err := CheckAppointmentConflict(apt.LawyerID, apt.StartTime, apt.EndTime, "")
+	hasConflict, err := CheckAppointmentConflict(db, apt.LawyerID, apt.StartTime, apt.EndTime, "")
 	if err != nil {
 		return err
 	}
@@ -19,7 +20,7 @@ func CreateAppointment(apt *models.Appointment) error {
 	}
 
 	// Verify the slot is within availability and not blocked
-	isAvailable, err := IsTimeSlotAvailable(apt.LawyerID, apt.StartTime, apt.EndTime)
+	isAvailable, err := IsTimeSlotAvailable(db, apt.LawyerID, apt.StartTime, apt.EndTime)
 	if err != nil {
 		return err
 	}
@@ -27,13 +28,13 @@ func CreateAppointment(apt *models.Appointment) error {
 		return errors.New("selected time is not within lawyer's availability")
 	}
 
-	return db.DB.Create(apt).Error
+	return db.Create(apt).Error
 }
 
 // GetAppointmentByID fetches a single appointment with relationships
-func GetAppointmentByID(id string) (*models.Appointment, error) {
+func GetAppointmentByID(db *gorm.DB, id string) (*models.Appointment, error) {
 	var apt models.Appointment
-	err := db.DB.Preload("Lawyer").Preload("Client").Preload("Case").Preload("AppointmentType").
+	err := db.Preload("Lawyer").Preload("Client").Preload("Case").Preload("AppointmentType").
 		First(&apt, "id = ?", id).Error
 	if err != nil {
 		return nil, err
@@ -42,9 +43,9 @@ func GetAppointmentByID(id string) (*models.Appointment, error) {
 }
 
 // GetLawyerAppointments fetches appointments for a lawyer within a date range
-func GetLawyerAppointments(lawyerID string, startDate, endDate time.Time) ([]models.Appointment, error) {
+func GetLawyerAppointments(db *gorm.DB, lawyerID string, startDate, endDate time.Time) ([]models.Appointment, error) {
 	var appointments []models.Appointment
-	err := db.DB.Preload("Client").
+	err := db.Preload("Client").
 		Where("lawyer_id = ? AND start_time >= ? AND end_time <= ?", lawyerID, startDate, endDate).
 		Where("status NOT IN (?)", []string{models.AppointmentStatusCancelled}).
 		Order("start_time asc").
@@ -53,9 +54,9 @@ func GetLawyerAppointments(lawyerID string, startDate, endDate time.Time) ([]mod
 }
 
 // GetFirmAppointments fetches all appointments for a firm within a date range
-func GetFirmAppointments(firmID string, startDate, endDate time.Time) ([]models.Appointment, error) {
+func GetFirmAppointments(db *gorm.DB, firmID string, startDate, endDate time.Time) ([]models.Appointment, error) {
 	var appointments []models.Appointment
-	err := db.DB.Preload("Lawyer").Preload("Client").
+	err := db.Preload("Lawyer").Preload("Client").
 		Where("firm_id = ? AND start_time >= ? AND end_time <= ?", firmID, startDate, endDate).
 		Order("start_time asc").
 		Find(&appointments).Error
@@ -63,11 +64,11 @@ func GetFirmAppointments(firmID string, startDate, endDate time.Time) ([]models.
 }
 
 // GetLawyerAppointmentsPaginated fetches appointments for a lawyer with pagination
-func GetLawyerAppointmentsPaginated(lawyerID string, startDate, endDate time.Time, page, limit int) ([]models.Appointment, int64, error) {
+func GetLawyerAppointmentsPaginated(db *gorm.DB, lawyerID string, startDate, endDate time.Time, page, limit int) ([]models.Appointment, int64, error) {
 	var appointments []models.Appointment
 	var total int64
 
-	query := db.DB.Model(&models.Appointment{}).
+	query := db.Model(&models.Appointment{}).
 		Where("lawyer_id = ? AND start_time >= ? AND end_time <= ?", lawyerID, startDate, endDate).
 		Where("status NOT IN (?)", []string{models.AppointmentStatusCancelled})
 
@@ -85,11 +86,11 @@ func GetLawyerAppointmentsPaginated(lawyerID string, startDate, endDate time.Tim
 }
 
 // GetFirmAppointmentsPaginated fetches appointments for a firm with pagination
-func GetFirmAppointmentsPaginated(firmID string, startDate, endDate time.Time, page, limit int) ([]models.Appointment, int64, error) {
+func GetFirmAppointmentsPaginated(db *gorm.DB, firmID string, startDate, endDate time.Time, page, limit int) ([]models.Appointment, int64, error) {
 	var appointments []models.Appointment
 	var total int64
 
-	query := db.DB.Model(&models.Appointment{}).
+	query := db.Model(&models.Appointment{}).
 		Where("firm_id = ? AND start_time >= ? AND end_time <= ?", firmID, startDate, endDate)
 
 	if err := query.Count(&total).Error; err != nil {
@@ -106,9 +107,9 @@ func GetFirmAppointmentsPaginated(firmID string, startDate, endDate time.Time, p
 }
 
 // GetClientAppointments fetches appointments for a client
-func GetClientAppointments(clientID string) ([]models.Appointment, error) {
+func GetClientAppointments(db *gorm.DB, clientID string) ([]models.Appointment, error) {
 	var appointments []models.Appointment
-	err := db.DB.Preload("Lawyer").
+	err := db.Preload("Lawyer").
 		Where("client_id = ?", clientID).
 		Order("start_time desc").
 		Find(&appointments).Error
@@ -116,28 +117,28 @@ func GetClientAppointments(clientID string) ([]models.Appointment, error) {
 }
 
 // UpdateAppointmentStatus updates the status of an appointment
-func UpdateAppointmentStatus(id, status string) error {
+func UpdateAppointmentStatus(db *gorm.DB, id, status string) error {
 	if !models.IsValidAppointmentStatus(status) {
 		return errors.New("invalid appointment status")
 	}
-	return db.DB.Model(&models.Appointment{}).Where("id = ?", id).Update("status", status).Error
+	return db.Model(&models.Appointment{}).Where("id = ?", id).Update("status", status).Error
 }
 
 // CancelAppointment cancels an appointment
-func CancelAppointment(id string) error {
-	apt, err := GetAppointmentByID(id)
+func CancelAppointment(db *gorm.DB, id string) error {
+	apt, err := GetAppointmentByID(db, id)
 	if err != nil {
 		return err
 	}
 	if !apt.IsCancellable() {
 		return errors.New("appointment cannot be cancelled")
 	}
-	return UpdateAppointmentStatus(id, models.AppointmentStatusCancelled)
+	return UpdateAppointmentStatus(db, id, models.AppointmentStatusCancelled)
 }
 
 // RescheduleAppointment reschedules an appointment to a new time
-func RescheduleAppointment(id string, newStart, newEnd time.Time) error {
-	apt, err := GetAppointmentByID(id)
+func RescheduleAppointment(db *gorm.DB, id string, newStart, newEnd time.Time) error {
+	apt, err := GetAppointmentByID(db, id)
 	if err != nil {
 		return err
 	}
@@ -146,7 +147,7 @@ func RescheduleAppointment(id string, newStart, newEnd time.Time) error {
 	}
 
 	// Check for conflicts (excluding this appointment)
-	hasConflict, err := CheckAppointmentConflict(apt.LawyerID, newStart, newEnd, id)
+	hasConflict, err := CheckAppointmentConflict(db, apt.LawyerID, newStart, newEnd, id)
 	if err != nil {
 		return err
 	}
@@ -154,7 +155,7 @@ func RescheduleAppointment(id string, newStart, newEnd time.Time) error {
 		return errors.New("new time conflicts with an existing appointment")
 	}
 
-	return db.DB.Model(&models.Appointment{}).Where("id = ?", id).
+	return db.Model(&models.Appointment{}).Where("id = ?", id).
 		Updates(map[string]interface{}{
 			"start_time": newStart,
 			"end_time":   newEnd,
@@ -162,9 +163,9 @@ func RescheduleAppointment(id string, newStart, newEnd time.Time) error {
 }
 
 // CheckAppointmentConflict checks if a time slot conflicts with existing appointments
-func CheckAppointmentConflict(lawyerID string, startTime, endTime time.Time, excludeID string) (bool, error) {
+func CheckAppointmentConflict(db *gorm.DB, lawyerID string, startTime, endTime time.Time, excludeID string) (bool, error) {
 	var count int64
-	query := db.DB.Model(&models.Appointment{}).
+	query := db.Model(&models.Appointment{}).
 		Where("lawyer_id = ?", lawyerID).
 		Where("status NOT IN (?)", []string{models.AppointmentStatusCancelled, models.AppointmentStatusNoShow}).
 		Where("start_time < ? AND end_time > ?", endTime, startTime) // Overlap check
@@ -181,7 +182,7 @@ func CheckAppointmentConflict(lawyerID string, startTime, endTime time.Time, exc
 }
 
 // GetAvailableSlots generates available time slots for a lawyer on a specific date
-func GetAvailableSlots(lawyerID string, date time.Time, slotDurationMinutes int, firmTimezone string) ([]models.TimeSlot, error) {
+func GetAvailableSlots(db *gorm.DB, lawyerID string, date time.Time, slotDurationMinutes int, firmTimezone string) ([]models.TimeSlot, error) {
 	// Load timezone
 	loc, err := time.LoadLocation(firmTimezone)
 	if err != nil {
@@ -197,7 +198,7 @@ func GetAvailableSlots(lawyerID string, date time.Time, slotDurationMinutes int,
 
 	// 1. Get availability slots for this day
 	var availabilities []models.Availability
-	err = db.DB.Where("lawyer_id = ? AND day_of_week = ? AND is_active = ?", lawyerID, dayOfWeek, true).
+	err = db.Where("lawyer_id = ? AND day_of_week = ? AND is_active = ?", lawyerID, dayOfWeek, true).
 		Order("start_time").
 		Find(&availabilities).Error
 	if err != nil {
@@ -209,13 +210,13 @@ func GetAvailableSlots(lawyerID string, date time.Time, slotDurationMinutes int,
 	}
 
 	// 2. Get blocked dates overlapping with this day
-	blockedDates, err := GetBlockedDates(lawyerID, dayStart, dayEnd)
+	blockedDates, err := GetBlockedDates(db, lawyerID, dayStart, dayEnd)
 	if err != nil {
 		return nil, err
 	}
 
 	// 3. Get existing appointments for this day (excluding cancelled)
-	existingAppointments, err := GetLawyerAppointments(lawyerID, dayStart, dayEnd)
+	existingAppointments, err := GetLawyerAppointments(db, lawyerID, dayStart, dayEnd)
 	if err != nil {
 		return nil, err
 	}
@@ -280,11 +281,11 @@ func GetAvailableSlots(lawyerID string, date time.Time, slotDurationMinutes int,
 }
 
 // GetFirmLawyersWithAvailability fetches lawyers from a firm who have availability set up
-func GetFirmLawyersWithAvailability(firmID string) ([]models.User, error) {
+func GetFirmLawyersWithAvailability(db *gorm.DB, firmID string) ([]models.User, error) {
 	var lawyers []models.User
 
 	// Get lawyers with role 'lawyer' or 'admin' who have at least one active availability slot
-	err := db.DB.
+	err := db.
 		Where("firm_id = ? AND role IN (?) AND is_active = ?", firmID, []string{"lawyer", "admin"}, true).
 		Where("id IN (SELECT DISTINCT lawyer_id FROM availabilities WHERE is_active = ?))", true).
 		Find(&lawyers).Error

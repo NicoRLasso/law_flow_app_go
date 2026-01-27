@@ -137,8 +137,3 @@ func DeleteAllUserSessions(db *gorm.DB, userID string) error {
 	}
 	return nil
 }
-
-// LogSecurityEvent logs security-related events
-func LogSecurityEvent(eventType, userID, details string) {
-	log.Printf("[SECURITY] %s | User: %s | Details: %s", eventType, userID, details)
-}

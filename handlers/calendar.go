@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"law_flow_app_go/db"
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
@@ -19,7 +20,7 @@ func CalendarPageHandler(c echo.Context) error {
 	}
 
 	// Fetch appointment types for filter/legend (optional)
-	aptTypes, _ := services.GetActiveAppointmentTypes(*user.FirmID)
+	aptTypes, _ := services.GetActiveAppointmentTypes(db.DB, *user.FirmID)
 	firm := middleware.GetCurrentFirm(c)
 	csrfToken := middleware.GetCSRFToken(c)
 
@@ -68,9 +69,9 @@ func CalendarEventsHandler(c echo.Context) error {
 	var dbErr error
 
 	if user.Role == "admin" || user.Role == "staff" {
-		appointments, dbErr = services.GetFirmAppointments(*user.FirmID, startTime, endTime)
+		appointments, dbErr = services.GetFirmAppointments(db.DB, *user.FirmID, startTime, endTime)
 	} else {
-		appointments, dbErr = services.GetLawyerAppointments(user.ID, startTime, endTime)
+		appointments, dbErr = services.GetLawyerAppointments(db.DB, user.ID, startTime, endTime)
 	}
 
 	if dbErr != nil {

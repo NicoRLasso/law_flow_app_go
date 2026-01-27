@@ -40,25 +40,25 @@ func AvailabilityPageHandler(c echo.Context) error {
 	lawyerID := currentUser.ID
 
 	// Fallback: create default availability if none exists (for users created before availability seeding was added to user creation)
-	hasSlots, err := services.HasAvailabilitySlots(lawyerID)
+	hasSlots, err := services.HasAvailabilitySlots(db.DB, lawyerID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check availability slots")
 	}
 
 	if !hasSlots {
-		if err := services.CreateDefaultAvailability(lawyerID); err != nil {
+		if err := services.CreateDefaultAvailability(db.DB, lawyerID); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create default availability")
 		}
 	}
 
 	// Get availability slots
-	slots, err := services.GetLawyerAvailability(lawyerID)
+	slots, err := services.GetLawyerAvailability(db.DB, lawyerID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to load availability")
 	}
 
 	// Get blocked dates
-	blockedDates, err := services.GetAllBlockedDates(lawyerID)
+	blockedDates, err := services.GetAllBlockedDates(db.DB, lawyerID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to load blocked dates")
 	}
@@ -71,7 +71,7 @@ func AvailabilityPageHandler(c echo.Context) error {
 // GetAvailabilityHandler returns availability slots for the current lawyer
 func GetAvailabilityHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
-	slots, err := services.GetLawyerAvailability(currentUser.ID)
+	slots, err := services.GetLawyerAvailability(db.DB, currentUser.ID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to load availability")
 	}
@@ -115,7 +115,7 @@ func CreateAvailabilityHandler(c echo.Context) error {
 	}
 
 	// Check for overlaps
-	overlaps, err := services.CheckAvailabilityOverlap(currentUser.ID, dayOfWeek, startTime, endTime, "")
+	overlaps, err := services.CheckAvailabilityOverlap(db.DB, currentUser.ID, dayOfWeek, startTime, endTime, "")
 	if err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.check_failed")))
@@ -137,7 +137,7 @@ func CreateAvailabilityHandler(c echo.Context) error {
 		IsActive:  true,
 	}
 
-	if err := services.CreateAvailabilitySlot(slot); err != nil {
+	if err := services.CreateAvailabilitySlot(db.DB, slot); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.create_failed")))
 		}
@@ -166,7 +166,7 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 	ctx := c.Request().Context()
 	slotID := c.Param("id")
 
-	slot, err := services.GetAvailabilityByID(slotID)
+	slot, err := services.GetAvailabilityByID(db.DB, slotID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Slot not found")
 	}
@@ -204,7 +204,7 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 	}
 
 	// Check for overlaps (excluding current slot)
-	overlaps, err := services.CheckAvailabilityOverlap(slot.LawyerID, slot.DayOfWeek, slot.StartTime, slot.EndTime, slot.ID)
+	overlaps, err := services.CheckAvailabilityOverlap(db.DB, slot.LawyerID, slot.DayOfWeek, slot.StartTime, slot.EndTime, slot.ID)
 	if err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.check_failed")))
@@ -218,7 +218,7 @@ func UpdateAvailabilityHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Slot overlaps with existing availability")
 	}
 
-	if err := services.UpdateAvailabilitySlot(slot); err != nil {
+	if err := services.UpdateAvailabilitySlot(db.DB, slot); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, availabilityErrorHTML(i18n.T(ctx, "availability.errors.update_failed")))
 		}
@@ -288,13 +288,15 @@ func DeleteAvailabilityHandler(c echo.Context) error {
 		AuditType:   "Availability",
 		TriggerName: "availability-updated",
 		FetchFunc: func(id string) (interface{}, string, error) {
-			slot, err := services.GetAvailabilityByID(id)
+			slot, err := services.GetAvailabilityByID(db.DB, id)
 			if err != nil {
 				return nil, "", err
 			}
 			return slot, slot.LawyerID, nil
 		},
-		DeleteFunc: services.DeleteAvailabilitySlot,
+		DeleteFunc: func(id string) error {
+			return services.DeleteAvailabilitySlot(db.DB, id)
+		},
 	}
 
 	return handleDeleteEntity(c, slotID, cfg)
@@ -303,7 +305,7 @@ func DeleteAvailabilityHandler(c echo.Context) error {
 // GetBlockedDatesHandler returns blocked dates for the current lawyer
 func GetBlockedDatesHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
-	blockedDates, err := services.GetAllBlockedDates(currentUser.ID)
+	blockedDates, err := services.GetAllBlockedDates(db.DB, currentUser.ID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to load blocked dates")
 	}
@@ -358,7 +360,7 @@ func CreateBlockedDateHandler(c echo.Context) error {
 		IsFullDay: true, // Simplified to always be full day
 	}
 
-	if err := services.CreateBlockedDate(blockedDate); err != nil {
+	if err := services.CreateBlockedDate(db.DB, blockedDate); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm">Failed to save block</div>`)
 		}
@@ -386,13 +388,15 @@ func DeleteBlockedDateHandler(c echo.Context) error {
 		AuditType:   "BlockedDate",
 		TriggerName: "blocked-dates-updated",
 		FetchFunc: func(id string) (interface{}, string, error) {
-			date, err := services.GetBlockedDateByID(id)
+			date, err := services.GetBlockedDateByID(db.DB, id)
 			if err != nil {
 				return nil, "", err
 			}
 			return date, date.LawyerID, nil
 		},
-		DeleteFunc: services.DeleteBlockedDate,
+		DeleteFunc: func(id string) error {
+			return services.DeleteBlockedDate(db.DB, id)
+		},
 	}
 
 	return handleDeleteEntity(c, dateID, cfg)
@@ -449,7 +453,7 @@ func CheckOverlapHandler(c echo.Context) error {
 		return c.HTML(http.StatusOK, `<div class="text-red-500 text-sm mt-1">End time must be after start time</div>`)
 	}
 
-	overlaps, err := services.CheckAvailabilityOverlap(currentUser.ID, dayOfWeek, startTime, endTime, excludeSlotID)
+	overlaps, err := services.CheckAvailabilityOverlap(db.DB, currentUser.ID, dayOfWeek, startTime, endTime, excludeSlotID)
 	if err != nil {
 		// Log error but don't show specific error to user during typing validation
 		return c.NoContent(http.StatusOK)
@@ -488,7 +492,7 @@ func CheckBlockedDateOverlapHandler(c echo.Context) error {
 
 	excludeID := c.FormValue("exclude_id")
 
-	overlaps, err := services.CheckBlockedDateOverlap(currentUser.ID, startAt, endAt, excludeID)
+	overlaps, err := services.CheckBlockedDateOverlap(db.DB, currentUser.ID, startAt, endAt, excludeID)
 	if err != nil {
 		return c.NoContent(http.StatusOK)
 	}

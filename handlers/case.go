@@ -581,7 +581,7 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 	// Update storage usage
 	if err := services.UpdateFirmUsageAfterStorageChange(db.DB, currentFirm.ID, uploadResult.FileSize); err != nil {
 		// Log but don't fail - usage will be recalculated on next check
-		services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update storage: "+err.Error())
+		services.LogSecurityEvent(db.DB, "USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update storage: "+err.Error())
 	}
 
 	// Audit logging (Upload)
@@ -853,7 +853,7 @@ func CreateCaseHandler(c echo.Context) error {
 	// Update usage cache
 	if err := services.UpdateFirmUsageAfterCaseChange(db.DB, currentFirm.ID, 1); err != nil {
 		// Log but don't fail - usage will be recalculated on next check
-		services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update case count: "+err.Error())
+		services.LogSecurityEvent(db.DB, "USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update case count: "+err.Error())
 	}
 
 	// Audit logging

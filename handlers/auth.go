@@ -103,7 +103,7 @@ func LoginPostHandler(c echo.Context) error {
 			user.FailedLoginAttempts = 0
 
 			// Log security event for excessive failed attempts
-			services.LogSecurityEvent("ACCOUNT_LOCKED", user.ID, "Account locked due to excessive failed login attempts")
+			services.LogSecurityEvent(db.DB, "ACCOUNT_LOCKED", user.ID, "Account locked due to excessive failed login attempts")
 		}
 		db.DB.Save(&user)
 

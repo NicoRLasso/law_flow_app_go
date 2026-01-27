@@ -81,9 +81,9 @@ func GetAppointmentsHandler(c echo.Context) error {
 
 	// Admins see all firm appointments, lawyers see their own
 	if user.Role == "admin" {
-		appointments, total, err = services.GetFirmAppointmentsPaginated(*user.FirmID, startDate, endDate, page, limit)
+		appointments, total, err = services.GetFirmAppointmentsPaginated(db.DB, *user.FirmID, startDate, endDate, page, limit)
 	} else {
-		appointments, total, err = services.GetLawyerAppointmentsPaginated(user.ID, startDate, endDate, page, limit)
+		appointments, total, err = services.GetLawyerAppointmentsPaginated(db.DB, user.ID, startDate, endDate, page, limit)
 	}
 
 	if err != nil {
@@ -142,7 +142,7 @@ func GetAvailableSlotsHandler(c echo.Context) error {
 	// TODO: Get slot duration from firm settings (default 60 min for now)
 	slotDuration := 60
 
-	slots, err := services.GetAvailableSlots(lawyerID, date, slotDuration, firm.Timezone)
+	slots, err := services.GetAvailableSlots(db.DB, lawyerID, date, slotDuration, firm.Timezone)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to generate slots")
 	}
@@ -234,7 +234,7 @@ func CreateAppointmentHandler(c echo.Context) error {
 		apt.AppointmentTypeID = &req.AppointmentTypeID
 	}
 
-	if err := services.CreateAppointment(apt); err != nil {
+	if err := services.CreateAppointment(db.DB, apt); err != nil {
 		// For HTMX requests, return error as HTML
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusConflict, fmt.Sprintf(`<div class="text-red-500 text-sm">%s</div>`, err.Error()))
@@ -334,7 +334,7 @@ func CreateAppointmentHandler(c echo.Context) error {
 	}
 
 	// Reload with relationships for API response
-	apt, _ = services.GetAppointmentByID(apt.ID)
+	apt, _ = services.GetAppointmentByID(db.DB, apt.ID)
 
 	// Audit logging (Create Appointment)
 	auditCtx := middleware.GetAuditContext(c)
@@ -351,7 +351,7 @@ func GetAppointmentHandler(c echo.Context) error {
 	}
 
 	id := c.Param("id")
-	apt, err := services.GetAppointmentByID(id)
+	apt, err := services.GetAppointmentByID(db.DB, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Appointment not found")
 	}
@@ -372,7 +372,7 @@ func UpdateAppointmentStatusHandler(c echo.Context) error {
 	}
 
 	id := c.Param("id")
-	apt, err := services.GetAppointmentByID(id)
+	apt, err := services.GetAppointmentByID(db.DB, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Appointment not found")
 	}
@@ -394,11 +394,11 @@ func UpdateAppointmentStatusHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid status")
 	}
 
-	if err := services.UpdateAppointmentStatus(id, req.Status); err != nil {
+	if err := services.UpdateAppointmentStatus(db.DB, id, req.Status); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update status")
 	}
 
-	apt, _ = services.GetAppointmentByID(id)
+	apt, _ = services.GetAppointmentByID(db.DB, id)
 
 	// Audit logging (Update Status)
 	auditCtx := middleware.GetAuditContext(c)
@@ -415,7 +415,7 @@ func CancelAppointmentHandler(c echo.Context) error {
 	}
 
 	id := c.Param("id")
-	apt, err := services.GetAppointmentByID(id)
+	apt, err := services.GetAppointmentByID(db.DB, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Appointment not found")
 	}
@@ -425,7 +425,7 @@ func CancelAppointmentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
 	}
 
-	if err := services.CancelAppointment(id); err != nil {
+	if err := services.CancelAppointment(db.DB, id); err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusOK, fmt.Sprintf(`<div class="text-red-500">Error: %s</div>`, err.Error()))
 		}
@@ -438,7 +438,7 @@ func CancelAppointmentHandler(c echo.Context) error {
 
 	if c.Request().Header.Get("HX-Request") == "true" {
 		// Reload the appointment to get updated status
-		updatedApt, _ := services.GetAppointmentByID(id)
+		updatedApt, _ := services.GetAppointmentByID(db.DB, id)
 		if updatedApt == nil {
 			return c.NoContent(http.StatusNotFound)
 		}
@@ -456,7 +456,7 @@ func RescheduleAppointmentHandler(c echo.Context) error {
 	}
 
 	id := c.Param("id")
-	apt, err := services.GetAppointmentByID(id)
+	apt, err := services.GetAppointmentByID(db.DB, id)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Appointment not found")
 	}
@@ -485,11 +485,11 @@ func RescheduleAppointmentHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid end_time format")
 	}
 
-	if err := services.RescheduleAppointment(id, startTime.UTC(), endTime.UTC()); err != nil {
+	if err := services.RescheduleAppointment(db.DB, id, startTime.UTC(), endTime.UTC()); err != nil {
 		return echo.NewHTTPError(http.StatusConflict, err.Error())
 	}
 
-	apt, _ = services.GetAppointmentByID(id)
+	apt, _ = services.GetAppointmentByID(db.DB, id)
 
 	// Audit logging (Reschedule)
 	auditCtx := middleware.GetAuditContext(c)

@@ -1,32 +1,33 @@
 package services
 
 import (
-	"law_flow_app_go/db"
 	"law_flow_app_go/models"
+
+	"gorm.io/gorm"
 )
 
 // GetAppointmentTypes returns all appointment types for a firm
-func GetAppointmentTypes(firmID string) ([]models.AppointmentType, error) {
+func GetAppointmentTypes(db *gorm.DB, firmID string) ([]models.AppointmentType, error) {
 	var types []models.AppointmentType
-	err := db.DB.Where("firm_id = ?", firmID).
+	err := db.Where("firm_id = ?", firmID).
 		Order(`"order" asc, name asc`).
 		Find(&types).Error
 	return types, err
 }
 
 // GetActiveAppointmentTypes returns only active appointment types for a firm
-func GetActiveAppointmentTypes(firmID string) ([]models.AppointmentType, error) {
+func GetActiveAppointmentTypes(db *gorm.DB, firmID string) ([]models.AppointmentType, error) {
 	var types []models.AppointmentType
-	err := db.DB.Where("firm_id = ? AND is_active = ?", firmID, true).
+	err := db.Where("firm_id = ? AND is_active = ?", firmID, true).
 		Order(`"order" asc, name asc`).
 		Find(&types).Error
 	return types, err
 }
 
 // GetAppointmentTypeByID fetches a single appointment type
-func GetAppointmentTypeByID(id string) (*models.AppointmentType, error) {
+func GetAppointmentTypeByID(db *gorm.DB, id string) (*models.AppointmentType, error) {
 	var aptType models.AppointmentType
-	err := db.DB.First(&aptType, "id = ?", id).Error
+	err := db.First(&aptType, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -34,26 +35,26 @@ func GetAppointmentTypeByID(id string) (*models.AppointmentType, error) {
 }
 
 // CreateAppointmentType creates a new appointment type
-func CreateAppointmentType(aptType *models.AppointmentType) error {
-	return db.DB.Create(aptType).Error
+func CreateAppointmentType(db *gorm.DB, aptType *models.AppointmentType) error {
+	return db.Create(aptType).Error
 }
 
 // UpdateAppointmentType updates an appointment type
-func UpdateAppointmentType(id string, updates map[string]interface{}) error {
-	return db.DB.Model(&models.AppointmentType{}).Where("id = ?", id).Updates(updates).Error
+func UpdateAppointmentType(db *gorm.DB, id string, updates map[string]interface{}) error {
+	return db.Model(&models.AppointmentType{}).Where("id = ?", id).Updates(updates).Error
 }
 
 // DeleteAppointmentType soft deletes an appointment type
-func DeleteAppointmentType(id string) error {
-	return db.DB.Delete(&models.AppointmentType{}, "id = ?", id).Error
+func DeleteAppointmentType(db *gorm.DB, id string) error {
+	return db.Delete(&models.AppointmentType{}, "id = ?", id).Error
 }
 
 // EnsureDefaultAppointmentTypes creates default types if none exist for a firm
-func EnsureDefaultAppointmentTypes(firmID string) error {
+func EnsureDefaultAppointmentTypes(db *gorm.DB, firmID string) error {
 	var count int64
-	db.DB.Model(&models.AppointmentType{}).Where("firm_id = ?", firmID).Count(&count)
+	db.Model(&models.AppointmentType{}).Where("firm_id = ?", firmID).Count(&count)
 	if count == 0 {
-		return models.CreateDefaultAppointmentTypes(db.DB, firmID)
+		return models.CreateDefaultAppointmentTypes(db, firmID)
 	}
 	return nil
 }

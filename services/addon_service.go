@@ -186,9 +186,10 @@ func RenewRecurringAddOns(db *gorm.DB, firmID string) error {
 	newExpiry := now.AddDate(0, 1, 0)
 
 	return db.Model(&models.FirmAddOn{}).
-		Joins("JOIN plan_addons ON firm_addons.add_on_id = plan_addons.id").
-		Where("firm_addons.firm_id = ? AND firm_addons.is_active = ? AND plan_addons.is_recurring = ?",
-			firmID, true, true).
+		Where("firm_addons.firm_id = ? AND firm_addons.is_active = ? AND add_on_id IN (?)",
+			firmID, true,
+			db.Model(&models.PlanAddOn{}).Select("id").Where("is_recurring = ?", true),
+		).
 		Updates(map[string]interface{}{
 			"expires_at": newExpiry,
 		}).Error

@@ -180,20 +180,20 @@ func CreateUser(c echo.Context) error {
 	if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
 		if err := services.UpdateFirmUsageAfterUserChange(db.DB, firm.ID, 1); err != nil {
 			// Log but don't fail - usage will be recalculated on next check
-			services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update user count: "+err.Error())
+			services.LogSecurityEvent(db.DB, "USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update user count: "+err.Error())
 		}
 	}
 
 	// Create default availability for lawyers and admins
 	if user.Role == "lawyer" || user.Role == "admin" {
-		if err := services.CreateDefaultAvailability(user.ID); err != nil {
+		if err := services.CreateDefaultAvailability(db.DB, user.ID); err != nil {
 			// Log error but don't fail user creation
-			services.LogSecurityEvent("AVAILABILITY_SEED_FAILED", user.ID, "Failed to create default availability: "+err.Error())
+			services.LogSecurityEvent(db.DB, "AVAILABILITY_SEED_FAILED", user.ID, "Failed to create default availability: "+err.Error())
 		}
 	}
 
 	// Log security event
-	services.LogSecurityEvent("USER_CREATED", currentUser.ID, "Created user: "+user.ID)
+	services.LogSecurityEvent(db.DB, "USER_CREATED", currentUser.ID, "Created user: "+user.ID)
 
 	// Log audit event
 	services.LogAuditEvent(db.DB, services.AuditContext{
@@ -333,7 +333,7 @@ func UpdateUser(c echo.Context) error {
 
 	// Log security event if admin modified another user
 	if currentUser.ID != user.ID {
-		services.LogSecurityEvent("USER_MODIFIED", currentUser.ID, "Modified user: "+user.ID)
+		services.LogSecurityEvent(db.DB, "USER_MODIFIED", currentUser.ID, "Modified user: "+user.ID)
 	}
 
 	// Log audit event
@@ -394,12 +394,12 @@ func DeleteUser(c echo.Context) error {
 	if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
 		if err := services.UpdateFirmUsageAfterUserChange(db.DB, firm.ID, -1); err != nil {
 			// Log but don't fail - usage will be recalculated on next check
-			services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update user count: "+err.Error())
+			services.LogSecurityEvent(db.DB, "USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update user count: "+err.Error())
 		}
 	}
 
 	// Log security event
-	services.LogSecurityEvent("USER_DELETED", currentUser.ID, "Deleted user: "+user.ID)
+	services.LogSecurityEvent(db.DB, "USER_DELETED", currentUser.ID, "Deleted user: "+user.ID)
 
 	// Log audit event
 	services.LogAuditEvent(db.DB, services.AuditContext{

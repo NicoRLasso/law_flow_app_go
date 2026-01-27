@@ -1,9 +1,10 @@
 package services
 
 import (
-	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // Default working hours: Mon-Fri, 9:00-12:00 and 14:00-17:00
@@ -30,7 +31,7 @@ var defaultAvailabilitySlots = []struct {
 }
 
 // CreateDefaultAvailability creates the default availability slots for a lawyer
-func CreateDefaultAvailability(lawyerID string) error {
+func CreateDefaultAvailability(db *gorm.DB, lawyerID string) error {
 	for _, slot := range defaultAvailabilitySlots {
 		availability := &models.Availability{
 			LawyerID:  lawyerID,
@@ -39,7 +40,7 @@ func CreateDefaultAvailability(lawyerID string) error {
 			EndTime:   slot.EndTime,
 			IsActive:  true,
 		}
-		if err := db.DB.Create(availability).Error; err != nil {
+		if err := db.Create(availability).Error; err != nil {
 			return err
 		}
 	}
@@ -47,18 +48,18 @@ func CreateDefaultAvailability(lawyerID string) error {
 }
 
 // GetLawyerAvailability fetches all availability slots for a lawyer
-func GetLawyerAvailability(lawyerID string) ([]models.Availability, error) {
+func GetLawyerAvailability(db *gorm.DB, lawyerID string) ([]models.Availability, error) {
 	var slots []models.Availability
-	err := db.DB.Where("lawyer_id = ?", lawyerID).
+	err := db.Where("lawyer_id = ?", lawyerID).
 		Order("day_of_week, start_time").
 		Find(&slots).Error
 	return slots, err
 }
 
 // GetAvailabilityByID fetches a single availability slot
-func GetAvailabilityByID(id string) (*models.Availability, error) {
+func GetAvailabilityByID(db *gorm.DB, id string) (*models.Availability, error) {
 	var slot models.Availability
-	err := db.DB.First(&slot, "id = ?", id).Error
+	err := db.First(&slot, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -66,44 +67,44 @@ func GetAvailabilityByID(id string) (*models.Availability, error) {
 }
 
 // CreateAvailabilitySlot adds a new availability slot
-func CreateAvailabilitySlot(slot *models.Availability) error {
-	return db.DB.Create(slot).Error
+func CreateAvailabilitySlot(db *gorm.DB, slot *models.Availability) error {
+	return db.Create(slot).Error
 }
 
 // UpdateAvailabilitySlot updates an existing availability slot
-func UpdateAvailabilitySlot(slot *models.Availability) error {
-	return db.DB.Save(slot).Error
+func UpdateAvailabilitySlot(db *gorm.DB, slot *models.Availability) error {
+	return db.Save(slot).Error
 }
 
 // DeleteAvailabilitySlot removes an availability slot
-func DeleteAvailabilitySlot(id string) error {
-	return db.DB.Delete(&models.Availability{}, "id = ?", id).Error
+func DeleteAvailabilitySlot(db *gorm.DB, id string) error {
+	return db.Delete(&models.Availability{}, "id = ?", id).Error
 }
 
 // GetBlockedDates fetches blocked dates for a lawyer in a date range
-func GetBlockedDates(lawyerID string, startDate, endDate time.Time) ([]models.BlockedDate, error) {
+func GetBlockedDates(db *gorm.DB, lawyerID string, startDate, endDate time.Time) ([]models.BlockedDate, error) {
 	var blockedDates []models.BlockedDate
 	// Find blocks that overlap with the requested window: (StartA < EndB) AND (EndA > StartB)
-	err := db.DB.Where("lawyer_id = ? AND start_at < ? AND end_at > ?", lawyerID, endDate, startDate).
+	err := db.Where("lawyer_id = ? AND start_at < ? AND end_at > ?", lawyerID, endDate, startDate).
 		Order("start_at asc").
 		Find(&blockedDates).Error
 	return blockedDates, err
 }
 
 // GetAllBlockedDates fetches all blocked dates for a lawyer (future and recent past)
-func GetAllBlockedDates(lawyerID string) ([]models.BlockedDate, error) {
+func GetAllBlockedDates(db *gorm.DB, lawyerID string) ([]models.BlockedDate, error) {
 	var blockedDates []models.BlockedDate
 	// Fetch blocks that end in the future (or today)
-	err := db.DB.Where("lawyer_id = ? AND end_at >= ?", lawyerID, time.Now().Truncate(24*time.Hour)).
+	err := db.Where("lawyer_id = ? AND end_at >= ?", lawyerID, time.Now().Truncate(24*time.Hour)).
 		Order("start_at asc").
 		Find(&blockedDates).Error
 	return blockedDates, err
 }
 
 // GetBlockedDateByID fetches a single blocked date
-func GetBlockedDateByID(id string) (*models.BlockedDate, error) {
+func GetBlockedDateByID(db *gorm.DB, id string) (*models.BlockedDate, error) {
 	var blockedDate models.BlockedDate
-	err := db.DB.First(&blockedDate, "id = ?", id).Error
+	err := db.First(&blockedDate, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -111,25 +112,25 @@ func GetBlockedDateByID(id string) (*models.BlockedDate, error) {
 }
 
 // CreateBlockedDate adds a new blocked date
-func CreateBlockedDate(blockedDate *models.BlockedDate) error {
-	return db.DB.Create(blockedDate).Error
+func CreateBlockedDate(db *gorm.DB, blockedDate *models.BlockedDate) error {
+	return db.Create(blockedDate).Error
 }
 
 // DeleteBlockedDate removes a blocked date
-func DeleteBlockedDate(id string) error {
-	return db.DB.Delete(&models.BlockedDate{}, "id = ?", id).Error
+func DeleteBlockedDate(db *gorm.DB, id string) error {
+	return db.Delete(&models.BlockedDate{}, "id = ?", id).Error
 }
 
 // IsTimeSlotAvailable checks if a time slot is available for a lawyer
 // It considers weekly availability, blocked dates, and existing appointments
-func IsTimeSlotAvailable(lawyerID string, checkStart, checkEnd time.Time) (bool, error) {
+func IsTimeSlotAvailable(db *gorm.DB, lawyerID string, checkStart, checkEnd time.Time) (bool, error) {
 	// 1. Check if the time falls within regular availability
 	dayOfWeek := int(checkStart.Weekday())
 	startTimeStr := checkStart.Format("15:04")
 	endTimeStr := checkEnd.Format("15:04")
 
 	var count int64
-	err := db.DB.Model(&models.Availability{}).
+	err := db.Model(&models.Availability{}).
 		Where("lawyer_id = ? AND day_of_week = ? AND is_active = ? AND start_time <= ? AND end_time >= ?",
 			lawyerID, dayOfWeek, true, startTimeStr, endTimeStr).
 		Count(&count).Error
@@ -143,7 +144,7 @@ func IsTimeSlotAvailable(lawyerID string, checkStart, checkEnd time.Time) (bool,
 	// 2. Check for blocked dates
 	var blockedDates []models.BlockedDate
 	// Find any block overlapping with this specific time slot
-	err = db.DB.Where("lawyer_id = ? AND start_at < ? AND end_at > ?", lawyerID, checkEnd, checkStart).
+	err = db.Where("lawyer_id = ? AND start_at < ? AND end_at > ?", lawyerID, checkEnd, checkStart).
 		Find(&blockedDates).Error
 	if err != nil {
 		return false, err
@@ -157,7 +158,7 @@ func IsTimeSlotAvailable(lawyerID string, checkStart, checkEnd time.Time) (bool,
 
 	// 3. Check for existing appointments
 	var appointmentCount int64
-	err = db.DB.Model(&models.Appointment{}).
+	err = db.Model(&models.Appointment{}).
 		Where("lawyer_id = ? AND status NOT IN (?, ?) AND start_time < ? AND end_time > ?",
 			lawyerID, models.AppointmentStatusCancelled, models.AppointmentStatusNoShow, checkEnd, checkStart).
 		Count(&appointmentCount).Error
@@ -172,9 +173,9 @@ func IsTimeSlotAvailable(lawyerID string, checkStart, checkEnd time.Time) (bool,
 }
 
 // CheckAvailabilityOverlap checks if a new or updated slot overlaps with existing slots
-func CheckAvailabilityOverlap(lawyerID string, dayOfWeek int, startTime, endTime string, excludeSlotID string) (bool, error) {
+func CheckAvailabilityOverlap(db *gorm.DB, lawyerID string, dayOfWeek int, startTime, endTime string, excludeSlotID string) (bool, error) {
 	var count int64
-	query := db.DB.Model(&models.Availability{}).
+	query := db.Model(&models.Availability{}).
 		Where("lawyer_id = ? AND day_of_week = ? AND is_active = ?", lawyerID, dayOfWeek, true).
 		Where("((start_time < ? AND end_time > ?) OR (start_time >= ? AND start_time < ?) OR (end_time > ? AND end_time <= ?))",
 			endTime, startTime, startTime, endTime, startTime, endTime)
@@ -191,9 +192,9 @@ func CheckAvailabilityOverlap(lawyerID string, dayOfWeek int, startTime, endTime
 }
 
 // HasAvailabilitySlots checks if a lawyer has any availability slots configured
-func HasAvailabilitySlots(lawyerID string) (bool, error) {
+func HasAvailabilitySlots(db *gorm.DB, lawyerID string) (bool, error) {
 	var count int64
-	err := db.DB.Model(&models.Availability{}).Where("lawyer_id = ?", lawyerID).Count(&count).Error
+	err := db.Model(&models.Availability{}).Where("lawyer_id = ?", lawyerID).Count(&count).Error
 	return count > 0, err
 }
 
@@ -210,9 +211,9 @@ func HasAvailabilitySlots(lawyerID string) (bool, error) {
 // }
 
 // CheckBlockedDateOverlap checks if a blocked date overlaps with existing ones
-func CheckBlockedDateOverlap(lawyerID string, startAt, endAt time.Time, excludeID string) (bool, error) {
+func CheckBlockedDateOverlap(db *gorm.DB, lawyerID string, startAt, endAt time.Time, excludeID string) (bool, error) {
 	var count int64
-	query := db.DB.Model(&models.BlockedDate{}).Where("lawyer_id = ?", lawyerID)
+	query := db.Model(&models.BlockedDate{}).Where("lawyer_id = ?", lawyerID)
 
 	if excludeID != "" {
 		query = query.Where("id != ?", excludeID)

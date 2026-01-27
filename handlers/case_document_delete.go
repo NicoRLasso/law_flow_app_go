@@ -62,7 +62,7 @@ func DeleteCaseDocumentHandler(c echo.Context) error {
 	// Update storage usage (decrease by deleted file size)
 	if err := services.UpdateFirmUsageAfterStorageChange(db.DB, currentFirm.ID, -deletedFileSize); err != nil {
 		// Log but don't fail - usage will be recalculated on next check
-		services.LogSecurityEvent("USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update storage after delete: "+err.Error())
+		services.LogSecurityEvent(db.DB, "USAGE_UPDATE_FAILED", currentUser.ID, "Failed to update storage after delete: "+err.Error())
 	}
 
 	// Audit logging (Delete)

@@ -42,8 +42,8 @@ clean: ## Clean build artifacts
 	rm -rf uploads/
 	find . -name "*_templ.go" -delete
 
-test: ## Run tests
-	go test -v ./...
+unit-test: ## Run tests
+	go test -v $(ARGS) ./...
 
 fmt: ## Format code
 	go fmt ./...

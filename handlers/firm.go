@@ -277,7 +277,7 @@ func UpdateFirmHandler(c echo.Context) error {
 	}
 
 	// Log security event
-	services.LogSecurityEvent("FIRM_UPDATED", currentUser.ID, "Admin updated firm settings ("+updateType+"): "+firm.ID)
+	services.LogSecurityEvent(db.DB, "FIRM_UPDATED", currentUser.ID, "Admin updated firm settings ("+updateType+"): "+firm.ID)
 
 	// Log audit event
 	services.LogAuditEvent(db.DB, services.AuditContext{
@@ -404,7 +404,7 @@ func UploadFirmLogoHandler(c echo.Context) error {
 	}
 
 	// Log security event
-	services.LogSecurityEvent("FIRM_LOGO_UPLOADED", currentUser.ID, "Admin uploaded firm logo: "+firm.ID)
+	services.LogSecurityEvent(db.DB, "FIRM_LOGO_UPLOADED", currentUser.ID, "Admin uploaded firm logo: "+firm.ID)
 
 	// Log audit event
 	services.LogAuditEvent(db.DB, services.AuditContext{
@@ -496,7 +496,7 @@ func DeleteFirmLogoHandler(c echo.Context) error {
 	}
 
 	// Log security event
-	services.LogSecurityEvent("FIRM_LOGO_DELETED", currentUser.ID, "Admin deleted firm logo: "+firm.ID)
+	services.LogSecurityEvent(db.DB, "FIRM_LOGO_DELETED", currentUser.ID, "Admin deleted firm logo: "+firm.ID)
 
 	// Log audit event
 	services.LogAuditEvent(db.DB, services.AuditContext{

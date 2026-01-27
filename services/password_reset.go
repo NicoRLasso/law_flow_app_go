@@ -57,7 +57,7 @@ func GenerateResetToken(db *gorm.DB, userEmail string) (*models.PasswordResetTok
 	}
 
 	// Log security event
-	LogSecurityEvent("PASSWORD_RESET_REQUESTED", user.ID, fmt.Sprintf("Password reset requested for email: %s", userEmail))
+	LogSecurityEvent(db, "PASSWORD_RESET_REQUESTED", user.ID, fmt.Sprintf("Password reset requested for email: %s", userEmail))
 
 	return resetToken, nil
 }
@@ -96,7 +96,7 @@ func ResetPassword(db *gorm.DB, token string, newPassword string) error {
 	// Validate token and get user
 	user, err := ValidateResetToken(db, token)
 	if err != nil {
-		LogSecurityEvent("PASSWORD_RESET_FAILED", "", fmt.Sprintf("Failed password reset attempt with token: %s", token[:10]))
+		LogSecurityEvent(db, "PASSWORD_RESET_FAILED", "", fmt.Sprintf("Failed password reset attempt with token: %s", token[:10]))
 		return err
 	}
 
@@ -138,7 +138,7 @@ func ResetPassword(db *gorm.DB, token string, newPassword string) error {
 	}
 
 	// Log security event
-	LogSecurityEvent("PASSWORD_RESET_COMPLETED", user.ID, "Password successfully reset")
+	LogSecurityEvent(db, "PASSWORD_RESET_COMPLETED", user.ID, "Password successfully reset")
 
 	return nil
 }

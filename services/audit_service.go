@@ -147,3 +147,28 @@ type AuditLogFilters struct {
 	DateTo       time.Time
 	SearchQuery  string
 }
+
+// LogSecurityEvent logs security-related events to the database and standard log
+func LogSecurityEvent(db *gorm.DB, eventType, userID, details string) {
+	// Log to stdout for immediate visibility (e.g. into aggregation limits)
+	log.Printf("[SECURITY] %s | User: %s | Details: %s", eventType, userID, details)
+
+	// Persist to database asynchronously
+	go func() {
+		auditLog := models.AuditLog{
+			UserID:       ptrIfNotEmpty(userID),
+			Action:       models.AuditAction("SECURITY"), // Cast string to AuditAction
+			ResourceType: "SECURITY_EVENT",
+			ResourceID:   eventType, // Use event type as resource ID or similar
+			Description:  details,
+			NewValues:    eventType, // Store event type in NewValues or similar
+		}
+
+		// If headers/IP are important for security logs, they should be passed.
+		// For now, keeping signature simple as requested, but we can enhance later.
+
+		if err := db.Create(&auditLog).Error; err != nil {
+			log.Printf("[AUDIT] Failed to create security audit log: %v", err)
+		}
+	}()
+}
