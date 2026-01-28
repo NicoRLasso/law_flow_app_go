@@ -71,9 +71,8 @@ type Appointment struct {
 	ReminderSentAt *time.Time `json:"reminder_sent_at,omitempty"`
 
 	// Optional links
-	CaseID   *string `gorm:"type:uuid;index" json:"case_id,omitempty"`
-	Case     *Case   `gorm:"foreignKey:CaseID" json:"case,omitempty"`
-	IntakeID *string `gorm:"type:uuid;index" json:"intake_id,omitempty"` // CaseRequest ID
+	CaseID *string `gorm:"type:uuid;index" json:"case_id,omitempty"`
+	Case   *Case   `gorm:"foreignKey:CaseID" json:"case,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID and BookingToken

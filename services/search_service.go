@@ -12,14 +12,15 @@ import (
 
 // SearchResult represents a search result
 type SearchResult struct {
-	CaseID      string `json:"case_id"`
-	CaseNumber  string `json:"case_number"`
-	CaseTitle   string `json:"case_title"`
-	ClientName  string `json:"client_name"`
-	Status      string `json:"status"`
-	Snippet     string `json:"snippet"`
-	MatchSource string `json:"match_source"`
-	Rank        float64
+	CaseID       string `json:"case_id"`
+	CaseNumber   string `json:"case_number"`
+	FilingNumber string `json:"filing_number"`
+	CaseTitle    string `json:"case_title"`
+	ClientName   string `json:"client_name"`
+	Status       string `json:"status"`
+	Snippet      string `json:"snippet"`
+	MatchSource  string `json:"match_source"`
+	Rank         float64
 }
 
 // SearchService handles FTS5 searches
@@ -49,6 +50,7 @@ func (s *SearchService) Search(ctx context.Context, firmID, query string, limit 
 		SELECT
 			m.case_id,
 			c.case_number,
+			COALESCE(c.filing_number, '') as filing_number,
 			COALESCE(c.title, '') as case_title,
 			COALESCE(u.name, '') as client_name,
 			c.status,
@@ -98,6 +100,7 @@ func (s *SearchService) SearchWithRoleFilter(ctx context.Context, firmID, userID
 		SELECT
 			m.case_id,
 			c.case_number,
+			COALESCE(c.filing_number, '') as filing_number,
 			COALESCE(c.title, '') as case_title,
 			COALESCE(u.name, '') as client_name,
 			c.status,

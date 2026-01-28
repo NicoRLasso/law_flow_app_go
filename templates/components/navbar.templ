@@ -140,20 +140,6 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 												{ i18n.T(ctx, "case.request.my_requests") }
 											</a>
 										}
-										if user.Role == "admin" || user.Role == "lawyer" {
-											<a
-												href="/case-requests"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-											func() string {
-												if currentPath == "/case-requests" {
-													return "text-primary font-bold bg-primary/5"
-												}
-												return "text-base-content/80"
-											}() }
-											>
-												{ i18n.T(ctx, "nav.requests") }
-											</a>
-										}
 										if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
 											<a
 												href="/historical-cases"
@@ -394,11 +380,6 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 							if user.Role == "client" {
 								<a href="/api/client/requests" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
 									{ i18n.T(ctx, "case.request.my_requests") }
-								</a>
-							}
-							if user.Role == "admin" || user.Role == "lawyer" {
-								<a href="/case-requests" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									{ i18n.T(ctx, "nav.requests") }
 								</a>
 							}
 							if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {

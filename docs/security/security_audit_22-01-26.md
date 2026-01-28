@@ -9,7 +9,6 @@ A deep security audit was conducted on the LexLegalCloud codebase. **All critica
 **Key Findings:**
 1.  ✅ **Stored XSS Vulnerability** in Template Editor (FIXED).
 2.  ✅ **File Upload Bypass Risk** for `.doc` / `.docx` files (FIXED).
-3.  ✅ **Missing CAPTCHA** on public case request forms (FIXED).
 4.  ✅ **CSP Weakness** (`unsafe-inline`) successfully removed (FIXED).
 
 ## 1. Vulnerability Deep Dive
@@ -28,12 +27,6 @@ A deep security audit was conducted on the LexLegalCloud codebase. **All critica
     -   Validate `.docx` by checking for ZIP signature (`PK\x03\x04`).
     -   Validate `.doc` by checking for OLECF signature (`\xD0\xCF\x11\xE0`).
 
-### 1.3 Missing CAPTCHA on Public Forms (✅ FIXED)
--   **Location:** `handlers/case_request.go`
--   **Remediation:** Integrated Cloudflare Turnstile CAPTCHA.
-    -   Added Widget to `public_case_request.templ`.
-    -   Implemented Token Verification in `handlers/case_request.go` and `services/turnstile.go`.
--   **Status:** **Secure**
 
 ## 2. Review of Recent Features
 
@@ -41,11 +34,6 @@ A deep security audit was conducted on the LexLegalCloud codebase. **All critica
 -   **Auth Check:** Properly restricts to `admin` and `lawyer`.
 -   **Scope:** Uses `GetFirmScopedQuery` and `assigned_to` checks for lawyers.
 -   **Status:** **Secure**
-
-### ✅ Client Case Requests (`handlers/case_request.go`)
--   **Auth Check:** Authenticated client routes are protected by `RequireRole("client")`.
--   **Data Integrity:** Submissions are tied to the authenticated user's session ID (Name/Email), preventing impersonation.
--   **Status:** **Secure** (Internal mechanism), **Vulnerable** (Public mechanism - see 1.3).
 
 ## 3. Configuration & Infrastructure
 

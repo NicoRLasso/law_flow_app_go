@@ -363,12 +363,6 @@ func GenerateFirmLogoKey(firmID, originalFilename string) string {
 	return fmt.Sprintf("logos/%s%s", firmID, ext)
 }
 
-// GenerateCaseRequestFileKey creates a storage key for case request files
-func GenerateCaseRequestFileKey(firmID, requestID, originalFilename string) string {
-	prefix := fmt.Sprintf("firms/%s/requests/%s", firmID, requestID)
-	return GenerateStorageKey(prefix, originalFilename)
-}
-
 // GenerateGeneratedDocumentKey creates a storage key for generated documents
 func GenerateGeneratedDocumentKey(firmID, caseID, originalFilename string) string {
 	prefix := fmt.Sprintf("firms/%s/cases/%s/generated", firmID, caseID)

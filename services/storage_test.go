@@ -107,11 +107,6 @@ func TestKeyGeneration(t *testing.T) {
 		assert.Equal(t, "logos/f1.pdf", key)
 	})
 
-	t.Run("GenerateCaseRequestFileKey", func(t *testing.T) {
-		key := GenerateCaseRequestFileKey(firmID, "r1", filename)
-		assert.Contains(t, key, "firms/f1/requests/r1")
-	})
-
 	t.Run("GenerateGeneratedDocumentKey", func(t *testing.T) {
 		key := GenerateGeneratedDocumentKey(firmID, caseID, filename)
 		assert.Contains(t, key, "firms/f1/cases/c1/generated")

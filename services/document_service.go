@@ -12,60 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// TransferRequestDocumentToCase transfers the document from a CaseRequest to a Case
-// This moves the physical file from case_requests/ to cases/{case_id}/ folder
-func TransferRequestDocumentToCase(tx *gorm.DB, request *models.CaseRequest, caseID string, uploadedByID string) error {
-	// Check if request has a document
-	if request.FileName == "" || request.FilePath == "" {
-		// No document to transfer
-		return nil
-	}
-
-	// Build new file path in cases folder
-	newFilePath := filepath.Join("uploads", "firms", request.FirmID, "cases", caseID, request.FileName)
-
-	// Create destination directory
-	destDir := filepath.Dir(newFilePath)
-	if err := os.MkdirAll(destDir, 0755); err != nil {
-		return fmt.Errorf("failed to create case documents directory: %w", err)
-	}
-
-	// Move file from case_requests to cases folder
-	oldFilePath := request.FilePath
-	if err := os.Rename(oldFilePath, newFilePath); err != nil {
-		// If rename fails (e.g., cross-device), try copy + delete
-		if err := copyFile(oldFilePath, newFilePath); err != nil {
-			return fmt.Errorf("failed to copy file to case folder: %w", err)
-		}
-		// Delete original file after successful copy
-		if err := os.Remove(oldFilePath); err != nil {
-			log.Printf("Warning: failed to delete original file %s: %v", oldFilePath, err)
-		}
-	}
-
-	// Create CaseDocument record with new path
-	caseDoc := &models.CaseDocument{
-		FirmID:           request.FirmID,
-		CaseRequestID:    &request.ID,
-		CaseID:           &caseID,
-		FileName:         request.FileName,
-		FileOriginalName: request.FileOriginalName,
-		FilePath:         newFilePath, // Use new path
-		FileSize:         request.FileSize,
-		DocumentType:     "initial_request", // Mark as initial request document
-		UploadedByID:     &uploadedByID,
-	}
-
-	if err := tx.Create(caseDoc).Error; err != nil {
-		// Rollback file move on database error
-		os.Rename(newFilePath, oldFilePath)
-		return fmt.Errorf("failed to create case document: %w", err)
-	}
-
-	log.Printf("Moved document from request %s to case %s: %s -> %s", request.ID, caseID, oldFilePath, newFilePath)
-	return nil
-}
-
 // copyFile copies a file from src to dst
 func copyFile(src, dst string) error {
 	sourceFile, err := os.Open(src)
@@ -101,10 +47,6 @@ func GetDocumentPath(document *models.CaseDocument) string {
 	// Documents are organized as: uploads/firms/{firm_id}/cases/{case_id}/{filename}
 	if document.CaseID != nil {
 		return filepath.Join("uploads", "firms", document.FirmID, "cases", *document.CaseID, document.FileName)
-	}
-	// Fallback for request-only documents
-	if document.CaseRequestID != nil {
-		return filepath.Join("uploads", "firms", document.FirmID, "case_requests", document.FileName)
 	}
 	return document.FilePath // Use stored path as fallback
 }

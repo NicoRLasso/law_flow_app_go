@@ -10,9 +10,7 @@
 | Appointment Cancellation | Client | Client cancels appointment |
 | Password Reset | User | Forgot password submitted |
 | Firm Setup Completion | Admin | Firm setup completed |
-| Case Acceptance | Client | Case request accepted |
 | Lawyer Assignment | Lawyer | Case assigned |
-| Case Request Rejection | Client | Case request rejected |
 | Collaborator Added | Lawyer | Added to case |
 
 ## Key Files

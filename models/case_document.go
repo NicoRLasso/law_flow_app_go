@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// CaseDocument represents a document attached to a case or case request
+// CaseDocument represents a document attached to a case
 type CaseDocument struct {
 	ID        string         `gorm:"type:uuid;primarykey" json:"id"`
 	CreatedAt time.Time      `json:"created_at"`
@@ -17,10 +17,6 @@ type CaseDocument struct {
 	// Firm relationship (for scoping)
 	FirmID string `gorm:"type:uuid;not null;index" json:"firm_id"`
 	Firm   Firm   `gorm:"foreignKey:FirmID" json:"firm,omitempty"`
-
-	// Relationships - can belong to either CaseRequest OR Case (or both)
-	CaseRequestID *string      `gorm:"type:uuid;index" json:"case_request_id,omitempty"`
-	CaseRequest   *CaseRequest `gorm:"foreignKey:CaseRequestID" json:"case_request,omitempty"`
 
 	CaseID *string `gorm:"type:uuid;index" json:"case_id,omitempty"`
 	Case   *Case   `gorm:"foreignKey:CaseID" json:"case,omitempty"`
@@ -55,8 +51,6 @@ func (d *CaseDocument) GetDownloadURL() string {
 	if d.CaseID != nil {
 		return "/api/cases/" + *d.CaseID + "/documents/" + d.ID + "/download"
 	}
-	if d.CaseRequestID != nil {
-		return "/api/case-requests/" + *d.CaseRequestID + "/documents/" + d.ID + "/download"
-	}
+
 	return ""
 }

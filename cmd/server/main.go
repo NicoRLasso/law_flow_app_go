@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.CaseRequest{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	if err := services.InitializeFTS5(db.DB); err != nil {
@@ -197,9 +197,7 @@ func main() {
 	e.GET("/cookies", handlers.WebsiteCookiesHandler)
 	e.GET("/compliance", handlers.WebsiteComplianceHandler)
 	e.POST("/api/website/contact", handlers.WebsiteContactSubmitHandler, middleware.PublicFormRateLimiter.Middleware())
-	e.GET("/firm/:slug/request", handlers.PublicCaseRequestHandler)
-	e.POST("/firm/:slug/request", handlers.PublicCaseRequestPostHandler, middleware.PublicFormRateLimiter.Middleware())
-	e.GET("/firm/:slug/request/success", handlers.PublicCaseRequestSuccessHandler)
+
 	firmSetup := e.Group("/firm")
 	firmSetup.Use(middleware.RequireAuth())
 	{
@@ -321,31 +319,6 @@ func main() {
 		protected.GET("/api/subtypes/branches", handlers.GetBranchesForDomainHandler)
 		protected.GET("/api/subtypes/options", handlers.GetSubtypeOptionsHandler)
 
-		caseRequestRoutes := protected.Group("/api/case-requests")
-		caseRequestRoutes.Use(middleware.RequireRole("admin", "lawyer"))
-		{
-			caseRequestRoutes.GET("", handlers.GetCaseRequestsHandler)
-			caseRequestRoutes.GET("/:id", handlers.GetCaseRequestHandler)
-			caseRequestRoutes.GET("/:id/detail", handlers.GetCaseRequestDetailHandler)
-			caseRequestRoutes.GET("/:id/file", handlers.DownloadCaseRequestFileHandler)
-			caseRequestRoutes.PUT("/:id/status", handlers.UpdateCaseRequestStatusHandler)
-			caseRequestRoutes.DELETE("/:id", handlers.DeleteCaseRequestHandler)
-		}
-
-		caseAcceptanceRoutes := protected.Group("/api/case-requests/:id/accept")
-		caseAcceptanceRoutes.Use(middleware.RequireRole("admin", "lawyer"))
-		{
-			caseAcceptanceRoutes.GET("/start", handlers.StartCaseAcceptanceHandler)
-			caseAcceptanceRoutes.POST("/client", handlers.ProcessClientStepHandler)
-			caseAcceptanceRoutes.GET("/lawyers", handlers.GetLawyerListHandler)
-			caseAcceptanceRoutes.POST("/lawyer", handlers.AssignLawyerStepHandler)
-			caseAcceptanceRoutes.GET("/classification", handlers.GetClassificationOptionsHandler)
-			caseAcceptanceRoutes.POST("/classification", handlers.SaveClassificationStepHandler)
-			caseAcceptanceRoutes.POST("/finalize", handlers.FinalizeCaseCreationHandler)
-			caseAcceptanceRoutes.DELETE("/cancel", handlers.CancelAcceptanceHandler)
-		}
-
-		protected.GET("/case-requests", handlers.CaseRequestsPageHandler)
 		protected.GET("/cases", handlers.CasesPageHandler)
 		protected.GET("/cases/:id", handlers.GetCaseDetailHandler)
 
@@ -364,14 +337,6 @@ func main() {
 			clientCaseRoutes.GET("/:id/documents/:docId/view", handlers.ViewCaseDocumentHandler)
 			clientCaseRoutes.GET("/:id/judicial-view", handlers.GetJudicialProcessViewHandler)
 		}
-		clientRequestRoutes := protected.Group("/api/client")
-		clientRequestRoutes.Use(middleware.RequireRole("client"))
-		{
-			clientRequestRoutes.GET("/case-request", handlers.ClientCaseRequestHandler)
-			clientRequestRoutes.POST("/case-request", handlers.ClientSubmitCaseRequestHandler)
-			clientRequestRoutes.GET("/requests", handlers.ClientRequestsPageHandler)
-		}
-
 		caseRoutes := protected.Group("/api/cases")
 		caseRoutes.Use(middleware.RequireRole("admin", "lawyer"))
 		{

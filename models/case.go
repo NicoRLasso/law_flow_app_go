@@ -66,10 +66,6 @@ type Case struct {
 	ClassifiedAt *time.Time `json:"classified_at,omitempty"`
 	ClassifiedBy *string    `gorm:"type:uuid" json:"classified_by,omitempty"`
 
-	// Case request relationship
-	CreatedFromRequestID *string      `gorm:"type:uuid" json:"created_from_request_id,omitempty"`
-	CreatedFromRequest   *CaseRequest `gorm:"foreignKey:CreatedFromRequestID" json:"created_from_request,omitempty"`
-
 	// Soft delete tracking
 	IsDeleted  bool       `gorm:"not null;default:false" json:"is_deleted"`
 	DeletedAt2 *time.Time `json:"deleted_at_custom,omitempty"` // Custom deleted timestamp (separate from GORM's DeletedAt)

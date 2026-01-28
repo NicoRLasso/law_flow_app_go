@@ -35,8 +35,6 @@
     "settings": "Settings",
     "firm_settings": "Firm Settings",
     "users": "Users",
-    "case_requests": "Case Requests",
-    "requests": "Requests",
     "cases": "Cases",
     "historical_cases": "Historical Cases",
     "info_title": "Firm Information",
@@ -427,7 +425,6 @@
     "request": {
       "title": "Request Legal Assistance",
       "subtitle": "Request Legal Assistance",
-      "form_title": "Case Request Form",
       "form_desc": "Please fill out the form below and we will contact you soon.",
       "personal_info": "Personal Information",
       "full_name": "Full Name",
@@ -443,24 +440,6 @@
       "pdf_only": "PDF only, maximum 10MB",
       "submit_btn": "Submit Request",
       "terms": "By submitting this form, you agree to our terms of service and privacy policy."
-    },
-    "case_request": {
-      "title": "Request New Case",
-      "new_btn": "Request New Case"
-    },
-    "success": {
-      "title": "Request Submitted",
-      "header": "Request Submitted Successfully!",
-      "thank_you": "Thank you for contacting",
-      "next_steps": "What happens next?",
-      "step1": "Our team will review your case request within 24-48 hours",
-      "step2": "We'll contact you via email or phone to discuss your case",
-      "step3": "If you uploaded a document, our lawyers will review it carefully",
-      "need_help": "Need immediate assistance?",
-      "call_us": "Call us at",
-      "email_us": "Email us at",
-      "another_request": "Submit Another Request",
-      "close_note": "You can close this page. We have all the information we need."
     }
   },
   "firm": {
@@ -501,8 +480,6 @@
     },
     "quick_actions": {
       "label": "Quick Actions",
-      "case_requests_title": "Case Requests",
-      "case_requests_desc": "Manage incoming requests",
       "users_title": "Manage Users",
       "users_desc": "Add & edit users",
       "upload_doc_title": "Upload Document",
@@ -894,141 +871,6 @@
       "cancel": "Cancel",
       "delete_btn": "Delete User"
     }
-  },
-  "case_requests": {
-    "title": "Case Requests",
-    "description": "Manage incoming case requests from your public form",
-    "filters": {
-      "status": "Status:",
-      "priority": "Priority:",
-      "all_status": "All Status",
-      "all_priorities": "All Priorities"
-    },
-    "status": {
-      "pending": "Pending",
-      "accepted": "Accepted",
-      "rejected": "Rejected"
-    },
-    "priority": {
-      "urgent": "Urgent",
-      "high": "High",
-      "medium": "Medium",
-      "low": "Low"
-    },
-    "table": {
-      "name": "Name",
-      "contact": "Contact",
-      "document": "Document",
-      "priority": "Priority",
-      "status": "Status",
-      "submitted": "Submitted",
-      "actions": "Actions",
-      "details": "Details",
-      "empty": "No case requests found"
-    },
-    "detail": {
-      "title": "Case Request Details",
-      "request_id": "Request ID: {id}",
-      "personal_info": "Personal Information",
-      "full_name": "Full Name",
-      "document": "Document",
-      "email": "Email",
-      "phone": "Phone",
-      "case_description": "Case Description",
-      "rejection_reason": "Rejection Reason",
-      "attached_documents": "Attached Documents",
-      "no_documents": "No documents attached",
-      "download": "Download",
-      "review_info": "Review Information",
-      "reviewed_by": "Reviewed By",
-      "reviewed_at": "Reviewed At",
-      "additional_info": "Additional Information",
-      "submitted": "Submitted",
-      "last_updated": "Last Updated",
-      "ip_address": "IP Address",
-      "close": "Close"
-    },
-    "reject_modal": {
-      "title": "Reject Case Request",
-      "from": "Request from: {name}",
-      "instruction": "Please provide a reason for rejecting this case request. This message will be sent to the client via email.",
-      "placeholder": "Please explain why this case request is being rejected...",
-      "cancel": "Cancel",
-      "reject_btn": "Reject & Send Email"
-    },
-    "accept_modal": {
-      "title": "Accept Case Request",
-      "step1": "Client",
-      "step2": "Lawyer",
-      "step3": "Classification",
-      "step4": "Review",
-      "cancel": "Cancel",
-      "next_lawyer": "Next: Assign Lawyer",
-      "next_class": "Next: Classification",
-      "next_review": "Next: Review",
-      "create_case": "Create Case",
-      "client_role_title": "Client Role in Case",
-      "client_role_description": "Select whether the client is acting as plaintiff or defendant in this case.",
-      "client_role_label": "Client Role",
-      "role_demandante": "Plaintiff",
-      "role_demandante_desc": "Client initiates the legal action",
-      "role_demandado": "Defendant",
-      "role_demandado_desc": "Client responds to the legal action",
-      "client_role_required": "You must select the client role",
-      "review_client_title": "Review Client Information",
-      "client_info": {
-          "name": "Name",
-          "email": "Email",
-          "phone": "Phone",
-          "document": "Document",
-          "description": "Description"
-      },
-      "assign_lawyer_title": "Assign Lawyer",
-      "client_status": {
-          "new": "New Client",
-          "existing": "Existing Client"
-      },
-      "no_lawyers": "No active lawyers found. Please create a lawyer user first.",
-      "go_to_users": "Go to Users",
-      "classification_title": "Case Classification (Optional)",
-      "classification": {
-        "domain": "Domain",
-        "skip_domain": "-- Skip Classification --",
-        "branch": "Branch",
-        "select_branch": "-- Select Branch --",
-        "subtypes": "Subtypes (Multi-select)"
-      },
-      "review_confirm_title": "Review & Confirm",
-      "client_label": "Client",
-      "assigned_lawyer_label": "Assigned Lawyer",
-      "classification_label": "Classification",
-      "no_classification": "No classification selected"
-    }
-  },
-  "errors": {
-      "case_acceptance": {
-          "request_not_found": "Request not found",
-          "pending_only": "Only pending requests can be accepted",
-          "client_role_required": "Client role selection is required",
-          "invalid_client_role": "Invalid client role selection",
-          "fetch_lawyers_failed": "Failed to fetch lawyers",
-          "lawyer_required": "Lawyer selection is required",
-          "invalid_lawyer": "Invalid lawyer selection",
-          "fetch_domains_failed": "Failed to fetch domains",
-          "fetch_branches_failed": "Failed to fetch branches",
-          "fetch_subtypes_failed": "Failed to fetch subtypes",
-          "invalid_domain": "Invalid domain selection",
-          "invalid_branch": "Invalid branch selection",
-          "create_client_failed": "Failed to create client user",
-          "gen_password_failed": "Failed to generate password",
-          "hash_password_failed": "Failed to hash password",
-          "gen_case_number_failed": "Failed to generate case number",
-          "create_case_failed": "Failed to create case",
-          "link_subtypes_failed": "Failed to link subtypes",
-          "update_request_failed": "Failed to update request status",
-          "commit_failed": "Failed to commit transaction",
-          "processed_already": "Request has already been processed"
-      }
   },
   "settings": {
     "profile": {
@@ -1621,7 +1463,6 @@
       "appointment": "Appointment",
       "blocked_date": "Blocked Date",
       "availability": "Availability",
-      "case_request": "Case Request",
       "firm": "Firm",
       "template": "Template",
       "generated_document": "Generated Document",
@@ -1654,8 +1495,6 @@
       "welcome": "Welcome to LexLegalCloud App!",
       "firm_setup": "Firm Setup Complete - lexlegalcloud App",
       "password_reset": "Password Reset Request - lexlegalcloud App",
-      "case_request_rejection": "Case Request Update - {firmName}",
-      "case_acceptance": "Case Accepted - {firmName}",
       "lawyer_assignment": "New Case Assigned - {caseNumber}",
       "collaborator_added": "Added as Collaborator - Case {caseNumber}",
       "appointment_confirmation": "Appointment Confirmed - {firmName}",

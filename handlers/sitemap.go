@@ -6,7 +6,6 @@ import (
 	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -47,27 +46,6 @@ func GetSitemapHandler(c echo.Context) error {
 	if err := db.DB.Where("is_active = ?", true).Find(&firms).Error; err != nil {
 		c.Logger().Error("Failed to fetch firms for sitemap", err)
 		// Continue with static pages if DB fails, or consider returning error
-	}
-
-	for _, firm := range firms {
-		// Only include firms with a valid slug
-		if firm.Slug != "" {
-			// Public Case Request Page
-			urls = append(urls, SitemapURL{
-				Loc:        baseURL + "/firm/" + firm.Slug + "/request",
-				ChangeFreq: "daily",
-				Priority:   0.9,
-				LastMod:    firm.UpdatedAt.Format(time.RFC3339),
-			})
-
-			// Public Booking Page
-			urls = append(urls, SitemapURL{
-				Loc:        baseURL + "/firm/" + firm.Slug + "/book",
-				ChangeFreq: "daily",
-				Priority:   0.9,
-				LastMod:    firm.UpdatedAt.Format(time.RFC3339),
-			})
-		}
 	}
 
 	urlSet := SitemapURLSet{

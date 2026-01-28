@@ -5,7 +5,6 @@ import (
 	"io"
 	"law_flow_app_go/models"
 	"mime/multipart"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -67,7 +66,7 @@ func setupDocumentTestDB() *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&models.CaseDocument{}, &models.CaseRequest{}, &models.Case{}, &models.Firm{}, &models.User{})
+	db.AutoMigrate(&models.CaseDocument{}, &models.Case{}, &models.Firm{}, &models.User{})
 	return db
 }
 
@@ -87,51 +86,6 @@ func TestGetDocumentPath(t *testing.T) {
 	expected := filepath.Join("uploads", "firms", "firm-1", "cases", "case-1", "test.pdf")
 	assert.Equal(t, expected, path)
 
-	reqDoc := &models.CaseDocument{
-		FirmID:        "firm-1",
-		CaseRequestID: stringToPtr("req-1"),
-		FileName:      "req.pdf",
-	}
-	pathReq := GetDocumentPath(reqDoc)
-	expectedReq := filepath.Join("uploads", "firms", "firm-1", "case_requests", "req.pdf")
-	assert.Equal(t, expectedReq, pathReq)
-}
-
-func TestTransferRequestDocumentToCase(t *testing.T) {
-	db := setupDocumentTestDB()
-	firmID := "firm-transfer"
-	caseID := "case-transfer"
-	userID := "user-transfer"
-
-	// Create a dummy file
-	os.MkdirAll("uploads/case_requests", 0755)
-	defer os.RemoveAll("uploads")
-
-	oldPath := "uploads/case_requests/request.pdf"
-	os.WriteFile(oldPath, []byte("test content"), 0644)
-
-	request := &models.CaseRequest{
-		ID:       "req-1",
-		FirmID:   firmID,
-		FileName: "request.pdf",
-		FilePath: oldPath,
-		FileSize: 12,
-	}
-
-	err := TransferRequestDocumentToCase(db, request, caseID, userID)
-	assert.NoError(t, err)
-
-	// Verify DB entry
-	var doc models.CaseDocument
-	err = db.Where("case_id = ?", caseID).First(&doc).Error
-	assert.NoError(t, err)
-	assert.Equal(t, "request.pdf", doc.FileName)
-
-	// Verify file moved
-	_, err = os.Stat(doc.FilePath)
-	assert.NoError(t, err)
-	_, err = os.Stat(oldPath)
-	assert.True(t, os.IsNotExist(err))
 }
 
 func TestDeleteCaseDocument(t *testing.T) {

@@ -46,11 +46,9 @@ A comprehensive security audit was conducted on the LexLegalCloud codebase. The 
 ### 2.1 Missing CSRF Protection on Critical Endpoints (`High Severity`)
 - **Location:** Multiple public and auth endpoints
 - **Files Affected:**
-  - `handlers/case_request.go` - Line 67 (PublicCaseRequestPostHandler)
   - `handlers/password_reset.go` - Lines 24, 115
   - `handlers/auth.go` - Line 39 (LoginPostHandler)
 - **Issue:** Public endpoints allow form submission without CSRF token validation. While Turnstile CAPTCHA provides some protection, it's not a CSRF mitigation.
-- **Risk:** Cross-site request forgery attacks can submit fake case requests, initiate password resets for other users, or attempt login brute force from victim's browser.
 - **Recommendation:**
   - Apply CSRF middleware to all state-changing endpoints
   - Use CSRF tokens in conjunction with existing CAPTCHA
@@ -124,7 +122,6 @@ A comprehensive security audit was conducted on the LexLegalCloud codebase. The 
   - Add content-type awareness to template rendering
 
 ### 3.2 Missing Security Headers on File Downloads (`Medium Severity`)
-- **Location:** `handlers/case_request.go` (line 168), `handlers/document_generation.go`
 - **Issue:** Downloaded files lack proper security headers:
   - No `Content-Disposition: attachment` header
   - No `X-Content-Type-Options: nosniff`
@@ -149,7 +146,6 @@ A comprehensive security audit was conducted on the LexLegalCloud codebase. The 
 - **Location:** Multiple handlers
 - **Examples:**
   - `handlers/case.go` (line 37): `assignedTo` filter lacks UUID format validation
-  - `handlers/case_request.go` (lines 102-105): Text fields trimmed but no length limits
   - `handlers/user.go` (lines 114-129): Name, email without reasonable length limits
 - **Risk:** Database performance issues, potential buffer overflow conditions, storage abuse.
 - **Recommendation:**
