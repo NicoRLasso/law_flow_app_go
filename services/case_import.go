@@ -18,10 +18,11 @@ import (
 
 // ImportResult contains the summary of the import process
 type ImportResult struct {
-	TotalProcessed int
-	SuccessCount   int
-	FailedCount    int
-	Errors         []string
+	TotalProcessed        int
+	SuccessCount          int
+	FailedCount           int
+	SkippedOverLimitCount int
+	Errors                []string
 }
 
 // GenerateExcelTemplate generates the Excel template for case import
@@ -144,20 +145,21 @@ func GenerateExcelTemplate(ctx context.Context, dbConn *gorm.DB, firmID string) 
 	caseHeaders := []string{
 		i18n.T(ctx, "cases.import.headers.email") + "*",       // A
 		i18n.T(ctx, "cases.import.headers.legacy_number"),     // B
-		i18n.T(ctx, "cases.import.headers.case_title") + "*",  // C
-		i18n.T(ctx, "cases.import.headers.description") + "*", // D
-		i18n.T(ctx, "cases.import.headers.domain"),            // E (Optional)
-		i18n.T(ctx, "cases.import.headers.branch"),            // F (Optional)
-		i18n.T(ctx, "cases.import.headers.subtype"),           // G (Optional)
-		i18n.T(ctx, "cases.import.headers.status") + "*",      // H
-		i18n.T(ctx, "cases.import.headers.opened_date"),       // I
-		i18n.T(ctx, "cases.import.headers.closed_date"),       // J
+		i18n.T(ctx, "cases.import.headers.filing_number"),     // C [NEW]
+		i18n.T(ctx, "cases.import.headers.case_title") + "*",  // D
+		i18n.T(ctx, "cases.import.headers.description") + "*", // E
+		i18n.T(ctx, "cases.import.headers.domain"),            // F (Optional)
+		i18n.T(ctx, "cases.import.headers.branch"),            // G (Optional)
+		i18n.T(ctx, "cases.import.headers.subtype"),           // H (Optional)
+		i18n.T(ctx, "cases.import.headers.status") + "*",      // I
+		i18n.T(ctx, "cases.import.headers.opened_date"),       // J
+		i18n.T(ctx, "cases.import.headers.closed_date"),       // K
 	}
 	for i, header := range caseHeaders {
 		cell, _ := excelize.CoordinatesToCellName(i+1, 1)
 		f.SetCellValue(sheetCases, cell, header)
 	}
-	f.SetColWidth(sheetCases, "A", "J", 20)
+	f.SetColWidth(sheetCases, "A", "K", 20)
 
 	// Fetch a real Domain/Branch/Subtype for the example
 	var exampleDomainName = "Civil"
@@ -179,18 +181,19 @@ func GenerateExcelTemplate(ctx context.Context, dbConn *gorm.DB, firmID string) 
 	// Example Case
 	f.SetCellValue(sheetCases, "A2", "client@example.com")
 	f.SetCellValue(sheetCases, "B2", "LEGACY-001")
-	f.SetCellValue(sheetCases, "C2", "Example Case Title")
-	f.SetCellValue(sheetCases, "D2", "Description of the case...")
-	f.SetCellValue(sheetCases, "E2", exampleDomainName)
-	f.SetCellValue(sheetCases, "F2", exampleBranchName)
-	f.SetCellValue(sheetCases, "G2", exampleSubtypeName)
-	f.SetCellValue(sheetCases, "H2", "OPEN")
-	f.SetCellValue(sheetCases, "I2", time.Now().Format("2006-01-02"))
+	f.SetCellValue(sheetCases, "C2", "123-456-789")
+	f.SetCellValue(sheetCases, "D2", "Example Case Title")
+	f.SetCellValue(sheetCases, "E2", "Description of the case...")
+	f.SetCellValue(sheetCases, "F2", exampleDomainName)
+	f.SetCellValue(sheetCases, "G2", exampleBranchName)
+	f.SetCellValue(sheetCases, "H2", exampleSubtypeName)
+	f.SetCellValue(sheetCases, "I2", "OPEN")
+	f.SetCellValue(sheetCases, "J2", time.Now().Format("2006-01-02"))
 
 	// Header Style
 	headerStyle, _ := f.NewStyle(&excelize.Style{Font: &excelize.Font{Bold: true}})
 	f.SetCellStyle(sheetClients, "A1", "E1", headerStyle)
-	f.SetCellStyle(sheetCases, "A1", "J1", headerStyle)
+	f.SetCellStyle(sheetCases, "A1", "K1", headerStyle)
 
 	buf, err := f.WriteToBuffer()
 	if err != nil {
@@ -200,8 +203,47 @@ func GenerateExcelTemplate(ctx context.Context, dbConn *gorm.DB, firmID string) 
 	return buf, nil
 }
 
+// AnalyzeExcelFile reads the file and returns basic stats like total rows to process
+func AnalyzeExcelFile(file io.Reader) (int, error) {
+	// We need to read into a byte slicer because OpenReader needs a readerAt or we use OpenFile?
+	// Excelize OpenReader takes io.Reader, so we are good.
+	f, err := excelize.OpenReader(file)
+	if err != nil {
+		return 0, fmt.Errorf("failed to open excel file: %w", err)
+	}
+	defer f.Close()
+
+	if f.SheetCount < 3 {
+		return 0, fmt.Errorf("invalid excel format: missing sheets")
+	}
+
+	sheets := f.GetSheetList()
+	caseSheetName := sheets[2]
+
+	rows, err := f.GetRows(caseSheetName)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read cases sheet: %w", err)
+	}
+
+	totalRows := 0
+	for i, row := range rows {
+		if i == 0 {
+			continue
+		} // Header
+		// Basic check for empty row
+		if len(row) > 0 {
+			// At least email required
+			if strings.TrimSpace(row[0]) != "" {
+				totalRows++
+			}
+		}
+	}
+
+	return totalRows, nil
+}
+
 // BulkCreateFromExcel parses the Excel file and creates records
-func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, userID string, file io.Reader) (*ImportResult, error) {
+func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, userID string, file io.Reader, limit int) (*ImportResult, error) {
 	f, err := excelize.OpenReader(file)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open excel file: %w", err)
@@ -355,14 +397,20 @@ func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, us
 		if i == 0 {
 			continue
 		} // Header
-		if len(row) < 8 { // Increased minimum columns due to Subtype insertion
+		if len(row) < 9 { // Increased minimum columns due to Subtype & Filing Number insertion
+			continue
+		}
+
+		// Check Limits
+		if limit != -1 && result.SuccessCount >= limit {
+			result.SkippedOverLimitCount++
 			continue
 		}
 
 		result.TotalProcessed++
 
 		// Columns:
-		// 0: Email*, 1: LegacyNumber, 2: Title*, 3: Description*, 4: Domain, 5: Branch, 6: Subtype, 7: Status*, 8: OpenedDate, 9: ClosedDate
+		// 0: Email*, 1: LegacyNumber, 2: FilingNumber, 3: Title*, 4: Description*, 5: Domain, 6: Branch, 7: Subtype, 8: Status*, 9: OpenedDate, 10: ClosedDate
 
 		email := strings.TrimSpace(row[0])
 		if email == "" {
@@ -377,12 +425,13 @@ func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, us
 		}
 
 		legacyNumber := strings.TrimSpace(row[1])
-		title := row[2]
-		description := row[3]
-		domainName := strings.TrimSpace(row[4])
-		branchName := strings.TrimSpace(row[5])
-		subtypeName := strings.TrimSpace(row[6])
-		statusRaw := strings.ToUpper(strings.TrimSpace(row[7]))
+		filingNumber := strings.TrimSpace(row[2])
+		title := row[3]
+		description := row[4]
+		domainName := strings.TrimSpace(row[5])
+		branchName := strings.TrimSpace(row[6])
+		subtypeName := strings.TrimSpace(row[7])
+		statusRaw := strings.ToUpper(strings.TrimSpace(row[8]))
 
 		// Map Status
 		status := models.CaseStatusOpen
@@ -399,15 +448,15 @@ func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, us
 
 		// Dates
 		openedAt := time.Now()
-		if len(row) > 8 && row[8] != "" {
-			if t, err := time.Parse("2006-01-02", row[8]); err == nil {
+		if len(row) > 9 && row[9] != "" {
+			if t, err := time.Parse("2006-01-02", row[9]); err == nil {
 				openedAt = t
 			}
 		}
 
 		var closedAt *time.Time
-		if status == models.CaseStatusClosed && len(row) > 9 && row[9] != "" {
-			if t, err := time.Parse("2006-01-02", row[9]); err == nil {
+		if status == models.CaseStatusClosed && len(row) > 10 && row[10] != "" {
+			if t, err := time.Parse("2006-01-02", row[10]); err == nil {
 				closedAt = &t
 			}
 		}
@@ -457,11 +506,17 @@ func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, us
 		}
 
 		// Create Case
+		var filingNumPtr *string
+		if filingNumber != "" {
+			filingNumPtr = &filingNumber
+		}
+
 		newCase := models.Case{
 			ID:                   uuid.New().String(),
 			FirmID:               firmID,
 			ClientID:             clientID,
 			CaseNumber:           sysCaseNumber,
+			FilingNumber:         filingNumPtr,
 			Title:                &title,
 			Description:          description,
 			CaseType:             "Imported",

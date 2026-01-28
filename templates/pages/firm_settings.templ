@@ -243,16 +243,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 														<span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.firm.desc_ph") }</span>
 													</label>
 												</div>
-												<!-- Email Sender Name -->
-												<div class="form-control w-full">
-													<label class="label">
-														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
-															{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
-														</span>
-													</label>
-													<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary" />
-													<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
-												</div>
+
 												<!-- Message Container -->
 												<div id="firm-message"></div>
 												<!-- Submit Button -->
@@ -345,16 +336,16 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 												<input type="email" id="noreply_email" name="noreply_email" value={ firm.NoreplyEmail } required class="input input-bordered w-full rounded-sm focus:input-primary" />
 												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.noreply_desc") }</span></label>
 											</div>
-											<!-- Email Sender Name -->
-											<div class="form-control w-full">
-												<label class="label">
-													<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
-														{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
-													</span>
-												</label>
-												<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary" />
-												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
-											</div>
+												<!-- Email Sender Name -->
+												<div class="form-control w-full">
+													<label class="label">
+														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+															{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
+														</span>
+													</label>
+													<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary" />
+													<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
+												</div>
 											<!-- Message Container -->
 											<div id="email-message"></div>
 											<!-- Submit Button -->

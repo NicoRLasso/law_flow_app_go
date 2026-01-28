@@ -78,16 +78,17 @@ func FirmSetupPostHandler(c echo.Context) error {
 
 	// Create the firm
 	firm := &models.Firm{
-		Name:         name,
-		Country:      country,
-		Timezone:     timezone,
-		Address:      address,
-		City:         city,
-		Phone:        phone,
-		Description:  description,
-		BillingEmail: billingEmail,
-		InfoEmail:    infoEmail,
-		NoreplyEmail: noreplyEmail,
+		Name:            name,
+		Country:         country,
+		Timezone:        timezone,
+		Address:         address,
+		City:            city,
+		Phone:           phone,
+		Description:     description,
+		BillingEmail:    billingEmail,
+		InfoEmail:       infoEmail,
+		NoreplyEmail:    noreplyEmail,
+		EmailSenderName: name, // Default to firm name
 	}
 
 	if err := db.DB.Create(firm).Error; err != nil {
@@ -248,6 +249,7 @@ func UpdateFirmHandler(c echo.Context) error {
 		firm.BillingEmail = billingEmail
 		firm.InfoEmail = strings.TrimSpace(c.FormValue("info_email"))
 		firm.NoreplyEmail = strings.TrimSpace(c.FormValue("noreply_email"))
+		firm.EmailSenderName = strings.TrimSpace(c.FormValue("email_sender_name"))
 
 	} else {
 		// Fallback for legacy requests or unknown types

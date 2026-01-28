@@ -1162,6 +1162,7 @@
         "phone": "Teléfono",
         "document_type": "Tipo Documento (CC, NIT, etc)",
         "document_number": "Número Documento",
+        "filing_number": "Número de Radicado",
         "legacy_number": "Número Caso Legado",
         "case_title": "Título Caso",
         "description": "Descripción",

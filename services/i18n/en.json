@@ -55,8 +55,8 @@
       "city": "City"
     },
     "delete": {
-        "confirm_message": "Are you sure you want to delete the firm {name}?",
-        "warning_message": "This will delete all users, cases, and data associated with this firm."
+      "confirm_message": "Are you sure you want to delete the firm {name}?",
+      "warning_message": "This will delete all users, cases, and data associated with this firm."
     },
     "appointments": "Appointments",
     "profile_settings": "Profile Settings",
@@ -674,7 +674,6 @@
     },
     "mobile_cta": "Start Free Trial"
   },
-
   "cases": {
     "detail": {
       "title": "Case Details",
@@ -796,6 +795,7 @@
         "phone": "Phone",
         "document_type": "Document Type",
         "document_number": "Document Number",
+        "filing_number": "Filing Number",
         "legacy_number": "Legacy Case Number",
         "case_title": "Case Title",
         "description": "Description",
@@ -1353,67 +1353,67 @@
       }
     },
     "users": {
-        "title": "User Management",
-        "subtitle": "Manage all users across the platform.",
-        "create_user": "Create User",
-        "search_placeholder": "Search users...",
-        "role_filter": {
-             "all": "All Roles",
-             "superadmin": "Superadmin",
-             "admin": "Admin",
-             "lawyer": "Lawyer",
-             "staff": "Staff",
-             "client": "Client"
-        },
-        "firm_filter": {
-             "all": "All Firms",
-             "none": "No Firm"
-        },
-        "status_filter": {
-             "all": "All Status",
-             "active": "Active",
-             "inactive": "Inactive"
-        },
-        "table": {
-             "user": "User",
-             "role": "Role",
-             "status": "Status",
-             "firm": "Firm",
-             "joined": "Joined",
-             "actions": "Actions",
-             "no_results": "No users found matching your criteria.",
-             "no_firm": "No Firm"
-        },
-        "modal": {
-             "create_title": "Create New User",
-             "edit_title": "Edit User",
-             "full_name": "Full Name",
-             "email": "Email Address",
-             "password": "Password",
-             "password_edit_hint": "Password (leave blank to keep current)",
-             "role": "Role",
-             "status": "Status",
-             "firm": "Firm",
-             "firm_no_firm": "No Firm (User will set up)",
-             "active": "Active",
-             "inactive": "Inactive",
-             "cancel": "Cancel",
-             "save": "Save Changes",
-             "create": "Create User"
-        },
-         "delete_modal": {
-             "title": "Delete User",
-             "confirm": "Are you sure you want to delete {name}?",
-             "warning": "This action will perform a soft delete. The user will essentially be deactivated and hidden, but data remains in the database.",
-             "cancel": "Cancel",
-             "delete": "Delete User"
-        }
+      "title": "User Management",
+      "subtitle": "Manage all users across the platform.",
+      "create_user": "Create User",
+      "search_placeholder": "Search users...",
+      "role_filter": {
+        "all": "All Roles",
+        "superadmin": "Superadmin",
+        "admin": "Admin",
+        "lawyer": "Lawyer",
+        "staff": "Staff",
+        "client": "Client"
+      },
+      "firm_filter": {
+        "all": "All Firms",
+        "none": "No Firm"
+      },
+      "status_filter": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "firm": "Firm",
+        "joined": "Joined",
+        "actions": "Actions",
+        "no_results": "No users found matching your criteria.",
+        "no_firm": "No Firm"
+      },
+      "modal": {
+        "create_title": "Create New User",
+        "edit_title": "Edit User",
+        "full_name": "Full Name",
+        "email": "Email Address",
+        "password": "Password",
+        "password_edit_hint": "Password (leave blank to keep current)",
+        "role": "Role",
+        "status": "Status",
+        "firm": "Firm",
+        "firm_no_firm": "No Firm (User will set up)",
+        "active": "Active",
+        "inactive": "Inactive",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "create": "Create User"
+      },
+      "delete_modal": {
+        "title": "Delete User",
+        "confirm": "Are you sure you want to delete {name}?",
+        "warning": "This action will perform a soft delete. The user will essentially be deactivated and hidden, but data remains in the database.",
+        "cancel": "Cancel",
+        "delete": "Delete User"
+      }
     },
     "nav": {
-        "dashboard": "Dashboard",
-        "users": "Users",
-        "firms": "Firms",
-        "logout": "Log out"
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "firms": "Firms",
+      "logout": "Log out"
     },
     "support": {
       "title": "Support Tickets",
@@ -1474,9 +1474,9 @@
     "newValues": "New Values",
     "field": "Field",
     "diff": {
-        "field": "Field",
-        "old": "Old Value",
-        "new": "New Value"
+      "field": "Field",
+      "old": "Old Value",
+      "new": "New Value"
     }
   },
   "search": {

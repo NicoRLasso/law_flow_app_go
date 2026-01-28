@@ -68,6 +68,7 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 								hx-post={ "/api/cases/" + caseRecord.ID + "/generate" }
 								hx-target="#generated-docs-container"
 								hx-swap="innerHTML"
+								hx-disabled-elt="find button"
 								class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"
 							>
 								<input type="hidden" name="template_id" x-bind:value="selectedTemplate"/>
@@ -78,6 +79,7 @@ templ GenerateDocumentTab(ctx context.Context, caseRecord models.Case, templates
 									class="input input-bordered input-sm w-full sm:w-auto rounded-sm focus:input-primary"
 								/>
 								<button type="submit" class="btn btn-primary btn-sm rounded-sm gap-2">
+									<span class="loading loading-spinner loading-xs htmx-indicator"></span>
 									<i data-lucide="file-down"></i>
 									{ i18n.T(ctx, "templates.generate_pdf") }
 								</button>

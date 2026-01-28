@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"testing"
@@ -107,34 +108,37 @@ func TestBulkCreateFromExcel(t *testing.T) {
 	// Cases Header
 	f.SetCellValue(sheet3, "A1", "Email*")
 	f.SetCellValue(sheet3, "B1", "LegacyNumber")
-	f.SetCellValue(sheet3, "C1", "Title*")
-	f.SetCellValue(sheet3, "D1", "Description*")
-	f.SetCellValue(sheet3, "E1", "Domain")
-	f.SetCellValue(sheet3, "F1", "Branch")
-	f.SetCellValue(sheet3, "G1", "Subtype")
-	f.SetCellValue(sheet3, "H1", "Status*")
+	f.SetCellValue(sheet3, "C1", "FilingNumber")
+	f.SetCellValue(sheet3, "D1", "Title*")
+	f.SetCellValue(sheet3, "E1", "Description*")
+	f.SetCellValue(sheet3, "F1", "Domain")
+	f.SetCellValue(sheet3, "G1", "Branch")
+	f.SetCellValue(sheet3, "H1", "Subtype")
+	f.SetCellValue(sheet3, "I1", "Status*")
 
 	// Row 2: Case for New Client
 	f.SetCellValue(sheet3, "A2", "new@example.com")
 	f.SetCellValue(sheet3, "B2", "LEG-001")
-	f.SetCellValue(sheet3, "C2", "Title 1")
-	f.SetCellValue(sheet3, "D2", "Desc 1")
-	f.SetCellValue(sheet3, "E2", "Civil")
-	f.SetCellValue(sheet3, "F2", "Family")
-	f.SetCellValue(sheet3, "G2", "Succession")
-	f.SetCellValue(sheet3, "H2", "OPEN")
+	f.SetCellValue(sheet3, "C2", "FIL-001")
+	f.SetCellValue(sheet3, "D2", "Title 1")
+	f.SetCellValue(sheet3, "E2", "Desc 1")
+	f.SetCellValue(sheet3, "F2", "Civil")
+	f.SetCellValue(sheet3, "G2", "Family")
+	f.SetCellValue(sheet3, "H2", "Succession")
+	f.SetCellValue(sheet3, "I2", "OPEN")
 
 	// Row 3: Case for Existing Client
 	f.SetCellValue(sheet3, "A3", existingEmail)
 	f.SetCellValue(sheet3, "B3", "LEG-002")
-	f.SetCellValue(sheet3, "C3", "Title 2")
-	f.SetCellValue(sheet3, "D3", "Desc 2")
-	f.SetCellValue(sheet3, "H3", "OPEN")
+	f.SetCellValue(sheet3, "C3", "FIL-002")
+	f.SetCellValue(sheet3, "D3", "Title 2")
+	f.SetCellValue(sheet3, "E3", "Desc 2")
+	f.SetCellValue(sheet3, "I3", "OPEN")
 
 	buf, _ := f.WriteToBuffer()
 
 	// Execute Import
-	result, err := BulkCreateFromExcel(ctx, db, firmID, userID, buf)
+	result, err := BulkCreateFromExcel(ctx, db, firmID, userID, buf, -1)
 
 	// Assert Result
 	assert.NoError(t, err)
@@ -173,8 +177,66 @@ func TestBulkCreateFromExcel_Validation(t *testing.T) {
 	// Empty file / Missing sheets
 	f := excelize.NewFile()
 	buf, _ := f.WriteToBuffer()
-	result, err := BulkCreateFromExcel(ctx, db, firmID, "user", buf)
+	result, err := BulkCreateFromExcel(ctx, db, firmID, "user", buf, -1)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "missing sheets")
 	assert.Nil(t, result)
+}
+
+func TestBulkCreateFromExcel_LimitEnforcement(t *testing.T) {
+	db := setupCaseImportTestDB()
+	ctx := context.Background()
+	firmID := "firm-limit"
+
+	db.Create(&models.Firm{ID: firmID, Name: "Limit Firm"})
+
+	// Create Excel File in memory with 5 cases
+	f := excelize.NewFile()
+	sheetCases := "Cases"
+	sheetClients := "Clients"
+	f.NewSheet(sheetClients)
+	f.NewSheet(sheetCases)
+
+	// Clients Header & Data
+	f.SetCellValue(sheetClients, "A1", "Email*")
+	f.SetCellValue(sheetClients, "A2", "test@example.com")
+
+	// Headers
+	f.SetCellValue(sheetCases, "A1", "Email*")
+	f.SetCellValue(sheetCases, "B1", "LegacyNumber")
+	f.SetCellValue(sheetCases, "C1", "FilingNumber")
+	f.SetCellValue(sheetCases, "D1", "Title*")
+	f.SetCellValue(sheetCases, "E1", "Description*")
+	f.SetCellValue(sheetCases, "I1", "Status*")
+
+	// 5 Rows
+	for i := 2; i <= 6; i++ {
+		cellEmail, _ := excelize.CoordinatesToCellName(1, i)
+		cellTitle, _ := excelize.CoordinatesToCellName(4, i)
+		cellDesc, _ := excelize.CoordinatesToCellName(5, i)
+		cellStatus, _ := excelize.CoordinatesToCellName(9, i) // I is 9th letter
+
+		f.SetCellValue(sheetCases, cellEmail, "test@example.com")
+		f.SetCellValue(sheetCases, cellTitle, fmt.Sprintf("Case %d", i))
+		f.SetCellValue(sheetCases, cellDesc, "Desc")
+		f.SetCellValue(sheetCases, cellStatus, "OPEN")
+	}
+
+	// Create Client for foreign key
+	db.Create(&models.User{ID: "client-test", Email: "test@example.com", FirmID: &firmID, Role: "client", IsActive: true})
+
+	buf, _ := f.WriteToBuffer()
+
+	// Execute Import with Limit 3
+	result, err := BulkCreateFromExcel(ctx, db, firmID, "user", buf, 3)
+
+	// Assert Result
+	assert.NoError(t, err)
+	assert.Equal(t, 3, result.SuccessCount)
+	assert.Equal(t, 2, result.SkippedOverLimitCount)
+
+	// Verify Database State
+	var count int64
+	db.Model(&models.Case{}).Where("firm_id = ?", firmID).Count(&count)
+	assert.Equal(t, int64(3), count)
 }

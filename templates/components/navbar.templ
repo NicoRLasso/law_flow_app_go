@@ -208,18 +208,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 											>
 												Calendar
 											</a>
-											<a
-												href="/availability"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-											func() string {
-												if currentPath == "/availability" {
-													return "text-primary font-bold bg-primary/5"
-												}
-												return "text-base-content/80"
-											}() }
-											>
-												{ i18n.T(ctx, "nav.availability") }
-											</a>
+
 											<a
 												href="/appointments"
 												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
@@ -301,6 +290,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
 									{ i18n.T(ctx, "nav.profile_settings") }
 								</a>
+								if user.Role == "admin" || user.Role == "lawyer" {
+									<a href="/availability" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+										{ i18n.T(ctx, "nav.availability") }
+									</a>
+								}
 								if user.Role == "admin" {
 									<a href="/firm/settings" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
 										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
