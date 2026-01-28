@@ -221,7 +221,11 @@ func SuperadminCreateUserHandler(c echo.Context) error {
 
 	// Fetch updated users
 	c.Response().Header().Set("HX-Trigger", "closeModal")
-	return SuperadminGetUsersListHTMX(c)
+
+	c.Response().Writer.Write([]byte("<div id='users-table-container' hx-swap-oob='true'>"))
+	err = SuperadminGetUsersListHTMX(c)
+	c.Response().Writer.Write([]byte("</div>"))
+	return err
 }
 
 // SuperadminUpdateUser updates a user
@@ -263,7 +267,10 @@ func SuperadminUpdateUser(c echo.Context) error {
 	// Return updated list + close modal via OOB
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 
-	return SuperadminGetUsersListHTMX(c)
+	c.Response().Writer.Write([]byte("<div id='users-table-container' hx-swap-oob='true'>"))
+	err := SuperadminGetUsersListHTMX(c)
+	c.Response().Writer.Write([]byte("</div>"))
+	return err
 }
 
 // SuperadminToggleUserActive toggles user status

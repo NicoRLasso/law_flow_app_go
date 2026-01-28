@@ -27,7 +27,7 @@ templ UserFormModal(ctx context.Context, user *models.User, firms []models.Firm,
 				} else {
 					hx-post="/superadmin/users"
 				}
-				hx-target="#users-table-container"
+				hx-target="#modal-feedback"
 				hx-swap="innerHTML"
 				hx-disabled-elt="find button[type='submit']"
 				class="space-y-6"

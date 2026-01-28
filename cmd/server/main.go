@@ -98,7 +98,7 @@ func main() {
 				return nil
 			},
 		}))
-		e.Use(middleware.CSPNonce())
+		e.Use(middleware.CSPNonce(cfg.Environment != "production"))
 		e.Use(echomiddleware.SecureWithConfig(echomiddleware.SecureConfig{
 			XSSProtection:         "1; mode=block",
 			ContentTypeNosniff:    "nosniff",

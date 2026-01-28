@@ -59,7 +59,7 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 				<!-- Status Select -->
 				<form method="POST" action={ templ.SafeURL("/superadmin/support/" + ticket.ID + "/status") } class="flex items-center">
 					<input type="hidden" name="_csrf" value={ csrfToken }/>
-					<select name="status" onchange="this.form.submit()" class="select select-bordered select-sm focus:select-primary font-bold rounded-sm">
+					<select name="status" @change="$el.form.submit()" class="select select-bordered select-sm focus:select-primary font-bold rounded-sm">
 						<option value="open" selected?={ ticket.Status == "open" }>{ i18n.T(ctx, "support.status.open") }</option>
 						<option value="in_progress" selected?={ ticket.Status == "in_progress" }>{ i18n.T(ctx, "support.status.in_progress") }</option>
 						<option value="resolved" selected?={ ticket.Status == "resolved" }>{ i18n.T(ctx, "support.status.resolved") }</option>

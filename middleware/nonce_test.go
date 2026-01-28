@@ -28,7 +28,7 @@ func TestCSPNonce(t *testing.T) {
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
 
-		handler := CSPNonce()(func(c echo.Context) error {
+		handler := CSPNonce(false)(func(c echo.Context) error {
 			return c.NoContent(http.StatusOK)
 		})
 

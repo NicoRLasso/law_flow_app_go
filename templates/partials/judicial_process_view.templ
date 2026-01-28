@@ -3,7 +3,7 @@ package partials
 import (
 	"context"
 	"fmt"
-	"law_flow_app_go/middleware"
+
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"strings"
@@ -280,12 +280,7 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 			</div>
 		}
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-		// Re-initialize lucide icons for the newly loaded content
-		if (typeof lucide !== 'undefined') {
-			lucide.createIcons();
-		}
-	</script>
+
 }
 
 // Helper to safely get string from JSONMap

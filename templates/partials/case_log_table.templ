@@ -9,7 +9,7 @@ import (
 templ CaseLogTable(ctx context.Context, logs []models.CaseLog, caseID string, currentPage int, totalPages int, limit int, total int) {
 	<!-- Filters -->
 	<div class="bg-base-100 rounded-sm border border-base-200 p-4 mb-6">
-		<form id="case-logs-filters" class="flex flex-col md:flex-row gap-4" onsubmit="return false;">
+		<form id="case-logs-filters" class="flex flex-col md:flex-row gap-4" @submit.prevent>
 			<!-- Keyword Search -->
 			<div class="flex-1 w-full form-control">
 				<div class="join w-full">

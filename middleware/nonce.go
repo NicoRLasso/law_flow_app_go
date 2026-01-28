@@ -23,7 +23,7 @@ func GenerateNonce() (string, error) {
 }
 
 // CSPNonce middleware generates a nonce for each request and adds it to the context
-func CSPNonce() echo.MiddlewareFunc {
+func CSPNonce(isDev bool) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			nonce, err := GenerateNonce()
@@ -42,7 +42,14 @@ func CSPNonce() echo.MiddlewareFunc {
 			// Construct CSP with Nonce
 			// Note: 'unsafe-eval' is currently preserved for Alpine.js support.
 			// We remove 'unsafe-inline' and replace it with 'nonce-{nonce}'.
-			csp := fmt.Sprintf("default-src 'self'; script-src 'self' 'nonce-%s' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://unpkg.com https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com", nonce)
+			scriptSrc := fmt.Sprintf("'self' 'nonce-%s' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com https://challenges.cloudflare.com", nonce)
+
+			// In development, we might need unsafe-inline for tools like templ proxy or other hot-reloaders
+			if isDev {
+				scriptSrc += " 'unsafe-inline'"
+			}
+
+			csp := fmt.Sprintf("default-src 'self'; script-src %s; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.r2.cloudflarestorage.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://unpkg.com https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com", scriptSrc)
 
 			c.Response().Header().Set("Content-Security-Policy", csp)
 
