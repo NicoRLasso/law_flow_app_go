@@ -67,9 +67,6 @@ type Appointment struct {
 	// Meeting URL (for video calls)
 	MeetingURL *string `gorm:"size:500" json:"meeting_url,omitempty"`
 
-	// Reminder System
-	ReminderSentAt *time.Time `json:"reminder_sent_at,omitempty"`
-
 	// Optional links
 	CaseID *string `gorm:"type:uuid;index" json:"case_id,omitempty"`
 	Case   *Case   `gorm:"foreignKey:CaseID" json:"case,omitempty"`

@@ -2,33 +2,33 @@ package jobs
 
 import (
 	"errors"
-	"law_flow_app_go/db"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/judicial"
 	"log"
 	"time"
 
+	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 )
 
 // StartJudicialUpdateJob starts the background job to update judicial processes
 // It runs once immediately, then every 24 hours
-func StartJudicialUpdateJob() {
-	go func() {
-		// Run immediately on startup (non-blocking) - wait 10 seconds for server to settle
-		time.Sleep(10 * time.Second)
-		log.Println("[JOB] Starting initial judicial process update...")
-		UpdateAllJudicialProcesses(db.DB)
+func StartScheduler(database *gorm.DB) {
 
-		// Schedule nightly run (every 24 hours)
-		ticker := time.NewTicker(24 * time.Hour)
-		defer ticker.Stop()
+	loc, _ := time.LoadLocation("America/Bogota")
+	c := cron.New(cron.WithLocation(loc))
 
-		for range ticker.C {
-			log.Println("[JOB] Starting scheduled judicial process update...")
-			UpdateAllJudicialProcesses(db.DB)
-		}
-	}()
+	_, err := c.AddFunc("0 0 * * *", func() {
+		log.Println("[CRON] Ejecutando UpdateAllJudicialProcesses a medianoche...")
+		UpdateAllJudicialProcesses(database)
+	})
+
+	if err != nil {
+		log.Fatalf("[CRON] Error al programar la tarea: %v", err)
+	}
+
+	c.Start()
+	log.Println("[CRON] Planificador de tareas iniciado correctamente.")
 }
 
 // UpdateAllJudicialProcesses iterates through relevant cases and updates them

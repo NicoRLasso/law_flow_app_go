@@ -17,7 +17,6 @@
 
 - **Service:** `services/email.go`
 - **Templates:** `templates/emails/*.html`, `templates/emails/*.txt`
-- **Jobs:** `services/jobs/reminders.go`
 
 ## Configuration
 

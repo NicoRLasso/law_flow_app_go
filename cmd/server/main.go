@@ -504,15 +504,8 @@ func main() {
 		}
 	}()
 
-	go func() {
-		jobs.SendAppointmentReminders(db.DB, cfg)
-		jobs.StartJudicialUpdateJob()
-		ticker := time.NewTicker(1 * time.Hour)
-		defer ticker.Stop()
-		for range ticker.C {
-			jobs.SendAppointmentReminders(db.DB, cfg)
-		}
-	}()
+	jobs.StartScheduler(db.DB)
+
 	go func() {
 		if err := e.Start(":" + cfg.ServerPort); err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatal("Shutting down the server")
@@ -532,6 +525,7 @@ func main() {
 
 	log.Println("Server gracefully stopped")
 }
+
 func checkSensitiveConfig(cfg *config.Config) {
 	if cfg.Environment == "production" {
 		if len(cfg.AllowedOrigins) == 1 && cfg.AllowedOrigins[0] == "*" {
