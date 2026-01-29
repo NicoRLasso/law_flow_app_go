@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.ServiceActivity{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.ServiceActivity{}, &models.Notification{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	if err := services.InitializeFTS5(db.DB); err != nil {
@@ -247,6 +247,9 @@ func main() {
 	protected.Use(middleware.AuditContext())
 	{
 		protected.GET("/dashboard", handlers.DashboardHandler)
+		protected.GET("/api/notifications", handlers.GetNotificationsHandler)
+		protected.PATCH("/api/notifications/:id/read", handlers.MarkNotificationReadHandler)
+		protected.PATCH("/api/notifications/read-all", handlers.MarkAllNotificationsReadHandler)
 		protected.GET("/api/me", handlers.GetCurrentUserHandler)
 		protected.GET("/profile", handlers.ProfileSettingsPageHandler)
 		protected.PUT("/api/profile", handlers.UpdateProfileHandler)

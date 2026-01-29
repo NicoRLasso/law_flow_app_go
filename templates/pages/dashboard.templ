@@ -92,6 +92,51 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						</div>
 					</div>
 				</div>
+				<!-- Notifications Section - NEW (Above Content Grid) -->
+				if len(stats.Notifications) > 0 {
+					<div class="mb-8" id="notifications-section">
+						<div class="flex justify-between items-center mb-4">
+							<h3 class="font-serif font-bold text-lg flex items-center gap-2">
+								<svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+								{ i18n.T(ctx, "dashboard.notifications.title") }
+								<span class="badge badge-primary badge-sm">{ fmt.Sprintf("%d", stats.UnreadCount) }</span>
+							</h3>
+							<button 
+								hx-patch="/api/notifications/read-all"
+								hx-target="#notifications-section"
+								hx-swap="outerHTML"
+								class="btn btn-ghost btn-xs">
+								{ i18n.T(ctx, "dashboard.notifications.mark_all_read") }
+							</button>
+						</div>
+						<div class="space-y-3">
+							for _, notif := range stats.Notifications {
+								<div class="card bg-base-100 shadow border-l-4 border-primary" id={ "notification-" + notif.ID }>
+									<div class="card-body p-4 flex flex-row justify-between items-start">
+										<div>
+											<p class="font-bold text-sm">{ notif.Title }</p>
+											<p class="text-xs opacity-70 line-clamp-2">{ notif.Message }</p>
+											<p class="text-xs opacity-50 mt-1">{ notif.CreatedAt.Format("02 Jan 2006, 15:04") }</p>
+										</div>
+										<div class="flex gap-2">
+											if notif.LinkURL != "" {
+												<a href={ templ.SafeURL(notif.LinkURL) } class="btn btn-primary btn-xs">Ver</a>
+											}
+											<button 
+												hx-patch={ "/api/notifications/" + notif.ID + "/read" }
+												hx-target={ "#notification-" + notif.ID }
+												hx-swap="outerHTML"
+												class="btn btn-ghost btn-xs">
+												✓
+											</button>
+										</div>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+				}
+
 				<!-- Content Grid -->
 				<div class={ "grid gap-8 mb-12", templ.KV("lg:grid-cols-2", true) }>
 					<!-- Recent Cases -->
@@ -184,34 +229,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 									}
 								</div>
 							}
-						</div>
-					</div>
-				</div>
-				<!-- Firm Information - Official Business Card Style -->
-				<div class="card bg-base-100 shadow-xl border-l-4 border-primary rounded-r-sm">
-					<div class="card-body p-8">
-						<div class="flex items-center gap-4 mb-8">
-							<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-content font-serif font-bold text-xl">
-								{ string(firm.Name[0]) }
-							</div>
-							<div>
-								<h3 class="font-serif font-bold text-2xl">{ firm.Name }</h3>
-								<p class="opacity-60 text-sm font-sans uppercase tracking-widest">{ i18n.T(ctx, "dashboard.firm_info.label") }</p>
-							</div>
-						</div>
-						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-							<div>
-								<p class="text-xs uppercase tracking-widest opacity-50 mb-1">{ i18n.T(ctx, "dashboard.firm_info.location") }</p>
-								<p class="font-serif text-lg">{ firm.City }, { firm.Country }</p>
-							</div>
-							<div>
-								<p class="text-xs uppercase tracking-widest opacity-50 mb-1">{ i18n.T(ctx, "dashboard.firm_info.contact") }</p>
-								<p class="font-serif text-lg">{ firm.Phone }</p>
-							</div>
-							<div>
-								<p class="text-xs uppercase tracking-widest opacity-50 mb-1">{ i18n.T(ctx, "dashboard.firm_info.billing_email") }</p>
-								<p class="font-serif text-lg">{ firm.BillingEmail }</p>
-							</div>
 						</div>
 					</div>
 				</div>

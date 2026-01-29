@@ -193,12 +193,13 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 					<div class="form-control">
 						<label class="label pt-0 pb-1.5 px-0">
 							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
-								{ i18n.T(ctx, "cases.assigned_lawyer") }
+								{ i18n.T(ctx, "cases.assigned_lawyer") } <span class="text-error">*</span>
 							</span>
 						</label>
 						<select
 							name="assigned_to_id"
 							class="select select-bordered w-full rounded-xl focus:select-primary h-12"
+							required
 						>
 							<option value="">{ i18n.T(ctx, "cases.select_lawyer") }</option>
 							for _, lawyer := range lawyers {

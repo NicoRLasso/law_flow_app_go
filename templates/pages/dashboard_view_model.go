@@ -12,4 +12,6 @@ type DashboardStats struct {
 	PendingTasks         int64
 	RecentCases          []models.Case
 	UpcomingAppointments []models.Appointment
+	Notifications        []models.Notification
+	UnreadCount          int64
 }

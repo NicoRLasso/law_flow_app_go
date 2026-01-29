@@ -474,6 +474,12 @@
     }
   },
   "dashboard": {
+    "notifications": {
+      "title": "Notificaciones",
+      "mark_all_read": "Marcar todo como leído",
+      "new_judicial_action": "Nueva actuación judicial",
+      "empty": "No hay notificaciones nuevas"
+    },
     "greeting": "Bienvenido de nuevo",
     "welcome": "Bienvenido de nuevo, {name}",
     "overview": "Resumen General",

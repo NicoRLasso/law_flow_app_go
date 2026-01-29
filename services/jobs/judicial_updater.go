@@ -2,9 +2,11 @@ package jobs
 
 import (
 	"errors"
+	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/judicial"
 	"log"
+	"reflect"
 	"time"
 
 	"github.com/robfig/cron/v3"
@@ -81,11 +83,6 @@ func processCase(database *gorm.DB, c models.Case) error {
 	country := "CO"
 	if c.Firm.Country != "" {
 		country = c.Firm.Country
-	} else {
-		// Try to fallback/determine or just return error
-		// For now, let's log and skip if unknown, or default to CO?
-		// User said this job is just for Colombia depending on country, so let's default to skipping if not CO.
-		// Actually, let's keep it robust.
 	}
 
 	provider, err := judicial.GetProvider(country)
@@ -100,6 +97,7 @@ func processCase(database *gorm.DB, c models.Case) error {
 
 	// 1. Check if we already have a JudicialProcess record
 	var jp models.JudicialProcess
+	isNewTracking := false
 	err = database.Where("case_id = ?", c.ID).First(&jp).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("[JOB] Error checking existing record: %v", err)
@@ -108,6 +106,7 @@ func processCase(database *gorm.DB, c models.Case) error {
 
 	// 2. If not found, search API to get Process ID
 	if errors.Is(err, gorm.ErrRecordNotFound) {
+		isNewTracking = true
 		log.Printf("[JOB] No existing record found. searching API for radicado: %s", radicado)
 		summary, err := provider.GetProcessIDByRadicado(radicado)
 		if err != nil {
@@ -148,8 +147,6 @@ func processCase(database *gorm.DB, c models.Case) error {
 			Status:       "ACTIVE",
 			Details:      detailsMap,
 		}
-		// Last Activity wasn't in generic summary, maybe we can fetch it, or rely on actions later.
-		// For now, let's leave LastActivityDate as zero or update from actions.
 
 		if err := database.Create(&jp).Error; err != nil {
 			return err
@@ -167,14 +164,73 @@ func processCase(database *gorm.DB, c models.Case) error {
 		return err
 	}
 
-	// Insert new actions
-	for _, action := range actions {
-		var exists int64
-		database.Model(&models.JudicialProcessAction{}).
-			Where("judicial_process_id = ? AND external_id = ?", jp.ID, action.ExternalID).
-			Count(&exists)
+	importedCount := 0
 
-		if exists == 0 {
+	// Insert/Update actions
+	for _, action := range actions {
+		var existingAction models.JudicialProcessAction
+		result := database.Where("judicial_process_id = ? AND external_id = ?", jp.ID, action.ExternalID).First(&existingAction)
+
+		if result.Error == nil {
+			// UPDATE LOGIC: Check changes BEFORE updating
+
+			// Construct target metadata for comparison
+			targetMetadata := make(models.JSONMap)
+			// Start with existing metadata keys if needed, or build fresh?
+			// To ensure clean updates from API, we usually rebuild or merge carefully.
+			// Let's copy existing first to preserve non-API keys if any.
+			if existingAction.Metadata != nil {
+				for k, v := range existingAction.Metadata {
+					targetMetadata[k] = v
+				}
+			}
+			// Update with API values
+			targetMetadata["registration_date"] = action.RegistrationDate
+			targetMetadata["initial_date"] = action.InitialDate
+			targetMetadata["final_date"] = action.FinalDate
+			if action.Metadata != nil {
+				for k, v := range action.Metadata {
+					targetMetadata[k] = v
+				}
+			}
+
+			// Detect changes
+			hasChanges := false
+			if existingAction.Type != action.Type {
+				hasChanges = true
+			}
+			if existingAction.Annotation != action.Annotation {
+				hasChanges = true
+			}
+			if existingAction.HasDocuments != action.HasDocuments {
+				hasChanges = true
+			}
+			if !existingAction.ActionDate.Equal(action.ActionDate) {
+				hasChanges = true
+			}
+			if !reflect.DeepEqual(existingAction.Metadata, targetMetadata) {
+				hasChanges = true
+			}
+
+			if hasChanges {
+				// Update fields
+				existingAction.Type = action.Type
+				existingAction.Annotation = action.Annotation
+				existingAction.HasDocuments = action.HasDocuments
+				existingAction.ActionDate = action.ActionDate
+				existingAction.Metadata = targetMetadata
+
+				if err := database.Save(&existingAction).Error; err != nil {
+					log.Printf("[JOB] Failed to update action %s: %v", action.ExternalID, err)
+				} else {
+					// Notify update if not initial sync
+					if !isNewTracking {
+						createJudicialUpdateNotification(database, c, existingAction, fmt.Sprintf("Actuación actualizada: %s", action.Type))
+					}
+				}
+			}
+		} else if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			// CREATE: New action
 			newAction := models.JudicialProcessAction{
 				JudicialProcessID: jp.ID,
 				ExternalID:        action.ExternalID,
@@ -194,11 +250,18 @@ func processCase(database *gorm.DB, c models.Case) error {
 					newAction.Metadata[k] = v
 				}
 			}
-			// Dates are directly available in generic action as Time or *Time
 
 			if err := database.Create(&newAction).Error; err != nil {
 				log.Printf("[JOB] Failed to create action %s: %v", action.ExternalID, err)
+			} else {
+				importedCount++
+				// Create notification ONLY if this is NOT the initial tracking setup
+				if !isNewTracking {
+					createJudicialUpdateNotification(database, c, newAction, fmt.Sprintf("Nueva actuación: %s", action.Type))
+				}
 			}
+		} else {
+			log.Printf("[JOB] Error checking action existence: %v", result.Error)
 		}
 	}
 
@@ -211,5 +274,41 @@ func processCase(database *gorm.DB, c models.Case) error {
 		}
 	}
 
+	// If this was the first sync and we imported data, send a SUMMARY notification
+	if isNewTracking && importedCount > 0 {
+		summaryNotification := models.Notification{
+			FirmID:    c.FirmID,
+			CaseID:    &c.ID,
+			Type:      models.NotificationTypeSystem, // Or a specific type for Linkage
+			Title:     "Proceso Vinculado Exitosamente",
+			Message:   fmt.Sprintf("Se ha conectado con la Rama Judicial y se han importado %d actuaciones históricas.", importedCount),
+			LinkURL:   fmt.Sprintf("/cases/%s", c.ID),
+			CreatedAt: time.Now(),
+		}
+		if c.AssignedToID != nil {
+			summaryNotification.UserID = c.AssignedToID
+		}
+		database.Create(&summaryNotification)
+	}
+
 	return nil
+}
+
+func createJudicialUpdateNotification(db *gorm.DB, c models.Case, action models.JudicialProcessAction, title string) {
+	notification := models.Notification{
+		FirmID:                  c.FirmID,
+		CaseID:                  &c.ID,
+		JudicialProcessActionID: &action.ID,
+		Type:                    models.NotificationTypeJudicialUpdate,
+		Title:                   title,
+		Message:                 action.Annotation,
+		LinkURL:                 fmt.Sprintf("/cases/%s", c.ID),
+	}
+
+	// Target assigned lawyer if exists
+	if c.AssignedToID != nil {
+		notification.UserID = c.AssignedToID
+	}
+
+	db.Create(&notification)
 }

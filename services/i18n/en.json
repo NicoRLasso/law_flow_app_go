@@ -461,6 +461,12 @@
     }
   },
   "dashboard": {
+    "notifications": {
+      "title": "Notifications",
+      "mark_all_read": "Mark all as read",
+      "new_judicial_action": "New judicial action",
+      "empty": "No new notifications"
+    },
     "greeting": "Welcome back",
     "welcome": "Welcome back, {name}",
     "overview": "Overview",

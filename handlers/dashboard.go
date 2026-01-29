@@ -118,6 +118,22 @@ func DashboardHandler(c echo.Context) error {
 		c.Logger().Error("Failed to fetch upcoming appointments:", err)
 	}
 
+	// Fetch unread notifications
+	var notifications []models.Notification
+	if err := db.Where("firm_id = ? AND (user_id IS NULL OR user_id = ?) AND read_at IS NULL", firm.ID, user.ID).
+		Order("created_at DESC").
+		Limit(5).
+		Find(&notifications).Error; err != nil {
+		c.Logger().Error("Failed to fetch notifications:", err)
+	}
+	stats.Notifications = notifications
+
+	if err := db.Model(&models.Notification{}).
+		Where("firm_id = ? AND (user_id IS NULL OR user_id = ?) AND read_at IS NULL", firm.ID, user.ID).
+		Count(&stats.UnreadCount).Error; err != nil {
+		c.Logger().Error("Failed to count unread notifications:", err)
+	}
+
 	component := pages.Dashboard(c.Request().Context(), "Dashboard | LexLegal Cloud", csrfToken, user, firm, stats)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }

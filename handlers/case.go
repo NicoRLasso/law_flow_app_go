@@ -786,7 +786,7 @@ func CreateCaseHandler(c echo.Context) error {
 	subtypeIDs := c.Request().Form["subtype_ids[]"]
 
 	// Validation
-	if clientID == "" || clientRole == "" || description == "" || domainID == "" || branchID == "" {
+	if clientID == "" || clientRole == "" || description == "" || domainID == "" || branchID == "" || assignedToID == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "Missing required fields")
 	}
 
