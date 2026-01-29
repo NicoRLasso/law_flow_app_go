@@ -27,7 +27,6 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "support.title") }</h1>
 						<p class="text-base-content/60 font-sans">{ i18n.T(ctx, "support.subtitle") }</p>
 					</div>
-
 					<!-- Layout with Sidebar -->
 					<div class="flex flex-col md:flex-row gap-8">
 						<!-- Sidebar Navigation -->
@@ -44,7 +43,6 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 								</span>
 								<i data-lucide="chevron-down" class="transition-transform duration-200" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
-
 							<!-- Navigation Menu -->
 							<nav
 								class="bg-base-100 rounded-sm border border-base-200 shadow-sm overflow-hidden"
@@ -84,7 +82,6 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 								</ul>
 							</nav>
 						</aside>
-
 						<!-- Main Content Area -->
 						<div class="flex-1 min-w-0">
 							<!-- FAQ Tab -->
@@ -134,10 +131,8 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 									</div>
 								</div>
 							</div>
-
 							<!-- Contact Tab -->
 							<div x-show="activeTab === 'contact'" x-transition class="space-y-6">
-
 								<!-- Contact Form -->
 								<div class="bg-base-100 border border-base-200 rounded-sm shadow-sm p-8">
 									<h2 class="text-xl font-serif font-bold mb-6 pb-4 border-b border-base-200">{ i18n.T(ctx, "support.form.title") }</h2>
@@ -213,19 +208,17 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 									</form>
 								</div>
 							</div>
-
-						<!-- Tickets Tab -->
-							<div 
-								x-show="activeTab === 'tickets'" 
-								x-transition 
-								class="space-y-6" 
+							<!-- Tickets Tab -->
+							<div
+								x-show="activeTab === 'tickets'"
+								x-transition
+								class="space-y-6"
 								x-data="{ showResponseModal: false, selectedTicket: null }"
 								@show-response.window="selectedTicket = $event.detail; showResponseModal = true"
 							>
 								<div class="bg-base-100 border border-base-200 rounded-sm shadow-sm p-8">
 									<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 pb-4 border-b border-base-200">
 										<h2 class="text-xl font-serif font-bold">{ i18n.T(ctx, "support.tickets.title") }</h2>
-										
 										<!-- Filters -->
 										<div class="flex flex-wrap gap-2 w-full sm:w-auto">
 											<!-- Status Filter -->
@@ -242,7 +235,6 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 												<option value="resolved">{ i18n.T(ctx, "support.tickets.status.resolved") }</option>
 												<option value="closed">{ i18n.T(ctx, "support.tickets.status.closed") }</option>
 											</select>
-
 											<!-- User Filter (Admin only) -->
 											if len(firmUsers) > 0 {
 												<select
@@ -261,7 +253,6 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 											}
 										</div>
 									</div>
-
 									<div
 										id="tickets-list"
 										data-loaded="false"
@@ -276,7 +267,6 @@ templ Support(ctx context.Context, title string, csrfToken string, user *models.
 										</div>
 									</div>
 								</div>
-
 								<!-- Response Modal -->
 								<div
 									x-show="showResponseModal"

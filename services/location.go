@@ -10,3 +10,12 @@ func GetDefaultTimezone(country string) string {
 	}
 	return ""
 }
+
+// GetDefaultCurrency returns the default currency for a given country.
+// Returns "USD" as fallback if no specific default is defined.
+func GetDefaultCurrency(country string) string {
+	if strings.EqualFold(country, "Colombia") {
+		return "COP"
+	}
+	return "USD"
+}

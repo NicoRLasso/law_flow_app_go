@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.ServiceActivity{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	if err := services.InitializeFTS5(db.DB); err != nil {
@@ -373,6 +373,69 @@ func main() {
 			caseRoutes.POST("/history", handlers.CreateHistoricalCaseHandler)
 			caseRoutes.GET("/history/branches", handlers.GetHistoricalCaseBranchesHandler)
 			caseRoutes.GET("/history/subtypes", handlers.GetHistoricalCaseSubtypesHandler)
+			caseRoutes.GET("/history/subtypes", handlers.GetHistoricalCaseSubtypesHandler)
+		}
+
+		// Legal Services Routes
+		protected.GET("/services", handlers.ServicesPageHandler)
+		protected.GET("/services/:id", handlers.GetServiceDetailHandler)
+
+		// Services Routes (Shared: Admin, Lawyer, Client)
+		serviceShared := protected.Group("/api/services")
+		serviceShared.Use(middleware.RequireRole("admin", "lawyer", "client"))
+		{
+			serviceShared.GET("", handlers.GetServicesHandler)
+			serviceShared.GET("/:id", handlers.GetServiceHandler)
+			serviceShared.GET("/:id/milestones", handlers.GetServiceMilestonesHandler)
+			serviceShared.GET("/:id/documents", handlers.GetServiceDocumentsHandler)
+			serviceShared.POST("/:id/documents/upload", handlers.UploadServiceDocumentHandler)
+			serviceShared.GET("/:id/documents/:did/download", handlers.DownloadServiceDocumentHandler)
+			serviceShared.GET("/:id/documents/:did/view", handlers.ViewServiceDocumentHandler)
+		}
+
+		// Services Routes (Admin/Lawyer Only)
+		serviceAdmin := protected.Group("/api/services")
+		serviceAdmin.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			// Service CRUD
+			serviceAdmin.GET("/new", handlers.CreateServiceModalHandler)
+			serviceAdmin.POST("", handlers.CreateServiceHandler)
+			serviceAdmin.GET("/:id/edit", handlers.GetUpdateServiceModalHandler)
+			serviceAdmin.PUT("/:id", handlers.UpdateServiceHandler)
+			serviceAdmin.PATCH("/:id/status", handlers.UpdateServiceStatusHandler)
+			serviceAdmin.GET("/:id/delete-confirm", handlers.DeleteServiceConfirmHandler)
+			serviceAdmin.DELETE("/:id", handlers.DeleteServiceHandler)
+
+			// Milestones Write
+			serviceAdmin.POST("/:id/milestones", handlers.CreateMilestoneHandler)
+			serviceAdmin.PUT("/:id/milestones/:mid", handlers.UpdateMilestoneHandler)
+			serviceAdmin.PATCH("/:id/milestones/:mid/complete", handlers.CompleteMilestoneHandler)
+			serviceAdmin.DELETE("/:id/milestones/:mid", handlers.DeleteMilestoneHandler)
+			serviceAdmin.POST("/:id/milestones/reorder", handlers.ReorderMilestonesHandler)
+
+			// Documents Write
+			serviceAdmin.PATCH("/:id/documents/:did/visibility", handlers.ToggleServiceDocumentVisibilityHandler)
+			serviceAdmin.DELETE("/:id/documents/:did", handlers.DeleteServiceDocumentHandler)
+
+			// Expenses
+			serviceAdmin.GET("/:id/expenses", handlers.GetServiceExpensesHandler)
+			serviceAdmin.POST("/:id/expenses", handlers.CreateServiceExpenseHandler)
+			serviceAdmin.GET("/:id/expenses/:eid/edit-modal", handlers.GetServiceExpenseEditModalHandler)
+			serviceAdmin.PUT("/:id/expenses/:eid", handlers.UpdateServiceExpenseHandler)
+			serviceAdmin.PATCH("/:id/expenses/:eid/approve", handlers.ApproveServiceExpenseHandler)
+			serviceAdmin.DELETE("/:id/expenses/:eid", handlers.DeleteServiceExpenseHandler)
+
+			// Activities
+			serviceAdmin.GET("/:id/activities", handlers.GetServiceActivitiesHandler)
+			serviceAdmin.GET("/:id/activities/new", handlers.GetServiceActivityForm)
+			serviceAdmin.POST("/:id/activities", handlers.CreateServiceActivityHandler)
+			serviceAdmin.PUT("/:id/activities/:aid", handlers.UpdateServiceActivityHandler)
+			serviceAdmin.DELETE("/:id/activities/:aid", handlers.DeleteServiceActivityHandler)
+
+			// Document Generation
+			serviceAdmin.GET("/:id/templates/modal", handlers.GetServiceTemplateModalHandler)
+			serviceAdmin.GET("/:id/generate/preview", handlers.PreviewServiceTemplateHandler)
+			serviceAdmin.POST("/:id/generate", handlers.GenerateServiceDocumentHandler)
 		}
 
 		protected.GET("/historical-cases", handlers.HistoricalCasesPageHandler)

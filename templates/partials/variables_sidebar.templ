@@ -9,7 +9,7 @@ templ VariablesSidebar(ctx context.Context) {
 	<div class="space-y-2 max-h-[400px] overflow-y-auto pr-2" x-data="{ expandedCategory: null }">
 		<!-- Client Variables -->
 		<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
-			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'client' ? null : 'client'" />
+			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'client' ? null : 'client'"/>
 			<div class="collapse-title text-sm font-bold text-base-content py-2 min-h-0">
 				{ i18n.T(ctx, "templates.variables.client") }
 			</div>
@@ -24,7 +24,7 @@ templ VariablesSidebar(ctx context.Context) {
 		</div>
 		<!-- Case Variables -->
 		<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
-			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'case' ? null : 'case'" />
+			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'case' ? null : 'case'"/>
 			<div class="collapse-title text-sm font-bold text-base-content py-2 min-h-0">
 				{ i18n.T(ctx, "templates.variables.case") }
 			</div>
@@ -41,7 +41,7 @@ templ VariablesSidebar(ctx context.Context) {
 		</div>
 		<!-- Firm Variables -->
 		<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
-			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'firm' ? null : 'firm'" />
+			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'firm' ? null : 'firm'"/>
 			<div class="collapse-title text-sm font-bold text-base-content py-2 min-h-0">
 				{ i18n.T(ctx, "templates.variables.firm") }
 			</div>
@@ -56,7 +56,7 @@ templ VariablesSidebar(ctx context.Context) {
 		</div>
 		<!-- Lawyer Variables -->
 		<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
-			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'lawyer' ? null : 'lawyer'" />
+			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'lawyer' ? null : 'lawyer'"/>
 			<div class="collapse-title text-sm font-bold text-base-content py-2 min-h-0">
 				{ i18n.T(ctx, "templates.variables.lawyer") }
 			</div>
@@ -68,7 +68,7 @@ templ VariablesSidebar(ctx context.Context) {
 		</div>
 		<!-- Date Variables -->
 		<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
-			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'dates' ? null : 'dates'" />
+			<input type="radio" name="var-accordion" @click="expandedCategory = expandedCategory === 'dates' ? null : 'dates'"/>
 			<div class="collapse-title text-sm font-bold text-base-content py-2 min-h-0">
 				{ i18n.T(ctx, "templates.variables.dates") }
 			</div>

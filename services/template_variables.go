@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"strings"
@@ -26,11 +27,12 @@ type Variable struct {
 
 // TemplateData holds all data for template variable substitution
 type TemplateData struct {
-	Client ClientData `json:"client"`
-	Case   CaseData   `json:"case"`
-	Firm   FirmData   `json:"firm"`
-	Lawyer LawyerData `json:"lawyer"`
-	Today  DateData   `json:"today"`
+	Client  ClientData  `json:"client"`
+	Case    CaseData    `json:"case"`
+	Service ServiceData `json:"service"`
+	Firm    FirmData    `json:"firm"`
+	Lawyer  LawyerData  `json:"lawyer"`
+	Today   DateData    `json:"today"`
 }
 
 // ClientData holds client-related template data
@@ -53,6 +55,21 @@ type CaseData struct {
 	Branch      string `json:"branch"`
 	Subtypes    string `json:"subtypes"`
 	OpenedAt    string `json:"opened_at"`
+}
+
+// ServiceData holds service-related template data
+type ServiceData struct {
+	Number           string `json:"number"`
+	Title            string `json:"title"`
+	Description      string `json:"description"`
+	ServiceType      string `json:"service_type"`
+	Objective        string `json:"objective"`
+	Status           string `json:"status"`
+	Priority         string `json:"priority"`
+	StartedAt        string `json:"started_at"`
+	EstimatedDueDate string `json:"estimated_due_date"`
+	EstimatedHours   string `json:"estimated_hours"`
+	ActualHours      string `json:"actual_hours"`
 }
 
 // FirmData holds firm-related template data
@@ -230,4 +247,86 @@ func safeStringPtr(s *string) string {
 		return ""
 	}
 	return *s
+}
+
+// BuildTemplateDataFromService extracts all template data from a service and its relationships
+func BuildTemplateDataFromService(service *models.LegalService, firm *models.Firm) TemplateData {
+	data := TemplateData{
+		Today: DateData{
+			Date:     time.Now().Format("2006-01-02"),
+			DateLong: time.Now().Format("January 2, 2006"),
+			Year:     time.Now().Format("2006"),
+		},
+	}
+
+	// Client data
+	if service.Client.ID != "" {
+		docType := ""
+		if service.Client.DocumentType != nil {
+			docType = service.Client.DocumentType.Label
+		}
+		data.Client = ClientData{
+			Name:           service.Client.Name,
+			Email:          service.Client.Email,
+			Phone:          safeString(service.Client.PhoneNumber),
+			DocumentType:   docType,
+			DocumentNumber: safeString(service.Client.DocumentNumber),
+			Address:        safeString(service.Client.Address),
+		}
+	}
+
+	// Service data
+	data.Service = ServiceData{
+		Number:      service.ServiceNumber,
+		Title:       service.Title,
+		Description: service.Description,
+		Objective:   service.Objective,
+		Status:      models.GetServiceStatusDisplayName(service.Status),
+		Priority:    models.GetServicePriorityDisplayName(service.Priority),
+	}
+
+	if service.ServiceType != nil {
+		data.Service.ServiceType = service.ServiceType.Label
+	}
+	if service.StartedAt != nil {
+		data.Service.StartedAt = service.StartedAt.Format("January 2, 2006")
+	}
+	if service.EstimatedDueDate != nil {
+		data.Service.EstimatedDueDate = service.EstimatedDueDate.Format("January 2, 2006")
+	}
+	if service.EstimatedHours != nil {
+		data.Service.EstimatedHours = formatFloat(*service.EstimatedHours)
+	}
+	data.Service.ActualHours = formatFloat(service.ActualHours)
+
+	// Firm data
+	if firm != nil {
+		data.Firm = FirmData{
+			Name:         firm.Name,
+			Address:      firm.Address,
+			City:         firm.City,
+			Phone:        firm.Phone,
+			BillingEmail: firm.BillingEmail,
+			InfoEmail:    firm.InfoEmail,
+		}
+	}
+
+	// Lawyer data (assigned lawyer)
+	if service.AssignedTo != nil {
+		data.Lawyer = LawyerData{
+			Name:  service.AssignedTo.Name,
+			Email: service.AssignedTo.Email,
+			Phone: safeString(service.AssignedTo.PhoneNumber),
+		}
+	}
+
+	return data
+}
+
+// formatFloat formats a float64 to a string with up to 2 decimal places
+func formatFloat(f float64) string {
+	if f == float64(int(f)) {
+		return fmt.Sprintf("%.0f", f)
+	}
+	return fmt.Sprintf("%.2f", f)
 }

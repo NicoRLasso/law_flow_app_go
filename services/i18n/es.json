@@ -36,6 +36,7 @@
     "firm_settings": "Configuración de Firma",
     "users": "Usuarios",
     "cases": "Casos",
+    "services": "Servicios",
     "historical_cases": "Casos Históricos",
     "info_title": "Información de la Firma",
     "info": {
@@ -356,6 +357,7 @@
     "cancel": "Cancelar",
     "select_option": "Seleccione una opción",
     "save": "Guardar",
+    "save_changes": "Guardar Cambios",
     "delete": "Eliminar",
     "edit": "Editar",
     "view": "Ver",
@@ -373,6 +375,9 @@
     "na": "N/A",
     "loading": "Cargando...",
     "close": "Cerrar",
+    "unassigned": "Sin Asignar",
+    "confirm_delete": "Confirmar Eliminación",
+    "status_all": "Todos los Estados",
     "all": "Todos",
     "showing": "Mostrando",
     "to": "a",
@@ -678,6 +683,7 @@
         "answer": "¡Sí! Nuestro constructor de flujos de trabajo te permite crear automatización personalizada adaptada a tu práctica. Los planes Profesional y Empresarial incluyen características avanzadas de flujo de trabajo e integraciones personalizadas con tus herramientas existentes."
       }
     },
+
     "final_cta": {
       "title": "¿Listo para Transformar tu Práctica?",
       "subtitle": "Contacte a nuestro equipo de soporte para cualquier pregunta o asistencia.",
@@ -688,6 +694,185 @@
     "mobile_cta": "Iniciar Prueba Gratis"
   },
 
+  "expenses": {
+    "add": "Registrar Gasto",
+    "add_title": "Registrar Nuevo Gasto",
+    "edit_title": "Editar Gasto",
+    "list_empty": "No hay gastos registrados aún.",
+    "total": "Total Gastos",
+    "table": {
+      "date": "Fecha",
+      "description": "Descripción",
+      "category": "Categoría",
+      "amount": "Monto",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "form": {
+      "description": "Descripción",
+      "amount": "Monto",
+      "date": "Fecha Incurrida",
+      "add": "Registrar Gasto"
+    },
+    "action": {
+      "edit": "Editar",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    }
+  },
+  "services": {
+    "title": "Servicios Legales",
+    "subtitle": "Gestión de servicios legales extrajudiciales",
+    "new": "Nuevo Servicio",
+    "client": "Cliente",
+    "type": "Tipo",
+    "table": {
+      "number": "#",
+      "title": "Título",
+      "client": "Cliente",
+      "type": "Tipo",
+      "status": "Estado",
+      "actions": "Acciones",
+      "empty": "No se encontraron servicios."
+    },
+    "status": {
+      "INTAKE": "Admisión",
+      "IN_PROGRESS": "En Progreso",
+      "ON_HOLD": "En Espera",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado"
+    },
+    "tab": {
+      "milestones": "Hitos",
+      "documents": "Documentos",
+      "expenses": "Gastos",
+      "activities": "Actividades",
+      "generate": "Generar"
+    },
+    "create": {
+      "title": "Crear Nuevo Servicio",
+      "submit": "Crear Servicio"
+    },
+    "edit": {
+      "title": "Editar Servicio Legal"
+    },
+    "milestones": {
+      "add": "Agregar Hito",
+      "add_title": "Agregar Nuevo Hito",
+      "edit_title": "Editar Hito",
+      "delete_confirm": "¿Está seguro de que desea eliminar este hito?",
+      "list_empty": "No hay hitos registrados aún.",
+      "progress": {
+        "title": "Progreso de Hitos"
+      },
+      "status": {
+        "completed": "Completados",
+        "pending": "Pendientes"
+      },
+      "form": {
+        "title": "Título",
+        "description": "Descripción",
+        "due_date": "Fecha Límite"
+      }
+    },
+    "generate": {
+      "templates": {
+        "title": "Seleccionar Plantilla"
+      },
+      "select_template": "Plantilla",
+      "document_name": "Nombre del Documento",
+      "document_name_placeholder": "Ej: Contrato de Servicios - Cliente X",
+      "info": "El documento se generará utilizando los datos de este servicio.",
+      "submit": "Generar Documento",
+      "preview": {
+        "title": "Vista Previa",
+        "placeholder": "Seleccione una plantilla para ver la vista previa"
+      }
+    },
+    "documents": {
+      "upload": {
+        "title": "Subir Documento",
+        "subtitle": "Subir un nuevo documento a este servicio",
+        "file_label": "Archivo del Documento",
+        "accepted_formats": "Formatos aceptados: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)",
+        "type_label": "Tipo de Documento",
+        "select_type": "Seleccionar tipo...",
+        "desc_label": "Descripción",
+        "desc_placeholder": "Descripción opcional del documento...",
+        "btn": "Subir",
+        "cancel": "Cancelar"
+      },
+      "form": {
+        "file": "Archivo del Documento",
+        "type": "Tipo de Documento",
+        "description": "Descripción",
+        "type_intake": "Ingreso/Admisión",
+        "type_working": "En Proceso",
+        "type_deliverable": "Entregable",
+        "type_reference": "Referencia"
+      },
+      "table": {
+        "file_name": "Nombre del Archivo",
+        "type": "Tipo",
+        "size": "Tamaño",
+        "uploaded_by": "Subido Por",
+        "uploaded_at": "Subido En",
+        "actions": "Acciones",
+        "system": "Sistema",
+        "empty": "No se encontraron documentos"
+      },
+      "visibility": {
+        "label": "Visibilidad",
+        "public": "Público",
+        "private": "Privado",
+        "toggle_public": "Hacer visible al cliente",
+        "toggle_private": "Ocultar del cliente",
+        "public_desc": "Visible para el cliente en el portal"
+      },
+      "delete": {
+        "title": "Eliminar Documento",
+        "message": "¿Está seguro de que desea eliminar este documento? Esta acción no se puede deshacer."
+      },
+      "viewer": {
+        "title": "Visor de Documentos",
+        "close_tooltip": "Cerrar visor"
+      }
+    },
+    "form": {
+      "title": "Título del Servicio",
+      "title_placeholder": "Ej., Revisión de Contrato para Corp Smith",
+      "client": "Cliente",
+      "type": "Tipo de Servicio",
+      "priority": "Prioridad",
+      "assign_to": "Asignar a",
+      "description": "Descripción",
+      "description_placeholder": "Ingrese descripción detallada...",
+      "objective": "Objetivo",
+      "objective_placeholder": "¿Cuál es el objetivo principal?",
+      "select_client": "Seleccionar Cliente",
+      "select_type": "Seleccionar Tipo",
+      "hours": "Horas"
+    },
+    "activities": {
+      "title": "Registro de Actividades",
+      "add_title": "Registrar Actividad o Tiempo",
+      "list_empty": "No hay actividades registradas aún.",
+      "form": {
+        "title": "Nuevo Registro",
+        "title_placeholder": "Ej: Llamada con cliente, Revisión de borradores",
+        "content_placeholder": "Detalles adicionales sobre lo realizado...",
+        "duration_placeholder": "Minutos (opcional)",
+        "occurred_at": "Fecha y Hora"
+      },
+      "type": {
+        "note": "Nota",
+        "call": "Llamada",
+        "meeting": "Reunión",
+        "email": "Email",
+        "time_entry": "Registro de Tiempo"
+      }
+    }
+  },
   "cases": {
     "detail": {
       "title": "Detalles del Caso",
@@ -877,6 +1062,7 @@
       "name": "Nombre de la Firma",
       "country": "País",
       "timezone": "Zona Horaria",
+      "currency": "Moneda",
       "address": "Dirección",
       "city": "Ciudad",
       "phone": "Número de Teléfono",
@@ -971,6 +1157,7 @@
     "detail": {
       "title": "Detalles del Caso",
       "case_number": "Número de Caso",
+      "financial_summary": "Resumen Financiero",
       "radicado": "Número de Radicado",
       "edit_btn": "Editar Caso",
       "edit_short": "Editar",

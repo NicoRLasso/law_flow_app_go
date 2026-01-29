@@ -13,7 +13,7 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 			<div class="dropdown md:hidden flex-shrink-0">
 				<button type="button" class="btn btn-ghost btn-circle btn-sm sm:btn-md" @click="mobileMenuOpen = !mobileMenuOpen">
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
 					</svg>
 				</button>
 			</div>
@@ -24,7 +24,6 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 				<div class="badge badge-outline badge-xs sm:badge-sm uppercase tracking-widest opacity-70 hidden sm:inline-flex flex-shrink-0">Superadmin</div>
 			</a>
 		</div>
-
 		<div class="navbar-center hidden md:flex">
 			<ul class="menu menu-horizontal px-1 gap-2">
 				<li>
@@ -54,7 +53,6 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 				</li>
 			</ul>
 		</div>
-
 		<div class="navbar-end flex-shrink-0">
 			<div class="dropdown dropdown-end">
 				<label tabindex="0" class="btn btn-ghost btn-circle btn-sm sm:btn-md avatar online">
@@ -73,7 +71,7 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 						<form hx-post="/logout" hx-swap="none" class="w-full">
 							<button type="submit" class="w-full text-left text-error hover:bg-error/10 font-serif">
 								<svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
 								</svg>
 								{ i18n.T(ctx, "nav.logout") }
 							</button>
@@ -82,12 +80,13 @@ templ Navbar(ctx context.Context, user *models.User, currentPath string) {
 				</ul>
 			</div>
 		</div>
-
 		<!-- Mobile Menu Dropdown -->
-		<div x-show="mobileMenuOpen" 
-			 x-transition 
-			 @click.away="mobileMenuOpen = false"
-			 class="absolute top-full left-0 w-full bg-base-100 border-b border-base-200 shadow-xl md:hidden z-40">
+		<div
+			x-show="mobileMenuOpen"
+			x-transition
+			@click.away="mobileMenuOpen = false"
+			class="absolute top-full left-0 w-full bg-base-100 border-b border-base-200 shadow-xl md:hidden z-40"
+		>
 			<ul class="menu menu-vertical p-4 gap-2">
 				<li><a href="/superadmin/dashboard" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/dashboard") }>Dashboard</a></li>
 				<li><a href="/superadmin/users" class={ "font-serif rounded-sm", templ.KV("active bg-primary/10 text-primary font-bold", currentPath == "/superadmin/users") }>Users</a></li>

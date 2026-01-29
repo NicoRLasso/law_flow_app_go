@@ -17,7 +17,6 @@ templ AddOnsPage(ctx context.Context, title string, csrfToken string, user *mode
 				<i data-lucide="plus" class="mr-2"></i> New Add-On
 			</button>
 		</div>
-
 		<div class="bg-base-100 border border-base-200 rounded-sm overflow-x-auto shadow-sm">
 			<table class="table w-full">
 				<thead>
@@ -52,15 +51,15 @@ templ AddOnsPage(ctx context.Context, title string, csrfToken string, user *mode
 								{ addon.FormatPrice() }
 							</td>
 							<td>
-								<input 
-									type="checkbox" 
+								<input
+									type="checkbox"
 									class="toggle toggle-success toggle-sm"
 									if addon.IsActive {
 										checked
 									}
 									hx-patch={ "/superadmin/addons/" + addon.ID + "/toggle-active" }
 									hx-target="closest tr"
-									hx-swap="none" 
+									hx-swap="none"
 								/>
 							</td>
 							<td class="text-right">

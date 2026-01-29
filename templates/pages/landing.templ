@@ -13,22 +13,18 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 		<div class="relative bg-base-100 overflow-hidden">
 			<!-- Abstract Background - Subtle & Elegant -->
 			<div class="absolute inset-0 z-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary via-base-100 to-base-100"></div>
-			
 			<div class="container mx-auto px-4 pt-4 pb-2 relative z-10 text-center">
 				<div class="max-w-4xl mx-auto">
 					<div class="inline-block mb-6 px-4 py-1 border border-primary/30 rounded-full bg-primary/5 text-primary text-sm font-semibold tracking-widest uppercase">
 						{ i18n.T(ctx, "landing.hero.label") }
 					</div>
-					
 					<h1 class="text-5xl lg:text-7xl font-serif font-bold text-base-content mb-8 leading-tight">
 						{ i18n.T(ctx, "landing.hero.title_prefix") }
 						<span class="italic text-primary block mt-2">{ i18n.T(ctx, "landing.hero.title_suffix") }</span>
 					</h1>
-					
 					<p class="text-xl text-base-content/70 font-sans max-w-2xl mx-auto mb-10 leading-relaxed">
 						{ i18n.T(ctx, "landing.hero.description") }
 					</p>
-					
 					<div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
 						<a href="/contact" class="btn btn-primary btn-lg rounded-sm px-8 font-serif tracking-wide shadow-lg hover:shadow-primary/20 transition-all duration-300">
 							{ i18n.T(ctx, "landing.pricing.book_demo") }
@@ -38,7 +34,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						</a>
 					</div>
 				</div>
-
 				<!-- Hero Image - "Framed" & Elegant -->
 				<div class="max-w-6xl mx-auto relative group">
 					<div class="absolute -inset-1 bg-gradient-to-b from-primary/10 to-transparent rounded-lg blur opacity-50 transition duration-1000 group-hover:duration-200"></div>
@@ -52,7 +47,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</div>
-
 		<!-- Trust/Social Proof - Sophisticated -->
 		<div class="bg-base-200/50 py-12 border-y border-base-200">
 			<div class="container mx-auto px-4">
@@ -69,7 +63,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</div>
-
 		<!-- Features Section - Elegant Columns -->
 		<section class="py-24 bg-base-100" id="features">
 			<div class="container mx-auto px-4">
@@ -80,7 +73,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 						{ i18n.T(ctx, "landing.features.subtitle") }
 					</p>
 				</div>
-
 				<div class="grid md:grid-cols-3 gap-10">
 					<!-- Feature 1 -->
 					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
@@ -92,7 +84,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							{ i18n.T(ctx, "landing.features.case_management.description") }
 						</p>
 					</div>
-
 					<!-- Feature 2 -->
 					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
 						<div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-content transition-colors duration-500 text-primary">
@@ -103,7 +94,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							{ i18n.T(ctx, "landing.features.automation.description") }
 						</p>
 					</div>
-
 					<!-- Feature 3 -->
 					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
 						<div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-content transition-colors duration-500 text-primary">
@@ -114,7 +104,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							{ i18n.T(ctx, "landing.features.portal.description") }
 						</p>
 					</div>
-
 					<!-- Feature 4 -->
 					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
 						<div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-content transition-colors duration-500 text-primary">
@@ -125,7 +114,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							{ i18n.T(ctx, "landing.features.time.description") }
 						</p>
 					</div>
-
 					<!-- Feature 5 -->
 					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
 						<div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-content transition-colors duration-500 text-primary">
@@ -136,7 +124,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							{ i18n.T(ctx, "landing.features.documents.description") }
 						</p>
 					</div>
-
 					<!-- Feature 6 (New) - Analytics -->
 					<div class="group p-8 bg-base-100 rounded-sm border border-base-200 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
 						<div class="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-content transition-colors duration-500 text-primary">
@@ -150,7 +137,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- Stats Section (Minimal) -->
 		<section class="py-16 bg-primary text-primary-content">
 			<div class="container mx-auto px-4">
@@ -174,7 +160,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- Benefits Section -->
 		<section class="py-24 bg-base-200" id="benefits">
 			<div class="container mx-auto px-4">
@@ -182,7 +167,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<span class="text-sm font-bold tracking-widest text-primary uppercase mb-3 block">{ i18n.T(ctx, "landing.benefits.label") }</span>
 					<h2 class="text-4xl font-serif font-bold mb-6">{ i18n.T(ctx, "landing.benefits.title") }</h2>
 				</div>
-				
 				<div class="max-w-4xl mx-auto space-y-8">
 					<!-- Benefit 1 -->
 					<div class="flex flex-col md:flex-row bg-base-100 rounded-sm shadow-sm overflow-hidden border-l-4 border-primary">
@@ -197,7 +181,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							</div>
 						</div>
 					</div>
-
 					<!-- Benefit 2 -->
 					<div class="flex flex-col md:flex-row bg-base-100 rounded-sm shadow-sm overflow-hidden border-l-4 border-secondary">
 						<div class="p-8 md:p-12 flex-1">
@@ -211,7 +194,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							</div>
 						</div>
 					</div>
-
 					<!-- Benefit 3 -->
 					<div class="flex flex-col md:flex-row bg-base-100 rounded-sm shadow-sm overflow-hidden border-l-4 border-accent">
 						<div class="p-8 md:p-12 flex-1">
@@ -228,19 +210,16 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- How It Works Section - Clean Process -->
 		<section class="py-24 bg-base-100 border-t border-base-200">
 			<div class="container mx-auto px-4">
 				<div class="text-center mb-16">
 					<h2 class="text-4xl font-serif font-bold mb-6">{ i18n.T(ctx, "landing.how_it_works.title") }</h2>
 				</div>
-				
 				<div class="max-w-4xl mx-auto">
 					<div class="relative">
 						<!-- Vertical Line -->
 						<div class="absolute left-1/2 transform -translate-x-1/2 h-full w-px bg-primary/20 hidden md:block"></div>
-						
 						<!-- Step 1 -->
 						<div class="relative z-10 mb-12 md:mb-0 flex flex-col md:flex-row items-center md:justify-between">
 							<div class="order-2 md:order-1 md:w-5/12 text-center md:text-right p-6">
@@ -250,7 +229,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 							<div class="order-1 md:order-2 w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-serif font-bold text-xl ring-4 ring-base-100 shadow-xl mb-4 md:mb-0">1</div>
 							<div class="order-3 md:w-5/12 p-6 md:opacity-0"></div> <!-- Spacer -->
 						</div>
-
 						<!-- Step 2 -->
 						<div class="relative z-10 mb-12 md:mb-0 flex flex-col md:flex-row items-center md:justify-between">
 							<div class="order-3 md:order-1 md:w-5/12 p-6 md:opacity-0"></div> <!-- Spacer -->
@@ -260,7 +238,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 								<p class="text-base-content/70">{ i18n.T(ctx, "landing.how_it_works.step2.description") }</p>
 							</div>
 						</div>
-
 						<!-- Step 3 -->
 						<div class="relative z-10 flex flex-col md:flex-row items-center md:justify-between">
 							<div class="order-2 md:order-1 md:w-5/12 text-center md:text-right p-6">
@@ -274,7 +251,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- Community/Testimonials Section (Restored & Styled) -->
 		<section class="py-24 bg-base-200">
 			<div class="container mx-auto px-4">
@@ -292,7 +268,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- Pricing Section (Restored & Styled) -->
 		<section class="py-24 bg-base-100 border-t border-base-200" id="pricing">
 			<div class="container mx-auto px-4">
@@ -318,7 +293,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- FAQ Section (Restored & Styled) -->
 		<section class="py-24 bg-base-200">
 			<div class="container mx-auto px-4">
@@ -328,47 +302,47 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					</div>
 					<div class="space-y-4">
 						<div class="collapse collapse-plus bg-base-100 border border-base-200 rounded-sm">
-							<input type="radio" name="faq-accordion" checked="checked" /> 
+							<input type="radio" name="faq-accordion" checked="checked"/>
 							<div class="collapse-title text-xl font-serif font-medium">
 								{ i18n.T(ctx, "landing.faq.q1.question") }
 							</div>
-							<div class="collapse-content"> 
+							<div class="collapse-content">
 								<p class="opacity-80 font-sans">{ i18n.T(ctx, "landing.faq.q1.answer") }</p>
 							</div>
 						</div>
 						<div class="collapse collapse-plus bg-base-100 border border-base-200 rounded-sm">
-							<input type="radio" name="faq-accordion" /> 
+							<input type="radio" name="faq-accordion"/>
 							<div class="collapse-title text-xl font-serif font-medium">
 								{ i18n.T(ctx, "landing.faq.q2.question") }
 							</div>
-							<div class="collapse-content"> 
+							<div class="collapse-content">
 								<p class="opacity-80 font-sans">{ i18n.T(ctx, "landing.faq.q2.answer") }</p>
 							</div>
 						</div>
 						<div class="collapse collapse-plus bg-base-100 border border-base-200 rounded-sm">
-							<input type="radio" name="faq-accordion" /> 
+							<input type="radio" name="faq-accordion"/>
 							<div class="collapse-title text-xl font-serif font-medium">
 								{ i18n.T(ctx, "landing.faq.q3.question") }
 							</div>
-							<div class="collapse-content"> 
+							<div class="collapse-content">
 								<p class="opacity-80 font-sans">{ i18n.T(ctx, "landing.faq.q3.answer") }</p>
 							</div>
 						</div>
 						<div class="collapse collapse-plus bg-base-100 border border-base-200 rounded-sm">
-							<input type="radio" name="faq-accordion" /> 
+							<input type="radio" name="faq-accordion"/>
 							<div class="collapse-title text-xl font-serif font-medium">
 								{ i18n.T(ctx, "landing.faq.q4.question") }
 							</div>
-							<div class="collapse-content"> 
+							<div class="collapse-content">
 								<p class="opacity-80 font-sans">{ i18n.T(ctx, "landing.faq.q4.answer") }</p>
 							</div>
 						</div>
 						<div class="collapse collapse-plus bg-base-100 border border-base-200 rounded-sm">
-							<input type="radio" name="faq-accordion" /> 
+							<input type="radio" name="faq-accordion"/>
 							<div class="collapse-title text-xl font-serif font-medium">
 								{ i18n.T(ctx, "landing.faq.q5.question") }
 							</div>
-							<div class="collapse-content"> 
+							<div class="collapse-content">
 								<p class="opacity-80 font-sans">{ i18n.T(ctx, "landing.faq.q5.answer") }</p>
 							</div>
 						</div>
@@ -376,7 +350,6 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- Trust Badges Section (Restored & Styled) -->
 		<section class="py-12 bg-base-100 border-t border-base-200">
 			<div class="container mx-auto px-4">
@@ -400,12 +373,10 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 				</div>
 			</div>
 		</section>
-
 		<!-- Final CTA Section - Authoritative -->
 		<section class="py-4 bg-primary text-primary-content relative overflow-hidden">
 			<!-- Simple textured overlay or gradient -->
 			<div class="absolute inset-0 bg-base-content/10 opacity-30"></div>
-			
 			<div class="container mx-auto px-4 relative z-10 text-center">
 				<div class="max-w-3xl mx-auto">
 					<h2 class="text-4xl lg:text-6xl font-serif font-bold mb-8">
@@ -414,20 +385,17 @@ templ Landing(ctx context.Context, title string, csrfToken string, seo *models.S
 					<p class="text-xl mb-10 opacity-90 leading-relaxed font-sans max-w-2xl mx-auto">
 						{ i18n.T(ctx, "landing.final_cta.subtitle") }
 					</p>
-					
 					<div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
 						<a href="/contact" class="btn btn-lg bg-white text-primary hover:bg-base-100 border-none rounded-sm px-10 font-serif tracking-wide shadow-xl">
 							{ i18n.T(ctx, "landing.pricing.book_demo") }
 						</a>
 					</div>
-					
 					<p class="mt-8 text-sm opacity-80 font-sans tracking-wider uppercase">
 						{ i18n.T(ctx, "landing.final_cta.no_credit_card") } • { i18n.T(ctx, "landing.final_cta.cancel_anytime") }
 					</p>
 				</div>
 			</div>
 		</section>
-
 		<!-- Sticky Mobile CTA -->
 		<div class="fixed bottom-0 left-0 w-full p-4 bg-base-100 border-t border-base-200 md:hidden z-50">
 			<a href="/contact" class="btn btn-primary w-full rounded-sm font-serif shadow-lg">

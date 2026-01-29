@@ -27,7 +27,6 @@ templ CaseFilters(ctx context.Context, user *models.User) {
 			@DateToInput(ctx)
 			@KeywordInput(ctx)
 		</div>
-
 		<!-- Search Button -->
 		<div class="w-full xl:w-auto mt-2 xl:mt-0 flex-shrink-0">
 			<button
@@ -61,7 +60,6 @@ templ CaseFiltersHistorical(ctx context.Context, user *models.User) {
 			@DateToInput(ctx)
 			@KeywordInput(ctx)
 		</div>
-
 		<!-- Search Button -->
 		<div class="w-full xl:w-auto mt-2 xl:mt-0 flex-shrink-0">
 			<button
@@ -74,7 +72,6 @@ templ CaseFiltersHistorical(ctx context.Context, user *models.User) {
 		</div>
 	</form>
 }
-
 
 // Helper Components for Inputs to avoid duplication
 templ StatusSelect(ctx context.Context) {

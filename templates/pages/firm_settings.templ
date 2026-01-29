@@ -9,7 +9,7 @@ import (
 	"law_flow_app_go/templates/layouts"
 )
 
-templ FirmSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, subscriptionInfo *services.SubscriptionInfo, availableAddOns []models.PlanAddOn) {
+templ FirmSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, subscriptionInfo *services.SubscriptionInfo, availableAddOns []models.PlanAddOn, currencyOptions []models.ChoiceOption) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
@@ -170,7 +170,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 															{ i18n.T(ctx, "settings.firm.name") } <span class="text-error">*</span>
 														</span>
 													</label>
-													<input type="text" id="name" name="name" x-model="currentName" required class="input input-bordered w-full rounded-sm focus:input-primary" />
+													<input type="text" id="name" name="name" x-model="currentName" required class="input input-bordered w-full rounded-sm focus:input-primary"/>
 												</div>
 												<!-- Country and Timezone Row -->
 												<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -181,7 +181,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 																{ i18n.T(ctx, "settings.firm.country") } <span class="text-error">*</span>
 															</span>
 														</label>
-														<input type="text" id="country" name="country" x-model="country" @input="updateTimezone()" required class="input input-bordered w-full rounded-sm focus:input-primary" />
+														<input type="text" id="country" name="country" x-model="country" @input="updateTimezone()" required class="input input-bordered w-full rounded-sm focus:input-primary"/>
 													</div>
 													<!-- Timezone -->
 													<div class="form-control w-full">
@@ -190,18 +190,29 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 																{ i18n.T(ctx, "settings.firm.timezone") }
 															</span>
 														</label>
-														<input 
-															type="text" 
-															id="timezone" 
-															name="timezone" 
-															x-model="timezone" 
-															:disabled="timezoneLocked" 
+														<input
+															type="text"
+															id="timezone"
+															name="timezone"
+															x-model="timezone"
+															:disabled="timezoneLocked"
 															:class="{'opacity-50 cursor-not-allowed': timezoneLocked}"
 															placeholder="UTC"
-															class="input input-bordered w-full rounded-sm focus:input-primary" 
+															class="input input-bordered w-full rounded-sm focus:input-primary"
 														/>
-														<input type="hidden" name="timezone" x-model="timezone" />
+														<input type="hidden" name="timezone" x-model="timezone"/>
 													</div>
+												</div>
+												<!-- Currency -->
+												<div class="form-control w-full">
+													<label class="label">
+														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">{ i18n.T(ctx, "settings.firm.currency") }</span>
+													</label>
+													<select name="currency" class="select select-bordered w-full rounded-sm">
+														for _, option := range currencyOptions {
+															<option value={ option.Code } selected?={ firm.Currency == option.Code }>{ option.Label }</option>
+														}
+													</select>
 												</div>
 												<!-- Address and City Row -->
 												<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -211,7 +222,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 																{ i18n.T(ctx, "settings.firm.address") }
 															</span>
 														</label>
-														<input type="text" id="address" name="address" value={ firm.Address } class="input input-bordered w-full rounded-sm focus:input-primary" />
+														<input type="text" id="address" name="address" value={ firm.Address } class="input input-bordered w-full rounded-sm focus:input-primary"/>
 													</div>
 													<div class="form-control w-full">
 														<label class="label">
@@ -219,7 +230,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 																{ i18n.T(ctx, "settings.firm.city") }
 															</span>
 														</label>
-														<input type="text" id="city" name="city" value={ firm.City } class="input input-bordered w-full rounded-sm focus:input-primary" />
+														<input type="text" id="city" name="city" value={ firm.City } class="input input-bordered w-full rounded-sm focus:input-primary"/>
 													</div>
 												</div>
 												<!-- Phone -->
@@ -229,7 +240,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 															{ i18n.T(ctx, "settings.firm.phone") }
 														</span>
 													</label>
-													<input type="tel" id="phone" name="phone" value={ firm.Phone } class="input input-bordered w-full rounded-sm focus:input-primary" />
+													<input type="tel" id="phone" name="phone" value={ firm.Phone } class="input input-bordered w-full rounded-sm focus:input-primary"/>
 												</div>
 												<!-- Description -->
 												<div class="form-control w-full">
@@ -243,7 +254,6 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 														<span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.firm.desc_ph") }</span>
 													</label>
 												</div>
-
 												<!-- Message Container -->
 												<div id="firm-message"></div>
 												<!-- Submit Button -->
@@ -313,7 +323,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 														{ i18n.T(ctx, "settings.email.billing") } <span class="text-error">*</span>
 													</span>
 												</label>
-												<input type="email" id="billing_email" name="billing_email" value={ firm.BillingEmail } required class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<input type="email" id="billing_email" name="billing_email" value={ firm.BillingEmail } required class="input input-bordered w-full rounded-sm focus:input-primary"/>
 												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.billing_desc") }</span></label>
 											</div>
 											<!-- Info Email -->
@@ -323,7 +333,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 														{ i18n.T(ctx, "settings.email.info") }
 													</span>
 												</label>
-												<input type="email" id="info_email" name="info_email" value={ firm.InfoEmail } class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<input type="email" id="info_email" name="info_email" value={ firm.InfoEmail } class="input input-bordered w-full rounded-sm focus:input-primary"/>
 												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.info_desc") }</span></label>
 											</div>
 											<!-- Noreply Email -->
@@ -333,19 +343,19 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 														{ i18n.T(ctx, "settings.email.noreply") } <span class="text-error">*</span>
 													</span>
 												</label>
-												<input type="email" id="noreply_email" name="noreply_email" value={ firm.NoreplyEmail } required class="input input-bordered w-full rounded-sm focus:input-primary" />
+												<input type="email" id="noreply_email" name="noreply_email" value={ firm.NoreplyEmail } required class="input input-bordered w-full rounded-sm focus:input-primary"/>
 												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.noreply_desc") }</span></label>
 											</div>
-												<!-- Email Sender Name -->
-												<div class="form-control w-full">
-													<label class="label">
-														<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
-															{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
-														</span>
-													</label>
-													<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary" />
-													<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
-												</div>
+											<!-- Email Sender Name -->
+											<div class="form-control w-full">
+												<label class="label">
+													<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">
+														{ i18n.T(ctx, "settings.email.sender_name") } <span class="text-error">*</span>
+													</span>
+												</label>
+												<input type="text" id="email_sender_name" name="email_sender_name" value={ firm.EmailSenderName } required placeholder="My Law Firm" class="input input-bordered w-full rounded-sm focus:input-primary"/>
+												<label class="label"><span class="label-text-alt opacity-60">{ i18n.T(ctx, "settings.email.sender_name_desc") }</span></label>
+											</div>
 											<!-- Message Container -->
 											<div id="email-message"></div>
 											<!-- Submit Button -->
@@ -547,7 +557,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 										<label class="label">
 											<span class="label-text font-bold uppercase tracking-wider text-xs opacity-60">{ i18n.T(ctx, "settings.templates.category_name") }</span>
 										</label>
-										<input type="text" name="name" required class="input input-bordered w-full rounded-sm" />
+										<input type="text" name="name" required class="input input-bordered w-full rounded-sm"/>
 									</div>
 									<div class="form-control w-full">
 										<label class="label">

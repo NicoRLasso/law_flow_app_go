@@ -8,8 +8,8 @@ import (
 )
 
 templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInfo) {
-	<div 
-		id="billing-tab-content" 
+	<div
+		id="billing-tab-content"
 		class="space-y-6"
 		hx-get="/api/firm/settings/billing"
 		hx-trigger="subscriptionUpdated from:document"
@@ -19,7 +19,6 @@ templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInf
 		if subscriptionInfo != nil {
 			<!-- Usage Overview -->
 			@UsageDisplay(ctx, subscriptionInfo)
-
 			<!-- Current Plan Card -->
 			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 				<div class="card-body p-8">
@@ -32,7 +31,6 @@ templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInf
 							{ subscriptionInfo.Plan.Name }
 						</span>
 					</div>
-
 					<div class="grid md:grid-cols-3 gap-8">
 						<div class="col-span-2 space-y-6">
 							<div class="flex items-center justify-between p-4 bg-base-50 rounded-sm border border-base-200">
@@ -55,7 +53,6 @@ templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInf
 									}
 								</div>
 							</div>
-							
 							<!-- Add-Ons purchased -->
 							<div>
 								<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-3">{ i18n.T(ctx, "subscription.active_addons") }</h3>
@@ -78,7 +75,7 @@ templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInf
 																<span class="badge badge-ghost badge-xs text-[10px] uppercase font-bold tracking-widest px-1">Permanent</span>
 															}
 														</div>
-														<button 
+														<button
 															@click={ fmt.Sprintf("addonToCancel = '%s'; addonNameToCancel = '%s'; showCancelModal = true", fa.ID, fa.AddOn.Name) }
 															class="text-error/40 hover:text-error transition-colors p-1"
 															title={ i18n.T(ctx, "subscription.cancel_addon") }
@@ -95,7 +92,6 @@ templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInf
 								}
 							</div>
 						</div>
-
 						<!-- Actions -->
 						<div class="bg-base-50 p-6 rounded-sm border border-base-200 space-y-4">
 							<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-2">{ i18n.T(ctx, "common.actions") }</h3>
@@ -113,7 +109,6 @@ templ BillingTab(ctx context.Context, subscriptionInfo *services.SubscriptionInf
 				<span>Subscription information not found. Please contact support.</span>
 			</div>
 		}
-
 		<!-- Custom Confirmation Modal -->
 		<div
 			x-show="showCancelModal"

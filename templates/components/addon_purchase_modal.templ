@@ -9,23 +9,21 @@ import (
 )
 
 templ AddOnPurchaseModal(ctx context.Context, addons []models.PlanAddOn, info *services.SubscriptionInfo) {
-	<div 
-		x-show="showAddOnModal" 
+	<div
+		x-show="showAddOnModal"
 		class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-base-300/80 backdrop-blur-sm"
 		x-transition.opacity
 		style="display: none;"
 	>
-		<div 
+		<div
 			class="bg-base-100 border border-base-200 rounded-sm w-full max-w-2xl p-8 shadow-xl relative"
 			@click.away="showAddOnModal = false"
 		>
 			<button @click="showAddOnModal = false" class="absolute top-4 right-4 text-base-content/40 hover:text-base-content">
 				<i data-lucide="x" class="w-6 h-6"></i>
 			</button>
-
 			<h3 class="text-2xl font-serif font-bold text-primary mb-2">{ i18n.T(ctx, "subscription.purchase_modal_title") }</h3>
 			<p class="text-base-content/60 mb-8">{ i18n.T(ctx, "subscription.purchase_modal_desc") }</p>
-
 			<div class="grid md:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-2">
 				for _, addon := range addons {
 					if addon.Type != "templates" || (info != nil && !info.HasTemplates) {
@@ -49,14 +47,13 @@ templ AddOnPurchaseModal(ctx context.Context, addons []models.PlanAddOn, info *s
 									}
 								</p>
 							</div>
-
-							<form 
-								hx-post="/api/addons/purchase" 
-								hx-target="#addon-message" 
+							<form
+								hx-post="/api/addons/purchase"
+								hx-target="#addon-message"
 								hx-swap="innerHTML"
 								@htmx:after-request="if(event.detail.successful) { setTimeout(() => { showAddOnModal = false; $el.reset(); document.getElementById('addon-message').innerHTML = ''; }, 2000) }"
 							>
-								<input type="hidden" name="addon_id" value={ addon.ID } />
+								<input type="hidden" name="addon_id" value={ addon.ID }/>
 								<button type="submit" class="btn btn-primary btn-sm w-full rounded-sm">
 									{ i18n.T(ctx, "subscription.purchase_btn") }
 								</button>
@@ -65,9 +62,7 @@ templ AddOnPurchaseModal(ctx context.Context, addons []models.PlanAddOn, info *s
 					}
 				}
 			</div>
-
 			<div id="addon-message" class="mt-4"></div>
-
 			<div class="flex justify-end mt-8 pt-4 border-t border-base-200">
 				<button @click="showAddOnModal = false" class="btn btn-ghost btn-sm rounded-sm">{ i18n.T(ctx, "common.close") }</button>
 			</div>

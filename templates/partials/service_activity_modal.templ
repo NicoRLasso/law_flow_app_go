@@ -1,0 +1,108 @@
+package partials
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/middleware"
+	"law_flow_app_go/services/i18n"
+)
+
+templ AddServiceActivityModal(ctx context.Context, serviceID string) {
+	<div
+		id="add_activity_modal"
+		class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all"
+		x-data="{ activityType: 'NOTE' }"
+		@click.self="closeAddActivityModal()"
+	>
+		<div class="bg-base-100 rounded-sm border border-base-200 shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+			<!-- Modal Header -->
+			<div class="px-6 py-4 border-b border-base-200 flex items-center justify-between bg-base-50/50">
+				<h3 class="text-xl font-serif font-bold text-base-content flex items-center gap-2">
+					<i data-lucide="activity" class="text-primary"></i>
+					{ i18n.T(ctx, "services.activities.add_title") }
+				</h3>
+				<button @click="closeAddActivityModal()" class="btn btn-ghost btn-sm btn-circle">
+					<i data-lucide="x"></i>
+				</button>
+			</div>
+			<!-- Form Body -->
+			<form
+				hx-post={ fmt.Sprintf("/api/services/%s/activities", serviceID) }
+				hx-target="#activities-tab-content"
+				hx-on::after-request="if(event.detail.successful) closeAddActivityModal()"
+				class="p-6 space-y-4"
+			>
+				<!-- Activity Type Selector -->
+				<div class="grid grid-cols-1 gap-4">
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.table.type") }</span>
+						</label>
+						<select name="activity_type" x-model="activityType" class="select select-bordered w-full rounded-sm focus:select-primary" required>
+							<option value="NOTE">{ i18n.T(ctx, "services.activities.type.note") }</option>
+							<option value="TIME_ENTRY">{ i18n.T(ctx, "services.activities.type.time_entry") }</option>
+							<option value="EMAIL">{ i18n.T(ctx, "services.activities.type.email") }</option>
+							<option value="CALL">{ i18n.T(ctx, "services.activities.type.call") }</option>
+							<option value="MEETING">{ i18n.T(ctx, "services.activities.type.meeting") }</option>
+						</select>
+					</div>
+				</div>
+				<!-- Title & Duration -->
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.milestones.form.title") }</span>
+						</label>
+						<input
+							type="text"
+							name="title"
+							placeholder={ i18n.T(ctx, "services.activities.form.title_placeholder") }
+							class="input input-bordered w-full rounded-sm focus:input-primary"
+							required
+						/>
+					</div>
+					<div class="form-control" x-show="activityType === 'TIME_ENTRY'">
+						<label class="label">
+							<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.activities.form.duration_placeholder") }</span>
+						</label>
+						<input
+							type="number"
+							name="duration"
+							placeholder="60"
+							class="input input-bordered w-full rounded-sm focus:input-primary"
+							::required="activityType === 'TIME_ENTRY'"
+						/>
+					</div>
+				</div>
+				<!-- Content -->
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.milestones.form.description") }</span>
+					</label>
+					<textarea
+						name="content"
+						class="textarea textarea-bordered h-24 rounded-sm focus:textarea-primary"
+						placeholder={ i18n.T(ctx, "services.activities.form.content_placeholder") }
+					></textarea>
+				</div>
+				<!-- Action Buttons -->
+				<div class="flex justify-end gap-3 pt-4 border-t border-base-200">
+					<button type="button" @click="closeAddActivityModal()" class="btn btn-ghost rounded-sm px-8">
+						{ i18n.T(ctx, "common.cancel") }
+					</button>
+					<button type="submit" class="btn btn-primary rounded-sm px-8 shadow-sm">
+						{ i18n.T(ctx, "common.save") }
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script nonce={ middleware.GetNonce(ctx) }>
+		function closeAddActivityModal() {
+			const modal = document.getElementById('add_activity_modal');
+			if (modal) {
+				modal.remove();
+			}
+		}
+	</script>
+}

@@ -16,22 +16,22 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 				<div class="navbar-start flex-1">
 					<!-- Mobile menu button -->
 					<div class="dropdown lg:hidden">
-						<button 
-							type="button" 
-							class="btn btn-primary lg:hidden" 
+						<button
+							type="button"
+							class="btn btn-primary lg:hidden"
 							@click="mobileMenuOpen = !mobileMenuOpen"
-							aria-label="Toggle menu">
+							aria-label="Toggle menu"
+						>
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"></path>
 							</svg>
 						</button>
 					</div>
 					<a href="/" class="btn btn-ghost text-2xl font-serif font-bold tracking-tight text-primary normal-case gap-2">
-						<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="Logo" class="w-8 h-8" />
+						<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="Logo" class="w-8 h-8"/>
 						{ i18n.T(ctx, "app.name") }
 					</a>
 				</div>
-				
 				<div class="navbar-center hidden lg:flex">
 					<ul class="menu menu-horizontal px-1 gap-2">
 						<li><a href="/#features">{ i18n.T(ctx, "nav.features") }</a></li>
@@ -39,7 +39,6 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 						<li><a href="/#pricing">{ i18n.T(ctx, "nav.pricing") }</a></li>
 					</ul>
 				</div>
-
 				<div class="navbar-end flex-1 gap-2">
 					<div class="hidden lg:flex gap-2 items-center justify-end">
 						<a href="/login" class="btn btn-primary btn-sm-content">{ i18n.T(ctx, "nav.login") }</a>
@@ -51,7 +50,6 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 					</div>
 				</div>
 			</div>
-
 			<!-- Mobile Menu Dropdown (Alpine controlled) -->
 			<div
 				x-show="mobileMenuOpen"
@@ -73,11 +71,9 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 				</ul>
 			</div>
 		</nav>
-
 		<main class="min-h-screen bg-base-100 text-base-content">
 			{ children... }
 		</main>
-
 		<!-- Footer -->
 		<footer class="footer p-10 bg-base-200 text-base-content grid-cols-2 lg:grid-cols-4">
 			<aside class="col-span-2 lg:col-span-1">
@@ -94,20 +90,20 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 						<span class="text-lg">f</span>
 					</a>
 				</div>
-			</aside> 
+			</aside>
 			<nav>
-				<span class="footer-title opacity-100 text-primary font-semibold">{ i18n.T(ctx, "footer.product") }</span> 
+				<span class="footer-title opacity-100 text-primary font-semibold">{ i18n.T(ctx, "footer.product") }</span>
 				<a href="/#features" class="link link-hover">{ i18n.T(ctx, "footer.features") }</a>
 				<a href="/#pricing" class="link link-hover">{ i18n.T(ctx, "footer.pricing") }</a>
 				<a href="/security" class="link link-hover">{ i18n.T(ctx, "footer.security") }</a>
-			</nav> 
+			</nav>
 			<nav>
-				<span class="footer-title opacity-100 text-primary font-semibold">{ i18n.T(ctx, "footer.company") }</span> 
+				<span class="footer-title opacity-100 text-primary font-semibold">{ i18n.T(ctx, "footer.company") }</span>
 				<a href="/about" class="link link-hover">{ i18n.T(ctx, "footer.about") }</a>
 				<a href="/contact" class="link link-hover">{ i18n.T(ctx, "footer.contact") }</a>
-			</nav> 
+			</nav>
 			<nav>
-				<span class="footer-title opacity-100 text-primary font-semibold">{ i18n.T(ctx, "footer.legal") }</span> 
+				<span class="footer-title opacity-100 text-primary font-semibold">{ i18n.T(ctx, "footer.legal") }</span>
 				<a href="/privacy" class="link link-hover">{ i18n.T(ctx, "footer.privacy") }</a>
 				<a href="/terms" class="link link-hover">{ i18n.T(ctx, "footer.terms") }</a>
 				<a href="/cookies" class="link link-hover">{ i18n.T(ctx, "footer.cookies") }</a>
@@ -117,7 +113,7 @@ templ WebsiteLayout(ctx context.Context, title string, csrfToken string, seo *mo
 		<footer class="footer px-10 py-4 border-t bg-base-200 text-base-content border-base-300">
 			<aside class="items-center grid-flow-col">
 				<p>{ i18n.T(ctx, "footer.rights") }</p>
-			</aside> 
+			</aside>
 			<nav class="md:place-self-center md:justify-self-end">
 				<div class="grid grid-flow-col gap-4">
 					<a href="#" class="link link-hover text-sm">{ i18n.T(ctx, "footer.status") }</a>

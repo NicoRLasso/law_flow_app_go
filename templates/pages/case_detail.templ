@@ -180,7 +180,6 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 										</div>
 									</div>
 								</div>
-
 								<!-- Unified Tab Content -->
 								<div x-show="activeTab === 'unified'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
 									<h2 class="text-xl font-serif font-bold text-base-content border-b border-base-200 pb-3 mb-4">
@@ -379,7 +378,6 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 									<p class="text-base-content/40 italic text-sm">{ i18n.T(ctx, "case.detail.no_collaborators") }</p>
 								}
 							</div>
-							
 							<!-- Add Collaborator (Admin only) -->
 							if user.Role == "admin" {
 								<div x-data={ "{ showAdd: false, availableCollaborators: [], loading: false, caseId: '" + caseRecord.ID + "' }" }>
@@ -690,7 +688,7 @@ templ UploadDocumentModal(ctx context.Context, caseRecord models.Case) {
 					<!-- Visibility Toggle -->
 					<div class="form-control">
 						<label class="label cursor-pointer justify-start gap-4 p-4 border border-base-200 rounded-sm hover:bg-base-50 transition-colors">
-							<input type="checkbox" name="is_public" value="true" class="checkbox checkbox-primary rounded-sm" />
+							<input type="checkbox" name="is_public" value="true" class="checkbox checkbox-primary rounded-sm"/>
 							<div>
 								<span class="label-text font-bold block">{ i18n.T(ctx, "case.document.visibility.public") }</span>
 								<span class="label-text-alt">{ i18n.T(ctx, "case.document.visibility.public_desc") }</span>
@@ -778,7 +776,6 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 				}
 			</div>
 		</div>
-
 		<!-- Opposing Party Section -->
 		<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 			<div class="card-body p-6">

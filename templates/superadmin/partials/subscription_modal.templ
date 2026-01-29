@@ -11,14 +11,12 @@ templ FirmSubscriptionModal(ctx context.Context, firm *models.Firm, plans []mode
 			<button @click="document.body.dispatchEvent(new CustomEvent('closeModal'))" class="absolute top-4 right-4 text-base-content/40 hover:text-base-content">
 				<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
 			</button>
-
 			<h3 class="text-2xl font-serif font-bold text-primary mb-2">Manage Subscription</h3>
 			<p class="text-sm text-base-content/60 mb-8 font-sans">
 				Update subscription plan for <span class="font-bold text-base-content">{ firm.Name }</span>
 			</p>
-
-			<form 
-				hx-put={ "/superadmin/firms/" + firm.ID + "/subscription" } 
+			<form
+				hx-put={ "/superadmin/firms/" + firm.ID + "/subscription" }
 				hx-target="#firms-table-container"
 				@submit="loading = true"
 				class="space-y-6"
@@ -40,7 +38,6 @@ templ FirmSubscriptionModal(ctx context.Context, firm *models.Firm, plans []mode
 						}
 					</div>
 				</div>
-
 				<div class="form-control w-full">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">Change Plan</span>
@@ -48,7 +45,7 @@ templ FirmSubscriptionModal(ctx context.Context, firm *models.Firm, plans []mode
 					<select name="plan_id" class="select select-bordered w-full rounded-sm font-sans focus:select-primary" required>
 						<option value="" disabled selected>Select a new plan...</option>
 						for _, plan := range plans {
-							<option 
+							<option
 								value={ plan.ID }
 								if firm.Subscription != nil && firm.Subscription.PlanID == plan.ID {
 									selected
@@ -59,11 +56,9 @@ templ FirmSubscriptionModal(ctx context.Context, firm *models.Firm, plans []mode
 						}
 					</select>
 				</div>
-
 				<div class="bg-base-50 p-4 border border-base-200 rounded-sm italic text-[11px] text-base-content/60">
 					Changing the plan will take effect immediately. If the firm is on a trial, it will be moved to the active phase of the new plan.
 				</div>
-
 				<div class="flex justify-end gap-3 pt-4">
 					<button type="button" @click="document.body.dispatchEvent(new CustomEvent('closeModal'))" class="btn btn-ghost rounded-sm font-bold uppercase tracking-widest text-xs">Cancel</button>
 					<button type="submit" class="btn btn-primary rounded-sm font-bold uppercase tracking-widest text-xs min-w-[120px]" :disabled="loading">

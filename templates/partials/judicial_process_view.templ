@@ -43,7 +43,6 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 					<a role="tab" class="tab h-12 flex-1 md:flex-none uppercase font-bold text-xs tracking-wider" :class="{ 'tab-active border-primary text-primary': activeTab === 'overview' }" @click="activeTab = 'overview'">Resumen</a>
 					<a role="tab" class="tab h-12 flex-1 md:flex-none uppercase font-bold text-xs tracking-wider" :class="{ 'tab-active border-primary text-primary': activeTab === 'actions' }" @click="activeTab = 'actions'">Actuaciones</a>
 				</div>
-
 				<!-- Tab Content: Overview -->
 				<div
 					id="tab-overview"
@@ -53,234 +52,226 @@ templ JudicialProcessView(ctx context.Context, jp *models.JudicialProcess, filin
 						style="display: none;"
 					}
 				>
-				<!-- Process Summary Card -->
-				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-					<div class="card-body p-6">
-						<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-base-200 pb-2">
-							<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest">
-								{ i18n.T(ctx, "judicial.process_info") }
-							</h2>
-							<span class="badge badge-outline font-mono self-start sm:self-auto">{ jp.Radicado }</span>
-						</div>
-						
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-							<div>
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.office") }</label>
-								<p class="text-base-content font-medium text-sm">{ getString(jp.Details, "office") }</p>
+					<!-- Process Summary Card -->
+					<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+						<div class="card-body p-6">
+							<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-base-200 pb-2">
+								<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest">
+									{ i18n.T(ctx, "judicial.process_info") }
+								</h2>
+								<span class="badge badge-outline font-mono self-start sm:self-auto">{ jp.Radicado }</span>
 							</div>
-							if val := getString(jp.Details, "judge"); val != "" {
+							<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
 								<div>
-									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.judge") }</label>
-									<p class="text-base-content font-medium text-sm">{ val }</p>
+									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.office") }</label>
+									<p class="text-base-content font-medium text-sm">{ getString(jp.Details, "office") }</p>
+								</div>
+								if val := getString(jp.Details, "judge"); val != "" {
+									<div>
+										<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.judge") }</label>
+										<p class="text-base-content font-medium text-sm">{ val }</p>
+									</div>
+								}
+								<div>
+									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.type") }</label>
+									<p class="text-base-content font-medium text-sm">{ getString(jp.Details, "process_type") }</p>
+								</div>
+								<div>
+									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.location") }</label>
+									<p class="text-base-content font-medium text-sm">{ getString(jp.Details, "department") }</p>
+								</div>
+							</div>
+							if val := getString(jp.Details, "subject"); val != "" {
+								<div class="mt-6 pt-4 border-t border-base-200">
+									<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-3">{ i18n.T(ctx, "judicial.subjects") }</h3>
+									<div class="border border-base-200 rounded-sm">
+										<!-- Desktop Table -->
+										<table class="hidden md:table table table-sm w-full">
+											<thead class="bg-base-50">
+												<tr>
+													<th class="w-1/3">Tipo</th>
+													<th>Nombre</th>
+												</tr>
+											</thead>
+											<tbody>
+												for _, sub := range splitSubjects(val) {
+													if role, name := parseSubject(sub); role != "" {
+														<tr>
+															<td class="font-bold text-xs uppercase text-base-content/70">{ role }</td>
+															<td class="font-medium text-sm">{ name }</td>
+														</tr>
+													}
+												}
+											</tbody>
+										</table>
+										<!-- Mobile List -->
+										<div class="md:hidden divide-y divide-base-200">
+											for _, sub := range splitSubjects(val) {
+												if role, name := parseSubject(sub); role != "" {
+													<div class="p-3">
+														<div class="font-bold text-xs uppercase text-base-content/50 mb-1">{ role }</div>
+														<div class="font-medium text-sm text-base-content">{ name }</div>
+													</div>
+												}
+											}
+										</div>
+									</div>
 								</div>
 							}
-							<div>
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.type") }</label>
-								<p class="text-base-content font-medium text-sm">{ getString(jp.Details, "process_type") }</p>
-							</div>
-							<div>
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "judicial.location") }</label>
-								<p class="text-base-content font-medium text-sm">{ getString(jp.Details, "department") }</p>
+							<div class="mt-4 flex justify-end">
+								<span class="text-xs text-base-content/40 flex items-center gap-1">
+									<i data-lucide="clock" class="w-3 h-3"></i>
+									{ i18n.T(ctx, "judicial.last_updated") }: { jp.LastTracking.Format("02 Jan 2006 15:04") }
+								</span>
 							</div>
 						</div>
-						
-						if val := getString(jp.Details, "subject"); val != "" {
-							<div class="mt-6 pt-4 border-t border-base-200">
-								<h3 class="text-sm font-bold uppercase tracking-wider text-base-content/40 mb-3">{ i18n.T(ctx, "judicial.subjects") }</h3>
-								<div class="border border-base-200 rounded-sm">
-									<!-- Desktop Table -->
-									<table class="hidden md:table table table-sm w-full">
-										<thead class="bg-base-50">
+					</div>
+				</div>
+				<!-- Tab Content: Actions -->
+				<div
+					id="tab-actions"
+					x-show="activeTab === 'actions'"
+					class="sub-tab-content"
+					if activeTab != "actions" {
+						style="display: none;"
+					}
+					x-cloak
+				>
+					<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+						<div class="card-body p-0">
+							<!-- No padding for table to flush edges -->
+							<div class="p-6 border-b border-base-200 flex justify-between items-center">
+								<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest">
+									{ i18n.T(ctx, "judicial.actions_history") }
+								</h2>
+								if totalPages > 1 {
+									<span class="text-xs text-base-content/50">Pg { fmt.Sprintf("%d", currentPage) } / { fmt.Sprintf("%d", totalPages) }</span>
+								}
+							</div>
+							if len(jp.Actions) == 0 {
+								<p class="text-center text-base-content/50 italic py-8">{ i18n.T(ctx, "judicial.no_actions") }</p>
+							} else {
+								<!-- Desktop Table View -->
+								<div class="hidden md:block overflow-x-auto">
+									<table class="table table-sm">
+										<thead class="bg-base-200/50">
 											<tr>
-												<th class="w-1/3">Tipo</th>
-												<th>Nombre</th>
+												<th class="w-32">Fecha</th>
+												<th class="w-1/4">Actuación</th>
+												<th>Anotación</th>
+												<th class="w-32">Término</th>
 											</tr>
 										</thead>
 										<tbody>
-											for _, sub := range splitSubjects(val) {
-												if role, name := parseSubject(sub); role != "" {
-													<tr>
-														<td class="font-bold text-xs uppercase text-base-content/70">{ role }</td>
-														<td class="font-medium text-sm">{ name }</td>
-													</tr>
-												}
+											for _, action := range jp.Actions {
+												<tr class="hover">
+													<td class="whitespace-nowrap font-mono text-xs align-top pt-3">
+														<div class="font-bold">{ action.ActionDate.Format("02/01/2006") }</div>
+														if t := getTime(action.Metadata, "registration_date"); !t.IsZero() {
+															<div class="text-[10px] text-base-content/40" title={ i18n.T(ctx, "judicial.registered") }>reg: { t.Format("02/01") }</div>
+														}
+													</td>
+													<td class="align-top pt-3">
+														<div class="font-bold text-xs text-primary">{ action.Type }</div>
+													</td>
+													<td class="text-xs whitespace-pre-wrap min-w-[300px] align-top pt-3">
+														if action.Annotation != "" {
+															{ action.Annotation }
+														} else {
+															<span class="text-base-content/30 italic">Sin anotación</span>
+														}
+													</td>
+													<td class="text-xs align-top pt-3">
+														if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
+															if tEnd := getTime(action.Metadata, "final_date"); !tEnd.IsZero() {
+																<div class="flex flex-col gap-1">
+																	<div class="badge badge-sm badge-ghost font-mono text-[10px] whitespace-nowrap">Ini: { tStart.Format("02/01/06") }</div>
+																	<div class="badge badge-sm badge-outline font-mono text-[10px] whitespace-nowrap">Fin: { tEnd.Format("02/01/06") }</div>
+																</div>
+															}
+														} else {
+															<span class="text-base-content/30">-</span>
+														}
+													</td>
+												</tr>
 											}
 										</tbody>
 									</table>
-									<!-- Mobile List -->
-									<div class="md:hidden divide-y divide-base-200">
-										for _, sub := range splitSubjects(val) {
-											if role, name := parseSubject(sub); role != "" {
-												<div class="p-3">
-													<div class="font-bold text-xs uppercase text-base-content/50 mb-1">{ role }</div>
-													<div class="font-medium text-sm text-base-content">{ name }</div>
-												</div>
-											}
-										}
-									</div>
 								</div>
-							</div>
-						}
-						
-						<div class="mt-4 flex justify-end">
-							<span class="text-xs text-base-content/40 flex items-center gap-1">
-								<i data-lucide="clock" class="w-3 h-3"></i>
-								{ i18n.T(ctx, "judicial.last_updated") }: { jp.LastTracking.Format("02 Jan 2006 15:04") }
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Tab Content: Actions -->
-			<div
-				id="tab-actions"
-				x-show="activeTab === 'actions'"
-				class="sub-tab-content"
-				if activeTab != "actions" {
-					style="display: none;"
-				}
-				x-cloak
-			>
-				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-					<div class="card-body p-0"> <!-- No padding for table to flush edges -->
-						<div class="p-6 border-b border-base-200 flex justify-between items-center">
-							<h2 class="text-lg font-serif font-bold text-primary uppercase tracking-widest">
-								{ i18n.T(ctx, "judicial.actions_history") }
-							</h2>
-							if totalPages > 1 {
-								<span class="text-xs text-base-content/50">Pg { fmt.Sprintf("%d", currentPage) } / { fmt.Sprintf("%d", totalPages) }</span>
-							}
-						</div>
-						
-						if len(jp.Actions) == 0 {
-							<p class="text-center text-base-content/50 italic py-8">{ i18n.T(ctx, "judicial.no_actions") }</p>
-						} else {
-							<!-- Desktop Table View -->
-							<div class="hidden md:block overflow-x-auto">
-								<table class="table table-sm">
-									<thead class="bg-base-200/50">
-										<tr>
-											<th class="w-32">Fecha</th>
-											<th class="w-1/4">Actuación</th>
-											<th>Anotación</th>
-											<th class="w-32">Término</th>
-										</tr>
-									</thead>
-									<tbody>
-										for _, action := range jp.Actions {
-											<tr class="hover">
-												<td class="whitespace-nowrap font-mono text-xs align-top pt-3">
-													<div class="font-bold">{ action.ActionDate.Format("02/01/2006") }</div>
+								<!-- Mobile Card View -->
+								<div class="md:hidden divide-y divide-base-200">
+									for _, action := range jp.Actions {
+										<div class="p-4 flex flex-col gap-3">
+											<div class="flex items-start justify-between">
+												<div class="flex flex-col">
+													<span class="font-mono font-bold text-sm">{ action.ActionDate.Format("02/01/2006") }</span>
 													if t := getTime(action.Metadata, "registration_date"); !t.IsZero() {
-														<div class="text-[10px] text-base-content/40" title={ i18n.T(ctx, "judicial.registered") }>reg: { t.Format("02/01") }</div>
+														<span class="text-[10px] text-base-content/40">reg: { t.Format("02/01/2006") }</span>
 													}
-												</td>
-												<td class="align-top pt-3">
-													<div class="font-bold text-xs text-primary">{ action.Type }</div>
-												</td>
-												<td class="text-xs whitespace-pre-wrap min-w-[300px] align-top pt-3">
+												</div>
+												if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
+													<div class="badge badge-sm badge-warning badge-outline text-[10px]">Con Términos</div>
+												}
+											</div>
+											<div>
+												<h4 class="font-bold text-sm text-primary mb-1">{ action.Type }</h4>
+												<p class="text-sm text-base-content/80 whitespace-pre-wrap">
 													if action.Annotation != "" {
 														{ action.Annotation }
 													} else {
-														<span class="text-base-content/30 italic">Sin anotación</span>
+														<span class="text-base-content/40 italic">Sin anotación</span>
 													}
-												</td>
-												<td class="text-xs align-top pt-3">
-													if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
-														if tEnd := getTime(action.Metadata, "final_date"); !tEnd.IsZero() {
-															<div class="flex flex-col gap-1">
-																<div class="badge badge-sm badge-ghost font-mono text-[10px] whitespace-nowrap">Ini: { tStart.Format("02/01/06") }</div>
-																<div class="badge badge-sm badge-outline font-mono text-[10px] whitespace-nowrap">Fin: { tEnd.Format("02/01/06") }</div>
-															</div>
-														}
-													} else {
-														<span class="text-base-content/30">-</span>
-													}
-												</td>
-											</tr>
-										}
-									</tbody>
-								</table>
-							</div>
-
-							<!-- Mobile Card View -->
-							<div class="md:hidden divide-y divide-base-200">
-								for _, action := range jp.Actions {
-									<div class="p-4 flex flex-col gap-3">
-										<div class="flex items-start justify-between">
-											<div class="flex flex-col">
-												<span class="font-mono font-bold text-sm">{ action.ActionDate.Format("02/01/2006") }</span>
-												if t := getTime(action.Metadata, "registration_date"); !t.IsZero() {
-													<span class="text-[10px] text-base-content/40">reg: { t.Format("02/01/2006") }</span>
-												}
+												</p>
 											</div>
 											if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
-												<div class="badge badge-sm badge-warning badge-outline text-[10px]">Con Términos</div>
-											}
-										</div>
-										
-										<div>
-											<h4 class="font-bold text-sm text-primary mb-1">{ action.Type }</h4>
-											<p class="text-sm text-base-content/80 whitespace-pre-wrap">
-												if action.Annotation != "" {
-													{ action.Annotation }
-												} else {
-													<span class="text-base-content/40 italic">Sin anotación</span>
+												if tEnd := getTime(action.Metadata, "final_date"); !tEnd.IsZero() {
+													<div class="bg-base-50 p-2 rounded text-xs flex gap-4 border border-base-200">
+														<div class="flex flex-col">
+															<span class="uppercase font-bold text-[10px] text-base-content/40">Inicia</span>
+															<span class="font-mono">{ tStart.Format("02/01/06") }</span>
+														</div>
+														<div class="flex flex-col">
+															<span class="uppercase font-bold text-[10px] text-base-content/40">Vence</span>
+															<span class="font-mono font-bold text-error">{ tEnd.Format("02/01/06") }</span>
+														</div>
+													</div>
 												}
-											</p>
-										</div>
-
-										if tStart := getTime(action.Metadata, "initial_date"); !tStart.IsZero() {
-											if tEnd := getTime(action.Metadata, "final_date"); !tEnd.IsZero() {
-												<div class="bg-base-50 p-2 rounded text-xs flex gap-4 border border-base-200">
-													<div class="flex flex-col">
-														<span class="uppercase font-bold text-[10px] text-base-content/40">Inicia</span>
-														<span class="font-mono">{ tStart.Format("02/01/06") }</span>
-													</div>
-													<div class="flex flex-col">
-														<span class="uppercase font-bold text-[10px] text-base-content/40">Vence</span>
-														<span class="font-mono font-bold text-error">{ tEnd.Format("02/01/06") }</span>
-													</div>
-												</div>
 											}
-										}
-									</div>
-								}
-							</div>
-						}
-
-						if totalPages > 1 {
-							<div class="flex justify-center p-4 border-t border-base-200 mt-2 gap-2">
-								if currentPage > 1 {
-									<button 
-										hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d&tab=actions", jp.CaseID, currentPage-1))) }
-										hx-target="#judicial_process_view"
-										hx-swap="outerHTML"
-										class="btn btn-sm btn-outline">
-										<i data-lucide="chevron-left" class="w-4 h-4"></i>
-									</button>
-								}
-								<button class="btn btn-sm btn-disabled">{ fmt.Sprintf("%d", currentPage) }</button>
-								if currentPage < totalPages {
-									<button 
-										hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d&tab=actions", jp.CaseID, currentPage+1))) }
-										hx-target="#judicial_process_view"
-										hx-swap="outerHTML"
-										class="btn btn-sm btn-outline">
-										<i data-lucide="chevron-right" class="w-4 h-4"></i>
-									</button>
-								}
-							</div>
-						}
+										</div>
+									}
+								</div>
+							}
+							if totalPages > 1 {
+								<div class="flex justify-center p-4 border-t border-base-200 mt-2 gap-2">
+									if currentPage > 1 {
+										<button
+											hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d&tab=actions", jp.CaseID, currentPage-1))) }
+											hx-target="#judicial_process_view"
+											hx-swap="outerHTML"
+											class="btn btn-sm btn-outline"
+										>
+											<i data-lucide="chevron-left" class="w-4 h-4"></i>
+										</button>
+									}
+									<button class="btn btn-sm btn-disabled">{ fmt.Sprintf("%d", currentPage) }</button>
+									if currentPage < totalPages {
+										<button
+											hx-get={ string(templ.SafeURL(fmt.Sprintf("/api/cases/%s/judicial-view?page=%d&tab=actions", jp.CaseID, currentPage+1))) }
+											hx-target="#judicial_process_view"
+											hx-swap="outerHTML"
+											class="btn btn-sm btn-outline"
+										>
+											<i data-lucide="chevron-right" class="w-4 h-4"></i>
+										</button>
+									}
+								</div>
+							}
+						</div>
 					</div>
 				</div>
 			</div>
-			
-			</div>
 		}
 	</div>
-
 }
 
 // Helper to safely get string from JSONMap

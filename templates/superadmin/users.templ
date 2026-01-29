@@ -32,7 +32,6 @@ templ UsersPage(
 				{ i18n.T(ctx, "superadmin.users.create_user") }
 			</button>
 		</div>
-
 		<!-- Filters & Search -->
 		<div
 			x-data="{ 
@@ -69,7 +68,6 @@ templ UsersPage(
 						<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
 					</div>
 				</div>
-
 				<!-- Role Filter -->
 				<div class="form-control w-full">
 					<label class="label py-1">
@@ -88,7 +86,6 @@ templ UsersPage(
 						<option value="client">{ i18n.T(ctx, "superadmin.users.role_filter.client") }</option>
 					</select>
 				</div>
-
 				<!-- Firm Filter -->
 				<div class="form-control w-full">
 					<label class="label py-1">
@@ -106,7 +103,6 @@ templ UsersPage(
 						}
 					</select>
 				</div>
-
 				<!-- Status Filter -->
 				<div class="form-control w-full">
 					<label class="label py-1">
@@ -124,7 +120,6 @@ templ UsersPage(
 				</div>
 			</div>
 		</div>
-
 		<!-- Users Table Container -->
 		<div id="users-table-container" class="card bg-base-100 shadow-xl border border-base-200 overflow-hidden rounded-sm">
 			@superadmin_partials.UsersTable(ctx, users)

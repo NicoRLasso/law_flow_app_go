@@ -16,31 +16,23 @@ templ Layout(ctx context.Context, title string, csrfToken string, user *models.U
 			<title>{ title }</title>
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) }/>
-			
 			<!-- Google Fonts: Playfair Display (Serif) & Lato (Sans) -->
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
-			
 			<!-- CSS Bundle -->
-			<link href={ "/static/css/style.css?v=" + middleware.GetCSSVersion(ctx) } rel="stylesheet" type="text/css" />
-			
+			<link href={ "/static/css/style.css?v=" + middleware.GetCSSVersion(ctx) } rel="stylesheet" type="text/css"/>
 			<!-- Lucide Icons -->
 			<script src="https://unpkg.com/lucide@latest" nonce={ middleware.GetNonce(ctx) }></script>
-			
 			<!-- HTMX -->
 			<script src="https://unpkg.com/htmx.org@2.0.0" defer nonce={ middleware.GetNonce(ctx) }></script>
-			
 			<!-- Alpine.js Plugins -->
 			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
-			
 			<!-- Alpine.js -->
 			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
-			
 			<!-- Custom Scripts -->
 			<script src={ "/static/js/app.js?v=" + middleware.GetAppJSVersion(ctx) } defer nonce={ middleware.GetNonce(ctx) }></script>
-
 			<!-- CSRF Configuration -->
 			<script nonce={ middleware.GetNonce(ctx) }>
 				document.addEventListener('DOMContentLoaded', function() {

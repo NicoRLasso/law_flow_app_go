@@ -7,7 +7,7 @@ import (
 
 // CaseImportModal renders the modal for importing cases via Excel
 templ CaseImportModal(ctx context.Context) {
-	<div 
+	<div
 		id="import-cases-modal"
 		class="modal modal-open"
 		x-data="{ loading: false }"
@@ -25,14 +25,13 @@ templ CaseImportModal(ctx context.Context) {
 						{ i18n.T(ctx, "cases.import.title") }
 					</p>
 				</div>
-				<button 
+				<button
 					class="btn btn-primary btn-sm btn-circle"
 					@click="document.getElementById('import-cases-modal').remove()"
 				>
 					<i data-lucide="x"></i>
 				</button>
 			</div>
-
 			<div id="import-form-container" class="overflow-y-auto">
 				<!-- Step 1: Download Template -->
 				<div class="mb-6">
@@ -52,14 +51,14 @@ templ CaseImportModal(ctx context.Context) {
 						<i data-lucide="download" class="text-base-content/40 group-hover:text-base-content transition-colors"></i>
 					</a>
 				</div>
-
 				<!-- Step 2: Upload -->
-				<form hx-post="/api/cases/import" 
-					  hx-encoding="multipart/form-data" 
-					  hx-target="#import-result" 
-					  hx-indicator="#import-loading"
-					  @htmx:before-request="loading = true"
-					  @htmx:after-request="loading = false"
+				<form
+					hx-post="/api/cases/import"
+					hx-encoding="multipart/form-data"
+					hx-target="#import-result"
+					hx-indicator="#import-loading"
+					@htmx:before-request="loading = true"
+					@htmx:after-request="loading = false"
 				>
 					<div class="form-control mb-4">
 						<label class="label pt-0 pb-1">
@@ -78,27 +77,25 @@ templ CaseImportModal(ctx context.Context) {
 							<span class="label-text-alt text-base-content/50">Excel files only (.xlsx)</span>
 						</label>
 					</div>
-
 					<!-- Loading Indicator -->
 					<div x-show="loading" class="mb-4 flex items-center justify-center gap-2 text-info">
 						<span class="loading loading-spinner loading-sm"></span>
 						<span>Processing file...</span>
 					</div>
-
 					<div id="import-loading" class="htmx-indicator hidden"></div>
-
 					<!-- Result Container -->
 					<div id="import-result"></div>
-
 					<!-- Actions -->
 					<div class="modal-action pt-4 border-t border-base-200">
-						<button type="button" 
+						<button
+							type="button"
 							class="btn btn-primary rounded-sm"
 							@click="document.getElementById('import-cases-modal').remove()"
 						>
 							{ i18n.T(ctx, "common.cancel") }
 						</button>
-						<button type="submit" 
+						<button
+							type="submit"
 							class="btn btn-primary rounded-sm"
 							:disabled="loading"
 						>

@@ -74,21 +74,21 @@ templ SupportTicketsList(ctx context.Context, tickets []models.SupportTicket, is
 // TicketStatusBadge renders the status badge for a ticket
 templ TicketStatusBadge(ctx context.Context, status string) {
 	switch status {
-	case "resolved":
-		<span class="badge badge-sm badge-success">
-			{ i18n.T(ctx, "support.status.resolved") }
-		</span>
-	case "in_progress":
-		<span class="badge badge-sm badge-warning">
-			{ i18n.T(ctx, "support.status.in_progress") }
-		</span>
-	case "closed":
-		<span class="badge badge-sm badge-ghost">
-			{ i18n.T(ctx, "support.status.closed") }
-		</span>
-	default:
-		<span class="badge badge-sm badge-info">
-			{ i18n.T(ctx, "support.status.open") }
-		</span>
+		case "resolved":
+			<span class="badge badge-sm badge-success">
+				{ i18n.T(ctx, "support.status.resolved") }
+			</span>
+		case "in_progress":
+			<span class="badge badge-sm badge-warning">
+				{ i18n.T(ctx, "support.status.in_progress") }
+			</span>
+		case "closed":
+			<span class="badge badge-sm badge-ghost">
+				{ i18n.T(ctx, "support.status.closed") }
+			</span>
+		default:
+			<span class="badge badge-sm badge-info">
+				{ i18n.T(ctx, "support.status.open") }
+			</span>
 	}
 }

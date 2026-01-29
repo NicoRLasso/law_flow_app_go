@@ -85,7 +85,6 @@ templ CaseLogList(ctx context.Context, logs []models.CaseLog, caseID string, cur
 				</table>
 			</div>
 		}
-
 		if len(logs) > 0 {
 			<div class="mt-4 p-4 border-t border-base-200">
 				@components.Pagination(ctx, components.PaginationData{

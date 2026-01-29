@@ -28,7 +28,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						}
 					</p>
 				</div>
-				
 				<!-- Stats Grid - Premium Cards -->
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
 					<!-- Stat Card 1: Active Cases -->
@@ -47,7 +46,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							</div>
 						</div>
 					</div>
-					
 					<!-- Stat Card 2: Total Clients (Hidden for Clients) -->
 					if user.Role != "client" {
 						<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
@@ -62,7 +60,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							</div>
 						</div>
 					}
-					
 					<!-- Stat Card 3: Completed Monthly (Hidden for Clients) -->
 					if user.Role != "client" {
 						<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
@@ -77,7 +74,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							</div>
 						</div>
 					}
-					
 					<!-- Stat Card 4: Pending Tasks / Appointments -->
 					<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm hover:-translate-y-1 transition-transform duration-300">
 						<div class="card-body p-5 flex flex-row items-center gap-4">
@@ -96,7 +92,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						</div>
 					</div>
 				</div>
-				
 				<!-- Content Grid -->
 				<div class={ "grid gap-8 mb-12", templ.KV("lg:grid-cols-2", true) }>
 					<!-- Recent Cases -->
@@ -131,10 +126,12 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 													<p class="text-xs opacity-60 mt-0.5">{ kase.CaseNumber } • { kase.Client.Name }</p>
 												</div>
 											</div>
-											<span class={ "badge badge-sm uppercase font-bold tracking-wider",
+											<span
+												class={ "badge badge-sm uppercase font-bold tracking-wider",
 												templ.KV("badge-success", kase.Status == "open"),
 												templ.KV("badge-warning", kase.Status == "on_hold"),
-												templ.KV("badge-ghost", kase.Status == "closed") }>
+												templ.KV("badge-ghost", kase.Status == "closed") }
+											>
 												{ kase.Status }
 											</span>
 										</a>
@@ -143,7 +140,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 							}
 						</div>
 					</div>
-					
 					<!-- Upcoming Appointments -->
 					<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">
 						<div class="border-b border-base-200 p-6 flex justify-between items-center bg-base-50/50">
@@ -191,7 +187,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						</div>
 					</div>
 				</div>
-				
 				<!-- Firm Information - Official Business Card Style -->
 				<div class="card bg-base-100 shadow-xl border-l-4 border-primary rounded-r-sm">
 					<div class="card-body p-8">
@@ -204,7 +199,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 								<p class="opacity-60 text-sm font-sans uppercase tracking-widest">{ i18n.T(ctx, "dashboard.firm_info.label") }</p>
 							</div>
 						</div>
-						
 						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 							<div>
 								<p class="text-xs uppercase tracking-widest opacity-50 mb-1">{ i18n.T(ctx, "dashboard.firm_info.location") }</p>
@@ -221,7 +215,6 @@ templ Dashboard(ctx context.Context, title string, csrfToken string, user *model
 						</div>
 					</div>
 				</div>
-				
 			</main>
 		</div>
 	}

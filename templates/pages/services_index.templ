@@ -1,0 +1,58 @@
+package pages
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Services(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
+		<div class="min-h-screen bg-base-200">
+			@components.Navbar(ctx, user, firm, "/services")
+			<main class="container mx-auto px-4 py-8">
+				<div class="flex justify-between items-center mb-6">
+					<div>
+						<h1 class="text-3xl font-bold font-serif">{ i18n.T(ctx, "services.title") }</h1>
+						<p class="text-base-content/60">{ i18n.T(ctx, "services.subtitle") }</p>
+					</div>
+					if user.Role != "client" {
+						<button
+							class="btn btn-primary gap-2"
+							hx-get="/api/services/new"
+							hx-target="body"
+							hx-swap="beforeend"
+						>
+							<i data-lucide="plus-circle" class="w-5 h-5"></i>
+							{ i18n.T(ctx, "services.new") }
+						</button>
+					}
+				</div>
+				<!-- Filters would go here -->
+				<div class="bg-base-100 p-4 rounded-lg shadow-sm border border-base-200 mb-6">
+					<!-- Simplified filters for now -->
+					<div class="flex gap-4">
+						<input type="text" placeholder={ i18n.T(ctx, "common.search") } class="input input-bordered w-full max-w-xs"/>
+						<select class="select select-bordered">
+							<option disabled selected>{ i18n.T(ctx, "common.status_all") }</option>
+							<option>Active</option>
+							<option>Completed</option>
+						</select>
+					</div>
+				</div>
+				<div
+					id="services-table"
+					hx-get="/api/services"
+					hx-trigger="load, reload-services from:body"
+					class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
+				>
+					<div class="flex justify-center p-12">
+						<span class="loading loading-spinner loading-lg"></span>
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}

@@ -14,41 +14,44 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 		x-data="{ loading: false }"
 		@keydown.escape.window="document.getElementById('create-case-modal').remove()"
 	>
-		<div class="modal-box max-w-2xl bg-base-100 rounded-sm max-h-[90vh] flex flex-col">
+		<div class="modal-box max-w-2xl bg-base-100 shadow-2xl max-h-[95vh] flex flex-col p-8 sm:p-10">
 			<!-- Header -->
-			<div class="flex items-center justify-between mb-6">
-				<div class="flex items-center gap-3">
-					<div class="p-2 bg-primary/10 rounded-sm">
-						<i data-lucide="plus" class="text-primary"></i>
+			<div class="flex items-center justify-between mb-8">
+				<div class="flex items-center gap-4">
+					<div class="p-3 bg-primary/10 rounded-xl">
+						<i data-lucide="plus" class="text-primary w-6 h-6"></i>
 					</div>
-					<h2 class="text-2xl font-serif font-bold text-base-content">Create New Case</h2>
+					<div>
+						<h2 class="text-2xl font-serif font-bold text-base-content leading-tight">Create New Case</h2>
+						<p class="text-xs text-base-content/60 font-medium uppercase tracking-widest mt-0.5">Initialize a legal proceeding</p>
+					</div>
 				</div>
 				<button
-					class="btn btn-primary btn-sm btn-circle"
+					class="btn btn-ghost btn-sm btn-circle hover:bg-base-200 transition-colors"
 					@click="document.getElementById('create-case-modal').remove()"
 				>
 					<i data-lucide="x"></i>
 				</button>
 			</div>
 			<!-- Body -->
-			<div class="flex-1 overflow-y-auto">
+			<div class="flex-1 overflow-y-auto pr-2 -mr-2">
 				<form
 					hx-post="/api/cases"
 					hx-swap="none"
-					@htmx:before-request="loading = true"
-					@htmx:after-request="loading = false; if($event.detail.successful) document.getElementById('create-case-modal').remove()"
-					class="space-y-4"
+					@htmx:before-request="if($event.target === $el) loading = true"
+					@htmx:after-request="if($event.target === $el) { loading = false; if($event.detail.successful) document.getElementById('create-case-modal').remove() }"
+					class="space-y-6 px-2"
 				>
 					<!-- Client -->
-					<div class="form-control">
-						<label class="label pt-0 pb-1">
+					<div class="form-control ">
+						<label class="label pt-0 pb-1.5 px-0">
 							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 								{ i18n.T(ctx, "cases.client") } <span class="text-error">*</span>
 							</span>
 						</label>
 						<select
 							name="client_id"
-							class="select select-bordered w-full rounded-sm focus:select-primary"
+							class="select select-bordered w-full rounded-xl focus:select-primary bg-base-100 h-12"
 							required
 						>
 							<option value="">{ i18n.T(ctx, "cases.select_client") }</option>
@@ -57,30 +60,34 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 							}
 						</select>
 					</div>
-
 					<!-- Client Role -->
 					<div class="form-control">
-						<label class="label pt-0 pb-1">
+						<label class="label pt-0 pb-1.5 px-0">
 							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 								Client Role <span class="text-error">*</span>
 							</span>
 						</label>
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<label class="label cursor-pointer justify-start gap-3 p-4 bg-base-200/50 rounded-sm border border-base-200 hover:border-primary/30 transition-colors">
-								<input type="radio" name="client_role" value="DEMANDANTE" class="radio radio-primary" required checked/>
-								<span class="label-text font-bold">Demandante (Plaintiff)</span>
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<label class="label cursor-pointer justify-start gap-4 p-4 bg-base-200/30 rounded-xl border-2 border-transparent hover:border-primary/20 hover:bg-base-200/50 transition-all active:scale-[0.98]">
+								<input type="radio" name="client_role" value="DEMANDANTE" class="radio radio-primary radio-sm" required checked/>
+								<div class="flex flex-col">
+									<span class="label-text font-bold text-base-content">Demandante</span>
+									<span class="text-[10px] text-base-content/50 uppercase tracking-tighter">Plaintiff</span>
+								</div>
 							</label>
-							<label class="label cursor-pointer justify-start gap-3 p-4 bg-base-200/50 rounded-sm border border-base-200 hover:border-primary/30 transition-colors">
-								<input type="radio" name="client_role" value="DEMANDADO" class="radio radio-primary" required/>
-								<span class="label-text font-bold">Demandado (Defendant)</span>
+							<label class="label cursor-pointer justify-start gap-4 p-4 bg-base-200/30 rounded-xl border-2 border-transparent hover:border-primary/20 hover:bg-base-200/50 transition-all active:scale-[0.98]">
+								<input type="radio" name="client_role" value="DEMANDADO" class="radio radio-primary radio-sm" required/>
+								<div class="flex flex-col">
+									<span class="label-text font-bold text-base-content">Demandado</span>
+									<span class="text-[10px] text-base-content/50 uppercase tracking-tighter">Defendant</span>
+								</div>
 							</label>
 						</div>
 					</div>
-
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<!-- Case Title -->
 						<div class="form-control">
-							<label class="label pt-0 pb-1">
+							<label class="label pt-0 pb-1.5 px-0">
 								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 									{ i18n.T(ctx, "cases.title_label") }
 								</span>
@@ -89,44 +96,48 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 								type="text"
 								name="title"
 								placeholder={ i18n.T(ctx, "cases.title_placeholder") }
-								class="input input-bordered w-full rounded-sm focus:input-primary"
+								class="input input-bordered w-full rounded-xl focus:input-primary h-12"
 							/>
 						</div>
-						
 						<!-- Filing Number (Radicado) -->
 						<div class="form-control">
-							<label class="label pt-0 pb-1">
+							<label class="label pt-0 pb-1.5 px-0">
 								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
-									Filing Number (Radicado) <span class="text-error">*</span>
+									Filing Number (Radicado)
 								</span>
 							</label>
 							<input
 								type="text"
 								name="filing_number"
 								placeholder="Court Filing Number"
-								class="input input-bordered w-full rounded-sm focus:input-primary"
-								required
+								class="input input-bordered w-full rounded-xl focus:input-primary h-12"
+								inputmode="numeric"
+								pattern="[0-9]*"
+								oninput="this.value = this.value.replace(/[^0-9]/g, '')"
 							/>
 						</div>
 					</div>
-
 					<!-- Classification Section -->
-					<div class="space-y-4 pt-4 border-t border-base-200">
-						<h3 class="text-lg font-serif font-bold text-base-content flex items-center gap-2">
-							<i data-lucide="tags" class="text-primary"></i>
-							Classification
-						</h3>
-						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="space-y-4 pt-6 border-t border-base-200/60">
+						<div class="flex items-center gap-2 mb-2">
+							<div class="p-1.5 bg-secondary/10 rounded-lg">
+								<i data-lucide="tags" class="text-secondary w-4 h-4"></i>
+							</div>
+							<h3 class="text-lg font-serif font-bold text-base-content">
+								Classification
+							</h3>
+						</div>
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 							<!-- Domain -->
 							<div class="form-control">
-								<label class="label pt-0 pb-1">
+								<label class="label pt-0 pb-1.5 px-0">
 									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 										Domain <span class="text-error">*</span>
 									</span>
 								</label>
 								<select
 									name="domain_id"
-									class="select select-bordered w-full rounded-sm focus:select-primary"
+									class="select select-bordered w-full rounded-xl focus:select-primary h-12"
 									required
 									hx-get="/api/subtypes/branches"
 									hx-target="#branch-select"
@@ -139,10 +150,9 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 									}
 								</select>
 							</div>
-
 							<!-- Branch -->
 							<div class="form-control">
-								<label class="label pt-0 pb-1">
+								<label class="label pt-0 pb-1.5 px-0">
 									<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 										Branch <span class="text-error">*</span>
 									</span>
@@ -150,7 +160,7 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 								<select
 									id="branch-select"
 									name="branch_id"
-									class="select select-bordered w-full rounded-sm focus:select-primary disabled:opacity-50"
+									class="select select-bordered w-full rounded-xl focus:select-primary disabled:opacity-50 h-12"
 									disabled
 									hx-get="/api/subtypes/options"
 									hx-target="#subtype-select-container"
@@ -161,15 +171,12 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 								</select>
 							</div>
 						</div>
-
 						<!-- Subtypes (Multi-select / Checkboxes) -->
-						<div id="subtype-select-container">
-						</div>
+						<div id="subtype-select-container" class="animate-in fade-in slide-in-from-top-2 duration-300"></div>
 					</div>
-
 					<!-- Description -->
 					<div class="form-control">
-						<label class="label pt-0 pb-1">
+						<label class="label pt-0 pb-1.5 px-0">
 							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 								{ i18n.T(ctx, "cases.description_label") } <span class="text-error">*</span>
 							</span>
@@ -178,24 +185,24 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 							name="description"
 							rows="3"
 							placeholder={ i18n.T(ctx, "cases.description_placeholder") }
-							class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary"
+							class="textarea textarea-bordered w-full rounded-xl focus:textarea-primary min-h-[100px]"
 							required
 						></textarea>
 					</div>
 					<!-- Assigned Lawyer -->
 					<div class="form-control">
-						<label class="label pt-0 pb-1">
+						<label class="label pt-0 pb-1.5 px-0">
 							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
 								{ i18n.T(ctx, "cases.assigned_lawyer") }
 							</span>
 						</label>
 						<select
 							name="assigned_to_id"
-							class="select select-bordered w-full rounded-sm focus:select-primary"
+							class="select select-bordered w-full rounded-xl focus:select-primary h-12"
 						>
 							<option value="">{ i18n.T(ctx, "cases.select_lawyer") }</option>
 							for _, lawyer := range lawyers {
-								<option 
+								<option
 									value={ lawyer.ID }
 									selected?={ user.Role == "lawyer" && user.ID == lawyer.ID }
 								>
@@ -205,20 +212,23 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 						</select>
 					</div>
 					<!-- Footer Actions -->
-					<div class="modal-action pt-4 border-t border-base-200 flex flex-col sm:flex-row gap-2">
+					<div class="modal-action pt-6 border-t border-base-200/60 flex flex-col sm:flex-row gap-3">
 						<button
 							type="button"
-							class="btn btn-ghost rounded-sm w-full sm:w-auto order-2 sm:order-1"
+							class="btn btn-ghost rounded-xl w-full sm:w-auto order-2 sm:order-1 h-12 px-8 font-bold"
 							@click="document.getElementById('create-case-modal').remove()"
 						>
 							{ i18n.T(ctx, "common.cancel") }
 						</button>
 						<button
 							type="submit"
-							class="btn btn-primary rounded-sm w-full sm:w-auto order-1 sm:order-2"
+							class="btn btn-primary rounded-xl w-full sm:w-auto order-1 sm:order-2 h-12 px-8 font-bold shadow-lg shadow-primary/20"
 							:disabled="loading"
 						>
-							<span x-show="!loading">{ i18n.T(ctx, "common.submit") }</span>
+							<span x-show="!loading" class="flex items-center gap-2">
+								{ i18n.T(ctx, "common.submit") }
+								<i data-lucide="arrow-right" class="w-4 h-4"></i>
+							</span>
 							<span x-show="loading" class="loading loading-spinner loading-sm"></span>
 						</button>
 					</div>

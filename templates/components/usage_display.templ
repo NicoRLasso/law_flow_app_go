@@ -32,8 +32,8 @@ templ UsageDisplay(ctx context.Context, info *services.SubscriptionInfo) {
 								templ.KV("progress-warning", info.UsersPercent >= 75 && info.UsersPercent < 90),
 								templ.KV("progress-primary", info.UsersPercent < 75) }
 							value={ fmt.Sprintf("%.0f", info.UsersPercent) }
-							max="100">
-						</progress>
+							max="100"
+						></progress>
 					}
 				</div>
 			</div>
@@ -57,8 +57,8 @@ templ UsageDisplay(ctx context.Context, info *services.SubscriptionInfo) {
 								templ.KV("progress-warning", info.StoragePercent >= 75 && info.StoragePercent < 90),
 								templ.KV("progress-primary", info.StoragePercent < 75) }
 							value={ fmt.Sprintf("%.0f", info.StoragePercent) }
-							max="100">
-						</progress>
+							max="100"
+						></progress>
 					}
 				</div>
 			</div>
@@ -82,8 +82,8 @@ templ UsageDisplay(ctx context.Context, info *services.SubscriptionInfo) {
 								templ.KV("progress-warning", info.CasesPercent >= 75 && info.CasesPercent < 90),
 								templ.KV("progress-primary", info.CasesPercent < 75) }
 							value={ fmt.Sprintf("%.0f", info.CasesPercent) }
-							max="100">
-						</progress>
+							max="100"
+						></progress>
 					}
 				</div>
 			</div>

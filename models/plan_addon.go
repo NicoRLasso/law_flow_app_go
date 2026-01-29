@@ -33,7 +33,7 @@ type PlanAddOn struct {
 	StorageBytes  int64 `gorm:"not null;default:0" json:"storage_bytes"`  // for storage add-ons (e.g., 5GB)
 
 	// Pricing (in cents)
-	PriceMonthly int  `gorm:"not null;default:0" json:"price_monthly"` // recurring price
+	PriceMonthly int  `gorm:"not null;default:0" json:"price_monthly"`  // recurring price
 	PriceOneTime int  `gorm:"not null;default:0" json:"price_one_time"` // one-time purchase (e.g., templates)
 	IsRecurring  bool `gorm:"not null;default:true" json:"is_recurring"`
 

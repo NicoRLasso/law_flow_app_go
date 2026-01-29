@@ -405,11 +405,19 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
+	// Set default timezone and currency based on country
+	timezone := services.GetDefaultTimezone(country)
+	if timezone == "" {
+		timezone = "UTC"
+	}
+
 	firm := &models.Firm{
 		Name:         name,
 		BillingEmail: billingEmail,
 		NoreplyEmail: c.FormValue("noreply_email"),
 		Country:      country,
+		Timezone:     timezone,
+		Currency:     services.GetDefaultCurrency(country),
 		City:         c.FormValue("city"),
 		Address:      c.FormValue("address"),
 		IsActive:     c.FormValue("is_active") == "true",

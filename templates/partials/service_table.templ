@@ -1,0 +1,163 @@
+package partials
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+)
+
+// ServiceTable renders the list of services with pagination
+templ ServiceTable(ctx context.Context, services []models.LegalService, currentPage, totalPages, limit, total int) {
+	if len(services) == 0 {
+		<div class="text-center py-16 bg-base-50 rounded-sm border border-base-200 border-dashed">
+			<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+				<i data-lucide="briefcase" class="text-2xl"></i>
+			</div>
+			<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "services.table.empty") }</p>
+		</div>
+	} else {
+		<!-- Table Container -->
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.table.number") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.table.title") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.table.client") }</th>
+						<th class="hidden lg:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.table.type") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.table.status") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.table.actions") }</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, s := range services {
+						@ServiceRow(ctx, s)
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination -->
+		<div class="mt-4 p-4 border-t border-base-200">
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: currentPage,
+				TotalPages:  totalPages,
+				Limit:       limit,
+				Total:       total,
+				BaseURL:     "/api/services",
+				TargetID:    "#services-table",
+			})
+		</div>
+	}
+}
+
+// ServiceRow renders a single row for a legal service
+templ ServiceRow(ctx context.Context, s models.LegalService) {
+	<tr class="hover group">
+		<!-- Service Number -->
+		<td>
+			<span class="font-mono text-sm font-bold text-base-content">{ s.ServiceNumber }</span>
+		</td>
+		<!-- Title & Description -->
+		<td>
+			<div class="flex flex-col gap-0.5">
+				<a
+					href={ templ.SafeURL(fmt.Sprintf("/services/%s", s.ID)) }
+					class="font-serif font-bold text-base-content group-hover:text-primary transition-colors"
+				>
+					{ s.Title }
+				</a>
+				<span class="text-xs text-base-content/50 line-clamp-1">{ s.Description }</span>
+			</div>
+		</td>
+		<!-- Client -->
+		<td class="hidden md:table-cell">
+			if s.Client.ID != "" {
+				<div class="flex items-center gap-2">
+					<div class="avatar placeholder">
+						<div class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center">
+							<span class="text-[10px] font-bold">{ string([]rune(s.Client.Name)[0]) }</span>
+						</div>
+					</div>
+					<span class="text-sm text-base-content/70">{ s.Client.Name }</span>
+				</div>
+			} else {
+				<span class="text-sm text-base-content/30 italic">{ i18n.T(ctx, "common.na") }</span>
+			}
+		</td>
+		<!-- Service Type -->
+		<td class="hidden lg:table-cell">
+			if s.ServiceType != nil {
+				<span class="badge badge-sm badge-outline font-medium">{ s.ServiceType.Label }</span>
+			} else {
+				<span class="text-sm text-base-content/30 italic">{ i18n.T(ctx, "common.na") }</span>
+			}
+		</td>
+		<!-- Status -->
+		<td>
+			@ServiceStatusBadge(ctx, s.Status)
+		</td>
+		<!-- Actions -->
+		<td>
+			<div class="flex items-center gap-1">
+				<a
+					href={ templ.SafeURL(fmt.Sprintf("/services/%s", s.ID)) }
+					class="btn btn-ghost btn-xs gap-1"
+					title={ i18n.T(ctx, "common.view") }
+				>
+					<i data-lucide="eye" class="w-4 h-4"></i>
+					<span class="hidden md:inline">{ i18n.T(ctx, "common.view") }</span>
+				</a>
+				<button
+					class="btn btn-ghost btn-xs gap-1"
+					hx-get={ fmt.Sprintf("/api/services/%s/edit", s.ID) }
+					hx-target="body"
+					hx-swap="beforeend"
+					title={ i18n.T(ctx, "common.edit") }
+				>
+					<i data-lucide="pencil" class="w-4 h-4"></i>
+					<span class="hidden md:inline">{ i18n.T(ctx, "common.edit") }</span>
+				</button>
+				<button
+					class="btn btn-ghost btn-xs gap-1 text-error"
+					hx-get={ fmt.Sprintf("/api/services/%s/delete-confirm", s.ID) }
+					hx-target="body"
+					hx-swap="beforeend"
+					title={ i18n.T(ctx, "common.delete") }
+				>
+					<i data-lucide="trash-2" class="w-4 h-4"></i>
+					<span class="hidden md:inline">{ i18n.T(ctx, "common.delete") }</span>
+				</button>
+			</div>
+		</td>
+	</tr>
+}
+
+// ServiceStatusBadge renders the status badge
+templ ServiceStatusBadge(ctx context.Context, status string) {
+	<span class={ "badge badge-sm font-bold", getServiceStatusClass(status) }>
+		{ getServiceStatusLabel(ctx, status) }
+	</span>
+}
+
+func getServiceStatusClass(status string) string {
+	switch status {
+	case models.ServiceStatusIntake:
+		return "badge-info"
+	case models.ServiceStatusInProgress:
+		return "badge-primary text-primary-content"
+	case models.ServiceStatusOnHold:
+		return "badge-warning"
+	case models.ServiceStatusCompleted:
+		return "badge-success text-success-content"
+	case models.ServiceStatusCancelled:
+		return "badge-error text-error-content"
+	default:
+		return "badge-ghost"
+	}
+}
+
+func getServiceStatusLabel(ctx context.Context, status string) string {
+	return i18n.T(ctx, "services.status."+status)
+}

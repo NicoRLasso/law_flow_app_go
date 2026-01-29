@@ -146,7 +146,7 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 							</div>
 							<!-- Page Settings (Collapsible) -->
 							<div class="collapse collapse-arrow bg-base-200/50 border border-base-200 rounded-sm">
-								<input type="checkbox" />
+								<input type="checkbox"/>
 								<div class="collapse-title text-sm font-bold py-2 min-h-0">
 									{ i18n.T(ctx, "templates.page_settings") }
 								</div>
@@ -275,7 +275,7 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 				insertVariable(variable) {
 					const editor = document.getElementById("template-editor");
 					editor.focus();
-					document.execCommand("insertText", false, "{{" + variable + "}}");
+					document.execCommand("insertText", false, "{{ " + variable + " }}");
 					this.content = editor.innerHTML;
 				}
 			}

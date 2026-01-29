@@ -22,4 +22,3 @@ templ Scripts(ctx context.Context, template models.DocumentTemplate) {
 	<script src={ "/static/js/editor/zoom.js?v=" + middleware.GetEditorJSVersion(ctx, "zoom.js") } nonce={ middleware.GetNonce(ctx) }></script>
 	<script src={ "/static/js/template-editor.js?v=" + middleware.GetEditorJSVersion(ctx, "template-editor.js") } nonce={ middleware.GetNonce(ctx) }></script>
 }
-

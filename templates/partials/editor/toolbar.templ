@@ -39,7 +39,6 @@ templ Toolbar(ctx context.Context) {
 				title="Heading 3"
 			>H3</button>
 		</div>
-
 		<!-- Formatting Buttons -->
 		<button
 			type="button"
@@ -68,7 +67,6 @@ templ Toolbar(ctx context.Context) {
 		>
 			<i data-lucide="underline" class="text-xs"></i>
 		</button>
-
 		<!-- Font Size Control -->
 		<div class="flex items-center gap-1 border-r border-base-200 pr-2 mr-2">
 			<button
@@ -99,7 +97,6 @@ templ Toolbar(ctx context.Context) {
 				<i data-lucide="plus" class="text-xs"></i>
 			</button>
 		</div>
-
 		<!-- Color Picker -->
 		<div class="flex items-center gap-1 border-r border-base-200 pr-2 mr-2">
 			<!-- Quick colors -->
@@ -119,7 +116,6 @@ templ Toolbar(ctx context.Context) {
 				/>
 			</div>
 		</div>
-
 		<!-- Alignment -->
 		<button
 			type="button"
@@ -157,9 +153,7 @@ templ Toolbar(ctx context.Context) {
 		>
 			<i data-lucide="align-justify" class="text-xs"></i>
 		</button>
-		
 		<div class="w-px h-6 bg-base-200 mx-2 self-center"></div>
-		
 		<!-- View Mode Toggle -->
 		<div class="flex items-center">
 			<button
@@ -172,9 +166,7 @@ templ Toolbar(ctx context.Context) {
 				{ i18n.T(ctx, "templates.view_paginated") }
 			</button>
 		</div>
-
 		<div class="w-px h-6 bg-base-200 mx-2 self-center"></div>
-
 		<!-- Zoom Controls -->
 		<div class="flex items-center gap-1">
 			<button

@@ -1,0 +1,133 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+// ServiceTemplateSelectorModal renders a modal for selecting and generating documents from templates for services
+templ ServiceTemplateSelectorModal(ctx context.Context, serviceID string, templates []models.DocumentTemplate) {
+	<div
+		id="template-selector-modal"
+		class="modal modal-open"
+		style="z-index: 9999;"
+		x-data={ "{ selectedTemplate: '', showPreview: false, previewLoading: false, serviceId: '" + serviceID + "', close() { const modal = document.getElementById('template-selector-modal'); if (modal) { modal.classList.remove('modal-open'); setTimeout(() => modal.remove(), 200); } } }" }
+	>
+		<div class="modal-box max-w-4xl max-h-[90vh] bg-base-100 rounded-sm flex flex-col">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-6">
+				<div>
+					<h3 class="text-2xl font-serif font-bold text-base-content">{ i18n.T(ctx, "services.generate.templates.title") }</h3>
+					<p class="text-sm text-base-content/50 mt-1">{ i18n.T(ctx, "services.generate.info") }</p>
+				</div>
+				<button
+					type="button"
+					@click="close()"
+					class="btn btn-primary btn-sm btn-circle"
+				>
+					<i data-lucide="x"></i>
+				</button>
+			</div>
+			<!-- Modal Content -->
+			<div class="flex-1 overflow-y-auto space-y-6">
+				if len(templates) == 0 {
+					<div class="text-center py-12">
+						<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+							<i data-lucide="file-text" class="text-2xl"></i>
+						</div>
+						<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "templates.no_templates") }</p>
+						<p class="text-sm text-base-content/40 mt-2">{ i18n.T(ctx, "templates.create_first") }</p>
+					</div>
+				} else {
+					<!-- Info Note -->
+					<div class="alert alert-info rounded-sm">
+						<i data-lucide="info"></i>
+						<span class="text-sm">{ i18n.T(ctx, "services.generate.info") }</span>
+					</div>
+					<!-- Template Selection -->
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div class="form-control">
+							<label class="label pt-0 pb-1">
+								<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "services.generate.select_template") }</span>
+							</label>
+							<select
+								x-model="selectedTemplate"
+								@change="showPreview = false"
+								class="select select-bordered w-full rounded-sm focus:select-primary"
+							>
+								<option value="">{ i18n.T(ctx, "common.select") }...</option>
+								for _, t := range templates {
+									<option value={ t.ID }>{ t.Name }</option>
+								}
+							</select>
+						</div>
+						<div class="flex items-end">
+							<button
+								type="button"
+								x-show="selectedTemplate"
+								x-cloak
+								@click="previewLoading = true; showPreview = true; htmx.ajax('GET', '/api/services/' + serviceId + '/generate/preview?template_id=' + selectedTemplate, {target: '#modal-template-preview-content', swap: 'innerHTML'}).then(() => { previewLoading = false; })"
+								class="btn btn-neutral rounded-sm gap-2 flex-1"
+							>
+								<i data-lucide="eye"></i>
+								{ i18n.T(ctx, "services.generate.preview.title") }
+							</button>
+						</div>
+					</div>
+					<!-- Preview Panel -->
+					<div x-show="showPreview" x-cloak x-collapse>
+						<div class="border border-base-200 rounded-sm overflow-hidden">
+							<div class="flex items-center justify-between px-4 py-2 bg-base-200/50 border-b border-base-200">
+								<span class="text-sm font-bold">{ i18n.T(ctx, "services.generate.preview.title") }</span>
+								<button type="button" @click="showPreview = false" class="btn btn-primary btn-xs btn-circle">
+									<i data-lucide="x"></i>
+								</button>
+							</div>
+							<div id="modal-template-preview-content" class="p-4 bg-white text-black min-h-[200px] max-h-[300px] overflow-y-auto prose max-w-none">
+								<template x-if="previewLoading">
+									<div class="flex items-center justify-center py-8">
+										<span class="loading loading-spinner loading-md text-primary"></span>
+									</div>
+								</template>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+			<!-- Modal Footer -->
+			if len(templates) > 0 {
+				<div class="modal-action pt-4 border-t border-base-200">
+					<form
+						hx-post={ "/api/services/" + serviceID + "/generate" }
+						hx-target="#service-documents-list"
+						hx-swap="innerHTML"
+						@htmx:after-request="closeTemplateSelectorModal();"
+						class="flex flex-col sm:flex-row gap-3 w-full"
+					>
+						<input type="hidden" name="template_id" x-bind:value="selectedTemplate"/>
+						<div class="flex-1">
+							<input
+								type="text"
+								name="name"
+								placeholder={ i18n.T(ctx, "services.generate.document_name_placeholder") }
+								class="input input-bordered w-full rounded-sm focus:input-primary"
+							/>
+						</div>
+						<button
+							type="submit"
+							x-bind:disabled="!selectedTemplate"
+							class="btn btn-primary rounded-sm gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							<i data-lucide="file-down"></i>
+							{ i18n.T(ctx, "services.generate.submit") }
+						</button>
+					</form>
+				</div>
+			}
+		</div>
+		<form method="dialog" class="modal-backdrop">
+			<button @click="close()">close</button>
+		</form>
+	</div>
+}

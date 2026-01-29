@@ -368,3 +368,15 @@ func GenerateGeneratedDocumentKey(firmID, caseID, originalFilename string) strin
 	prefix := fmt.Sprintf("firms/%s/cases/%s/generated", firmID, caseID)
 	return GenerateStorageKey(prefix, originalFilename)
 }
+
+// GenerateServiceDocumentKey creates a storage key for service documents
+func GenerateServiceDocumentKey(firmID, serviceID, originalFilename string) string {
+	prefix := fmt.Sprintf("firms/%s/services/%s", firmID, serviceID)
+	return GenerateStorageKey(prefix, originalFilename)
+}
+
+// GenerateServiceGeneratedDocumentKey creates a storage key for documents generated from templates for services
+func GenerateServiceGeneratedDocumentKey(firmID, serviceID, originalFilename string) string {
+	prefix := fmt.Sprintf("firms/%s/services/%s/generated", firmID, serviceID)
+	return GenerateStorageKey(prefix, originalFilename)
+}

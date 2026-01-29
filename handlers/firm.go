@@ -81,6 +81,7 @@ func FirmSetupPostHandler(c echo.Context) error {
 		Name:            name,
 		Country:         country,
 		Timezone:        timezone,
+		Currency:        services.GetDefaultCurrency(country),
 		Address:         address,
 		City:            city,
 		Phone:           phone,
@@ -165,8 +166,19 @@ func FirmSettingsPageHandler(c echo.Context) error {
 	// Get available add-ons for the purchase modal
 	availableAddOns, _ := services.GetAvailableAddOns(db.DB)
 
+	// Get currency options - seed if missing (for existing firms created before currency seeding)
+	currencyOptions, _ := services.GetChoiceOptions(db.DB, firm.ID, models.ChoiceCategoryKeyCurrency)
+	if len(currencyOptions) == 0 {
+		// Seed currency choices for this firm
+		if err := services.SeedCurrencyChoices(db.DB, firm.ID, firm.Country); err != nil {
+			c.Logger().Warnf("Failed to seed currency choices for firm %s: %v", firm.ID, err)
+		}
+		// Retry fetching
+		currencyOptions, _ = services.GetChoiceOptions(db.DB, firm.ID, models.ChoiceCategoryKeyCurrency)
+	}
+
 	// Render the firm settings page
-	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm, subscriptionInfo, availableAddOns)
+	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm, subscriptionInfo, availableAddOns, currencyOptions)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -201,6 +213,7 @@ func UpdateFirmHandler(c echo.Context) error {
 		"billing_email": firm.BillingEmail,
 		"info_email":    firm.InfoEmail,
 		"noreply_email": firm.NoreplyEmail,
+		"currency":      firm.Currency,
 	}
 
 	// Helper function for HTMX error response
@@ -215,6 +228,7 @@ func UpdateFirmHandler(c echo.Context) error {
 		name := strings.TrimSpace(c.FormValue("name"))
 		country := strings.TrimSpace(c.FormValue("country"))
 		timezone := strings.TrimSpace(c.FormValue("timezone"))
+		currency := strings.TrimSpace(c.FormValue("currency"))
 
 		if name == "" || country == "" {
 			return htmxError("Firm name and country are required")
@@ -234,6 +248,9 @@ func UpdateFirmHandler(c echo.Context) error {
 
 		firm.Country = country
 		firm.Timezone = timezone
+		if currency != "" {
+			firm.Currency = currency
+		}
 		firm.Address = strings.TrimSpace(c.FormValue("address"))
 		firm.City = strings.TrimSpace(c.FormValue("city"))
 		firm.Phone = strings.TrimSpace(c.FormValue("phone"))

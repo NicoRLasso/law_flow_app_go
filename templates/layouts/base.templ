@@ -72,12 +72,11 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<!-- Favicon -->
 			<link rel="icon" type="image/png" href={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) }/>
 			<!-- Google Fonts: Playfair Display (Serif) & Lato (Sans) -->
-			<link rel="preconnect" href="https://fonts.googleapis.com">
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
-
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet"/>
 			<!-- Local CSS (Tailwind v4 + DaisyUI) -->
-			<link href={ "/static/css/style.css?v=" + middleware.GetCSSVersion(ctx) } rel="stylesheet" type="text/css" />
+			<link href={ "/static/css/style.css?v=" + middleware.GetCSSVersion(ctx) } rel="stylesheet" type="text/css"/>
 			<!-- Lucide Icons -->
 			<script src="https://unpkg.com/lucide@latest" nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- HTMX - defer loading -->
@@ -85,6 +84,8 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<!-- Alpine.js Plugins (must load before Alpine) -->
 			<script src="https://unpkg.com/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<script src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
+			<!-- SortableJS -->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js" nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- Alpine.js -->
 			<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer nonce={ middleware.GetNonce(ctx) }></script>
 			<!-- CSRF Configuration for HTMX -->
@@ -108,7 +109,6 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			<script src={ "/static/js/app.js?v=" + middleware.GetAppJSVersion(ctx) } defer nonce={ middleware.GetNonce(ctx) }></script>
 		</head>
 		<body class="bg-background text-foreground">
-
 			{ children... }
 		</body>
 	</html>

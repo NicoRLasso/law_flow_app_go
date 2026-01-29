@@ -35,12 +35,17 @@ type Firm struct {
 	LogoURL string `json:"logo_url"` // Path to firm's logo image
 
 	// Availability settings
-	BufferMinutes int `gorm:"not null;default:15" json:"buffer_minutes"` // Buffer between appointments (30, 45, or 60 min)
+	BufferMinutes int    `gorm:"not null;default:15" json:"buffer_minutes"` // Buffer between appointments (30, 45, or 60 min)
+	Currency      string `gorm:"not null;default:'USD'" json:"currency"`    // Default currency for the firm
 
 	// Relationships
 	Users        []User            `gorm:"foreignKey:FirmID" json:"-"`
 	Subscription *FirmSubscription `gorm:"foreignKey:FirmID" json:"subscription,omitempty"`
 }
+
+const (
+	ChoiceCategoryKeyCurrency = "currency"
+)
 
 // BeforeCreate hook to generate UUID and slug
 func (f *Firm) BeforeCreate(tx *gorm.DB) error {

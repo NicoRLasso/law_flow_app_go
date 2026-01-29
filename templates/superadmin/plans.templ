@@ -17,7 +17,6 @@ templ PlansPage(ctx context.Context, title string, csrfToken string, user *model
 				<i data-lucide="plus" class="mr-2"></i> New Plan
 			</button>
 		</div>
-
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 			for _, plan := range plans {
 				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm overflow-hidden flex flex-col">
@@ -29,7 +28,6 @@ templ PlansPage(ctx context.Context, title string, csrfToken string, user *model
 							}
 						</div>
 						<p class="text-sm text-base-content/60 mb-6 line-clamp-2">{ plan.Description }</p>
-						
 						<div class="space-y-3 text-sm">
 							<div class="flex justify-between">
 								<span class="opacity-60">Price (Monthly)</span>

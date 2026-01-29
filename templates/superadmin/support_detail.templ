@@ -44,7 +44,6 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 					</div>
 				</div>
 			</div>
-			
 			<div class="flex items-center gap-4">
 				<!-- Take Ticket Button -->
 				if ticket.Status == "open" {
@@ -55,7 +54,6 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 						</button>
 					</form>
 				}
-
 				<!-- Status Select -->
 				<form method="POST" action={ templ.SafeURL("/superadmin/support/" + ticket.ID + "/status") } class="flex items-center">
 					<input type="hidden" name="_csrf" value={ csrfToken }/>
@@ -68,7 +66,6 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 				</form>
 			</div>
 		</div>
-
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 			<!-- Ticket Details & Conversation -->
 			<div class="lg:col-span-2 space-y-8">
@@ -84,7 +81,6 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 						</div>
 					</div>
 				</div>
-
 				<!-- Response if exists -->
 				if ticket.Response != nil && *ticket.Response != "" {
 					<div class="card bg-primary/5 shadow-inner border border-primary/10 rounded-sm">
@@ -106,7 +102,6 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 						</div>
 					</div>
 				}
-
 				<!-- Reply Form -->
 				if ticket.Status != "closed" && ticket.Status != "resolved" {
 					<div class="card bg-base-100 shadow-2xl border border-base-200 overflow-hidden ring-1 ring-base-200 rounded-sm">
@@ -133,7 +128,6 @@ templ SupportDetail(ctx context.Context, title string, csrfToken string, user *m
 					</div>
 				}
 			</div>
-
 			<!-- Sidebar -->
 			<div class="space-y-8">
 				<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">

@@ -1,0 +1,631 @@
+package pages
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/middleware"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
+	"strings"
+)
+
+templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, service *models.LegalService, expenseCategories []models.ChoiceOption, totalExpenses float64) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
+		<div class="min-h-screen bg-base-200">
+			<!-- Navigation Bar -->
+			@components.Navbar(ctx, user, firm, "/services")
+			<!-- Main Content -->
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full" x-data="{ activeTab: 'summary', sidebarOpen: false }">
+					<!-- Header with Back Button -->
+					<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
+						<div class="flex items-start sm:items-center gap-4 md:gap-6">
+							<a
+								href="/services"
+								class="btn btn-circle btn-primary btn-sm mt-1 sm:mt-0"
+								title={ i18n.T(ctx, "common.back") }
+							>
+								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+								</svg>
+							</a>
+							<div>
+								<h1 class="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-base-content mb-1 leading-tight">{ service.Title }</h1>
+								<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-sans">
+									<span class="font-bold text-primary whitespace-nowrap">{ service.ServiceNumber }</span>
+									<span class="text-base-content/30 hidden sm:inline">•</span>
+									if service.ServiceType != nil {
+										<span class="text-base-content/60">{ i18n.T(ctx, "services.table.type") }: <span class="font-medium">{ service.ServiceType.Label }</span></span>
+									}
+								</div>
+							</div>
+						</div>
+						<div class="flex items-center gap-3 pl-[3.25rem] sm:pl-0">
+							@ServiceStatusBadge(ctx, service.Status)
+							if user.Role != "client" {
+								<button
+									type="button"
+									hx-get={ fmt.Sprintf("/api/services/%s/edit", service.ID) }
+									hx-target="body"
+									hx-swap="beforeend"
+									class="btn btn-primary btn-sm rounded-sm font-serif shadow-sm gap-2"
+								>
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+									</svg>
+									<span class="hidden sm:inline">{ i18n.T(ctx, "common.edit") }</span>
+								</button>
+							}
+						</div>
+					</div>
+					<!-- Layout with Sidebar -->
+					<div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 md:gap-8 items-start">
+						<!-- Sidebar Navigation -->
+						<aside class="w-full">
+							<!-- Mobile Toggle Button -->
+							<button
+								@click="sidebarOpen = !sidebarOpen"
+								:aria-expanded="sidebarOpen"
+								class="md:hidden w-full flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-sm mb-4"
+							>
+								<span class="flex items-center gap-3 font-serif font-bold">
+									<i data-lucide="menu"></i>
+									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'milestones' ? '" + i18n.T(ctx, "services.tab.milestones") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "services.tab.documents") + "' : activeTab === 'expenses' ? '" + i18n.T(ctx, "services.tab.expenses") + "' : '" + i18n.T(ctx, "services.tab.activities") + "'" }></span>
+								</span>
+								<i data-lucide="chevron-down" class="transition-transform" :class="{ 'rotate-180': sidebarOpen }"></i>
+							</button>
+							<!-- Navigation Menu -->
+							<nav
+								class="bg-base-100 rounded-sm border border-base-200 shadow-sm overflow-hidden"
+								:class="{ 'hidden md:block': !sidebarOpen }"
+							>
+								<ul class="flex flex-col">
+									<li>
+										<button
+											@click="activeTab = 'summary'; sidebarOpen = false"
+											:class="activeTab === 'summary' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="info" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "case.detail.tab.summary") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'milestones'; sidebarOpen = false; setTimeout(() => { const el = document.getElementById('milestones-tab-content'); if (el) htmx.trigger(el, 'load') }, 50)"
+											:class="activeTab === 'milestones' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="flag" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "services.tab.milestones") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'documents'; sidebarOpen = false; setTimeout(() => { const el = document.getElementById('service-documents-list'); if (el) htmx.trigger(el, 'reveal') }, 50)"
+											:class="activeTab === 'documents' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="file-text" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "services.tab.documents") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'expenses'; sidebarOpen = false; setTimeout(() => { const el = document.getElementById('expenses-tab-content'); if (el) htmx.trigger(el, 'reveal') }, 50)"
+											:class="activeTab === 'expenses' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="dollar-sign" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "services.tab.expenses") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'activities'; sidebarOpen = false; setTimeout(() => { const el = document.getElementById('activities-tab-content'); if (el) htmx.trigger(el, 'reveal') }, 50)"
+											:class="activeTab === 'activities' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="activity" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "services.tab.activities") }</span>
+										</button>
+									</li>
+									// Generate tab removed
+								</ul>
+							</nav>
+						</aside>
+						<!-- Main Content Area -->
+						<div class="w-full min-w-0">
+							<!-- Summary Tab -->
+							<div x-show="activeTab === 'summary'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								@ServiceSummaryTab(ctx, service, user, totalExpenses)
+							</div>
+							<!-- Milestones Tab -->
+							<div x-show="activeTab === 'milestones'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+									<h2 class="text-xl font-serif font-bold text-base-content border-b-2 border-primary pb-1 pr-6 inline-block">
+										{ i18n.T(ctx, "services.tab.milestones") }
+									</h2>
+									if user.Role != "client" {
+										<button
+											type="button"
+											@click="openAddMilestoneModal()"
+											class="btn btn-primary btn-sm rounded-sm shadow-sm"
+										>
+											<i data-lucide="plus" class="mr-2"></i>
+											{ i18n.T(ctx, "services.milestones.add") }
+										</button>
+									}
+								</div>
+								<div
+									id="milestones-tab-content"
+									hx-get={ fmt.Sprintf("/api/services/%s/milestones", service.ID) }
+									hx-trigger="load"
+								>
+									<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+										<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+										<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
+									</div>
+								</div>
+							</div>
+							@ServiceDocumentsTab(ctx, service, user)
+							<!-- Expenses Tab -->
+							<div x-show="activeTab === 'expenses'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+									<h2 class="text-xl font-serif font-bold text-base-content border-b-2 border-primary pb-1 pr-6 inline-block">
+										{ i18n.T(ctx, "services.tab.expenses") }
+									</h2>
+									if user.Role != "client" {
+										<button
+											type="button"
+											@click="openAddExpenseModal()"
+											class="btn btn-primary btn-sm rounded-sm shadow-sm"
+										>
+											<i data-lucide="plus" class="mr-2"></i>
+											{ i18n.T(ctx, "expenses.add") }
+										</button>
+									}
+								</div>
+								<div
+									id="expenses-tab-content"
+									hx-get={ fmt.Sprintf("/api/services/%s/expenses", service.ID) }
+									hx-trigger="reveal"
+									class="bg-base-100 rounded-sm border border-base-200 shadow-sm min-h-[200px]"
+								>
+									<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+										<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+										<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
+									</div>
+								</div>
+							</div>
+							<!-- Activities Tab -->
+							<div x-show="activeTab === 'activities'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+									<h2 class="text-xl font-serif font-bold text-base-content border-b-2 border-primary pb-1 pr-6 inline-block">
+										{ i18n.T(ctx, "services.activities.title") }
+									</h2>
+									if user.Role != "client" {
+										<button
+											type="button"
+											hx-get={ fmt.Sprintf("/api/services/%s/activities/new", service.ID) }
+											hx-target="#activity-modal-container"
+											hx-swap="innerHTML"
+											class="btn btn-primary btn-sm rounded-sm shadow-sm"
+										>
+											<i data-lucide="plus" class="mr-2"></i>
+											{ i18n.T(ctx, "common.add") }
+										</button>
+									}
+								</div>
+								<div
+									id="activities-tab-content"
+									hx-get={ fmt.Sprintf("/api/services/%s/activities", service.ID) }
+									hx-trigger="reveal"
+								>
+									<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+										<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+										<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
+									</div>
+								</div>
+							</div>
+							<!-- Generate Tab -->
+							// Generate tab content removed
+						</div>
+					</div>
+				</div>
+			</main>
+			<!-- Scripts for Modals -->
+			<script nonce={ middleware.GetNonce(ctx) }>
+				function openAddMilestoneModal() {
+					const modal = document.getElementById('add_milestone_modal');
+					if (modal) {
+						modal.classList.remove('hidden');
+						modal.style.display = 'flex';
+					}
+				}
+
+				function openAddExpenseModal() {
+					const modal = document.getElementById('add_expense_modal');
+					if (modal) {
+						modal.classList.remove('hidden');
+						modal.style.display = 'flex';
+					}
+				}
+
+				function openUploadModalService() {
+					const modal = document.getElementById('upload-document-modal');
+					if (modal) {
+						modal.classList.remove('hidden');
+						modal.style.display = 'flex';
+					}
+				}
+
+				function closeUploadModalService() {
+					const modal = document.getElementById('upload-document-modal');
+					if (modal) {
+						modal.classList.add('hidden');
+						modal.style.display = 'none';
+						const form = document.getElementById('upload-form');
+						if (form) form.reset();
+					}
+				}
+
+				function openPDFViewerModalService(docID, serviceID, fileName) {
+					const modal = document.getElementById('pdf-viewer-modal-service');
+					const embedElement = document.getElementById('pdf-embed-service');
+					const titleElement = document.getElementById('pdf-title-service');
+
+					if (titleElement) titleElement.textContent = fileName;
+					if (embedElement) embedElement.src = `/api/services/${serviceID}/documents/${docID}/view`;
+
+					if (modal) {
+						modal.classList.remove('hidden');
+						modal.style.display = 'flex';
+					}
+				}
+
+				function closePDFViewerModalService() {
+					const modal = document.getElementById('pdf-viewer-modal-service');
+					const embedElement = document.getElementById('pdf-embed-service');
+
+					if (modal) {
+						modal.classList.add('hidden');
+						modal.style.display = 'none';
+					}
+					if (embedElement) embedElement.src = '';
+				}
+
+				function closeTemplateSelectorModal() {
+					const container = document.getElementById('template-modal-container');
+					if (container) container.innerHTML = '';
+				}
+			</script>
+			<!-- Modals (outside main) -->
+			if user.Role != "client" {
+				@partials.UploadDocumentModal(ctx, service.ID)
+				@partials.AddMilestoneModal(ctx, service.ID)
+				@partials.AddExpenseModal(ctx, service.ID, expenseCategories)
+			}
+			@partials.PDFViewerModalService(ctx)
+			@components.ConfirmationModal(ctx)
+			<div id="template-modal-container"></div>
+			<div id="activity-modal-container"></div>
+		</div>
+	}
+}
+
+// ServiceDocumentsTab renders the documents tab content with filters
+templ ServiceDocumentsTab(ctx context.Context, service *models.LegalService, user *models.User) {
+	<div x-show="activeTab === 'documents'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+		// Header with Upload Button
+		<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+			<h2 class="text-xl font-serif font-bold text-base-content border-b-2 border-primary pb-1 pr-6 inline-block">
+				{ i18n.T(ctx, "services.tab.documents") }
+			</h2>
+			<div class="flex items-center gap-2">
+				if user.Role != "client" {
+					<button
+						type="button"
+						hx-get={ fmt.Sprintf("/api/services/%s/templates/modal", service.ID) }
+						hx-target="#template-modal-container"
+						hx-swap="innerHTML"
+						class="btn btn-outline btn-sm rounded-sm font-normal"
+					>
+						<i data-lucide="wand-2" class="mr-2"></i>
+						{ i18n.T(ctx, "case.document.create_from_template") }
+					</button>
+					<button
+						type="button"
+						@click="openUploadModalService()"
+						class="btn btn-primary btn-sm rounded-sm shadow-sm"
+					>
+						<i data-lucide="upload" class="mr-2"></i>
+						{ i18n.T(ctx, "services.documents.upload.title") }
+					</button>
+				}
+			</div>
+		</div>
+		// Document Filters
+		<div class="bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm mb-6">
+			<form id="service-doc-filters-form" class="flex flex-col md:flex-row gap-4" @submit.prevent>
+				// Keyword Search
+				<div class="flex-1 w-full relative">
+					<i data-lucide="search" class="absolute left-3 top-3 text-base-content/30"></i>
+					<input
+						type="text"
+						id="doc-keyword"
+						name="keyword"
+						placeholder={ i18n.T(ctx, "case.detail.search_placeholder") }
+						class="input input-bordered w-full pl-10 rounded-sm focus:input-primary"
+					/>
+				</div>
+				<div class="flex gap-4 flex-col sm:flex-row md:items-center">
+					// Document Type Filter
+					<div class="w-full sm:w-[200px]">
+						<select
+							id="doc-type"
+							name="document_type"
+							class="select select-bordered w-full rounded-sm focus:select-primary"
+						>
+							<option value="">{ i18n.T(ctx, "case.detail.filter.all_types") }</option>
+							<option value="INTAKE">{ i18n.T(ctx, "services.documents.form.type_intake") }</option>
+							<option value="WORKING">{ i18n.T(ctx, "services.documents.form.type_working") }</option>
+							<option value="DELIVERABLE">{ i18n.T(ctx, "services.documents.form.type_deliverable") }</option>
+							<option value="REFERENCE">{ i18n.T(ctx, "services.documents.form.type_reference") }</option>
+						</select>
+					</div>
+					// Apply Filter Button
+					<button
+						type="button"
+						@click="filterDocumentsService()"
+						class="btn btn-neutral rounded-sm"
+					>
+						{ i18n.T(ctx, "case.detail.filter.apply") }
+					</button>
+				</div>
+			</form>
+		</div>
+		// Documents Table Container
+		<div
+			id="service-documents-list"
+			data-service-id={ service.ID }
+			hx-get={ fmt.Sprintf("/api/services/%s/documents", service.ID) }
+			hx-trigger="loadDocuments, reveal, serviceDocumentGenerated from:body"
+			hx-swap="innerHTML"
+			class="bg-base-100 rounded-sm border border-base-200 shadow-sm min-h-[200px]"
+		>
+			// Loading state
+			<div class="flex flex-col items-center justify-center py-12">
+				<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+				<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
+			</div>
+		</div>
+	</div>
+	<script nonce={ middleware.GetNonce(ctx) }>
+		function filterDocumentsService() {
+			const keyword = document.getElementById('doc-keyword').value;
+			const docType = document.getElementById('doc-type').value;
+			const container = document.getElementById('service-documents-list');
+			const serviceID = container.dataset.serviceId;
+
+			let url = `/api/services/${serviceID}/documents?`;
+			if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
+			if (docType) url += `document_type=${encodeURIComponent(docType)}&`;
+
+			url = url.replace(/[&?]$/, '');
+
+			htmx.ajax('GET', url, {
+				target: '#service-documents-list',
+				swap: 'innerHTML'
+			});
+		}
+	</script>
+}
+
+templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user *models.User, totalExpenses float64) {
+	<!-- Service Information Grid -->
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+		<!-- Left Column -->
+		<div class="space-y-8">
+			<!-- Service Information -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "case.detail.info_title") }
+					</h2>
+					<div class="space-y-4">
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.table.number") }</label>
+							<p class="text-base-content/80 font-mono text-sm">{ service.ServiceNumber }</p>
+						</div>
+						if service.ServiceType != nil {
+							<div>
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.table.type") }</label>
+								<p class="text-base-content font-medium">{ service.ServiceType.Label }</p>
+							</div>
+						}
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.description") }</label>
+							<p class="text-base-content/80 whitespace-pre-wrap leading-relaxed font-sans text-sm">{ service.Description }</p>
+						</div>
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.objective") }</label>
+							<p class="text-base-content/80 whitespace-pre-wrap leading-relaxed font-sans text-sm">{ service.Objective }</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Timeline -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "case.detail.timeline_title") }
+					</h2>
+					<div class="space-y-4">
+						<div class="flex items-center justify-between">
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "common.created_at") }</label>
+							<p class="text-base-content font-medium">{ service.CreatedAt.Format("02 Jan 2006") }</p>
+						</div>
+						if service.StartedAt != nil {
+							<div class="flex items-center justify-between">
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "services.form.started_at") }</label>
+								<p class="text-base-content font-medium">{ service.StartedAt.Format("02 Jan 2006") }</p>
+							</div>
+						}
+						if service.EstimatedDueDate != nil {
+							<div class="flex items-center justify-between">
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "services.form.due_date") }</label>
+								<p class="text-base-content font-medium">{ service.EstimatedDueDate.Format("02 Jan 2006") }</p>
+							</div>
+						}
+						if service.CompletedAt != nil {
+							<div class="flex items-center justify-between">
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "services.status.COMPLETED") }</label>
+								<p class="text-base-content font-medium">{ service.CompletedAt.Format("02 Jan 2006") }</p>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Right Column -->
+		<div class="space-y-8">
+			<!-- Client Information -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "services.client") }
+					</h2>
+					<div class="flex items-center gap-4 p-4 bg-base-50 rounded-sm border border-base-200">
+						<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold text-xl">
+							{ string([]rune(service.Client.Name)[0]) }
+						</div>
+						<div class="flex flex-col">
+							<p class="font-bold text-base-content text-lg">{ service.Client.Name }</p>
+							<p class="text-sm text-base-content/60">{ service.Client.Email }</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Assignment -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "case.detail.assignment_title") }
+					</h2>
+					<div class="space-y-6">
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "services.form.assign_to") }</label>
+							if service.AssignedTo != nil {
+								<div class="flex items-center gap-3 p-3 bg-base-50 rounded-sm border border-base-200">
+									<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold">
+										{ string([]rune(service.AssignedTo.Name)[0]) }
+									</div>
+									<div class="flex flex-col">
+										<p class="font-bold text-base-content">{ service.AssignedTo.Name }</p>
+										<p class="text-xs text-base-content/60">{ i18n.T(ctx, "users.roles.lawyer") }</p>
+									</div>
+								</div>
+							} else {
+								<p class="text-base-content/40 italic flex items-center gap-2">
+									<i data-lucide="alert-circle"></i>
+									{ i18n.T(ctx, "common.unassigned") }
+								</p>
+							}
+						</div>
+						<!-- Collaborators Section -->
+						if len(service.Collaborators) > 0 {
+							<div>
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "case.detail.collaborators") }</label>
+								<div class="flex flex-wrap gap-2">
+									for _, collab := range service.Collaborators {
+										<div class="flex items-center gap-2 pl-2 pr-3 py-1 bg-base-50 border border-base-200 rounded-full">
+											<div class="w-6 h-6 rounded-full bg-base-200 flex items-center justify-center text-[10px] text-base-content/70">
+												{ string([]rune(collab.Name)[0]) }
+											</div>
+											<span class="text-sm font-medium text-base-content/80">{ collab.Name }</span>
+										</div>
+									}
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+			<!-- Priority & Hours -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "case.detail.financial_summary") }
+					</h2>
+					<div class="grid grid-cols-2 gap-4">
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "expenses.total") }</label>
+							<p class="text-base-content font-serif text-lg font-bold">{ fmt.Sprintf("%.2f %s", totalExpenses, service.Firm.Currency) }</p>
+						</div>
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.hours") }</label>
+							<p class="text-base-content font-serif">{ fmt.Sprintf("%.1f / %.1f", service.ActualHours, func() float64 { if service.EstimatedHours != nil { return *service.EstimatedHours }; return 0.0 }()) }</p>
+						</div>
+					</div>
+					<div class="mt-4">
+						<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.priority") }</label>
+						@PriorityBadge(ctx, service.Priority)
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// ServiceStatusBadge renders a status badge for services
+templ ServiceStatusBadge(ctx context.Context, status string) {
+	<span class={ "badge badge-md uppercase font-bold tracking-wider rounded-sm", getServiceStatusClass(status) }>
+		{ getServiceStatusLabel(ctx, status) }
+	</span>
+}
+
+func getServiceStatusClass(status string) string {
+	switch status {
+	case models.ServiceStatusInProgress:
+		return "badge-primary text-primary-content"
+	case models.ServiceStatusOnHold:
+		return "badge-warning text-warning-content"
+	case models.ServiceStatusCompleted:
+		return "badge-success text-success-content"
+	case models.ServiceStatusCancelled:
+		return "badge-error text-error-content"
+	case models.ServiceStatusIntake:
+		return "badge-info text-info-content"
+	default:
+		return "badge-ghost"
+	}
+}
+
+func getServiceStatusLabel(ctx context.Context, status string) string {
+	return i18n.T(ctx, "services.status."+status)
+}
+
+templ PriorityBadge(ctx context.Context, priority string) {
+	<span class={ "badge badge-md font-bold rounded-sm uppercase tracking-wider", getPriorityClass(priority) }>
+		{ i18n.T(ctx, "priority."+strings.ToLower(priority)) }
+	</span>
+}
+
+func getPriorityClass(priority string) string {
+	switch priority {
+	case "LOW":
+		return "badge-ghost"
+	case "NORMAL":
+		return "badge-info text-info-content"
+	case "HIGH":
+		return "badge-warning text-warning-content"
+	case "URGENT":
+		return "badge-error text-error-content"
+	default:
+		return "badge-ghost"
+	}
+}

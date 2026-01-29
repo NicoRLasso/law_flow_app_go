@@ -1,0 +1,329 @@
+package partials
+
+import (
+	"context"
+	"fmt"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"strings"
+)
+
+// ServiceDocumentTable renders the service documents table with pagination
+templ ServiceDocumentTable(ctx context.Context, documents []models.ServiceDocument, currentPage int, totalPages int, limit int, total int, serviceID string, canEdit bool) {
+	if len(documents) == 0 {
+		<div class="text-center py-16 bg-base-50">
+			<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+				<i data-lucide="file-text" class="text-2xl"></i>
+			</div>
+			<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "services.documents.table.empty") }</p>
+		</div>
+	} else {
+		<!-- Table Container -->
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.table.file_name") }</th>
+						<th class="hidden sm:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.table.type") }</th>
+						<th class="hidden sm:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.visibility.label") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.table.size") }</th>
+						<th class="hidden lg:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.table.uploaded_by") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.table.uploaded_at") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "services.documents.table.actions") }</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, doc := range documents {
+						@ServiceDocumentRow(ctx, doc, serviceID)
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination Controls -->
+		<div class="mt-4 p-4 border-t border-base-200">
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: currentPage,
+				TotalPages:  totalPages,
+				Limit:       limit,
+				Total:       total,
+				BaseURL:     fmt.Sprintf("/api/services/%s/documents", serviceID),
+				Status:      "",
+				Priority:    "",
+				TargetID:    "#service-documents-list",
+				IncludeID:   "#service-doc-filters-form",
+			})
+		</div>
+	}
+}
+
+// ServiceDocumentRow renders a single table row for a service document
+templ ServiceDocumentRow(ctx context.Context, doc models.ServiceDocument, serviceID string) {
+	<tr id={ "doc-row-" + doc.ID } class="hover group">
+		<!-- File Name & Description -->
+		<td>
+			<div class="flex items-center gap-3">
+				<i data-lucide="file" class="text-base-content/40"></i>
+				<div class="flex flex-col">
+					<span class="text-sm font-bold text-base-content">{ doc.FileOriginalName }</span>
+					if doc.Description != nil {
+						<span class="text-xs text-base-content/50 line-clamp-1">{ *doc.Description }</span>
+					}
+				</div>
+			</div>
+		</td>
+		<!-- Document Type -->
+		<td class="hidden sm:table-cell">
+			<span class="badge badge-ghost badge-sm">{ doc.DocumentType }</span>
+		</td>
+		<!-- Visibility Badge -->
+		<td class="hidden sm:table-cell">
+			if doc.IsPublic {
+				<span class="badge badge-success badge-sm text-white">
+					{ i18n.T(ctx, "services.documents.visibility.public") }
+				</span>
+			} else {
+				<span class="badge badge-ghost badge-sm">
+					{ i18n.T(ctx, "services.documents.visibility.private") }
+				</span>
+			}
+		</td>
+		<!-- File Size -->
+		<td class="hidden md:table-cell">
+			<span class="text-sm text-base-content/60">{ formatFileSize(doc.FileSize) }</span>
+		</td>
+		<!-- Uploaded By -->
+		<td class="hidden lg:table-cell">
+			if doc.UploadedBy != nil {
+				<span class="text-sm text-base-content">{ doc.UploadedBy.Name }</span>
+			} else {
+				<span class="text-sm text-base-content/50">{ i18n.T(ctx, "services.documents.table.system") }</span>
+			}
+		</td>
+		<!-- Uploaded At -->
+		<td class="hidden md:table-cell">
+			<span class="text-xs text-base-content/50 font-mono">
+				{ formatRelativeTime(doc.CreatedAt) }
+			</span>
+		</td>
+		<!-- Actions -->
+		<td>
+			<div class="flex items-center gap-1">
+				<!-- Visibility Toggle Button -->
+				<button
+					type="button"
+					hx-patch={ "/api/services/" + serviceID + "/documents/" + doc.ID + "/visibility" }
+					hx-target={ "#doc-row-" + doc.ID }
+					hx-swap="outerHTML"
+					class={ "btn btn-neutral btn-xs", templ.KV("text-success", doc.IsPublic), templ.KV("text-base-content/50", !doc.IsPublic) }
+					title={ getVisibilityTooltipService(ctx, doc.IsPublic) }
+				>
+					if doc.IsPublic {
+						<i data-lucide="eye"></i>
+					} else {
+						<i data-lucide="eye-off"></i>
+					}
+				</button>
+				if isPDFFileService(doc) {
+					<button
+						type="button"
+						class="btn btn-info btn-xs"
+						title="View PDF"
+						data-doc-id={ doc.ID }
+						data-service-id={ serviceID }
+						data-file-name={ doc.FileOriginalName }
+						@click="openPDFViewerModalService($el.getAttribute('data-doc-id'), $el.getAttribute('data-service-id'), $el.getAttribute('data-file-name'))"
+					>
+						<i data-lucide="search"></i>
+					</button>
+				}
+				<button
+					type="button"
+					class="btn btn-error btn-xs"
+					title={ i18n.T(ctx, "common.delete") }
+					data-confirm-title={ i18n.T(ctx, "services.documents.delete.title") }
+					data-confirm-message={ i18n.T(ctx, "services.documents.delete.message") }
+					data-confirm-url={ "/api/services/" + serviceID + "/documents/" + doc.ID }
+					data-confirm-method="DELETE"
+					data-confirm-target="closest tr"
+					data-confirm-swap="delete"
+					@click="openConfirmationModalFromData($el)"
+				>
+					<i data-lucide="trash-2"></i>
+				</button>
+			</div>
+		</td>
+	</tr>
+}
+
+// isPDFFileService checks if a document is a PDF
+func isPDFFileService(doc models.ServiceDocument) bool {
+	ext := strings.ToLower(strings.TrimSpace(doc.FileOriginalName))
+	return strings.HasSuffix(ext, ".pdf")
+}
+
+// getVisibilityTooltipService returns the tooltip for visibility toggle
+func getVisibilityTooltipService(ctx context.Context, isPublic bool) string {
+	if isPublic {
+		return i18n.T(ctx, "services.documents.visibility.toggle_private")
+	}
+	return i18n.T(ctx, "services.documents.visibility.toggle_public")
+}
+
+// UploadDocumentModal renders the service document upload modal
+templ UploadDocumentModal(ctx context.Context, serviceID string) {
+	<!-- Upload Document Modal -->
+	<div
+		id="upload-document-modal"
+		class="hidden fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+		x-data="{ close() { const modal = document.getElementById('upload-document-modal'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; document.getElementById('upload-form').reset(); } } }"
+		@click.self="close()"
+	>
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl relative">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
+				<h3 class="text-2xl font-serif font-bold text-base-content">
+					{ i18n.T(ctx, "services.documents.upload.title") }
+				</h3>
+				<button
+					type="button"
+					@click="close()"
+					class="btn btn-sm btn-circle btn-primary"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+					</svg>
+				</button>
+			</div>
+			<!-- Upload Form -->
+			<form
+				id="upload-form"
+				hx-post={ fmt.Sprintf("/api/services/%s/documents/upload", serviceID) }
+				hx-encoding="multipart/form-data"
+				hx-target="#service-documents-list"
+				hx-swap="innerHTML"
+			>
+				<div class="space-y-6">
+					<!-- File Upload -->
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
+								{ i18n.T(ctx, "services.documents.upload.file_label") } <span class="text-error">*</span>
+							</span>
+						</label>
+						<input
+							type="file"
+							name="file"
+							required
+							accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+							class="file-input file-input-bordered w-full rounded-sm"
+						/>
+						<label class="label">
+							<span class="label-text-alt opacity-60">{ i18n.T(ctx, "services.documents.upload.accepted_formats") }</span>
+						</label>
+					</div>
+					<!-- Document Type -->
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
+								{ i18n.T(ctx, "services.documents.upload.type_label") } <span class="text-error">*</span>
+							</span>
+						</label>
+						<select
+							name="document_type"
+							required
+							class="select select-bordered w-full rounded-sm"
+						>
+							<option value="">{ i18n.T(ctx, "services.documents.upload.select_type") }</option>
+							<option value="INTAKE">{ i18n.T(ctx, "services.documents.form.type_intake") }</option>
+							<option value="WORKING">{ i18n.T(ctx, "services.documents.form.type_working") }</option>
+							<option value="DELIVERABLE">{ i18n.T(ctx, "services.documents.form.type_deliverable") }</option>
+							<option value="REFERENCE">{ i18n.T(ctx, "services.documents.form.type_reference") }</option>
+						</select>
+					</div>
+					<!-- Description -->
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
+								{ i18n.T(ctx, "services.documents.upload.desc_label") }
+							</span>
+						</label>
+						<textarea
+							name="description"
+							rows="3"
+							placeholder={ i18n.T(ctx, "services.documents.upload.desc_placeholder") }
+							class="textarea textarea-bordered w-full rounded-sm"
+						></textarea>
+					</div>
+					<!-- Visibility Toggle -->
+					<div class="form-control">
+						<label class="label cursor-pointer justify-start gap-4 p-4 border border-base-200 rounded-sm hover:bg-base-50 transition-colors">
+							<input type="checkbox" name="is_public" value="true" class="checkbox checkbox-primary rounded-sm"/>
+							<div>
+								<span class="label-text font-bold block">{ i18n.T(ctx, "services.documents.visibility.public") }</span>
+								<span class="label-text-alt">{ i18n.T(ctx, "services.documents.visibility.public_desc") }</span>
+							</div>
+						</label>
+					</div>
+					<!-- Response Container -->
+					<div id="upload-response-service"></div>
+					<!-- Action Buttons -->
+					<div class="flex items-center gap-4 pt-4 border-t border-base-200">
+						<button
+							type="button"
+							@click="close()"
+							class="btn btn-primary rounded-sm"
+						>
+							{ i18n.T(ctx, "services.documents.upload.cancel") }
+						</button>
+						<button
+							type="submit"
+							class="btn btn-primary rounded-sm flex-1"
+						>
+							{ i18n.T(ctx, "services.documents.upload.btn") }
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+// PDFViewerModalService renders a modal to view PDF documents for services
+templ PDFViewerModalService(ctx context.Context) {
+	<div
+		id="pdf-viewer-modal-service"
+		class="hidden fixed inset-0 bg-base-300/95 backdrop-blur-md flex items-center justify-center p-4"
+		style="z-index: 9999; display: none;"
+		x-data="{ close() { const modal = document.getElementById('pdf-viewer-modal-service'); const embed = document.getElementById('pdf-embed-service'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; if (embed) embed.src = ''; } } }"
+		@click.self="close()"
+	>
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-6xl h-full flex flex-col shadow-2xl">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between px-6 py-4 border-b border-base-200 bg-base-100">
+				<div class="flex items-center gap-3">
+					<div class="p-2 bg-primary/10 rounded-sm">
+						<i data-lucide="file-text" class="text-primary"></i>
+					</div>
+					<h3 id="pdf-title-service" class="text-base font-serif font-bold text-base-content truncate">{ i18n.T(ctx, "services.documents.viewer.title") }</h3>
+				</div>
+				<button
+					type="button"
+					@click="close()"
+					class="btn btn-primary btn-sm btn-circle"
+					title={ i18n.T(ctx, "services.documents.viewer.close_tooltip") }
+				>
+					<i data-lucide="x"></i>
+				</button>
+			</div>
+			<!-- PDF Viewer Container -->
+			<div class="flex-1 p-1 overflow-hidden bg-base-200">
+				<embed
+					id="pdf-embed-service"
+					type="application/pdf"
+					class="w-full h-full"
+				/>
+			</div>
+		</div>
+	</div>
+}
