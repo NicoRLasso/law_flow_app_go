@@ -59,6 +59,43 @@ func InitializeFTS5(db *gorm.DB) error {
 	db.Exec(`CREATE INDEX IF NOT EXISTS idx_fts_mapping_firm ON cases_fts_mapping(firm_id)`)
 	db.Exec(`CREATE INDEX IF NOT EXISTS idx_fts_mapping_case ON cases_fts_mapping(case_id)`)
 
+	// Create FTS5 virtual table for services
+	err = db.Exec(`
+		CREATE VIRTUAL TABLE IF NOT EXISTS services_fts USING fts5(
+			service_id UNINDEXED,
+			firm_id UNINDEXED,
+			service_number,
+			service_title,
+			service_description,
+			service_objective,
+			client_name,
+			activity_content,
+			milestone_content,
+			document_content,
+			tokenize='unicode61 remove_diacritics 2'
+		)
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	// Create mapping table for services
+	err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS services_fts_mapping (
+			rowid INTEGER PRIMARY KEY AUTOINCREMENT,
+			service_id TEXT NOT NULL UNIQUE,
+			firm_id TEXT NOT NULL,
+			last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	// Create indices for services mapping table
+	db.Exec(`CREATE INDEX IF NOT EXISTS idx_services_fts_mapping_firm ON services_fts_mapping(firm_id)`)
+	db.Exec(`CREATE INDEX IF NOT EXISTS idx_services_fts_mapping_service ON services_fts_mapping(service_id)`)
+
 	// Create triggers for cases table
 	if err := createCasesTriggers(db); err != nil {
 		log.Printf("[WARNING] Failed to create cases triggers: %v", err)
@@ -77,6 +114,26 @@ func InitializeFTS5(db *gorm.DB) error {
 	// Create triggers for case_documents table
 	if err := createCaseDocumentsTriggers(db); err != nil {
 		log.Printf("[WARNING] Failed to create case_documents triggers: %v", err)
+	}
+
+	// Create triggers for legal_services table
+	if err := createServicesTriggers(db); err != nil {
+		log.Printf("[WARNING] Failed to create services triggers: %v", err)
+	}
+
+	// Create triggers for service_activities table
+	if err := createServiceActivitiesTriggers(db); err != nil {
+		log.Printf("[WARNING] Failed to create service_activities triggers: %v", err)
+	}
+
+	// Create triggers for service_milestones table
+	if err := createServiceMilestonesTriggers(db); err != nil {
+		log.Printf("[WARNING] Failed to create service_milestones triggers: %v", err)
+	}
+
+	// Create triggers for service_documents table
+	if err := createServiceDocumentsTriggers(db); err != nil {
+		log.Printf("[WARNING] Failed to create service_documents triggers: %v", err)
 	}
 
 	log.Println("FTS5 search index initialized")
@@ -150,14 +207,14 @@ func createCasesTriggers(db *gorm.DB) error {
 				COALESCE((SELECT name FROM case_parties WHERE case_id = NEW.id LIMIT 1), ''),
 				COALESCE((SELECT GROUP_CONCAT(COALESCE(title, '') || ' ' || COALESCE(content, ''), ' ') FROM case_logs WHERE case_id = NEW.id AND deleted_at IS NULL), ''),
 				COALESCE((SELECT GROUP_CONCAT(COALESCE(description, '') || ' ' || file_original_name, ' ') FROM case_documents WHERE case_id = NEW.id AND deleted_at IS NULL), '')
-			FROM cases_fts_mapping m 
-			WHERE m.case_id = NEW.id 
+			FROM cases_fts_mapping m
+			WHERE m.case_id = NEW.id
 			AND NEW.deleted_at IS NULL;
 
 			-- If it was soft-deleted, we might want to also clean up mapping or keep it?
 			-- RebuildFTSIndex excludes deleted_at IS NULL makers.
 			-- For triggers, if it's soft-deleted, we already deleted from cases_fts.
-			
+
 			UPDATE cases_fts_mapping SET last_updated = CURRENT_TIMESTAMP WHERE case_id = NEW.id;
 		END
 	`).Error
@@ -327,11 +384,19 @@ func createCaseDocumentsTriggers(db *gorm.DB) error {
 func RebuildFTSIndex(db *gorm.DB) error {
 	log.Println("Rebuilding FTS5 index...")
 
-	// Clear existing data
+	// Clear existing data for cases
 	if err := db.Exec(`DELETE FROM cases_fts`).Error; err != nil {
 		return err
 	}
 	if err := db.Exec(`DELETE FROM cases_fts_mapping`).Error; err != nil {
+		return err
+	}
+
+	// Clear existing data for services
+	if err := db.Exec(`DELETE FROM services_fts`).Error; err != nil {
+		return err
+	}
+	if err := db.Exec(`DELETE FROM services_fts_mapping`).Error; err != nil {
 		return err
 	}
 
@@ -381,11 +446,282 @@ func RebuildFTSIndex(db *gorm.DB) error {
 	}
 
 	// Get count for logging
-	var count int64
-	db.Table("cases_fts_mapping").Count(&count)
-	log.Printf("FTS5 index rebuilt successfully with %d cases", count)
+	// Rebuild services index
+	var services []struct {
+		ID            string
+		FirmID        string
+		ServiceNumber string
+		Title         string
+		Description   string
+		Objective     string
+		ClientID      string
+		ClientName    string
+	}
+
+	db.Table("legal_services").
+		Select("legal_services.id, legal_services.firm_id, legal_services.service_number, legal_services.title, legal_services.description, legal_services.objective, legal_services.client_id, users.name as client_name").
+		Joins("LEFT JOIN users ON users.id = legal_services.client_id").
+		Scan(&services)
+
+	for _, service := range services {
+		// Insert into mapping
+		db.Exec(`INSERT OR IGNORE INTO services_fts_mapping (service_id, firm_id) VALUES (?, ?)`,
+			service.ID, service.FirmID)
+
+		var rowid int64
+		db.Raw(`SELECT rowid FROM services_fts_mapping WHERE service_id = ?`, service.ID).Scan(&rowid)
+
+		// Get activities
+		var activities string
+		db.Raw(`SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ') FROM service_activities WHERE service_id = ?`, service.ID).Scan(&activities)
+
+		// Get milestones
+		var milestones string
+		db.Raw(`SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ') FROM service_milestones WHERE service_id = ?`, service.ID).Scan(&milestones)
+
+		// Get documents
+		var documents string
+		db.Raw(`SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ') FROM service_documents WHERE service_id = ?`, service.ID).Scan(&documents)
+
+		// Insert into FTS
+		db.Exec(`
+			INSERT INTO services_fts (rowid, service_id, firm_id, service_number, service_title, service_description, service_objective, client_name, activity_content, milestone_content, document_content)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			rowid, service.ID, service.FirmID, service.ServiceNumber, service.Title,
+			service.Description, service.Objective, service.ClientName,
+			activities, milestones, documents)
+	}
+
+	var casesCount, servicesCount int64
+	db.Table("cases_fts_mapping").Count(&casesCount)
+	db.Table("services_fts_mapping").Count(&servicesCount)
+	log.Printf("FTS5 index rebuilt successfully with %d cases and %d services", casesCount, servicesCount)
 
 	return nil
+}
+
+func createServicesTriggers(db *gorm.DB) error {
+	// Drop existing triggers first
+	db.Exec(`DROP TRIGGER IF EXISTS services_fts_insert`)
+	db.Exec(`DROP TRIGGER IF EXISTS services_fts_update`)
+	db.Exec(`DROP TRIGGER IF EXISTS services_fts_delete`)
+
+	// Trigger: INSERT on legal_services
+	err := db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS services_fts_insert AFTER INSERT ON legal_services
+		BEGIN
+			INSERT OR IGNORE INTO services_fts_mapping (service_id, firm_id)
+			VALUES (NEW.id, NEW.firm_id);
+
+			INSERT INTO services_fts (
+				rowid, service_id, firm_id, service_number, service_title,
+				service_description, service_objective, client_name,
+				activity_content, milestone_content, document_content
+			)
+			SELECT
+				(SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.id),
+				NEW.id,
+				NEW.firm_id,
+				NEW.service_number,
+				NEW.title,
+				NEW.description,
+				COALESCE(NEW.objective, ''),
+				COALESCE((SELECT name FROM users WHERE id = NEW.client_id), ''),
+				'',
+				'',
+				''
+			WHERE NEW.deleted_at IS NULL;
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	// Trigger: UPDATE on legal_services
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS services_fts_update AFTER UPDATE ON legal_services
+		BEGIN
+			DELETE FROM services_fts WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.id);
+
+			INSERT INTO services_fts (
+				rowid, service_id, firm_id, service_number, service_title,
+				service_description, service_objective, client_name,
+				activity_content, milestone_content, document_content
+			)
+			SELECT
+				(SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.id),
+				NEW.id,
+				NEW.firm_id,
+				NEW.service_number,
+				NEW.title,
+				NEW.description,
+				COALESCE(NEW.objective, ''),
+				COALESCE((SELECT name FROM users WHERE id = NEW.client_id), ''),
+				COALESCE((SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ') FROM service_activities WHERE service_id = NEW.id), ''),
+				COALESCE((SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ') FROM service_milestones WHERE service_id = NEW.id), ''),
+				COALESCE((SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ') FROM service_documents WHERE service_id = NEW.id AND deleted_at IS NULL), '')
+			FROM services_fts_mapping m
+			WHERE m.service_id = NEW.id
+			AND NEW.deleted_at IS NULL;
+
+			UPDATE services_fts_mapping SET last_updated = CURRENT_TIMESTAMP WHERE service_id = NEW.id;
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	// Trigger: DELETE on legal_services
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS services_fts_delete AFTER DELETE ON legal_services
+		BEGIN
+			DELETE FROM services_fts WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.id);
+			DELETE FROM services_fts_mapping WHERE service_id = OLD.id;
+		END
+	`).Error
+
+	return err
+}
+
+func createServiceActivitiesTriggers(db *gorm.DB) error {
+	db.Exec(`DROP TRIGGER IF EXISTS service_activities_fts_insert`)
+	db.Exec(`DROP TRIGGER IF EXISTS service_activities_fts_update`)
+	db.Exec(`DROP TRIGGER IF EXISTS service_activities_fts_delete`)
+
+	err := db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_activities_fts_insert AFTER INSERT ON service_activities
+		BEGIN
+			UPDATE services_fts SET activity_content = (
+				SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ')
+				FROM service_activities WHERE service_id = NEW.service_id
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_activities_fts_update AFTER UPDATE ON service_activities
+		BEGIN
+			UPDATE services_fts SET activity_content = (
+				SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ')
+				FROM service_activities WHERE service_id = NEW.service_id
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_activities_fts_delete AFTER DELETE ON service_activities
+		BEGIN
+			UPDATE services_fts SET activity_content = (
+				SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ')
+				FROM service_activities WHERE service_id = OLD.service_id
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.service_id);
+		END
+	`).Error
+
+	return err
+}
+
+func createServiceMilestonesTriggers(db *gorm.DB) error {
+	db.Exec(`DROP TRIGGER IF EXISTS service_milestones_fts_insert`)
+	db.Exec(`DROP TRIGGER IF EXISTS service_milestones_fts_update`)
+	db.Exec(`DROP TRIGGER IF EXISTS service_milestones_fts_delete`)
+
+	err := db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_milestones_fts_insert AFTER INSERT ON service_milestones
+		BEGIN
+			UPDATE services_fts SET milestone_content = (
+				SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ')
+				FROM service_milestones WHERE service_id = NEW.service_id
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_milestones_fts_update AFTER UPDATE ON service_milestones
+		BEGIN
+			UPDATE services_fts SET milestone_content = (
+				SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ')
+				FROM service_milestones WHERE service_id = NEW.service_id
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_milestones_fts_delete AFTER DELETE ON service_milestones
+		BEGIN
+			UPDATE services_fts SET milestone_content = (
+				SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ')
+				FROM service_milestones WHERE service_id = OLD.service_id
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.service_id);
+		END
+	`).Error
+
+	return err
+}
+
+func createServiceDocumentsTriggers(db *gorm.DB) error {
+	db.Exec(`DROP TRIGGER IF EXISTS service_documents_fts_insert`)
+	db.Exec(`DROP TRIGGER IF EXISTS service_documents_fts_update`)
+	db.Exec(`DROP TRIGGER IF EXISTS service_documents_fts_delete`)
+
+	err := db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_documents_fts_insert AFTER INSERT ON service_documents
+		BEGIN
+			UPDATE services_fts SET document_content = (
+				SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ')
+				FROM service_documents WHERE service_id = NEW.service_id AND deleted_at IS NULL
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_documents_fts_update AFTER UPDATE ON service_documents
+		BEGIN
+			UPDATE services_fts SET document_content = (
+				SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ')
+				FROM service_documents WHERE service_id = NEW.service_id AND deleted_at IS NULL
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
+		END
+	`).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.Exec(`
+		CREATE TRIGGER IF NOT EXISTS service_documents_fts_delete AFTER DELETE ON service_documents
+		BEGIN
+			UPDATE services_fts SET document_content = (
+				SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ')
+				FROM service_documents WHERE service_id = OLD.service_id AND deleted_at IS NULL
+			)
+			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.service_id);
+		END
+	`).Error
+
+	return err
 }
 
 // MigrateFTSData checks if FTS index is empty and populates it

@@ -9,17 +9,17 @@ import (
 
 templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentPath string) {
 	<nav class="sticky top-0 z-50 bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-sm" x-data="{ mobileMenuOpen: false }">
-		<div class="container mx-auto px-6 py-3">
-			<div class="flex items-center justify-between">
+		<div class="container mx-auto px-4 md:px-6 py-3">
+			<div class="flex items-center justify-between gap-2 md:gap-4">
 				<!-- Left Section: Logo & Nav -->
-				<div class="flex items-center gap-12">
-					<a href="/dashboard" class="group flex items-center gap-3">
+				<div class="flex items-center gap-2 md:gap-12 min-w-0">
+					<a href="/dashboard" class="group flex items-center gap-2 md:gap-3 flex-shrink-0">
 						if firm.LogoURL != "" {
-							<img src={ firm.LogoURL } alt={ firm.Name } class="w-10 h-10 rounded-sm object-contain"/>
+							<img src={ firm.LogoURL } alt={ firm.Name } class="w-8 h-8 md:w-10 md:h-10 rounded-sm object-contain"/>
 						} else {
-							<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="lexlegalcloud" class="w-10 h-10"/>
+							<img src={ "/static/images/favicon.png?v=" + middleware.GetFaviconVersion(ctx) } alt="lexlegalcloud" class="w-8 h-8 md:w-10 md:h-10"/>
 						}
-						<h1 class="text-2xl font-bold font-serif tracking-tight text-primary">
+						<h1 class="text-lg md:text-2xl font-bold font-serif tracking-tight text-primary truncate">
 							{ firm.Name }
 						</h1>
 					</a>
@@ -244,10 +244,12 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 					</div>
 				</div>
 				<!-- Right Section: Search & Profile -->
-				<div class="flex items-center gap-4">
+				<div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
 					<!-- Global Search (hidden for clients and superadmin) -->
 					if user.Role != "client" && user.Role != "superadmin" {
-						@SearchBox(ctx)
+						<div class="hidden sm:block w-40 md:w-56 lg:w-64">
+							@SearchBox(ctx)
+						</div>
 					}
 					<!-- Mobile Menu Button -->
 					<button
@@ -354,8 +356,14 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 			class="absolute left-0 right-0 top-full mt-0 mx-4 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden md:hidden"
 			style="display: none;"
 		>
+			<!-- Mobile Search Box -->
+			if user.Role != "client" && user.Role != "superadmin" {
+				<div class="p-3 border-b border-base-200 sm:hidden">
+					@SearchBox(ctx)
+				</div>
+			}
 			<!-- Menu Items (Simplified for Mobile) -->
-			<div class="p-2 space-y-1 overflow-y-auto max-h-[80vh]">
+			<div class="p-2 space-y-1 overflow-y-auto max-h-[70vh]">
 				if user.Role == "superadmin" {
 					<a href="/superadmin/dashboard" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
 						{ i18n.T(ctx, "nav.dashboard") }

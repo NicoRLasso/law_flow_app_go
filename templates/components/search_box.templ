@@ -15,7 +15,7 @@ func itoa(i int) string {
 // SearchBox renders the global search component for the navbar
 templ SearchBox(ctx context.Context) {
 	<div
-		class="relative hidden lg:block"
+		class="relative w-full"
 		x-data="{
 			open: false,
 			query: '',
@@ -55,7 +55,7 @@ templ SearchBox(ctx context.Context) {
 				hx-include="[name='q']"
 				name="q"
 				placeholder={ i18n.T(ctx, "search.placeholder") }
-				class="input input-sm input-bordered w-64 pl-9 pr-12 rounded-sm focus:input-primary bg-base-200/50 font-sans"
+				class="input input-sm input-bordered w-full pl-9 pr-12 rounded-sm focus:input-primary bg-base-200/50 font-sans"
 				autocomplete="off"
 			/>
 			<!-- Status Icons -->
@@ -90,8 +90,8 @@ templ SearchBox(ctx context.Context) {
 			</div>
 			<!-- Shortcut Hint -->
 			<div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
-				<kbd x-show="status === 'idle'" class="kbd kbd-xs opacity-50">Ctrl+K</kbd>
-				<span x-show="status === 'success'" x-cloak class="text-xs text-success font-medium" x-text="document.querySelector('#search-results [data-count]')?.dataset.count + ' encontrados'"></span>
+				<kbd x-show="status === 'idle'" class="kbd kbd-xs opacity-50 hidden md:inline-flex">Ctrl+K</kbd>
+				<span x-show="status === 'success'" x-cloak class="text-xs text-success font-medium truncate max-w-[80px]" x-text="document.querySelector('#search-results [data-count]')?.dataset.count + ' encontrados'"></span>
 			</div>
 		</div>
 		<!-- Results Dropdown -->
@@ -103,8 +103,8 @@ templ SearchBox(ctx context.Context) {
 			x-transition:leave="transition ease-in duration-150"
 			x-transition:leave-start="opacity-100 translate-y-0"
 			x-transition:leave-end="opacity-0 translate-y-1"
-			class="absolute top-full left-0 right-0 mt-2 bg-base-100 border border-base-200 rounded-sm shadow-2xl z-50 max-h-96 overflow-y-auto"
-			style="min-width: 360px; display: none;"
+			class="absolute top-full left-0 right-0 mt-2 bg-base-100 border border-base-200 rounded-sm shadow-2xl z-50 max-h-96 overflow-y-auto w-full md:w-auto"
+			style="min-width: min(360px, calc(100vw - 2rem)); display: none;"
 		>
 			<div
 				id="search-results"
@@ -159,57 +159,111 @@ templ SearchResults(ctx context.Context, results []services.SearchResult, query 
 	} else {
 		<div data-has-results="true" data-count={ itoa(len(results)) } class="divide-y divide-base-200">
 			for _, result := range results {
-				<a
-					href={ templ.SafeURL("/cases/" + result.CaseID) }
-					class="block p-3 hover:bg-base-200/50 transition-colors group"
-				>
-					<div class="flex items-start gap-3">
-						<!-- Icon based on source -->
-						<div class="w-9 h-9 rounded-sm bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-colors">
-							if result.MatchSource == "document" {
-								<i data-lucide="file-text" class="w-4 h-4"></i>
-							} else {
-								<i data-lucide="briefcase" class="w-4 h-4"></i>
-							}
-						</div>
-						<div class="flex-1 min-w-0">
-							<div class="flex items-center gap-2">
-								<span class="font-serif font-bold text-sm text-base-content truncate">
-									if result.CaseTitle != "" {
-										{ result.CaseTitle }
-									} else {
-										{ result.CaseNumber }
-									}
-								</span>
-								<span
-									class={
-										"badge badge-xs uppercase",
-										templ.KV("badge-success", result.Status == "OPEN"),
-										templ.KV("badge-warning", result.Status == "ON_HOLD"),
-										templ.KV("badge-ghost", result.Status == "CLOSED"),
-									}
-								>
-									{ result.Status }
-								</span>
-							</div>
-							<p class="text-xs text-base-content/60 mt-0.5">
-								{ result.CaseNumber }
-								if result.ClientName != "" {
-									<span class="mx-1">·</span>
-									{ result.ClientName }
+				if result.Type == "case" {
+					<a
+						href={ templ.SafeURL("/cases/" + result.CaseID) }
+						class="block p-3 hover:bg-base-200/50 transition-colors group"
+					>
+						<div class="flex items-start gap-3">
+							<!-- Icon based on source -->
+							<div class="w-9 h-9 rounded-sm bg-primary/10 flex items-center justify-center text-primary flex-shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-colors">
+								if result.MatchSource == "document" {
+									<i data-lucide="file-text" class="w-4 h-4"></i>
+								} else {
+									<i data-lucide="scale" class="w-4 h-4"></i>
 								}
-							</p>
-							<!-- Snippet with highlighted text -->
-							if result.Snippet != "" {
-								<p class="text-xs mt-1.5 text-base-content/70 line-clamp-2 [&_mark]:bg-warning/30 [&_mark]:text-warning-content [&_mark]:px-0.5 [&_mark]:rounded">
-									@templ.Raw(result.Snippet)
+							</div>
+							<div class="flex-1 min-w-0">
+								<div class="flex items-center gap-2">
+									<span class="badge badge-xs badge-primary">Case</span>
+									<span class="font-serif font-bold text-sm text-base-content truncate">
+										if result.CaseTitle != "" {
+											{ result.CaseTitle }
+										} else {
+											{ result.CaseNumber }
+										}
+									</span>
+									<span
+										class={
+											"badge badge-xs uppercase",
+											templ.KV("badge-success", result.Status == "OPEN"),
+											templ.KV("badge-warning", result.Status == "ON_HOLD"),
+											templ.KV("badge-ghost", result.Status == "CLOSED"),
+										}
+									>
+										{ result.Status }
+									</span>
+								</div>
+								<p class="text-xs text-base-content/60 mt-0.5">
+									{ result.CaseNumber }
+									if result.ClientName != "" {
+										<span class="mx-1">·</span>
+										{ result.ClientName }
+									}
 								</p>
-							}
+								<!-- Snippet with highlighted text -->
+								if result.Snippet != "" {
+									<p class="text-xs mt-1.5 text-base-content/70 line-clamp-2 [&_mark]:bg-warning/30 [&_mark]:text-warning-content [&_mark]:px-0.5 [&_mark]:rounded">
+										@templ.Raw(result.Snippet)
+									</p>
+								}
+							</div>
+							<!-- Arrow -->
+							<i data-lucide="chevron-right" class="w-4 h-4 text-base-content/30 group-hover:text-primary transition-colors flex-shrink-0"></i>
 						</div>
-						<!-- Arrow -->
-						<i data-lucide="chevron-right" class="w-4 h-4 text-base-content/30 group-hover:text-primary transition-colors flex-shrink-0"></i>
-					</div>
-				</a>
+					</a>
+				} else if result.Type == "service" {
+					<a
+						href={ templ.SafeURL("/services/" + result.ServiceID) }
+						class="block p-3 hover:bg-base-200/50 transition-colors group"
+					>
+						<div class="flex items-start gap-3">
+							<!-- Icon for service -->
+							<div class="w-9 h-9 rounded-sm bg-info/10 flex items-center justify-center text-info flex-shrink-0 group-hover:bg-info group-hover:text-info-content transition-colors">
+								if result.MatchSource == "document" {
+									<i data-lucide="file-text" class="w-4 h-4"></i>
+								} else {
+									<i data-lucide="briefcase" class="w-4 h-4"></i>
+								}
+							</div>
+							<div class="flex-1 min-w-0">
+								<div class="flex items-center gap-2">
+									<span class="badge badge-xs badge-info">Service</span>
+									<span class="font-serif font-bold text-sm text-base-content truncate">
+										{ result.ServiceTitle }
+									</span>
+									<span
+										class={
+											"badge badge-xs uppercase",
+											templ.KV("badge-info", result.ServiceStatus == "INTAKE"),
+											templ.KV("badge-primary", result.ServiceStatus == "IN_PROGRESS"),
+											templ.KV("badge-warning", result.ServiceStatus == "ON_HOLD"),
+											templ.KV("badge-success", result.ServiceStatus == "COMPLETED"),
+											templ.KV("badge-ghost", result.ServiceStatus == "CANCELLED"),
+										}
+									>
+										{ result.ServiceStatus }
+									</span>
+								</div>
+								<p class="text-xs text-base-content/60 mt-0.5">
+									{ result.ServiceNumber }
+									if result.ClientName != "" {
+										<span class="mx-1">·</span>
+										{ result.ClientName }
+									}
+								</p>
+								<!-- Snippet with highlighted text -->
+								if result.Snippet != "" {
+									<p class="text-xs mt-1.5 text-base-content/70 line-clamp-2 [&_mark]:bg-warning/30 [&_mark]:text-warning-content [&_mark]:px-0.5 [&_mark]:rounded">
+										@templ.Raw(result.Snippet)
+									</p>
+								}
+							</div>
+							<!-- Arrow -->
+							<i data-lucide="chevron-right" class="w-4 h-4 text-base-content/30 group-hover:text-primary transition-colors flex-shrink-0"></i>
+						</div>
+					</a>
+				}
 			}
 		</div>
 		<!-- Footer with link to full search -->
