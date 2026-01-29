@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, service *models.LegalService, expenseCategories []models.ChoiceOption, totalExpenses float64) {
+templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, service *models.LegalService, expenseCategories []models.ChoiceOption, totalExpenses float64, timeline []models.TimelineEvent) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
@@ -141,7 +141,7 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 						<div class="w-full min-w-0">
 							<!-- Summary Tab -->
 							<div x-show="activeTab === 'summary'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
-								@ServiceSummaryTab(ctx, service, user, totalExpenses)
+								@ServiceSummaryTab(ctx, service, user, totalExpenses, timeline)
 							</div>
 							<!-- Milestones Tab -->
 							<div x-show="activeTab === 'milestones'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
@@ -224,8 +224,9 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 									id="activities-tab-content"
 									hx-get={ fmt.Sprintf("/api/services/%s/activities", service.ID) }
 									hx-trigger="reveal"
+									class="bg-base-100 rounded-sm border border-base-200 shadow-sm min-h-[200px]"
 								>
-									<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+									<div class="flex flex-col items-center justify-center py-12">
 										<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
 										<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
 									</div>
@@ -425,18 +426,31 @@ templ ServiceDocumentsTab(ctx context.Context, service *models.LegalService, use
 	</script>
 }
 
-templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user *models.User, totalExpenses float64) {
+templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user *models.User, totalExpenses float64, timeline []models.TimelineEvent) {
 	<!-- Service Information Grid -->
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 		<!-- Left Column -->
 		<div class="space-y-8">
 			<!-- Service Information -->
-			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm mb-4">
 				<div class="card-body p-6">
 					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
-						{ i18n.T(ctx, "case.detail.info_title") }
+						{ i18n.T(ctx, "services.detail.info_title") }
 					</h2>
 					<div class="space-y-4">
+						<!-- Client Information -->
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "services.client") }</label>
+							<div class="flex items-center gap-4 p-4 bg-base-50 rounded-sm border border-base-200">
+								<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold text-xl">
+									{ string([]rune(service.Client.Name)[0]) }
+								</div>
+								<div class="flex flex-col">
+									<p class="font-bold text-base-content text-lg">{ service.Client.Name }</p>
+									<p class="text-sm text-base-content/60">{ service.Client.Email }</p>
+								</div>
+							</div>
+						</div>
 						<div>
 							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.table.number") }</label>
 							<p class="text-base-content/80 font-mono text-sm">{ service.ServiceNumber }</p>
@@ -455,103 +469,6 @@ templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user 
 							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.objective") }</label>
 							<p class="text-base-content/80 whitespace-pre-wrap leading-relaxed font-sans text-sm">{ service.Objective }</p>
 						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Timeline -->
-			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-				<div class="card-body p-6">
-					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
-						{ i18n.T(ctx, "case.detail.timeline_title") }
-					</h2>
-					<div class="space-y-4">
-						<div class="flex items-center justify-between">
-							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "common.created_at") }</label>
-							<p class="text-base-content font-medium">{ service.CreatedAt.Format("02 Jan 2006") }</p>
-						</div>
-						if service.StartedAt != nil {
-							<div class="flex items-center justify-between">
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "services.form.started_at") }</label>
-								<p class="text-base-content font-medium">{ service.StartedAt.Format("02 Jan 2006") }</p>
-							</div>
-						}
-						if service.EstimatedDueDate != nil {
-							<div class="flex items-center justify-between">
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "services.form.due_date") }</label>
-								<p class="text-base-content font-medium">{ service.EstimatedDueDate.Format("02 Jan 2006") }</p>
-							</div>
-						}
-						if service.CompletedAt != nil {
-							<div class="flex items-center justify-between">
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "services.status.COMPLETED") }</label>
-								<p class="text-base-content font-medium">{ service.CompletedAt.Format("02 Jan 2006") }</p>
-							</div>
-						}
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- Right Column -->
-		<div class="space-y-8">
-			<!-- Client Information -->
-			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-				<div class="card-body p-6">
-					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
-						{ i18n.T(ctx, "services.client") }
-					</h2>
-					<div class="flex items-center gap-4 p-4 bg-base-50 rounded-sm border border-base-200">
-						<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold text-xl">
-							{ string([]rune(service.Client.Name)[0]) }
-						</div>
-						<div class="flex flex-col">
-							<p class="font-bold text-base-content text-lg">{ service.Client.Name }</p>
-							<p class="text-sm text-base-content/60">{ service.Client.Email }</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Assignment -->
-			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-				<div class="card-body p-6">
-					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
-						{ i18n.T(ctx, "case.detail.assignment_title") }
-					</h2>
-					<div class="space-y-6">
-						<div>
-							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "services.form.assign_to") }</label>
-							if service.AssignedTo != nil {
-								<div class="flex items-center gap-3 p-3 bg-base-50 rounded-sm border border-base-200">
-									<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold">
-										{ string([]rune(service.AssignedTo.Name)[0]) }
-									</div>
-									<div class="flex flex-col">
-										<p class="font-bold text-base-content">{ service.AssignedTo.Name }</p>
-										<p class="text-xs text-base-content/60">{ i18n.T(ctx, "users.roles.lawyer") }</p>
-									</div>
-								</div>
-							} else {
-								<p class="text-base-content/40 italic flex items-center gap-2">
-									<i data-lucide="alert-circle"></i>
-									{ i18n.T(ctx, "common.unassigned") }
-								</p>
-							}
-						</div>
-						<!-- Collaborators Section -->
-						if len(service.Collaborators) > 0 {
-							<div>
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "case.detail.collaborators") }</label>
-								<div class="flex flex-wrap gap-2">
-									for _, collab := range service.Collaborators {
-										<div class="flex items-center gap-2 pl-2 pr-3 py-1 bg-base-50 border border-base-200 rounded-full">
-											<div class="w-6 h-6 rounded-full bg-base-200 flex items-center justify-center text-[10px] text-base-content/70">
-												{ string([]rune(collab.Name)[0]) }
-											</div>
-											<span class="text-sm font-medium text-base-content/80">{ collab.Name }</span>
-										</div>
-									}
-								</div>
-							</div>
-						}
 					</div>
 				</div>
 			</div>
@@ -577,8 +494,37 @@ templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user 
 					</div>
 				</div>
 			</div>
+
+		</div>
+		<!-- Right Column -->
+		<div class="space-y-8">
+			<!-- Timeline -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "case.detail.timeline_title") }
+					</h2>
+					<div
+						id="timeline-events-container"
+						hx-get={ fmt.Sprintf("/api/services/%s/timeline?page=1", service.ID) }
+						hx-trigger="load, refreshTimeline from:body"
+						hx-swap="innerHTML"
+					>
+						<div class="flex flex-col items-center justify-center py-8">
+							<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+							<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
+						</div>
+					</div>
+
+				</div>
+			</div>
 		</div>
 	</div>
+}
+
+// ServiceTimelineEvents is deprecated - use partials.ServiceTimelineList instead
+templ ServiceTimelineEvents(ctx context.Context, timeline []models.TimelineEvent) {
+	<!-- This component is no longer used -->
 }
 
 // ServiceStatusBadge renders a status badge for services

@@ -6,50 +6,56 @@ import (
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
 	"law_flow_app_go/templates/layouts"
+	"law_flow_app_go/templates/partials"
 )
 
 templ Services(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-base-200">
+			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/services")
-			<main class="container mx-auto px-4 py-8">
-				<div class="flex justify-between items-center mb-6">
-					<div>
-						<h1 class="text-3xl font-bold font-serif">{ i18n.T(ctx, "services.title") }</h1>
-						<p class="text-base-content/60">{ i18n.T(ctx, "services.subtitle") }</p>
+			<!-- Main Content -->
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full">
+					<!-- Header -->
+					<div class="flex items-center justify-between gap-4 mb-8">
+						<div>
+							<h1 class="text-3xl md:text-4xl font-serif font-bold tracking-tight text-base-content">{ i18n.T(ctx, "services.title") }</h1>
+							<p class="text-base-content/60 mt-1 text-sm md:text-base font-sans">{ i18n.T(ctx, "services.subtitle") }</p>
+						</div>
+						if user.Role != "client" {
+							<button
+								hx-get="/api/services/new"
+								hx-target="body"
+								hx-swap="beforeend"
+								class="px-4 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-focus rounded-sm transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+							>
+								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+								</svg>
+								{ i18n.T(ctx, "services.new") }
+							</button>
+						}
 					</div>
-					if user.Role != "client" {
-						<button
-							class="btn btn-primary gap-2"
-							hx-get="/api/services/new"
-							hx-target="body"
-							hx-swap="beforeend"
-						>
-							<i data-lucide="plus-circle" class="w-5 h-5"></i>
-							{ i18n.T(ctx, "services.new") }
-						</button>
-					}
-				</div>
-				<!-- Filters would go here -->
-				<div class="bg-base-100 p-4 rounded-lg shadow-sm border border-base-200 mb-6">
-					<!-- Simplified filters for now -->
-					<div class="flex gap-4">
-						<input type="text" placeholder={ i18n.T(ctx, "common.search") } class="input input-bordered w-full max-w-xs"/>
-						<select class="select select-bordered">
-							<option disabled selected>{ i18n.T(ctx, "common.status_all") }</option>
-							<option>Active</option>
-							<option>Completed</option>
-						</select>
+					<!-- Service Filters -->
+					<div class="bg-base-100 p-6 rounded-sm shadow-sm border border-base-200 mb-6">
+						@partials.ServiceFilters(ctx, user)
 					</div>
-				</div>
-				<div
-					id="services-table"
-					hx-get="/api/services"
-					hx-trigger="load, reload-services from:body"
-					class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
-				>
-					<div class="flex justify-center p-12">
-						<span class="loading loading-spinner loading-lg"></span>
+					<!-- Loading indicator -->
+					<div id="loading-indicator" class="htmx-indicator flex items-center justify-center py-12">
+						<span class="loading loading-spinner loading-lg text-primary"></span>
+					</div>
+					<!-- Services Table -->
+					<div
+						id="services-table"
+						hx-get="/api/services"
+						hx-trigger="load, reload-services from:body"
+						hx-indicator="#loading-indicator"
+						class="bg-base-100 rounded-sm shadow-sm border border-base-200 overflow-hidden"
+					>
+						<div class="flex justify-center p-12">
+							<span class="loading loading-spinner loading-lg"></span>
+						</div>
 					</div>
 				</div>
 			</main>

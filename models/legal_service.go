@@ -7,6 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// TimelineEvent represents a unified timeline entry for services
+type TimelineEvent struct {
+	Date         time.Time
+	Type         string // "service_created", "service_started", "service_completed", "milestone", "activity"
+	Title        string
+	Description  string
+	Status       string
+	ActivityType string
+	IsCompleted  bool
+}
+
 // Service status constants (workflow states - must remain fixed)
 const (
 	ServiceStatusIntake     = "INTAKE"      // Initial request phase

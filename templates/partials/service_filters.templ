@@ -1,0 +1,130 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+// ServiceFilters renders the filter controls for services
+templ ServiceFilters(ctx context.Context, user *models.User) {
+	<!-- Filter Form Container -->
+	<form
+		id="services-filter-form"
+		hx-get="/api/services"
+		hx-target="#services-table"
+		hx-trigger="submit"
+		hx-indicator="#loading-indicator"
+		class="flex flex-col xl:flex-row gap-4 items-start xl:items-end w-full"
+	>
+		<!-- Filters Group -->
+		<div class="flex flex-wrap gap-4 w-full">
+			if user.Role == "admin" {
+				@ServiceStatusSelect(ctx)
+				@ServiceAssignedToSelect(ctx)
+			}
+			@ServiceClientSelect(ctx)
+			@ServiceTypeSelect(ctx)
+			@ServiceKeywordInput(ctx)
+		</div>
+		<!-- Search Button -->
+		<div class="w-full xl:w-auto mt-2 xl:mt-0 flex-shrink-0">
+			<button
+				type="submit"
+				class="btn btn-primary w-full xl:w-auto rounded-sm gap-2"
+			>
+				<i data-lucide="search"></i>
+				<span>{ i18n.T(ctx, "common.search") }</span>
+			</button>
+		</div>
+	</form>
+}
+
+// Helper Components for Service Filters
+templ ServiceStatusSelect(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "common.status") }</span>
+		</label>
+		<select
+			class="select select-bordered select-sm w-full sm:w-40 rounded-sm focus:select-primary"
+			name="status"
+			id="status-filter"
+		>
+			<option value="">{ i18n.T(ctx, "common.status_all") }</option>
+			<option value="INTAKE">{ i18n.T(ctx, "services.status.INTAKE") }</option>
+			<option value="IN_PROGRESS">{ i18n.T(ctx, "services.status.IN_PROGRESS") }</option>
+			<option value="ON_HOLD">{ i18n.T(ctx, "services.status.ON_HOLD") }</option>
+			<option value="COMPLETED">{ i18n.T(ctx, "services.status.COMPLETED") }</option>
+			<option value="CANCELLED">{ i18n.T(ctx, "services.status.CANCELLED") }</option>
+		</select>
+	</div>
+}
+
+templ ServiceAssignedToSelect(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.assigned_to") }</span>
+		</label>
+		<select
+			class="select select-bordered select-sm w-full sm:w-48 rounded-sm focus:select-primary"
+			name="assigned_to"
+			id="assigned-to-filter"
+		>
+			<option value="">{ i18n.T(ctx, "cases.filters.all_lawyers") }</option>
+			<!-- Options will be populated via HTMX from /api/lawyers -->
+		</select>
+	</div>
+}
+
+templ ServiceClientSelect(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "services.client") }</span>
+		</label>
+		<select
+			class="select select-bordered select-sm w-full sm:w-48 rounded-sm focus:select-primary"
+			name="client_id"
+			id="client-filter"
+		>
+			<option value="">{ i18n.T(ctx, "common.all") }</option>
+			<!-- Options will be populated via HTMX from /api/clients -->
+		</select>
+	</div>
+}
+
+templ ServiceTypeSelect(ctx context.Context) {
+	<div class="form-control w-full sm:w-auto">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "services.type") }</span>
+		</label>
+		<select
+			class="select select-bordered select-sm w-full sm:w-40 rounded-sm focus:select-primary"
+			name="service_type"
+			id="service-type-filter"
+		>
+			<option value="">{ i18n.T(ctx, "common.all") }</option>
+			<!-- Options will be populated via HTMX from service types -->
+		</select>
+	</div>
+}
+
+templ ServiceKeywordInput(ctx context.Context) {
+	<div class="form-control w-full sm:flex-1 min-w-[200px]">
+		<label class="label pt-0 pb-1">
+			<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "cases.filters.search_label") }</span>
+		</label>
+		<div class="relative">
+			<input
+				type="text"
+				placeholder={ i18n.T(ctx, "cases.filters.search_placeholder") }
+				class="input input-bordered input-sm w-full rounded-sm pl-9 focus:input-primary"
+				name="keyword"
+				id="keyword-filter"
+			/>
+			<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+				<i data-lucide="search" class="text-base-content/40"></i>
+			</div>
+		</div>
+	</div>
+}

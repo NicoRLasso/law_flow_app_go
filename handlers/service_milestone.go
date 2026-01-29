@@ -91,6 +91,9 @@ func CreateMilestoneHandler(c echo.Context) error {
 		"ServiceMilestone", milestone.ID, milestone.Title,
 		"Milestone created", nil, milestone)
 
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+
 	// Return updated list
 	return GetServiceMilestonesHandler(c)
 }
@@ -166,6 +169,9 @@ func CompleteMilestoneHandler(c echo.Context) error {
 		"ServiceMilestone", milestone.ID, milestone.Title,
 		msg, nil, nil)
 
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+
 	return GetServiceMilestonesHandler(c)
 }
 
@@ -175,15 +181,24 @@ func DeleteMilestoneHandler(c echo.Context) error {
 	milestoneID := c.Param("mid")
 	currentFirm := middleware.GetCurrentFirm(c)
 
-	if err := db.DB.Where("firm_id = ? AND id = ? AND service_id = ?", currentFirm.ID, milestoneID, serviceID).Delete(&models.ServiceMilestone{}).Error; err != nil {
+	// Fetch milestone before deleting for audit log
+	var milestone models.ServiceMilestone
+	if err := db.DB.Where("firm_id = ? AND id = ? AND service_id = ?", currentFirm.ID, milestoneID, serviceID).First(&milestone).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Milestone not found")
+	}
+
+	if err := db.DB.Delete(&milestone).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete milestone")
 	}
 
 	// Audit Log
 	auditCtx := middleware.GetAuditContext(c)
 	services.LogAuditEvent(db.DB, auditCtx, models.AuditActionDelete,
-		"ServiceMilestone", milestoneID, "",
+		"ServiceMilestone", milestone.ID, milestone.Title,
 		"Milestone deleted", nil, nil)
+
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
 
 	return GetServiceMilestonesHandler(c)
 }

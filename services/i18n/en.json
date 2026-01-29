@@ -396,7 +396,8 @@
     "active": "Active",
     "inactive": "Inactive",
     "download": "Download",
-    "search": "Search"
+    "search": "Search",
+    "page": "Page"
   },
   "auth": {
     "email": "Email Address",
@@ -748,6 +749,9 @@
     "edit": {
       "title": "Edit Legal Service"
     },
+    "detail": {
+      "info_title": "Service Information"
+    },
     "milestones": {
       "add": "Add Milestone",
       "add_title": "Add New Milestone",
@@ -848,7 +852,15 @@
     "activities": {
       "title": "Activity Log",
       "add_title": "Log Activity or Time",
+      "edit_title": "Edit Activity",
       "list_empty": "No activities recorded yet.",
+      "table": {
+        "date": "Date",
+        "title": "Title",
+        "content": "Content",
+        "duration": "Duration",
+        "actions": "Actions"
+      },
       "form": {
         "title": "New Log Entry",
         "title_placeholder": "E.g., Client call, Drafting documents",
@@ -862,6 +874,10 @@
         "meeting": "Meeting",
         "email": "Email",
         "time_entry": "Time Entry"
+      },
+      "delete": {
+        "title": "Delete Activity",
+        "message": "Are you sure you want to delete this activity? This action cannot be undone."
       }
     }
   },

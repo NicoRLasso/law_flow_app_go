@@ -3,106 +3,258 @@ package partials
 import (
 	"context"
 	"fmt"
-	"law_flow_app_go/middleware"
+	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 )
 
+// AddServiceActivityModal matches UploadDocumentModal structure exactly
 templ AddServiceActivityModal(ctx context.Context, serviceID string) {
+	<!-- Add Activity Modal -->
 	<div
 		id="add_activity_modal"
-		class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all"
-		x-data="{ activityType: 'NOTE' }"
-		@click.self="closeAddActivityModal()"
+		class="fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+		x-data="{ activityType: 'NOTE', close() { const container = document.getElementById('activity-modal-container'); if (container) { container.innerHTML = ''; } } }"
+		@click.self="close()"
+		@htmx:after-request.window="if($event.detail.successful && $event.detail.elt.closest('#add_activity_modal')) { close(); }"
 	>
-		<div class="bg-base-100 rounded-sm border border-base-200 shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl relative">
 			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-base-200 flex items-center justify-between bg-base-50/50">
-				<h3 class="text-xl font-serif font-bold text-base-content flex items-center gap-2">
-					<i data-lucide="activity" class="text-primary"></i>
-					{ i18n.T(ctx, "services.activities.add_title") }
-				</h3>
-				<button @click="closeAddActivityModal()" class="btn btn-ghost btn-sm btn-circle">
+			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
+				<div class="flex items-center gap-4">
+					<div class="p-3 bg-primary/10 rounded-sm">
+						<i data-lucide="activity" class="text-primary w-6 h-6"></i>
+					</div>
+					<div>
+						<h3 class="text-2xl font-serif font-bold text-base-content leading-tight">
+							{ i18n.T(ctx, "services.activities.add_title") }
+						</h3>
+					</div>
+				</div>
+				<button
+					type="button"
+					@click="close()"
+					class="btn btn-ghost btn-sm btn-circle hover:bg-base-200 transition-colors"
+				>
 					<i data-lucide="x"></i>
 				</button>
 			</div>
-			<!-- Form Body -->
+			<!-- Form -->
 			<form
+				id="add-activity-form"
 				hx-post={ fmt.Sprintf("/api/services/%s/activities", serviceID) }
 				hx-target="#activities-tab-content"
-				hx-on::after-request="if(event.detail.successful) closeAddActivityModal()"
-				class="p-6 space-y-4"
+				hx-swap="innerHTML"
+				class="space-y-6"
 			>
-				<!-- Activity Type Selector -->
-				<div class="grid grid-cols-1 gap-4">
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.table.type") }</span>
-						</label>
-						<select name="activity_type" x-model="activityType" class="select select-bordered w-full rounded-sm focus:select-primary" required>
-							<option value="NOTE">{ i18n.T(ctx, "services.activities.type.note") }</option>
-							<option value="TIME_ENTRY">{ i18n.T(ctx, "services.activities.type.time_entry") }</option>
-							<option value="EMAIL">{ i18n.T(ctx, "services.activities.type.email") }</option>
-							<option value="CALL">{ i18n.T(ctx, "services.activities.type.call") }</option>
-							<option value="MEETING">{ i18n.T(ctx, "services.activities.type.meeting") }</option>
-						</select>
-					</div>
+				<!-- Activity Type -->
+				<div class="form-control w-full">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.table.type") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select
+						name="activity_type"
+						x-model="activityType"
+						required
+						class="select select-bordered w-full rounded-sm focus:select-primary h-12"
+					>
+						<option value="NOTE">{ i18n.T(ctx, "services.activities.type.note") }</option>
+						<option value="TIME_ENTRY">{ i18n.T(ctx, "services.activities.type.time_entry") }</option>
+						<option value="EMAIL">{ i18n.T(ctx, "services.activities.type.email") }</option>
+						<option value="CALL">{ i18n.T(ctx, "services.activities.type.call") }</option>
+						<option value="MEETING">{ i18n.T(ctx, "services.activities.type.meeting") }</option>
+					</select>
 				</div>
-				<!-- Title & Duration -->
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.milestones.form.title") }</span>
-						</label>
-						<input
-							type="text"
-							name="title"
-							placeholder={ i18n.T(ctx, "services.activities.form.title_placeholder") }
-							class="input input-bordered w-full rounded-sm focus:input-primary"
-							required
-						/>
-					</div>
-					<div class="form-control" x-show="activityType === 'TIME_ENTRY'">
-						<label class="label">
-							<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.activities.form.duration_placeholder") }</span>
-						</label>
-						<input
-							type="number"
-							name="duration"
-							placeholder="60"
-							class="input input-bordered w-full rounded-sm focus:input-primary"
-							::required="activityType === 'TIME_ENTRY'"
-						/>
-					</div>
+				<!-- Title -->
+				<div class="form-control w-full">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.milestones.form.title") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<input
+						type="text"
+						name="title"
+						placeholder={ i18n.T(ctx, "services.activities.form.title_placeholder") }
+						required
+						class="input input-bordered w-full rounded-sm focus:input-primary h-12"
+					/>
+				</div>
+				<!-- Duration -->
+				<div class="form-control w-full" x-show="activityType === 'TIME_ENTRY'">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.activities.form.duration_placeholder") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<input
+						type="number"
+						name="duration"
+						placeholder="60"
+						class="input input-bordered w-full rounded-sm focus:input-primary h-12"
+						::required="activityType === 'TIME_ENTRY'"
+					/>
 				</div>
 				<!-- Content -->
-				<div class="form-control">
-					<label class="label">
-						<span class="label-text font-bold text-xs uppercase tracking-wider">{ i18n.T(ctx, "services.milestones.form.description") }</span>
+				<div class="form-control w-full">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.milestones.form.description") }
+						</span>
 					</label>
 					<textarea
 						name="content"
-						class="textarea textarea-bordered h-24 rounded-sm focus:textarea-primary"
+						rows="3"
 						placeholder={ i18n.T(ctx, "services.activities.form.content_placeholder") }
+						class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary min-h-[100px]"
 					></textarea>
 				</div>
 				<!-- Action Buttons -->
-				<div class="flex justify-end gap-3 pt-4 border-t border-base-200">
-					<button type="button" @click="closeAddActivityModal()" class="btn btn-ghost rounded-sm px-8">
+				<div class="flex items-center gap-4 pt-6 border-t border-base-200/60">
+					<button
+						type="button"
+						@click="close()"
+						class="btn btn-ghost rounded-sm w-full sm:w-auto order-2 sm:order-1 h-12 px-8 font-bold"
+					>
 						{ i18n.T(ctx, "common.cancel") }
 					</button>
-					<button type="submit" class="btn btn-primary rounded-sm px-8 shadow-sm">
+					<button
+						type="submit"
+						class="btn btn-primary rounded-sm w-full sm:w-auto order-1 sm:order-2 h-12 px-8 font-bold shadow-lg shadow-primary/20"
+					>
 						{ i18n.T(ctx, "common.save") }
 					</button>
 				</div>
 			</form>
 		</div>
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-		function closeAddActivityModal() {
-			const modal = document.getElementById('add_activity_modal');
-			if (modal) {
-				modal.remove();
-			}
-		}
-	</script>
+}
+
+func getDurationValue(duration *int) string {
+	if duration != nil {
+		return fmt.Sprintf("%d", *duration)
+	}
+	return ""
+}
+
+// EditServiceActivityModal - Brand new clean version
+templ EditServiceActivityModal(ctx context.Context, activity models.ServiceActivity, serviceID string) {
+	<div
+		id={ fmt.Sprintf("edit_activity_modal_%s", activity.ID) }
+		class="fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+		x-data={ fmt.Sprintf("{ activityType: '%s', close() { this.$el.remove(); } }", activity.ActivityType) }
+		@click.self="close()"
+		@htmx:after-request.window={ fmt.Sprintf("if($event.detail.successful && $event.detail.elt.closest('#edit_activity_modal_%s')) { close(); }", activity.ID) }
+	>
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 shadow-2xl relative">
+			<!-- Modal Header -->
+			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
+				<div class="flex items-center gap-4">
+					<div class="p-3 bg-primary/10 rounded-sm">
+						<i data-lucide="pencil" class="text-primary w-6 h-6"></i>
+					</div>
+					<div>
+						<h3 class="text-2xl font-serif font-bold text-base-content leading-tight">
+							{ i18n.T(ctx, "services.activities.edit_title") }
+						</h3>
+					</div>
+				</div>
+				<button
+					type="button"
+					@click="close()"
+					class="btn btn-ghost btn-sm btn-circle hover:bg-base-200 transition-colors"
+				>
+					<i data-lucide="x"></i>
+				</button>
+			</div>
+			<!-- Form -->
+			<form
+				hx-put={ fmt.Sprintf("/api/services/%s/activities/%s", serviceID, activity.ID) }
+				hx-target="#activities-tab-content"
+				hx-swap="innerHTML"
+				class="space-y-6"
+			>
+				<!-- Activity Type -->
+				<div class="form-control w-full">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.table.type") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select
+						name="activity_type"
+						x-model="activityType"
+						required
+						class="select select-bordered w-full rounded-sm focus:select-primary h-12"
+					>
+						<option value="NOTE" selected?={ activity.ActivityType == "NOTE" }>{ i18n.T(ctx, "services.activities.type.note") }</option>
+						<option value="TIME_ENTRY" selected?={ activity.ActivityType == "TIME_ENTRY" }>{ i18n.T(ctx, "services.activities.type.time_entry") }</option>
+						<option value="EMAIL" selected?={ activity.ActivityType == "EMAIL" }>{ i18n.T(ctx, "services.activities.type.email") }</option>
+						<option value="CALL" selected?={ activity.ActivityType == "CALL" }>{ i18n.T(ctx, "services.activities.type.call") }</option>
+						<option value="MEETING" selected?={ activity.ActivityType == "MEETING" }>{ i18n.T(ctx, "services.activities.type.meeting") }</option>
+					</select>
+				</div>
+				<!-- Title -->
+				<div class="form-control w-full">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.milestones.form.title") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<input
+						type="text"
+						name="title"
+						value={ activity.Title }
+						required
+						class="input input-bordered w-full rounded-sm focus:input-primary h-12"
+					/>
+				</div>
+				<!-- Duration -->
+				<div class="form-control w-full" x-show="activityType === 'TIME_ENTRY'">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.activities.form.duration_placeholder") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<input
+						type="number"
+						name="duration"
+						value={ getDurationValue(activity.Duration) }
+						class="input input-bordered w-full rounded-sm focus:input-primary h-12"
+						::required="activityType === 'TIME_ENTRY'"
+					/>
+				</div>
+				<!-- Content -->
+				<div class="form-control w-full">
+					<label class="label pt-0 pb-1.5 px-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "services.milestones.form.description") }
+						</span>
+					</label>
+					<textarea
+						name="content"
+						rows="3"
+						class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary min-h-[100px]"
+					>{ activity.Content }</textarea>
+				</div>
+				<!-- Action Buttons -->
+				<div class="flex items-center gap-4 pt-6 border-t border-base-200/60">
+					<button
+						type="button"
+						@click="close()"
+						class="btn btn-ghost rounded-sm w-full sm:w-auto order-2 sm:order-1 h-12 px-8 font-bold"
+					>
+						{ i18n.T(ctx, "common.cancel") }
+					</button>
+					<button
+						type="submit"
+						class="btn btn-primary rounded-sm w-full sm:w-auto order-1 sm:order-2 h-12 px-8 font-bold shadow-lg shadow-primary/20"
+					>
+						{ i18n.T(ctx, "common.save") }
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 }

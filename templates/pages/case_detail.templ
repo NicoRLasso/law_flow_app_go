@@ -296,32 +296,34 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.desc") }</label>
 							<p class="text-base-content/80 whitespace-pre-wrap leading-relaxed font-sans text-sm">{ caseRecord.Description }</p>
 						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Timeline -->
-			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-				<div class="card-body p-6">
-					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
-						{ i18n.T(ctx, "case.detail.timeline_title") }
-					</h2>
-					<div class="space-y-4">
-						<div class="flex items-center justify-between">
-							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "case.detail.opened") }</label>
-							<p class="text-base-content font-medium">{ caseRecord.OpenedAt.Format("02 Jan 2006") }</p>
-						</div>
-						if caseRecord.ClosedAt != nil {
-							<div class="flex items-center justify-between">
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "case.detail.closed") }</label>
-								<p class="text-base-content font-medium">{ caseRecord.ClosedAt.Format("02 Jan 2006") }</p>
+						<!-- Classification Section (merged) -->
+						if caseRecord.Domain != nil {
+							<div>
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.domain") }</label>
+								<p class="text-base-content font-serif">{ caseRecord.Domain.Name }</p>
+							</div>
+						}
+						if caseRecord.Branch != nil {
+							<div>
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.branch") }</label>
+								<p class="text-base-content font-serif">{ caseRecord.Branch.Name }</p>
+							</div>
+						}
+						if len(caseRecord.Subtypes) > 0 {
+							<div>
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "case.detail.subtypes") }</label>
+								<div class="flex flex-wrap gap-2">
+									for _, subtype := range caseRecord.Subtypes {
+										<span class="badge badge-outline rounded-sm text-xs font-semibold">
+											{ subtype.Name }
+										</span>
+									}
+								</div>
 							</div>
 						}
 					</div>
 				</div>
 			</div>
-		</div>
-		<!-- Right Column -->
-		<div class="space-y-8">
 			<!-- Assignment -->
 			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 				<div class="card-body p-6">
@@ -421,42 +423,29 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 					</div>
 				</div>
 			</div>
-			<!-- Classification -->
-			if caseRecord.Domain != nil || caseRecord.Branch != nil || len(caseRecord.Subtypes) > 0 {
-				<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
-					<div class="card-body p-6">
-						<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
-							{ i18n.T(ctx, "case.detail.classification_title") }
-						</h2>
-						<div class="space-y-4">
-							if caseRecord.Domain != nil {
-								<div>
-									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.domain") }</label>
-									<p class="text-base-content font-serif">{ caseRecord.Domain.Name }</p>
-								</div>
-							}
-							if caseRecord.Branch != nil {
-								<div>
-									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.branch") }</label>
-									<p class="text-base-content font-serif">{ caseRecord.Branch.Name }</p>
-								</div>
-							}
-							if len(caseRecord.Subtypes) > 0 {
-								<div>
-									<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "case.detail.subtypes") }</label>
-									<div class="flex flex-wrap gap-2">
-										for _, subtype := range caseRecord.Subtypes {
-											<span class="badge badge-outline rounded-sm text-xs font-semibold">
-												{ subtype.Name }
-											</span>
-										}
-									</div>
-								</div>
-							}
+		</div>
+		<!-- Right Column -->
+		<div class="space-y-8">
+			<!-- Timeline -->
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+				<div class="card-body p-6">
+					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
+						{ i18n.T(ctx, "case.detail.timeline_title") }
+					</h2>
+					<div class="space-y-4">
+						<div class="flex items-center justify-between">
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "case.detail.opened") }</label>
+							<p class="text-base-content font-medium">{ caseRecord.OpenedAt.Format("02 Jan 2006") }</p>
 						</div>
+						if caseRecord.ClosedAt != nil {
+							<div class="flex items-center justify-between">
+								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "case.detail.closed") }</label>
+								<p class="text-base-content font-medium">{ caseRecord.ClosedAt.Format("02 Jan 2006") }</p>
+							</div>
+						}
 					</div>
 				</div>
-			}
+			</div>
 		</div>
 	</div>
 }

@@ -387,6 +387,7 @@ func main() {
 			serviceShared.GET("", handlers.GetServicesHandler)
 			serviceShared.GET("/:id", handlers.GetServiceHandler)
 			serviceShared.GET("/:id/milestones", handlers.GetServiceMilestonesHandler)
+			serviceShared.GET("/:id/timeline", handlers.GetServiceTimelineHandler)
 			serviceShared.GET("/:id/documents", handlers.GetServiceDocumentsHandler)
 			serviceShared.POST("/:id/documents/upload", handlers.UploadServiceDocumentHandler)
 			serviceShared.GET("/:id/documents/:did/download", handlers.DownloadServiceDocumentHandler)
@@ -428,6 +429,7 @@ func main() {
 			// Activities
 			serviceAdmin.GET("/:id/activities", handlers.GetServiceActivitiesHandler)
 			serviceAdmin.GET("/:id/activities/new", handlers.GetServiceActivityForm)
+			serviceAdmin.GET("/:id/activities/:aid/edit-modal", handlers.GetServiceActivityEditModalHandler)
 			serviceAdmin.POST("/:id/activities", handlers.CreateServiceActivityHandler)
 			serviceAdmin.PUT("/:id/activities/:aid", handlers.UpdateServiceActivityHandler)
 			serviceAdmin.DELETE("/:id/activities/:aid", handlers.DeleteServiceActivityHandler)

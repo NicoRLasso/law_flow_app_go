@@ -9,6 +9,7 @@ import (
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -115,6 +116,17 @@ func GetServiceDetailHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve service")
 	}
 
+	// Preload Milestones and Activities for timeline
+	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Milestones).Error; err != nil {
+		fmt.Printf("Error loading milestones: %v\n", err)
+	}
+	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Activities).Error; err != nil {
+		fmt.Printf("Error loading activities: %v\n", err)
+	}
+
+	// Build timeline events (empty for now, will be loaded via HTMX)
+	timeline := []models.TimelineEvent{}
+
 	// Security check for clients
 	if currentUser.Role == "client" && service.ClientID != currentUser.ID {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
@@ -135,9 +147,152 @@ func GetServiceDetailHandler(c echo.Context) error {
 	// Fetch total expenses for summary
 	totalExpenses, _ := services.GetServiceTotalExpenses(db.DB, service.ID)
 
-	// Note: pages.ServiceDetail update to include totalExpenses
-	component := pages.ServiceDetail(c.Request().Context(), "Service Details | LexLegal Cloud", csrfToken, currentUser, currentFirm, service, expenseCategories, totalExpenses)
+	// Note: pages.ServiceDetail update to include totalExpenses and timeline
+	component := pages.ServiceDetail(c.Request().Context(), "Service Details | LexLegal Cloud", csrfToken, currentUser, currentFirm, service, expenseCategories, totalExpenses, timeline)
 	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetServiceTimelineHandler returns timeline events for a service with pagination
+func GetServiceTimelineHandler(c echo.Context) error {
+	id := c.Param("id")
+	currentUser := middleware.GetCurrentUser(c)
+	currentFirm := middleware.GetCurrentFirm(c)
+
+	service, err := services.GetServiceByID(db.DB, currentFirm.ID, id)
+	if err != nil {
+		if err == services.ErrServiceNotFound {
+			return echo.NewHTTPError(http.StatusNotFound, "Service not found")
+		}
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve service")
+	}
+
+	// Security check for clients
+	if currentUser.Role == "client" && service.ClientID != currentUser.ID {
+		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
+	}
+
+	// Preload Milestones and Activities for timeline
+	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Milestones).Error; err != nil {
+		fmt.Printf("Error loading milestones: %v\n", err)
+	}
+	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Activities).Error; err != nil {
+		fmt.Printf("Error loading activities: %v\n", err)
+	}
+
+	// Pagination
+	page := 1
+	limit := 6
+	if p, err := strconv.Atoi(c.QueryParam("page")); err == nil && p > 0 {
+		page = p
+	}
+
+	// Build timeline events
+	allEvents := buildServiceTimeline(service)
+
+	// Calculate pagination
+	total := len(allEvents)
+	totalPages := (total + limit - 1) / limit
+
+	// Get page slice
+	start := (page - 1) * limit
+	end := start + limit
+	if end > total {
+		end = total
+	}
+
+	var events []models.TimelineEvent
+	if start < total {
+		events = allEvents[start:end]
+	} else {
+		events = []models.TimelineEvent{}
+	}
+
+	component := partials.ServiceTimelineList(c.Request().Context(), events, page, totalPages, total, id)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// buildServiceTimeline creates a sorted timeline of service events
+func buildServiceTimeline(service *models.LegalService) []models.TimelineEvent {
+	var events []models.TimelineEvent
+
+	// Add service created event
+	events = append(events, models.TimelineEvent{
+		Date:        service.CreatedAt,
+		Type:        "service_created",
+		Title:       "Service Created",
+		Description: "Service was created",
+	})
+
+	// Add service started event
+	if service.StartedAt != nil {
+		events = append(events, models.TimelineEvent{
+			Date:        *service.StartedAt,
+			Type:        "service_started",
+			Title:       "Service Started",
+			Description: "Service work began",
+		})
+	}
+
+	// Add service completed event
+	if service.CompletedAt != nil {
+		events = append(events, models.TimelineEvent{
+			Date:        *service.CompletedAt,
+			Type:        "service_completed",
+			Title:       "Service Completed",
+			Description: "Service was completed",
+			IsCompleted: true,
+		})
+	}
+
+	// Add estimated due date as event
+	if service.EstimatedDueDate != nil {
+		events = append(events, models.TimelineEvent{
+			Date:        *service.EstimatedDueDate,
+			Type:        "estimated_due",
+			Title:       "Estimated Due Date",
+			Description: "Target completion date",
+		})
+	}
+
+	// Add milestones
+	for _, milestone := range service.Milestones {
+		desc := ""
+		if milestone.Description != nil {
+			desc = *milestone.Description
+		}
+		dueDate := time.Now()
+		if milestone.DueDate != nil {
+			dueDate = *milestone.DueDate
+		}
+		events = append(events, models.TimelineEvent{
+			Date:        dueDate,
+			Type:        "milestone",
+			Title:       milestone.Title,
+			Description: desc,
+			Status:      milestone.Status,
+			IsCompleted: milestone.Status == "COMPLETED",
+		})
+	}
+
+	// Add activities
+	for _, activity := range service.Activities {
+		if activity.OccurredAt != nil {
+			events = append(events, models.TimelineEvent{
+				Date:         *activity.OccurredAt,
+				Type:         "activity",
+				Title:        activity.Title,
+				Description:  activity.Content,
+				ActivityType: activity.ActivityType,
+			})
+		}
+	}
+
+	// Sort events by date (most recent first)
+	sort.Slice(events, func(i, j int) bool {
+		return events[i].Date.After(events[j].Date)
+	})
+
+	return events
 }
 
 // CreateServiceModalHandler renders the modal to create a new service

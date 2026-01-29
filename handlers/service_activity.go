@@ -16,16 +16,38 @@ import (
 // GetServiceActivitiesHandler list
 func GetServiceActivitiesHandler(c echo.Context) error {
 	serviceID := c.Param("id")
+	currentUser := middleware.GetCurrentUser(c)
 	currentFirm := middleware.GetCurrentFirm(c)
 
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page < 1 {
+		page = 1
+	}
+	limit := 10
+	offset := (page - 1) * limit
+
 	var activities []models.ServiceActivity
-	if err := db.DB.Where("firm_id = ? AND service_id = ?", currentFirm.ID, serviceID).
-		Order("occurred_at DESC").
+	var total int64
+
+	query := db.DB.Where("firm_id = ? AND service_id = ?", currentFirm.ID, serviceID)
+
+	if err := query.Model(&models.ServiceActivity{}).Count(&total).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to count activities")
+	}
+
+	if err := query.Order("occurred_at DESC").
+		Limit(limit).
+		Offset(offset).
 		Find(&activities).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch activities")
 	}
 
-	component := partials.ServiceActivityList(c.Request().Context(), activities)
+	totalPages := 0
+	if total > 0 {
+		totalPages = int((total + int64(limit) - 1) / int64(limit))
+	}
+
+	component := partials.ServiceActivityTable(c.Request().Context(), activities, page, totalPages, limit, int(total), serviceID, currentUser.Role != "client")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -33,6 +55,21 @@ func GetServiceActivitiesHandler(c echo.Context) error {
 func GetServiceActivityForm(c echo.Context) error {
 	serviceID := c.Param("id")
 	component := partials.AddServiceActivityModal(c.Request().Context(), serviceID)
+	return component.Render(c.Request().Context(), c.Response().Writer)
+}
+
+// GetServiceActivityEditModalHandler returns the edit modal for an activity
+func GetServiceActivityEditModalHandler(c echo.Context) error {
+	serviceID := c.Param("id")
+	activityID := c.Param("aid")
+	currentFirm := middleware.GetCurrentFirm(c)
+
+	var activity models.ServiceActivity
+	if err := db.DB.Where("firm_id = ? AND id = ? AND service_id = ?", currentFirm.ID, activityID, serviceID).First(&activity).Error; err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "Activity not found")
+	}
+
+	component := partials.EditServiceActivityModal(c.Request().Context(), activity, serviceID)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -85,6 +122,9 @@ func CreateServiceActivityHandler(c echo.Context) error {
 		services.UpdateServiceActualHours(db.DB, serviceID)
 	}
 
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+
 	return GetServiceActivitiesHandler(c)
 }
 
@@ -116,6 +156,9 @@ func UpdateServiceActivityHandler(c echo.Context) error {
 		services.UpdateServiceActualHours(db.DB, serviceID)
 	}
 
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+
 	return GetServiceActivitiesHandler(c)
 }
 
@@ -139,6 +182,9 @@ func DeleteServiceActivityHandler(c echo.Context) error {
 	if isTimeEntry {
 		services.UpdateServiceActualHours(db.DB, serviceID)
 	}
+
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
 
 	return GetServiceActivitiesHandler(c)
 }

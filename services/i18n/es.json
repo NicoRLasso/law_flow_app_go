@@ -56,8 +56,8 @@
       "city": "Ciudad"
     },
     "delete": {
-        "confirm_message": "¿Está seguro de que desea eliminar la firma {name}?",
-        "warning_message": "Esto eliminará todos los usuarios, casos y datos asociados con esta firma."
+      "confirm_message": "¿Está seguro de que desea eliminar la firma {name}?",
+      "warning_message": "Esto eliminará todos los usuarios, casos y datos asociados con esta firma."
     },
     "appointments": "Citas",
     "profile_settings": "Configuración de Perfil",
@@ -394,7 +394,8 @@
     "active": "Activo",
     "inactive": "Inactivo",
     "download": "Descargar",
-    "search": "Buscar"
+    "search": "Buscar",
+    "page": "Página"
   },
   "auth": {
     "email": "Correo Electrónico",
@@ -756,6 +757,9 @@
     "edit": {
       "title": "Editar Servicio Legal"
     },
+    "detail": {
+      "info_title": "Información del Servicio"
+    },
     "milestones": {
       "add": "Agregar Hito",
       "add_title": "Agregar Nuevo Hito",
@@ -856,7 +860,15 @@
     "activities": {
       "title": "Registro de Actividades",
       "add_title": "Registrar Actividad o Tiempo",
+      "edit_title": "Editar Actividad",
       "list_empty": "No hay actividades registradas aún.",
+      "table": {
+        "date": "Fecha",
+        "title": "Título",
+        "content": "Contenido",
+        "duration": "Duración",
+        "actions": "Acciones"
+      },
       "form": {
         "title": "Nuevo Registro",
         "title_placeholder": "Ej: Llamada con cliente, Revisión de borradores",
@@ -868,8 +880,12 @@
         "note": "Nota",
         "call": "Llamada",
         "meeting": "Reunión",
-        "email": "Email",
+        "email": "Correo Electrónico",
         "time_entry": "Registro de Tiempo"
+      },
+      "delete": {
+        "title": "Eliminar Actividad",
+        "message": "¿Está seguro de que desea eliminar esta actividad? Esta acción no se puede deshacer."
       }
     }
   },
@@ -999,8 +1015,8 @@
       "active_user": "Usuario Activo",
       "inactive_desc": "Los usuarios inactivos no pueden iniciar sesión",
       "cancel": "Cancelar",
-    "select_option": "Seleccione una opción",
-    "required_fields": "Por favor complete todos los campos requeridos",
+      "select_option": "Seleccione una opción",
+      "required_fields": "Por favor complete todos los campos requeridos",
       "create_btn": "Crear Usuario",
       "update_btn": "Actualizar Usuario",
       "role_help": {
@@ -1555,67 +1571,67 @@
       }
     },
     "users": {
-        "title": "Gestión de Usuarios",
-        "subtitle": "Gestionar todos los usuarios de la plataforma.",
-        "create_user": "Crear Usuario",
-        "search_placeholder": "Buscar usuarios...",
-        "role_filter": {
-             "all": "Todos los Roles",
-             "superadmin": "Superadmin",
-             "admin": "Admin",
-             "lawyer": "Abogado",
-             "staff": "Personal",
-             "client": "Cliente"
-        },
-        "firm_filter": {
-             "all": "Todas las Firmas",
-             "none": "Sin Firma"
-        },
-        "status_filter": {
-             "all": "Todos los Estados",
-             "active": "Activo",
-             "inactive": "Inactivo"
-        },
-        "table": {
-             "user": "Usuario",
-             "role": "Rol",
-             "status": "Estado",
-             "firm": "Firma",
-             "joined": "Unido",
-             "actions": "Acciones",
-             "no_results": "No se encontraron usuarios con esos criterios.",
-             "no_firm": "Sin Firma"
-        },
-        "modal": {
-             "create_title": "Crear Nuevo Usuario",
-             "edit_title": "Editar Usuario",
-             "full_name": "Nombre Completo",
-             "email": "Correo Electrónico",
-             "password": "Contraseña",
-             "password_edit_hint": "Contraseña (dejar en blanco para mantener actual)",
-             "role": "Rol",
-             "status": "Estado",
-             "firm": "Firma",
-             "firm_no_firm": "Sin Firma (Usuario la configurará)",
-             "active": "Activo",
-             "inactive": "Inactivo",
-             "cancel": "Cancelar",
-             "save": "Guardar Cambios",
-             "create": "Crear Usuario"
-        },
-         "delete_modal": {
-             "title": "Eliminar Usuario",
-             "confirm": "¿Estás seguro de que deseas eliminar a {name}?",
-             "warning": "Esta acción realizará un borrado lógico. El usuario será desactivado y ocultado, pero los datos permanecerán en la base de datos.",
-             "cancel": "Cancelar",
-             "delete": "Eliminar Usuario"
-        }
+      "title": "Gestión de Usuarios",
+      "subtitle": "Gestionar todos los usuarios de la plataforma.",
+      "create_user": "Crear Usuario",
+      "search_placeholder": "Buscar usuarios...",
+      "role_filter": {
+        "all": "Todos los Roles",
+        "superadmin": "Superadmin",
+        "admin": "Admin",
+        "lawyer": "Abogado",
+        "staff": "Personal",
+        "client": "Cliente"
+      },
+      "firm_filter": {
+        "all": "Todas las Firmas",
+        "none": "Sin Firma"
+      },
+      "status_filter": {
+        "all": "Todos los Estados",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "table": {
+        "user": "Usuario",
+        "role": "Rol",
+        "status": "Estado",
+        "firm": "Firma",
+        "joined": "Unido",
+        "actions": "Acciones",
+        "no_results": "No se encontraron usuarios con esos criterios.",
+        "no_firm": "Sin Firma"
+      },
+      "modal": {
+        "create_title": "Crear Nuevo Usuario",
+        "edit_title": "Editar Usuario",
+        "full_name": "Nombre Completo",
+        "email": "Correo Electrónico",
+        "password": "Contraseña",
+        "password_edit_hint": "Contraseña (dejar en blanco para mantener actual)",
+        "role": "Rol",
+        "status": "Estado",
+        "firm": "Firma",
+        "firm_no_firm": "Sin Firma (Usuario la configurará)",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "cancel": "Cancelar",
+        "save": "Guardar Cambios",
+        "create": "Crear Usuario"
+      },
+      "delete_modal": {
+        "title": "Eliminar Usuario",
+        "confirm": "¿Estás seguro de que deseas eliminar a {name}?",
+        "warning": "Esta acción realizará un borrado lógico. El usuario será desactivado y ocultado, pero los datos permanecerán en la base de datos.",
+        "cancel": "Cancelar",
+        "delete": "Eliminar Usuario"
+      }
     },
     "nav": {
-        "dashboard": "Tablero",
-        "users": "Usuarios",
-        "firms": "Firmas",
-        "logout": "Cerrar Sesión"
+      "dashboard": "Tablero",
+      "users": "Usuarios",
+      "firms": "Firmas",
+      "logout": "Cerrar Sesión"
     },
     "support": {
       "title": "Tickets de Soporte",
@@ -1676,9 +1692,9 @@
     "newValues": "Nuevos Valores",
     "field": "Campo",
     "diff": {
-        "field": "Campo",
-        "old": "Valor Anterior",
-        "new": "Nuevo Valor"
+      "field": "Campo",
+      "old": "Valor Anterior",
+      "new": "Nuevo Valor"
     }
   },
   "search": {
