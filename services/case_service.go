@@ -70,3 +70,23 @@ func EnsureUniqueCaseNumber(db *gorm.DB, firmID string) (string, error) {
 
 	return "", fmt.Errorf("failed to generate unique case number after %d retries", maxRetries)
 }
+
+// GetCaseByID retrieves a case by ID with preloaded relationships
+func GetCaseByID(db *gorm.DB, firmID string, caseID string) (*models.Case, error) {
+	var caseRecord models.Case
+	err := db.Where("firm_id = ? AND id = ?", firmID, caseID).
+		Preload("Client").
+		Preload("AssignedTo").
+		Preload("Domain").
+		Preload("Branch").
+		Preload("Subtypes").
+		Preload("Milestones", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sort_order ASC")
+		}).
+		First(&caseRecord).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return &caseRecord, nil
+}

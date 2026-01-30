@@ -269,7 +269,13 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 		return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to create case</div>`)
 	}
 
-	// Handle subtypes if provided
+	// Create default milestones
+	if err := services.CreateDefaultCaseMilestones(tx, &newCase); err != nil {
+		tx.Rollback()
+		return c.HTML(http.StatusInternalServerError, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Failed to create milestones</div>`)
+	}
+
+	// Handle documents if any were uploaded
 	if len(subtypeIDs) > 0 {
 		var subtypes []models.CaseSubtype
 		if err := tx.Where("id IN ?", subtypeIDs).Find(&subtypes).Error; err == nil && len(subtypes) > 0 {

@@ -7,15 +7,16 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, page int, totalPages int, total int, serviceID string) {
+// TimelineList is a generic component for displaying procedural timelines for cases or services
+templ TimelineList(ctx context.Context, timeline []models.TimelineEvent, page int, totalPages int, total int, resourceID string, apiURL string, targetID string, limit int) {
 	<div class="space-y-3">
 		if len(timeline) > 0 {
 			for _, event := range timeline {
 				<div class="flex items-start gap-3 p-3 rounded-sm hover:bg-base-50 transition-colors">
 					<div class="mt-0.5">
-						if event.Type == "service_created" || event.Type == "service_started" {
+						if event.Type == "service_created" || event.Type == "service_started" || event.Type == "case_opened" {
 							<div class="w-2 h-2 rounded-full bg-primary"></div>
-						} else if event.Type == "service_completed" {
+						} else if event.Type == "service_completed" || event.Type == "case_closed" {
 							<div class="w-2 h-2 rounded-full bg-success"></div>
 						} else if event.Type == "estimated_due" {
 							<div class="w-2 h-2 rounded-full bg-warning"></div>
@@ -67,13 +68,13 @@ templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, 
 		<div class="flex items-center justify-between pt-4 mt-4 border-t border-base-200">
 			<div class="text-sm text-base-content/60">
 				{ i18n.T(ctx, "common.showing") }
-				<span class="font-medium">{ fmt.Sprintf("%d", (page-1)*5+1) }</span>
+				<span class="font-medium">{ fmt.Sprintf("%d", (page-1)*limit+1) }</span>
 				-
 				<span class="font-medium">
-					if page*5 > total {
+					if page*limit > total {
 						{ fmt.Sprintf("%d", total) }
 					} else {
-						{ fmt.Sprintf("%d", page*5) }
+						{ fmt.Sprintf("%d", page*limit) }
 					}
 				</span>
 				{ i18n.T(ctx, "common.of") }
@@ -83,8 +84,8 @@ templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, 
 				if page > 1 {
 					<button
 						class="join-item btn btn-sm"
-						hx-get={ fmt.Sprintf("/api/services/%s/timeline?page=%d", serviceID, page-1) }
-						hx-target="#timeline-events-container"
+						hx-get={ fmt.Sprintf("%s?page=%d", apiURL, page-1) }
+						hx-target={ targetID }
 						hx-swap="innerHTML"
 					>
 						<i data-lucide="chevron-left" class="w-4 h-4"></i>
@@ -100,8 +101,8 @@ templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, 
 				if page < totalPages {
 					<button
 						class="join-item btn btn-sm"
-						hx-get={ fmt.Sprintf("/api/services/%s/timeline?page=%d", serviceID, page+1) }
-						hx-target="#timeline-events-container"
+						hx-get={ fmt.Sprintf("%s?page=%d", apiURL, page+1) }
+						hx-target={ targetID }
 						hx-swap="innerHTML"
 					>
 						<i data-lucide="chevron-right" class="w-4 h-4"></i>

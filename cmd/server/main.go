@@ -39,7 +39,7 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.Notification{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.CaseMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.Notification{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	if err := services.InitializeFTS5(db.DB); err != nil {
@@ -411,7 +411,6 @@ func main() {
 			caseRoutes.PUT("/:id", handlers.UpdateCaseHandler)
 			caseRoutes.PATCH("/:id/documents/:docId/visibility", handlers.ToggleDocumentVisibilityHandler)
 			caseRoutes.DELETE("/:id/documents/:docId", handlers.DeleteCaseDocumentHandler)
-			caseRoutes.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 			caseRoutes.DELETE("/:id/collaborators/:userId", handlers.RemoveCaseCollaboratorHandler)
 			caseRoutes.GET("/:id/collaborators/available", handlers.GetAvailableCollaboratorsHandler)
 			caseRoutes.GET("/import/modal", handlers.ImportCasesModalHandler)
@@ -438,7 +437,22 @@ func main() {
 			caseRoutes.POST("/history", handlers.CreateHistoricalCaseHandler)
 			caseRoutes.GET("/history/branches", handlers.GetHistoricalCaseBranchesHandler)
 			caseRoutes.GET("/history/subtypes", handlers.GetHistoricalCaseSubtypesHandler)
-			caseRoutes.GET("/history/subtypes", handlers.GetHistoricalCaseSubtypesHandler)
+		}
+
+		caseShared := protected.Group("/api/cases")
+		caseShared.Use(middleware.RequireRole("admin", "lawyer", "client"))
+		{
+			caseShared.GET("/:id/summary", handlers.GetCaseSummaryHandler)
+			caseShared.GET("/:id/timeline", handlers.GetCaseTimelineHandler)
+			caseShared.GET("/:id/log", handlers.GetCaseLogHandler)
+			caseShared.POST("/:id/log", handlers.CreateCaseLogHandler)
+			caseShared.GET("/:id/milestones", handlers.GetCaseMilestonesHandler)
+			caseShared.POST("/:id/milestones", handlers.CreateCaseMilestoneHandler)
+			caseShared.PUT("/:id/milestones/:mid", handlers.UpdateCaseMilestoneHandler)
+			caseShared.PATCH("/:id/milestones/:mid/complete", handlers.CompleteCaseMilestoneHandler)
+			caseShared.DELETE("/:id/milestones/:mid", handlers.DeleteCaseMilestoneHandler)
+			caseShared.POST("/:id/milestones/reorder", handlers.ReorderCaseMilestonesHandler)
+			caseShared.POST("/:id/collaborators", handlers.AddCaseCollaboratorHandler)
 		}
 
 		// Legal Services Routes

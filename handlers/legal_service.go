@@ -200,7 +200,8 @@ func GetServiceTimelineHandler(c echo.Context) error {
 		events = []models.TimelineEvent{}
 	}
 
-	component := partials.ServiceTimelineList(c.Request().Context(), events, page, totalPages, total, id)
+	apiURL := fmt.Sprintf("/api/services/%s/timeline", id)
+	component := partials.TimelineList(c.Request().Context(), events, page, totalPages, total, id, apiURL, "#timeline-events-container", limit)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

@@ -983,7 +983,26 @@
     "select_domain": "Seleccionar dominio",
     "branch": "Rama",
     "select_branch": "Seleccionar rama",
-    "subtypes": "Subtipos"
+    "subtypes": "Subtipos",
+    "milestones": {
+      "add": "Agregar Hito",
+      "add_title": "Agregar Nuevo Hito",
+      "edit_title": "Editar Hito",
+      "delete_confirm": "¿Está seguro de que desea eliminar este hito?",
+      "list_empty": "No hay hitos registrados aún.",
+      "progress": {
+        "title": "Progreso de Hitos"
+      },
+      "status": {
+        "completed": "Completados",
+        "pending": "Pendientes"
+      },
+      "form": {
+        "title": "Título",
+        "description": "Descripción",
+        "due_date": "Fecha Límite"
+      }
+    }
   },
   "users": {
     "title": "Gestión de Usuarios",

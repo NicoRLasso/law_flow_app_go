@@ -91,8 +91,8 @@ func CreateMilestoneHandler(c echo.Context) error {
 		"ServiceMilestone", milestone.ID, milestone.Title,
 		"Milestone created", nil, milestone)
 
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger timeline and summary refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline,refreshSummary")
 
 	// Return updated list
 	return GetServiceMilestonesHandler(c)
@@ -127,8 +127,8 @@ func UpdateMilestoneHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update milestone")
 	}
 
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger timeline and summary refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline,refreshSummary")
 
 	// Audit Log
 	// ...
@@ -172,8 +172,8 @@ func CompleteMilestoneHandler(c echo.Context) error {
 		"ServiceMilestone", milestone.ID, milestone.Title,
 		msg, nil, nil)
 
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger timeline and summary refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline,refreshSummary")
 
 	return GetServiceMilestonesHandler(c)
 }
@@ -200,8 +200,8 @@ func DeleteMilestoneHandler(c echo.Context) error {
 		"ServiceMilestone", milestone.ID, milestone.Title,
 		"Milestone deleted", nil, nil)
 
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger timeline and summary refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline,refreshSummary")
 
 	return GetServiceMilestonesHandler(c)
 }
@@ -219,8 +219,8 @@ func ReorderMilestonesHandler(c echo.Context) error {
 		}
 	}
 
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger timeline and summary refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline,refreshSummary")
 
 	return GetServiceMilestonesHandler(c)
 }

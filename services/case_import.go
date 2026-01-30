@@ -538,6 +538,14 @@ func BulkCreateFromExcel(ctx context.Context, dbConn *gorm.DB, firmID string, us
 			continue
 		}
 
+		// Create default milestones for imported case
+		if err := CreateDefaultCaseMilestones(tx, &newCase); err != nil {
+			// Log error but don't fail the whole case import if just milestones fail?
+			// Actually, better to maintain consistency.
+			tx.Rollback()
+			return nil, fmt.Errorf("failed to create milestones for case at row %d: %w", i+1, err)
+		}
+
 		result.SuccessCount++
 	}
 

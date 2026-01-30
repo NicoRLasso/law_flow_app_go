@@ -86,6 +86,7 @@ type Case struct {
 	Migrator      *User          `gorm:"foreignKey:MigratedBy" json:"migrator,omitempty"`
 	Subtypes      []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
 	Documents     []CaseDocument `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
+	Milestones    []CaseMilestone `gorm:"foreignKey:CaseID" json:"milestones,omitempty"`
 	Collaborators []User         `gorm:"many2many:case_collaborators;" json:"collaborators,omitempty"`
 	OpposingParty *CaseParty     `gorm:"foreignKey:CaseID" json:"opposing_party,omitempty"`
 }

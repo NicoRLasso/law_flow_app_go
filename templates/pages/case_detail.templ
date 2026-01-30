@@ -2,6 +2,7 @@ package pages
 
 import (
 	"context"
+	"fmt"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -10,7 +11,7 @@ import (
 	"strings"
 )
 
-templ CaseDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, caseRecord models.Case) {
+templ CaseDetail(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, caseRecord models.Case, timeline []models.TimelineEvent) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
@@ -139,6 +140,16 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 									</li>
 									<li>
 										<button
+											@click={ "activeTab = 'milestones'; sidebarOpen = false; setTimeout(() => { if (!document.getElementById('case-milestones-container')) htmx.ajax('GET', '/api/cases/" + caseRecord.ID + "/milestones', {target: '#milestones-tab-content', swap: 'innerHTML'}) }, 50)" }
+											:class="activeTab === 'milestones' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="check-square" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "services.tab.milestones") }</span>
+										</button>
+									</li>
+									<li>
+										<button
 											@click="activeTab = 'parties'; sidebarOpen = false"
 											:class="activeTab === 'parties' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
 											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
@@ -188,8 +199,45 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 						<!-- Main Content Area -->
 						<div class="w-full min-w-0">
 							<!-- Summary Tab -->
-							<div x-show="activeTab === 'summary'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
-								@CaseResumenTab(ctx, caseRecord, user)
+							<div 
+								x-show="activeTab === 'summary'" 
+								x-transition:enter="transition ease-out duration-300 transform" 
+								x-transition:enter-start="opacity-0 translate-y-2" 
+								x-transition:enter-end="opacity-100 translate-y-0" 
+								class="space-y-6"
+								id="summary-tab-content"
+								hx-get={ "/api/cases/" + caseRecord.ID + "/summary" }
+								hx-trigger="load, refreshSummary from:body"
+							>
+								@CaseResumenTab(ctx, caseRecord, user, timeline)
+							</div>
+							<!-- Milestones Tab -->
+							<div x-show="activeTab === 'milestones'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+								<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
+									<h2 class="text-xl font-serif font-bold text-base-content border-b-2 border-primary pb-1 pr-6 inline-block">
+										{ i18n.T(ctx, "services.tab.milestones") }
+									</h2>
+									if user.Role != "client" {
+										<button
+											type="button"
+											@click="document.getElementById('add_case_milestone_modal').classList.remove('hidden'); document.getElementById('add_case_milestone_modal').style.display = 'flex';"
+											class="btn btn-primary btn-sm rounded-sm shadow-sm"
+										>
+											<i data-lucide="plus" class="mr-2"></i>
+											{ i18n.T(ctx, "cases.milestones.add") }
+										</button>
+									}
+								</div>
+								<div
+									id="milestones-tab-content"
+									hx-get={ "/api/cases/" + caseRecord.ID + "/milestones" }
+									hx-trigger="load"
+								>
+									<div class="bg-base-100 p-12 rounded-sm border border-base-200 text-center flex flex-col items-center justify-center min-h-[300px]">
+										<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+										<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
+									</div>
+								</div>
 							</div>
 							<!-- Parties Tab -->
 							<div x-show="activeTab === 'parties'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
@@ -233,6 +281,8 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 			</main>
 			<!-- Upload Document Modal (outside main content) -->
 			@UploadDocumentModal(ctx, caseRecord)
+			<!-- Add Case Milestone Modal -->
+			@partials.AddCaseMilestoneModal(ctx, caseRecord.ID)
 			<!-- PDF Viewer Modal -->
 			@partials.PDFViewerModal(ctx, caseRecord)
 			<!-- Edit Case Modal Container -->
@@ -247,18 +297,31 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 }
 
 // CaseResumenTab renders the summary tab content
-templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.User) {
+templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.User, timeline []models.TimelineEvent) {
 	<!-- Case Information Grid -->
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 		<!-- Left Column -->
 		<div class="space-y-8">
 			<!-- Case Information -->
-			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm mb-4">
 				<div class="card-body p-6">
 					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
 						{ i18n.T(ctx, "case.detail.info_title") }
 					</h2>
 					<div class="space-y-4">
+						<!-- Client Information -->
+						<div>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "case.client") }</label>
+							<div class="flex items-center gap-4 p-4 bg-base-50 rounded-sm border border-base-200">
+								<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-serif font-bold text-xl">
+									{ string([]rune(caseRecord.Client.Name)[0]) }
+								</div>
+								<div class="flex flex-col">
+									<p class="font-bold text-base-content text-lg">{ caseRecord.Client.Name }</p>
+									<p class="text-sm text-base-content/60">{ caseRecord.Client.Email }</p>
+								</div>
+							</div>
+						</div>
 						if caseRecord.FilingNumber != nil {
 							<div>
 								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.radicado") }</label>
@@ -283,7 +346,7 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.desc") }</label>
 							<p class="text-base-content/80 whitespace-pre-wrap leading-relaxed font-sans text-sm">{ caseRecord.Description }</p>
 						</div>
-						<!-- Classification Section (merged) -->
+						<!-- Classification Section -->
 						if caseRecord.Domain != nil {
 							<div>
 								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "case.detail.domain") }</label>
@@ -311,7 +374,7 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 					</div>
 				</div>
 			</div>
-			<!-- Assignment -->
+			<!-- Assignment & Collaborators -->
 			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 				<div class="card-body p-6">
 					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
@@ -331,13 +394,13 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 									</div>
 								</div>
 							} else {
-								<p class="text-base-content/40 italic flex items-center gap-2">
-									<i data-lucide="alert-circle"></i>
+								<p class="text-base-content/40 italic flex items-center gap-2 text-sm">
+									<i data-lucide="alert-circle" class="w-4 h-4"></i>
 									{ i18n.T(ctx, "case.detail.unassigned") }
 								</p>
 							}
 						</div>
-						<!-- Collaborators Section -->
+						<!-- Collaborators -->
 						<div>
 							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-2 block">{ i18n.T(ctx, "case.detail.collaborators") }</label>
 							<div class="flex flex-wrap gap-2 mb-3">
@@ -358,7 +421,7 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 													data-confirm-target="#collaborator-response"
 													class="text-base-content/30 hover:text-error transition-colors"
 												>
-													<i data-lucide="x"></i>
+													<i data-lucide="x" class="w-3 h-3"></i>
 												</button>
 											}
 										</div>
@@ -367,15 +430,14 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 									<p class="text-base-content/40 italic text-sm">{ i18n.T(ctx, "case.detail.no_collaborators") }</p>
 								}
 							</div>
-							<!-- Add Collaborator (Admin only) -->
 							if user.Role == "admin" {
 								<div x-data={ "{ showAdd: false, availableCollaborators: [], loading: false, caseId: '" + caseRecord.ID + "' }" }>
 									<button
 										type="button"
 										@click="showAdd = !showAdd; if(showAdd && availableCollaborators.length === 0) { loading = true; fetch('/api/cases/' + caseId + '/collaborators/available').then(r => r.json()).then(data => { availableCollaborators = data; loading = false; }); }"
-										class="btn btn-info btn-xs"
+										class="btn btn-info btn-xs btn-outline rounded-sm"
 									>
-										<i data-lucide="plus" class="mr-1"></i>
+										<i data-lucide="plus" class="w-3 h-3 mr-1"></i>
 										{ i18n.T(ctx, "case.detail.add_collaborator") }
 									</button>
 									<div x-show="showAdd" x-transition class="mt-2 p-3 bg-base-50 rounded-sm border border-base-200">
@@ -404,7 +466,6 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 									</div>
 								</div>
 							}
-							<!-- Collaborator Response -->
 							<div id="collaborator-response"></div>
 						</div>
 					</div>
@@ -419,17 +480,16 @@ templ CaseResumenTab(ctx context.Context, caseRecord models.Case, user *models.U
 					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
 						{ i18n.T(ctx, "case.detail.timeline_title") }
 					</h2>
-					<div class="space-y-4">
-						<div class="flex items-center justify-between">
-							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "case.detail.opened") }</label>
-							<p class="text-base-content font-medium">{ caseRecord.OpenedAt.Format("02 Jan 2006") }</p>
+					<div
+						id="case-timeline-events-container"
+						hx-get={ fmt.Sprintf("/api/cases/%s/timeline?page=1", caseRecord.ID) }
+						hx-trigger="load, refreshTimeline from:body"
+						hx-swap="innerHTML"
+					>
+						<div class="flex flex-col items-center justify-center py-8">
+							<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
+							<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
 						</div>
-						if caseRecord.ClosedAt != nil {
-							<div class="flex items-center justify-between">
-								<label class="text-xs font-bold uppercase tracking-wider text-base-content/40">{ i18n.T(ctx, "case.detail.closed") }</label>
-								<p class="text-base-content font-medium">{ caseRecord.ClosedAt.Format("02 Jan 2006") }</p>
-							</div>
-						}
 					</div>
 				</div>
 			</div>

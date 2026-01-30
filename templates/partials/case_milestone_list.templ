@@ -8,49 +8,48 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ ServiceMilestoneList(ctx context.Context, milestones []models.ServiceMilestone, progress *services.MilestoneProgress, canEdit bool, serviceID string) {
+templ CaseMilestoneList(ctx context.Context, milestones []models.CaseMilestone, progress *services.MilestoneProgress, canEdit bool, caseID string) {
 	<!-- Progress Bar -->
-	if progress != nil {
+	if progress != nil && progress.Total > 0 {
 		<div class="mb-6 bg-base-100 p-4 rounded-sm border border-base-200">
 			<div class="flex justify-between items-center mb-2">
-				<span class="font-bold text-sm">{ i18n.T(ctx, "services.milestones.progress.title") }</span>
+				<span class="font-bold text-sm">{ i18n.T(ctx, "cases.milestones.progress.title") }</span>
 				<span class="text-sm font-mono">{ fmt.Sprintf("%d%%", progress.Percent) }</span>
 			</div>
 			<progress class="progress progress-primary w-full" value={ fmt.Sprintf("%d", progress.Percent) } max="100"></progress>
 			<div class="flex gap-4 mt-2 text-xs text-base-content/60">
-				<span>{ fmt.Sprintf("%d %s", progress.Completed, i18n.T(ctx, "services.milestones.status.completed")) }</span>
-				<span>{ fmt.Sprintf("%d %s", progress.Pending, i18n.T(ctx, "services.milestones.status.pending")) }</span>
+				<span>{ fmt.Sprintf("%d %s", progress.Completed, i18n.T(ctx, "cases.milestones.status.completed")) }</span>
+				<span>{ fmt.Sprintf("%d %s", progress.Pending, i18n.T(ctx, "cases.milestones.status.pending")) }</span>
 			</div>
 		</div>
 	}
 	<!-- Checklist -->
 	<div
-		x-data={ "{ editModalOpen: false, editMilestoneId: '', editTitle: '', editDescription: '', editDueDate: '', serviceId: '" + serviceID + "', openEdit(id, title, desc, date) { this.editMilestoneId = id; this.editTitle = title; this.editDescription = desc || ''; this.editDueDate = date || ''; this.editModalOpen = true; }, closeEdit() { this.editModalOpen = false; this.editMilestoneId = ''; }, submitEdit() { const form = document.getElementById('edit-milestone-form'); const formData = new FormData(form); const values = {}; formData.forEach((value, key) => { values[key] = value; }); htmx.ajax('PUT', '/api/services/' + this.serviceId + '/milestones/' + this.editMilestoneId, { target: '#milestones-tab-content', swap: 'innerHTML', values: values }).then(() => {}); }, onEditRequest(event) { if (event.detail.successful) { this.closeEdit(); } } }" }
+		x-data={ "{ editModalOpen: false, editMilestoneId: '', editTitle: '', editDescription: '', editDueDate: '', caseId: '" + caseID + "', openEdit(id, title, desc, date) { this.editMilestoneId = id; this.editTitle = title; this.editDescription = desc || ''; this.editDueDate = date || ''; this.editModalOpen = true; }, closeEdit() { this.editModalOpen = false; this.editMilestoneId = ''; }, submitEdit() { const form = document.getElementById('edit-case-milestone-form'); const formData = new FormData(form); const values = {}; formData.forEach((value, key) => { values[key] = value; }); htmx.ajax('PUT', '/api/cases/' + this.caseId + '/milestones/' + this.editMilestoneId, { target: '#milestones-tab-content', swap: 'innerHTML', values: values }).then(() => {}); }, onEditRequest(event) { if (event.detail.successful) { this.closeEdit(); } } }" }
 	>
 		<form 
-			id="milestone-reorder-form" 
+			id="case-milestone-reorder-form" 
 			x-init="new Sortable($el, { handle: '.drag-handle', animation: 150, ghostClass: 'bg-base-200', onEnd: function (evt) { htmx.trigger($el, 'end'); } })"
-			hx-post={ fmt.Sprintf("/api/services/%s/milestones/reorder", serviceID) } 
+			hx-post={ fmt.Sprintf("/api/cases/%s/milestones/reorder", caseID) } 
 			hx-target="#milestones-tab-content" 
 			hx-trigger="end" 
-			class="flex flex-col gap-2" 
-			id="milestone-list"
+			class="flex flex-col gap-2"
 		>
 			if len(milestones) == 0 {
 				<div class="text-center py-8 text-base-content/50 italic">
-					{ i18n.T(ctx, "services.milestones.list.empty") }
+					{ i18n.T(ctx, "cases.milestones.list.empty") }
 				</div>
 			} else {
 				for _, m := range milestones {
-					@MilestoneItem(ctx, m, canEdit)
+					@CaseMilestoneItem(ctx, m, canEdit)
 				}
 			}
 		</form>
-		@UpdateMilestoneModal(ctx)
+		@UpdateCaseMilestoneModal(ctx)
 	</div>
 }
 
-templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool) {
+templ CaseMilestoneItem(ctx context.Context, m models.CaseMilestone, canEdit bool) {
 	<div class="flex items-start gap-3 p-3 bg-base-100 rounded-sm border border-base-200 group hover:border-primary/50 transition-colors shadow-sm select-none">
 		<input type="hidden" name="ids[]" value={ m.ID }/>
 		<!-- Drag Handle -->
@@ -67,7 +66,7 @@ templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool
 					checked?={ m.Status == models.MilestoneStatusCompleted }
 					class="checkbox checkbox-primary checkbox-sm rounded-sm"
 					name="is_complete"
-					hx-patch={ fmt.Sprintf("/api/services/%s/milestones/%s/complete", m.ServiceID, m.ID) }
+					hx-patch={ fmt.Sprintf("/api/cases/%s/milestones/%s/complete", m.CaseID, m.ID) }
 					hx-vals={ fmt.Sprintf(`{"is_complete": %v}`, m.Status != models.MilestoneStatusCompleted) }
 					hx-target="#milestones-tab-content"
 				/>
@@ -95,7 +94,7 @@ templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool
 			<div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
 				<button
 					type="button"
-					@click={ fmt.Sprintf("openEdit('%s', '%s', '%s', '%s')", m.ID, m.Title, getMilestoneDescription(m), getMilestoneDueDate(m)) }
+					@click={ fmt.Sprintf("openEdit('%s', '%s', '%s', '%s')", m.ID, m.Title, getCaseMilestoneDescription(m), getCaseMilestoneDueDate(m)) }
 					class="btn btn-ghost btn-xs btn-square text-primary rounded-sm"
 					title={ i18n.T(ctx, "common.edit") }
 				>
@@ -106,8 +105,8 @@ templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool
 					class="btn btn-ghost btn-xs btn-square text-error rounded-sm"
 					@click="openConfirmationModalFromData($el)"
 					data-confirm-title={ i18n.T(ctx, "common.confirm_delete") }
-					data-confirm-message={ i18n.T(ctx, "services.milestones.delete_confirm") }
-					data-confirm-url={ fmt.Sprintf("/api/services/%s/milestones/%s", m.ServiceID, m.ID) }
+					data-confirm-message={ i18n.T(ctx, "cases.milestones.delete_confirm") }
+					data-confirm-url={ fmt.Sprintf("/api/cases/%s/milestones/%s", m.CaseID, m.ID) }
 					data-confirm-method="DELETE"
 					data-confirm-target="#milestones-tab-content"
 					title={ i18n.T(ctx, "common.delete") }
@@ -119,43 +118,38 @@ templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool
 	</div>
 }
 
-func getMilestoneDescription(m models.ServiceMilestone) string {
+func getCaseMilestoneDescription(m models.CaseMilestone) string {
 	if m.Description != nil {
 		return *m.Description
 	}
 	return ""
 }
 
-func getMilestoneDueDate(m models.ServiceMilestone) string {
+func getCaseMilestoneDueDate(m models.CaseMilestone) string {
 	if m.DueDate != nil {
 		return m.DueDate.Format("2006-01-02")
 	}
 	return ""
 }
 
-templ AddMilestoneModal(ctx context.Context, serviceID string) {
-	<!-- Add Milestone Modal -->
-	<div id="add_milestone_modal" class="hidden fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" x-data="{ close() { const modal = document.getElementById('add_milestone_modal'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; document.getElementById('add-milestone-form').reset(); } }, onAddRequest(event) { if (event.detail.successful) { this.close(); } } }" @click.self="close()">
+templ AddCaseMilestoneModal(ctx context.Context, caseID string) {
+	<div id="add_case_milestone_modal" class="hidden fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" x-data="{ close() { const modal = document.getElementById('add_case_milestone_modal'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; document.getElementById('add-case-milestone-form').reset(); } }, onAddRequest(event) { if (event.detail.successful) { this.close(); } } }" @click.self="close()">
 		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-lg p-8 shadow-2xl relative">
-			<!-- Modal Header -->
 			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
 				<h3 class="text-2xl font-serif font-bold text-base-content capitalize">
-					{ i18n.T(ctx, "services.milestones.add_title") }
+					{ i18n.T(ctx, "cases.milestones.add_title") }
 				</h3>
 				<button
 					type="button"
 					@click="close()"
 					class="btn btn-sm btn-circle btn-primary"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="x" class="w-4 h-4"></i>
 				</button>
 			</div>
-			<!-- Form -->
 			<form
-				id="add-milestone-form"
-				hx-post={ fmt.Sprintf("/api/services/%s/milestones", serviceID) }
+				id="add-case-milestone-form"
+				hx-post={ fmt.Sprintf("/api/cases/%s/milestones", caseID) }
 				hx-target="#milestones-tab-content"
 				@htmx:after-request="onAddRequest($event)"
 				class="flex flex-col gap-5"
@@ -163,7 +157,7 @@ templ AddMilestoneModal(ctx context.Context, serviceID string) {
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
-							{ i18n.T(ctx, "services.milestones.form.title") } <span class="text-error">*</span>
+							{ i18n.T(ctx, "cases.milestones.form.title") } <span class="text-error">*</span>
 						</span>
 					</label>
 					<input type="text" name="title" required class="input input-bordered w-full rounded-sm"/>
@@ -171,7 +165,7 @@ templ AddMilestoneModal(ctx context.Context, serviceID string) {
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
-							{ i18n.T(ctx, "services.milestones.form.description") }
+							{ i18n.T(ctx, "cases.milestones.form.description") }
 						</span>
 					</label>
 					<textarea name="description" rows="3" class="textarea textarea-bordered w-full rounded-sm"></textarea>
@@ -179,12 +173,11 @@ templ AddMilestoneModal(ctx context.Context, serviceID string) {
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
-							{ i18n.T(ctx, "services.milestones.form.due_date") }
+							{ i18n.T(ctx, "cases.milestones.form.due_date") }
 						</span>
 					</label>
 					<input type="date" name="due_date" class="input input-bordered w-full rounded-sm"/>
 				</div>
-				<!-- Actions -->
 				<div class="flex items-center gap-4 pt-4 border-t border-base-200 mt-2">
 					<button
 						type="button"
@@ -202,39 +195,29 @@ templ AddMilestoneModal(ctx context.Context, serviceID string) {
 	</div>
 }
 
-templ UpdateMilestoneModal(ctx context.Context) {
-	<!-- Update Milestone Modal (Alpine Controlled) -->
+templ UpdateCaseMilestoneModal(ctx context.Context) {
 	<div
 		x-show="editModalOpen"
 		style="display: none;"
 		class="fixed inset-0 bg-base-300/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
 		x-transition:enter="transition ease-out duration-200"
-		x-transition:enter-start="opacity-0"
-		x-transition:enter-end="opacity-100"
-		x-transition:leave="transition ease-in duration-100"
-		x-transition:leave-start="opacity-100"
-		x-transition:leave-end="opacity-0"
 		@click.self="closeEdit()"
 	>
-		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-lg p-8 shadow-2xl relative">
-			<!-- Modal Header -->
+		<div class="bg-base-100 rounded-sm border border-base-200 w-full max-w-lg p-8 shadow-2xl relative" @click.stop>
 			<div class="flex items-center justify-between mb-8 border-b border-base-200 pb-4">
 				<h3 class="text-2xl font-serif font-bold text-base-content capitalize">
-					{ i18n.T(ctx, "services.milestones.edit_title") }
+					{ i18n.T(ctx, "cases.milestones.edit_title") }
 				</h3>
 				<button
 					type="button"
 					@click="closeEdit()"
 					class="btn btn-sm btn-circle btn-primary"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+					<i data-lucide="x" class="w-4 h-4"></i>
 				</button>
 			</div>
-			<!-- Form -->
 			<form
-				id="edit-milestone-form"
+				id="edit-case-milestone-form"
 				@submit.prevent="submitEdit()"
 				@htmx:after-request="onEditRequest($event)"
 				class="flex flex-col gap-5"
@@ -242,7 +225,7 @@ templ UpdateMilestoneModal(ctx context.Context) {
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
-							{ i18n.T(ctx, "services.milestones.form.title") } <span class="text-error">*</span>
+							{ i18n.T(ctx, "cases.milestones.form.title") } <span class="text-error">*</span>
 						</span>
 					</label>
 					<input type="text" name="title" x-model="editTitle" required class="input input-bordered w-full rounded-sm"/>
@@ -250,7 +233,7 @@ templ UpdateMilestoneModal(ctx context.Context) {
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
-							{ i18n.T(ctx, "services.milestones.form.description") }
+							{ i18n.T(ctx, "cases.milestones.form.description") }
 						</span>
 					</label>
 					<textarea name="description" x-model="editDescription" rows="3" class="textarea textarea-bordered w-full rounded-sm"></textarea>
@@ -258,12 +241,11 @@ templ UpdateMilestoneModal(ctx context.Context) {
 				<div class="form-control">
 					<label class="label">
 						<span class="label-text font-bold uppercase tracking-widest text-xs opacity-60">
-							{ i18n.T(ctx, "services.milestones.form.due_date") }
+							{ i18n.T(ctx, "cases.milestones.form.due_date") }
 						</span>
 					</label>
 					<input type="date" name="due_date" x-model="editDueDate" class="input input-bordered w-full rounded-sm"/>
 				</div>
-				<!-- Actions -->
 				<div class="flex items-center gap-4 pt-4 border-t border-base-200 mt-2">
 					<button
 						type="button"

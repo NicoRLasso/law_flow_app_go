@@ -198,7 +198,8 @@ func GetCaseDetailHandler(c echo.Context) error {
 
 	// Render detail page
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.CaseDetail(c.Request().Context(), "Case Details | LexLegal Cloud", csrfToken, currentUser, currentFirm, caseRecord)
+	timeline := buildCaseTimeline(&caseRecord)
+	component := pages.CaseDetail(c.Request().Context(), "Case Details | LexLegal Cloud", csrfToken, currentUser, currentFirm, caseRecord, timeline)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -853,6 +854,12 @@ func CreateCaseHandler(c echo.Context) error {
 			tx.Rollback()
 			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to link subtypes")
 		}
+	}
+
+	// Create default milestones
+	if err := services.CreateDefaultCaseMilestones(tx, &newCase); err != nil {
+		tx.Rollback()
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create default milestones")
 	}
 
 	if err := tx.Commit().Error; err != nil {

@@ -945,6 +945,25 @@
     "branch": "Branch",
     "select_branch": "Select branch",
     "subtypes": "Subtypes",
+    "milestones": {
+      "add": "Add Milestone",
+      "add_title": "Add New Milestone",
+      "edit_title": "Edit Milestone",
+      "delete_confirm": "Are you sure you want to delete this milestone?",
+      "list_empty": "No milestones recorded yet.",
+      "progress": {
+        "title": "Milestone Progress"
+      },
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending"
+      },
+      "form": {
+        "title": "Title",
+        "description": "Description",
+        "due_date": "Due Date"
+      }
+    },
     "import": {
       "title": "Import Cases",
       "modal_title": "Import Cases from Excel",
