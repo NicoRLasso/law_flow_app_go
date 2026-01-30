@@ -55,7 +55,7 @@ templ AuditLogTable(ctx context.Context, logs []models.AuditLog, total int64, pa
 								if (log.Action == models.AuditActionUpdate || log.Action == models.AuditActionVisibilityChange) && (log.OldValues != "" || log.NewValues != "") {
 									<div x-data="{ open: false }">
 										<button
-											class="btn btn-xs btn-primary text-primary"
+											class="btn btn-xs btn-primary"
 											@click="open = true"
 										>
 											{ i18n.T(ctx, "audit.viewChanges") }

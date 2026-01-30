@@ -44,7 +44,7 @@ func CSPNonce(isDev bool) echo.MiddlewareFunc {
 			// We strictly use the nonce and do NOT allow 'unsafe-inline' to ensure the nonce is effective.
 			scriptSrc := fmt.Sprintf("'self' 'nonce-%s' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com https://challenges.cloudflare.com", nonce)
 
-			csp := fmt.Sprintf("default-src 'self'; script-src %s; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.r2.cloudflarestorage.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://unpkg.com https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com", scriptSrc)
+			csp := fmt.Sprintf("default-src 'self'; script-src %s; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.r2.cloudflarestorage.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://unpkg.com https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com", scriptSrc)
 
 			c.Response().Header().Set("Content-Security-Policy", csp)
 

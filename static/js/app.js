@@ -265,9 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
    GLOBAL SECURITY & UI HELPERS (CSP Compliant)
    ============================================ */
 
-// Template Editor Alpine Component
-window.templateEditor = function() {
-    return {
+// Simple Template Editor Alpine Component
+document.addEventListener('alpine:init', () => {
+    Alpine.data('simpleTemplateEditor', () => ({
         content: document.getElementById("template-editor")?.innerHTML || "",
         updateContent(html) {
             this.content = html;
@@ -295,8 +295,8 @@ window.templateEditor = function() {
                 this.content = editor.innerHTML;
             }
         }
-    };
-};
+    }));
+});
 
 // Global Confirmation Modal Helper
 let confirmationModalTriggerElement = null;
@@ -507,8 +507,8 @@ window.cancelEvent = function() {
 };
 
 // Appointment Page Alpine Helper
-window.appointmentPage = function() {
-    return {
+document.addEventListener('alpine:init', () => {
+    Alpine.data('appointmentPage', () => ({
         showCreateModal: false,
         selectedCase: '',
         selectedLawyer: '',
@@ -586,25 +586,29 @@ window.appointmentPage = function() {
                 return `
                     <button 
                         type="button"
-                        @click="selectSlot('${slot.start_time}', '${slot.end_time}')"
-                        class="btn btn-sm rounded-sm ${isSelected ? 'btn-primary' : 'btn-outline border-base-300'}"
+                        class="slot-btn btn btn-sm rounded-sm ${isSelected ? 'btn-primary' : 'btn-outline border-base-300'}"
+                        data-start="${slot.start_time}"
+                        data-end="${slot.end_time}"
                     >${timeStr}</button>
                 `;
             }).join('');
-            
-            // Re-init Alpine on new elements
-            if (window.Alpine) {
-                window.Alpine.initTree(container);
-            }
+
+            // Add click listeners for CSP compliance
+            container.querySelectorAll('.slot-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    this.selectSlot(btn.dataset.start, btn.dataset.end);
+                });
+            });
         },
-        
+
         selectSlot(start, end) {
             this.selectedStartTime = start;
             this.selectedEndTime = end;
             this.renderSlots();
         }
-    };
-};
+    }));
+});
+
 
 
 

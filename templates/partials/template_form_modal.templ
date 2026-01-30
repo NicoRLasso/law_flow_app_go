@@ -25,7 +25,7 @@ templ TemplateFormModal(ctx context.Context, template models.DocumentTemplate, c
 				hx-target="#templates-table-container"
 				hx-swap="innerHTML"
 				@htmx:after-request="if(event.detail.successful) { open = false; setTimeout(() => document.getElementById('template-modal-container').innerHTML = '', 200) }"
-				x-data="templateEditor()"
+				x-data="simpleTemplateEditor"
 				class="flex flex-col h-full"
 			>
 				<!-- Header -->

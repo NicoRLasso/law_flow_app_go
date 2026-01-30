@@ -11,7 +11,7 @@ import (
 
 templ Appointments(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
-		<div class="min-h-screen bg-base-200" x-data="appointmentPage()">
+		<div class="min-h-screen bg-base-200" x-data="appointmentPage">
 			<!-- Navigation Bar -->
 			@components.Navbar(ctx, user, firm, "/appointments")
 			<!-- Main Content -->

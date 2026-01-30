@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"law_flow_app_go/config"
 	"law_flow_app_go/db"
 	"law_flow_app_go/handlers"
@@ -151,12 +152,39 @@ func main() {
 		},
 		Store: echomiddleware.NewRateLimiterMemoryStoreWithConfig(
 			echomiddleware.RateLimiterMemoryStoreConfig{
-				Rate:      50,
-				Burst:     100,
+				Rate:      20,
+				Burst:     50,
 				ExpiresIn: 3 * time.Minute,
 			},
 		),
 	}))
+
+	// Custom HTTP Error Handler to include Request ID
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		code := http.StatusInternalServerError
+		if he, ok := err.(*echo.HTTPError); ok {
+			code = he.Code
+		}
+
+		requestID := c.Response().Header().Get(echo.HeaderXRequestID)
+		
+		// If it's an HTMX request, we might want to return a nice alert
+		if c.Request().Header.Get("HX-Request") == "true" {
+			c.HTML(code, fmt.Sprintf(`
+				<div class="alert alert-error rounded-sm shadow-lg mb-4">
+					<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+					<div>
+						<h3 class="font-bold">Error %d</h3>
+						<div class="text-xs opacity-70">ID: %s</div>
+					</div>
+				</div>
+			`, code, requestID))
+			return
+		}
+
+		// Default error response
+		e.DefaultHTTPErrorHandler(err, c)
+	}
 
 	// CORS Configuration
 	corsConfig := echomiddleware.DefaultCORSConfig
