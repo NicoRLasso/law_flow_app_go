@@ -102,7 +102,7 @@ templ ServiceTemplateSelectorModal(ctx context.Context, serviceID string, templa
 						hx-post={ "/api/services/" + serviceID + "/generate" }
 						hx-target="#service-documents-list"
 						hx-swap="innerHTML"
-						@htmx:after-request="closeTemplateSelectorModal();"
+						@htmx:after-request="if(event.detail.successful) { close(); }"
 						class="flex flex-col sm:flex-row gap-3 w-full"
 					>
 						<input type="hidden" name="template_id" x-bind:value="selectedTemplate"/>

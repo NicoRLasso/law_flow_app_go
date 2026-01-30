@@ -465,17 +465,13 @@ func RebuildFTSIndex(db *gorm.DB) error {
 		var rowid int64
 		db.Raw(`SELECT rowid FROM services_fts_mapping WHERE service_id = ?`, service.ID).Scan(&rowid)
 
-		// Get activities
-		var activities string
-		db.Raw(`SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ') FROM service_activities WHERE service_id = ?`, service.ID).Scan(&activities)
-
 		// Get milestones
 		var milestones string
 		db.Raw(`SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ') FROM service_milestones WHERE service_id = ?`, service.ID).Scan(&milestones)
 
 		// Get documents
 		var documents string
-		db.Raw(`SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ') FROM service_documents WHERE service_id = ?`, service.ID).Scan(&documents)
+		db.Raw(`SELECT GROUP_CONCAT(file_original_name || ' ' || COALESCE(description, ''), ' ') FROM service_documents WHERE service_id = ?`, service.ID).Scan(&documents)
 
 		// Insert into FTS
 		db.Exec(`
@@ -483,7 +479,7 @@ func RebuildFTSIndex(db *gorm.DB) error {
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			rowid, service.ID, service.FirmID, service.ServiceNumber, service.Title,
 			service.Description, service.Objective, service.ClientName,
-			activities, milestones, documents)
+			milestones, documents)
 	}
 
 	var casesCount, servicesCount int64
@@ -551,9 +547,8 @@ func createServicesTriggers(db *gorm.DB) error {
 				NEW.description,
 				COALESCE(NEW.objective, ''),
 				COALESCE((SELECT name FROM users WHERE id = NEW.client_id), ''),
-				COALESCE((SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ') FROM service_activities WHERE service_id = NEW.id), ''),
 				COALESCE((SELECT GROUP_CONCAT(title || ' ' || COALESCE(description, ''), ' ') FROM service_milestones WHERE service_id = NEW.id), ''),
-				COALESCE((SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ') FROM service_documents WHERE service_id = NEW.id AND deleted_at IS NULL), '')
+				COALESCE((SELECT GROUP_CONCAT(file_original_name || ' ' || COALESCE(description, ''), ' ') FROM service_documents WHERE service_id = NEW.id AND deleted_at IS NULL), '')
 			FROM services_fts_mapping m
 			WHERE m.service_id = NEW.id
 			AND NEW.deleted_at IS NULL;
@@ -633,7 +628,7 @@ func createServiceDocumentsTriggers(db *gorm.DB) error {
 		CREATE TRIGGER IF NOT EXISTS service_documents_fts_insert AFTER INSERT ON service_documents
 		BEGIN
 			UPDATE services_fts SET document_content = (
-				SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ')
+				SELECT GROUP_CONCAT(file_original_name || ' ' || COALESCE(description, ''), ' ')
 				FROM service_documents WHERE service_id = NEW.service_id AND deleted_at IS NULL
 			)
 			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
@@ -647,7 +642,7 @@ func createServiceDocumentsTriggers(db *gorm.DB) error {
 		CREATE TRIGGER IF NOT EXISTS service_documents_fts_update AFTER UPDATE ON service_documents
 		BEGIN
 			UPDATE services_fts SET document_content = (
-				SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ')
+				SELECT GROUP_CONCAT(file_original_name || ' ' || COALESCE(description, ''), ' ')
 				FROM service_documents WHERE service_id = NEW.service_id AND deleted_at IS NULL
 			)
 			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
@@ -661,7 +656,7 @@ func createServiceDocumentsTriggers(db *gorm.DB) error {
 		CREATE TRIGGER IF NOT EXISTS service_documents_fts_delete AFTER DELETE ON service_documents
 		BEGIN
 			UPDATE services_fts SET document_content = (
-				SELECT GROUP_CONCAT(name || ' ' || COALESCE(description, ''), ' ')
+				SELECT GROUP_CONCAT(file_original_name || ' ' || COALESCE(description, ''), ' ')
 				FROM service_documents WHERE service_id = OLD.service_id AND deleted_at IS NULL
 			)
 			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.service_id);

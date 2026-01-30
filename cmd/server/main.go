@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -139,7 +140,23 @@ func main() {
 	}))
 
 	e.Use(echomiddleware.Recover())
-	e.Use(echomiddleware.RateLimiter(echomiddleware.NewRateLimiterMemoryStore(10)))
+	e.Use(echomiddleware.RateLimiterWithConfig(echomiddleware.RateLimiterConfig{
+		Skipper: func(c echo.Context) bool {
+			// Skip rate limiting for static assets
+			path := c.Request().URL.Path
+			return strings.HasPrefix(path, "/static/") ||
+				path == "/robots.txt" ||
+				path == "/sitemap.xml" ||
+				path == "/favicon.ico"
+		},
+		Store: echomiddleware.NewRateLimiterMemoryStoreWithConfig(
+			echomiddleware.RateLimiterMemoryStoreConfig{
+				Rate:      50,
+				Burst:     100,
+				ExpiresIn: 3 * time.Minute,
+			},
+		),
+	}))
 
 	// CORS Configuration
 	corsConfig := echomiddleware.DefaultCORSConfig

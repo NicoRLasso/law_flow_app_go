@@ -30,9 +30,6 @@ type JudicialProcess struct {
 	LastTracking time.Time `json:"last_tracking"`
 	Status       string    `gorm:"not null;default:ACTIVE" json:"status"`
 
-	// Dates
-	LastActivityDate time.Time `json:"last_activity_date"`
-
 	// Relationships
 	CaseID string `gorm:"type:uuid;not null;index" json:"case_id"`
 	Case   Case   `gorm:"foreignKey:CaseID" json:"case,omitempty"`
