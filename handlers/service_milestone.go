@@ -127,6 +127,9 @@ func UpdateMilestoneHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update milestone")
 	}
 
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+
 	// Audit Log
 	// ...
 
@@ -215,6 +218,9 @@ func ReorderMilestonesHandler(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to reorder")
 		}
 	}
+
+	// Trigger timeline refresh
+	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
 
 	return GetServiceMilestonesHandler(c)
 }

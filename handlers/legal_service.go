@@ -9,7 +9,6 @@ import (
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
 	"net/http"
-	"sort"
 	"strconv"
 	"time"
 
@@ -117,7 +116,7 @@ func GetServiceDetailHandler(c echo.Context) error {
 	}
 
 	// Preload Milestones for timeline
-	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Milestones).Error; err != nil {
+	if err := db.DB.Where("service_id = ?", service.ID).Order("sort_order ASC").Find(&service.Milestones).Error; err != nil {
 		fmt.Printf("Error loading milestones: %v\n", err)
 	}
 
@@ -169,7 +168,7 @@ func GetServiceTimelineHandler(c echo.Context) error {
 	}
 
 	// Preload Milestones for timeline
-	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Milestones).Error; err != nil {
+	if err := db.DB.Where("service_id = ?", service.ID).Order("sort_order ASC").Find(&service.Milestones).Error; err != nil {
 		fmt.Printf("Error loading milestones: %v\n", err)
 	}
 
@@ -205,11 +204,11 @@ func GetServiceTimelineHandler(c echo.Context) error {
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
-// buildServiceTimeline creates a sorted timeline of service events
+// buildServiceTimeline creates a procedural timeline of service events
 func buildServiceTimeline(service *models.LegalService) []models.TimelineEvent {
 	var events []models.TimelineEvent
 
-	// Add service created event
+	// 1. Service Created (Always First)
 	events = append(events, models.TimelineEvent{
 		Date:        service.CreatedAt,
 		Type:        "service_created",
@@ -217,7 +216,7 @@ func buildServiceTimeline(service *models.LegalService) []models.TimelineEvent {
 		Description: "Service was created",
 	})
 
-	// Add service started event
+	// 2. Service Started (if exists)
 	if service.StartedAt != nil {
 		events = append(events, models.TimelineEvent{
 			Date:        *service.StartedAt,
@@ -227,7 +226,31 @@ func buildServiceTimeline(service *models.LegalService) []models.TimelineEvent {
 		})
 	}
 
-	// Add service completed event
+	// 3. Milestones (in sort_order as preloaded)
+	for _, milestone := range service.Milestones {
+		desc := ""
+		if milestone.Description != nil {
+			desc = *milestone.Description
+		}
+		date := service.CreatedAt
+		if milestone.DueDate != nil {
+			date = *milestone.DueDate
+		} else if milestone.Status == models.MilestoneStatusCompleted && milestone.UpdatedAt.After(service.CreatedAt) {
+			// If completed and has no due date, use updated_at as a proxy for the timeline display
+			date = milestone.UpdatedAt
+		}
+
+		events = append(events, models.TimelineEvent{
+			Date:        date,
+			Type:        "milestone",
+			Title:       milestone.Title,
+			Description: desc,
+			Status:      milestone.Status,
+			IsCompleted: milestone.Status == models.MilestoneStatusCompleted,
+		})
+	}
+
+	// 4. Service Completed (if exists)
 	if service.CompletedAt != nil {
 		events = append(events, models.TimelineEvent{
 			Date:        *service.CompletedAt,
@@ -238,41 +261,7 @@ func buildServiceTimeline(service *models.LegalService) []models.TimelineEvent {
 		})
 	}
 
-	// Add estimated due date as event
-	if service.EstimatedDueDate != nil {
-		events = append(events, models.TimelineEvent{
-			Date:        *service.EstimatedDueDate,
-			Type:        "estimated_due",
-			Title:       "Estimated Due Date",
-			Description: "Target completion date",
-		})
-	}
-
-	// Add milestones
-	for _, milestone := range service.Milestones {
-		desc := ""
-		if milestone.Description != nil {
-			desc = *milestone.Description
-		}
-		dueDate := time.Now()
-		if milestone.DueDate != nil {
-			dueDate = *milestone.DueDate
-		}
-		events = append(events, models.TimelineEvent{
-			Date:        dueDate,
-			Type:        "milestone",
-			Title:       milestone.Title,
-			Description: desc,
-			Status:      milestone.Status,
-			IsCompleted: milestone.Status == "COMPLETED",
-		})
-	}
-
-	// Sort events by date (most recent first)
-	sort.Slice(events, func(i, j int) bool {
-		return events[i].Date.After(events[j].Date)
-	})
-
+	// No global sorting by date - we maintain the procedural order of creation -> milestones -> completion
 	return events
 }
 
