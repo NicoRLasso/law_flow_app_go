@@ -139,6 +139,20 @@ func UpdateCaseHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Description is required")
 	}
 
+	// Length validation
+	if len(description) > 5000 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Description must be less than 5000 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Description must be less than 5000 characters")
+	}
+	if len(filingNumber) > 24 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="p-4 bg-red-500/20 text-red-400 rounded-lg">Filing number must be less than 24 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Filing number must be less than 24 characters")
+	}
+
 	// Validate status
 	if !models.IsValidCaseStatus(status) {
 		if c.Request().Header.Get("HX-Request") == "true" {

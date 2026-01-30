@@ -48,6 +48,38 @@ func UpdateProfileHandler(c echo.Context) error {
 	documentTypeID := strings.TrimSpace(c.FormValue("document_type_id"))
 	documentNumber := strings.TrimSpace(c.FormValue("document_number"))
 
+	// Length Validation
+	if len(name) > 255 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Name must be less than 255 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Name must be less than 255 characters")
+	}
+	if len(email) > 320 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Email must be less than 320 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Email must be less than 320 characters")
+	}
+	if len(phoneNumber) > 20 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Phone number must be less than 20 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Phone number must be less than 20 characters")
+	}
+	if len(address) > 255 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Address must be less than 255 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Address must be less than 255 characters")
+	}
+	if len(documentNumber) > 50 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Document number must be less than 50 characters</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Document number must be less than 50 characters")
+	}
+
 	// Validate required fields
 	if name == "" || email == "" || language == "" {
 		if c.Request().Header.Get("HX-Request") == "true" {

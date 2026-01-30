@@ -1,0 +1,128 @@
+package superadmin
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services"
+	"time"
+)
+
+templ SecurityDashboard(ctx context.Context, title string, csrfToken string, user *models.User, currentPath string, alerts []services.SecurityAlert, logs []models.AuditLog) {
+	@Layout(ctx, title, csrfToken, user, currentPath) {
+		<!-- Header -->
+		<div class="mb-10 border-b border-base-content/10 pb-6">
+			<p class="text-sm font-bold tracking-widest text-primary uppercase mb-2 font-sans">Security</p>
+			<h2 class="text-4xl font-serif font-bold text-base-content lg:text-5xl">Security Dashboard</h2>
+			<p class="mt-2 text-lg text-base-content/60 font-sans max-w-2xl">Monitor security events and system integrity.</p>
+		</div>
+
+		<!-- Active Alerts Section -->
+		<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm mb-12">
+			<div class="card-body p-6">
+				<h2 class="card-title text-error mb-6 flex items-center gap-2">
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+					Recent Security Alerts
+				</h2>
+				if len(alerts) == 0 {
+					<div class="alert alert-success bg-success/10 border-success/20 text-success-content rounded-sm">
+						<svg class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+						<span class="font-medium">No active security alerts detected. System is healthy.</span>
+					</div>
+				} else {
+					<div class="overflow-x-auto">
+						<table class="table w-full">
+							<thead>
+								<tr class="bg-base-200/50 text-base-content/70 border-b border-base-200">
+									<th class="font-serif font-bold uppercase tracking-wider text-xs">Time</th>
+									<th class="font-serif font-bold uppercase tracking-wider text-xs">Level</th>
+									<th class="font-serif font-bold uppercase tracking-wider text-xs">Source IP</th>
+									<th class="font-serif font-bold uppercase tracking-wider text-xs">Event</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, alert := range alerts {
+									<tr class="hover:bg-base-50 transition-colors">
+										<td class="font-mono text-xs">{ alert.Timestamp.Format(time.RFC822) }</td>
+										<td>
+											if alert.Level == "CRITICAL" {
+												<span class="badge badge-error gap-1 font-bold text-white uppercase tracking-wider text-[10px]">
+													CRITICAL
+												</span>
+											} else {
+												<span class="badge badge-warning gap-1 font-bold uppercase tracking-wider text-[10px]">
+													WARNING
+												</span>
+											}
+										</td>
+										<td class="font-mono text-sm">{ alert.IP }</td>
+										<td class="font-medium">{ alert.Reason }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</div>
+		</div>
+
+		<!-- Recent Security Logs -->
+		<div class="card bg-base-100 shadow-xl border border-base-200 rounded-sm">
+			<div class="card-body p-6">
+				<div class="flex justify-between items-center mb-6">
+					<h2 class="card-title text-base-content flex items-center gap-2">
+						<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+						Audit Log: Security Events
+					</h2>
+					<a href="/superadmin/support" class="btn btn-ghost btn-sm font-bold uppercase tracking-wider text-xs">View All Logs &rarr;</a>
+				</div>
+				
+				<div class="overflow-x-auto">
+					<table class="table w-full">
+						<thead>
+							<tr class="bg-base-200/50 text-base-content/70 border-b border-base-200">
+								<th class="font-serif font-bold uppercase tracking-wider text-xs">Time</th>
+								<th class="font-serif font-bold uppercase tracking-wider text-xs">Action</th>
+								<th class="font-serif font-bold uppercase tracking-wider text-xs">User</th>
+								<th class="font-serif font-bold uppercase tracking-wider text-xs">Details</th>
+							</tr>
+						</thead>
+						<tbody>
+							if len(logs) == 0 {
+								<tr>
+									<td colspan="4" class="text-center py-12 opacity-60 italic">No recent security logs found.</td>
+								</tr>
+							} else {
+								for _, log := range logs {
+									<tr class="hover:bg-base-50 transition-colors">
+										<td class="font-mono text-xs opacity-70">{ log.CreatedAt.Format("02 Jan 15:04") }</td>
+										<td>
+											<span class="badge badge-ghost badge-sm font-bold uppercase tracking-wider text-[10px]">{ string(log.Action) }</span>
+										</td>
+										<td>
+											if log.UserName != "" {
+												<div class="flex flex-col">
+													<span class="font-bold text-sm">{ log.UserName }</span>
+													if log.UserRole != "" {
+														<span class="text-[10px] opacity-50 uppercase tracking-wider">{ log.UserRole }</span>
+													}
+												</div>
+											} else {
+												<span class="italic opacity-50 text-sm">System/Unknown</span>
+											}
+										</td>
+										<td class="text-sm">
+											<p class="font-medium">{ log.Description }</p>
+											if log.ResourceID != "" {
+												<p class="font-mono text-[10px] opacity-50 mt-0.5">ID: { log.ResourceID }</p>
+											}
+										</td>
+									</tr>
+								}
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+}

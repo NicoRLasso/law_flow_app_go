@@ -57,10 +57,24 @@ make unit-test
 - **Exclusions:** Automatically excludes `templates`, `static`, `models`, `db`, and `config` dirs to focus on logic.
 - **Advanced Usage:** Pass arguments using `ARGS`, e.g., `make unit-test ARGS="-run TestAuth"`.
 
+## 🔒 Security
+The project includes automated security scanning tools to ensure code quality and safety.
+
+```bash
+make security
+```
+
+This command runs:
+- **[gosec](https://github.com/securego/gosec):** Static code analysis for security issues in the Go code.
+- **[govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck):** Checks for known vulnerabilities in your Go dependencies.
+
+The tools will be automatically installed if they are missing from your system.
+
 ## 🔧 Development Workflow (Makefile)
 | Command | Description |
 | :--- | :--- |
 | `make dev` | **Standard Dev:** Templ generate + Air live-reload + CSS watch. |
+| `make security` | Run security scans (gosec + govulncheck). |
 | `make unit-test` | Runs the test suite with coverage. |
 | `make generate` | Manual Templ code generation. |
 | `make fmt` | Formats all Go and Templ files. |

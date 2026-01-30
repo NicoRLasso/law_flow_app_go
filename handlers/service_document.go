@@ -214,6 +214,9 @@ func DownloadServiceDocumentHandler(c echo.Context) error {
 
 	c.Response().Header().Set("Content-Type", contentType)
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=\""+doc.FileOriginalName+"\"")
+	c.Response().Header().Set("X-Content-Type-Options", "nosniff")
+	c.Response().Header().Set("X-Download-Options", "noopen")
+	c.Response().Header().Set("X-Permitted-Cross-Domain-Policies", "none")
 	return c.Stream(http.StatusOK, contentType, reader)
 }
 
@@ -315,6 +318,7 @@ func ViewServiceDocumentHandler(c echo.Context) error {
 
 	c.Response().Header().Set("Content-Type", contentType)
 	c.Response().Header().Set("Content-Disposition", "inline; filename=\""+doc.FileOriginalName+"\"")
+	c.Response().Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'")
 
 	// Stream the file to the response
 	return c.Stream(http.StatusOK, contentType, reader)

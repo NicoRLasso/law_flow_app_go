@@ -356,6 +356,17 @@ func CreateServiceHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Missing required fields")
 	}
 
+	// Length Validation
+	if len(title) > 255 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Title must be less than 255 characters")
+	}
+	if len(description) > 5000 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Description must be less than 5000 characters")
+	}
+	if len(objective) > 5000 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Objective must be less than 5000 characters")
+	}
+
 	// Generate number
 	serviceNumber, err := services.EnsureUniqueServiceNumber(db.DB, currentFirm.ID)
 	if err != nil {
@@ -517,6 +528,17 @@ func UpdateServiceHandler(c echo.Context) error {
 	service.Title = c.FormValue("title")
 	service.Description = c.FormValue("description")
 	service.Objective = c.FormValue("objective")
+
+	// Length Validation
+	if len(service.Title) > 255 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Title must be less than 255 characters")
+	}
+	if len(service.Description) > 5000 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Description must be less than 5000 characters")
+	}
+	if len(service.Objective) > 5000 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Objective must be less than 5000 characters")
+	}
 
 	priority := c.FormValue("priority")
 	if priority != "" && models.IsValidServicePriority(priority) {

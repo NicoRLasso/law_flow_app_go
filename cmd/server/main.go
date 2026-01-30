@@ -54,6 +54,7 @@ func main() {
 		log.Printf("[WARNING] Failed to initialize subscription system: %v", err)
 	}
 	services.InitializeStorage(cfg)
+	services.InitSecurityMonitor() // Initialize Security Event Monitor
 	middleware.InitAssetVersions()
 	checkSensitiveConfig(cfg)
 	e := echo.New()
@@ -61,6 +62,7 @@ func main() {
 	e.HideBanner = true
 	e.Use(echomiddleware.BodyLimit("2M"))
 	e.Use(echomiddleware.Gzip())
+	e.Use(echomiddleware.RequestID()) // Generate Request ID early
 	if cfg.Environment == "production" {
 		logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 		slog.SetDefault(logger)
@@ -98,14 +100,6 @@ func main() {
 				return nil
 			},
 		}))
-		e.Use(middleware.CSPNonce(cfg.Environment != "production"))
-		e.Use(echomiddleware.SecureWithConfig(echomiddleware.SecureConfig{
-			XSSProtection:         "1; mode=block",
-			ContentTypeNosniff:    "nosniff",
-			XFrameOptions:         "SAMEORIGIN",
-			HSTSMaxAge:            31536000,
-			HSTSExcludeSubdomains: true,
-		}))
 	} else {
 		logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 		slog.SetDefault(logger)
@@ -133,13 +127,34 @@ func main() {
 			},
 		}))
 	}
+
+	// Security Headers (CSP & HSTS) - Applied in ALL environments
+	e.Use(middleware.CSPNonce(cfg.Environment != "production"))
+	e.Use(echomiddleware.SecureWithConfig(echomiddleware.SecureConfig{
+		XSSProtection:         "1; mode=block",
+		ContentTypeNosniff:    "nosniff",
+		XFrameOptions:         "SAMEORIGIN",
+		HSTSMaxAge:            31536000,
+		HSTSExcludeSubdomains: true,
+	}))
+
 	e.Use(echomiddleware.Recover())
-	e.Use(echomiddleware.RateLimiter(echomiddleware.NewRateLimiterMemoryStore(20)))
+	e.Use(echomiddleware.RateLimiter(echomiddleware.NewRateLimiterMemoryStore(10)))
+
+	// CORS Configuration
 	corsConfig := echomiddleware.DefaultCORSConfig
 	if cfg.Environment == "production" {
 		corsConfig.AllowOrigins = cfg.AllowedOrigins
+	} else {
+		// Restrictive CORS for development instead of wildcards
+		corsConfig.AllowOrigins = []string{
+			"http://localhost:" + cfg.ServerPort,
+			"http://127.0.0.1:" + cfg.ServerPort,
+			"http://localhost:3000", // Common frontend port
+		}
 	}
 	e.Use(echomiddleware.CORSWithConfig(corsConfig))
+
 	e.Use(echomiddleware.CSRFWithConfig(echomiddleware.CSRFConfig{
 		TokenLookup:    "header:X-CSRF-Token,form:_csrf",
 		CookieName:     "_csrf",
@@ -213,6 +228,7 @@ func main() {
 			return c.Redirect(http.StatusMovedPermanently, "/superadmin/dashboard")
 		})
 		superadminRoutes.GET("/dashboard", handlers.SuperadminDashboardHandler)
+		superadminRoutes.GET("/security", handlers.SuperadminSecurityDashboardHandler)
 		superadminRoutes.GET("/users", handlers.SuperadminUsersPageHandler)
 		superadminRoutes.GET("/users/list", handlers.SuperadminGetUsersListHTMX)
 		superadminRoutes.GET("/users/new", handlers.SuperadminGetUserFormNew)
@@ -222,6 +238,7 @@ func main() {
 		superadminRoutes.PATCH("/users/:id/toggle-active", handlers.SuperadminToggleUserActive)
 		superadminRoutes.GET("/users/:id/delete-confirm", handlers.SuperadminGetUserDeleteConfirm)
 		superadminRoutes.DELETE("/users/:id", handlers.SuperadminDeleteUser)
+		superadminRoutes.PATCH("/users/:id/anonymize", handlers.SuperadminAnonymizeUser)
 		superadminRoutes.GET("/firms", handlers.SuperadminFirmsPageHandler)
 		superadminRoutes.GET("/firms/list", handlers.SuperadminGetFirmsListHTMX)
 		superadminRoutes.GET("/firms/new", handlers.SuperadminGetFirmFormNew)
@@ -489,7 +506,7 @@ func main() {
 	}
 
 	go func() {
-		ticker := time.NewTicker(1 * time.Hour)
+		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 
 		for range ticker.C {

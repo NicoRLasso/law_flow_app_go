@@ -174,7 +174,7 @@ func ImportCasesHandler(c echo.Context) error {
 	summaryHtml += `
 		<div class="flex justify-between items-center pt-4">
 			<span class="text-xs text-gray-500">You can close this window. The import will continue in the background.</span>
-			<button onclick="document.getElementById('import-cases-modal').remove()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white text-sm transition-colors">
+			<button @click="document.getElementById('import-cases-modal').remove()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white text-sm transition-colors">
 				` + i18n.T(ctx, "common.close") + `
 			</button>
 		</div>

@@ -41,13 +41,8 @@ func CSPNonce(isDev bool) echo.MiddlewareFunc {
 
 			// Construct CSP with Nonce
 			// Note: 'unsafe-eval' is currently preserved for Alpine.js support.
-			// We remove 'unsafe-inline' and replace it with 'nonce-{nonce}'.
+			// We strictly use the nonce and do NOT allow 'unsafe-inline' to ensure the nonce is effective.
 			scriptSrc := fmt.Sprintf("'self' 'nonce-%s' 'unsafe-eval' https://unpkg.com https://static.cloudflareinsights.com https://challenges.cloudflare.com", nonce)
-
-			// In development, we might need unsafe-inline for tools like templ proxy or other hot-reloaders
-			if isDev {
-				scriptSrc += " 'unsafe-inline'"
-			}
 
 			csp := fmt.Sprintf("default-src 'self'; script-src %s; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.r2.cloudflarestorage.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://unpkg.com https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com", scriptSrc)
 

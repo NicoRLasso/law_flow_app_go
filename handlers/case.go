@@ -386,6 +386,9 @@ func DownloadCaseDocumentHandler(c echo.Context) error {
 
 	// Set the Content-Disposition header to suggest the original filename
 	c.Response().Header().Set("Content-Disposition", "attachment; filename=\""+document.FileOriginalName+"\"")
+	c.Response().Header().Set("X-Content-Type-Options", "nosniff")
+	c.Response().Header().Set("X-Download-Options", "noopen")
+	c.Response().Header().Set("X-Permitted-Cross-Domain-Policies", "none")
 
 	// Serve file from local storage
 	return c.File(localPath)
@@ -451,6 +454,7 @@ func ViewCaseDocumentHandler(c echo.Context) error {
 	// Set headers for inline PDF display
 	c.Response().Header().Set("Content-Type", contentType)
 	c.Response().Header().Set("Content-Disposition", "inline; filename=\""+document.FileOriginalName+"\"")
+	c.Response().Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'")
 
 	// Stream the file to the response
 	return c.Stream(http.StatusOK, contentType, reader)
@@ -788,6 +792,17 @@ func CreateCaseHandler(c echo.Context) error {
 	// Validation
 	if clientID == "" || clientRole == "" || description == "" || domainID == "" || branchID == "" || assignedToID == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "Missing required fields")
+	}
+
+	// Length Validation
+	if len(title) > 255 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Title must be less than 255 characters")
+	}
+	if len(filingNumber) > 24 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Filing number must be less than 24 characters")
+	}
+	if len(description) > 5000 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Description must be less than 5000 characters")
 	}
 
 	// Generate unique case number

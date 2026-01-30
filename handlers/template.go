@@ -158,6 +158,18 @@ func CreateTemplateHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Name is required")
 	}
 
+	// Length Validation
+	if len(name) > 255 {
+		return c.String(http.StatusBadRequest, "Name must be less than 255 characters")
+	}
+	if len(description) > 500 {
+		return c.String(http.StatusBadRequest, "Description must be less than 500 characters")
+	}
+	// Limit content size to prevent DoS (500KB)
+	if len(content) > 500000 {
+		return c.String(http.StatusBadRequest, "Content is too large (max 500KB)")
+	}
+
 	if content == "" {
 		content = "<p></p>" // Default empty content
 	}
@@ -228,6 +240,11 @@ func UpdateTemplateHandler(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Name is required")
 	}
 
+	// Length Validation
+	if len(name) > 255 {
+		return c.String(http.StatusBadRequest, "Name must be less than 255 characters")
+	}
+
 	template.Name = name
 
 	if isMetadataUpdate {
@@ -238,6 +255,9 @@ func UpdateTemplateHandler(c echo.Context) error {
 		template.IsActive = isActive
 
 		if description != "" {
+			if len(description) > 500 {
+				return c.String(http.StatusBadRequest, "Description must be less than 500 characters")
+			}
 			template.Description = &description
 		} else {
 			template.Description = nil
@@ -259,6 +279,11 @@ func UpdateTemplateHandler(c echo.Context) error {
 	} else {
 		// Content update (from Editor): Update Content and Version
 		// Preserve Metadata (IsActive, Description, Category, etc.)
+
+		// Length Validation
+		if len(content) > 500000 {
+			return c.String(http.StatusBadRequest, "Content is too large (max 500KB)")
+		}
 
 		// Sanitize content (XSS protection)
 		p := bluemonday.UGCPolicy()

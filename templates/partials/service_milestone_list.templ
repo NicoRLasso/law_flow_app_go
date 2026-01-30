@@ -9,7 +9,7 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ ServiceMilestoneList(ctx context.Context, milestones []models.ServiceMilestone, progress *services.MilestoneProgress, canEdit bool) {
+templ ServiceMilestoneList(ctx context.Context, milestones []models.ServiceMilestone, progress *services.MilestoneProgress, canEdit bool, serviceID string) {
 	<!-- Progress Bar -->
 	if progress != nil {
 		<div class="mb-6 bg-base-100 p-4 rounded-sm border border-base-200">
@@ -47,13 +47,15 @@ templ ServiceMilestoneList(ctx context.Context, milestones []models.ServiceMiles
 		}
 	}"
 	>
-		<form id="milestone-reorder-form" hx-post={ fmt.Sprintf("/api/services/%s/milestones/reorder", func() string {
-	if len(milestones) > 0 {
-		return milestones[0].ServiceID
-	} else {
-		return ""
-	}
-}()) } hx-target="#milestones-tab-content" hx-trigger="end" class="flex flex-col gap-2" id="milestone-list">
+		<form 
+			id="milestone-reorder-form" 
+			x-init="new Sortable($el, { handle: '.drag-handle', animation: 150, ghostClass: 'bg-base-200', onEnd: function (evt) { htmx.trigger($el, 'end'); } })"
+			hx-post={ fmt.Sprintf("/api/services/%s/milestones/reorder", serviceID) } 
+			hx-target="#milestones-tab-content" 
+			hx-trigger="end" 
+			class="flex flex-col gap-2" 
+			id="milestone-list"
+		>
 			if len(milestones) == 0 {
 				<div class="text-center py-8 text-base-content/50 italic">
 					{ i18n.T(ctx, "services.milestones.list.empty") }
@@ -66,23 +68,6 @@ templ ServiceMilestoneList(ctx context.Context, milestones []models.ServiceMiles
 		</form>
 		@UpdateMilestoneModal(ctx)
 	</div>
-	if canEdit && len(milestones) > 0 {
-		<script nonce={ middleware.GetNonce(ctx) }>
-			(function() {
-				const el = document.getElementById('milestone-reorder-form');
-				if (el) {
-					new Sortable(el, {
-						handle: '.drag-handle',
-						animation: 150,
-						ghostClass: 'bg-base-200',
-						onEnd: function (evt) {
-							htmx.trigger(el, 'end');
-						}
-					});
-				}
-			})();
-		</script>
-	}
 }
 
 templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool) {
@@ -139,7 +124,7 @@ templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool
 				<button
 					type="button"
 					class="btn btn-ghost btn-xs btn-square text-error rounded-sm"
-					onclick="openConfirmationModalFromData(this)"
+					@click="openConfirmationModalFromData($el)"
 					data-confirm-title={ i18n.T(ctx, "common.confirm_delete") }
 					data-confirm-message={ i18n.T(ctx, "services.milestones.delete_confirm") }
 					data-confirm-url={ fmt.Sprintf("/api/services/%s/milestones/%s", m.ServiceID, m.ID) }

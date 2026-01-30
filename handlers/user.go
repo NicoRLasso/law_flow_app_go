@@ -134,6 +134,26 @@ func CreateUser(c echo.Context) error {
 	isActiveStr := c.FormValue("is_active")
 	user.IsActive = isActiveStr == "true"
 
+	// Length Validation
+	if len(user.Name) > 255 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Name must be less than 255 characters"})
+	}
+	if len(user.Email) > 320 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Email must be less than 320 characters"})
+	}
+	if len(user.Password) > 72 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Password must be less than 72 characters"})
+	}
+	if user.Address != nil && len(*user.Address) > 255 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Address must be less than 255 characters"})
+	}
+	if user.PhoneNumber != nil && len(*user.PhoneNumber) > 20 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Phone number must be less than 20 characters"})
+	}
+	if user.DocumentNumber != nil && len(*user.DocumentNumber) > 50 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Document number must be less than 50 characters"})
+	}
+
 	// Validate required fields
 	if user.Email == "" || user.Password == "" || user.Name == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{
@@ -289,17 +309,34 @@ func UpdateUser(c echo.Context) error {
 	}
 	user.IsActive = isActiveStr == "true"
 
+	// Length Validation
+	if len(name) > 255 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Name must be less than 255 characters"})
+	}
+	if len(email) > 320 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Email must be less than 320 characters"})
+	}
+
 	// Handle optional fields
 	if address := c.FormValue("address"); address != "" {
+		if len(address) > 255 {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Address must be less than 255 characters"})
+		}
 		user.Address = &address
 	}
 	if phoneNumber := c.FormValue("phone_number"); phoneNumber != "" {
+		if len(phoneNumber) > 20 {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Phone number must be less than 20 characters"})
+		}
 		user.PhoneNumber = &phoneNumber
 	}
 	if documentTypeID := c.FormValue("document_type_id"); documentTypeID != "" {
 		user.DocumentTypeID = &documentTypeID
 	}
 	if documentNumber := c.FormValue("document_number"); documentNumber != "" {
+		if len(documentNumber) > 50 {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Document number must be less than 50 characters"})
+		}
 		user.DocumentNumber = &documentNumber
 	}
 

@@ -92,6 +92,7 @@ func LoginPostHandler(c echo.Context) error {
 
 	// Verify password result
 	if !passwordValid {
+		services.Monitor.TrackFailedLogin(c.RealIP()) // Track security event
 		// Increment failed login attempts
 		user.FailedLoginAttempts++
 		if user.FailedLoginAttempts >= 5 {

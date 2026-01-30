@@ -130,8 +130,33 @@ func (r *R2Storage) IsConfigured() bool {
 	return r.client != nil && r.bucket != ""
 }
 
+// ValidatePath checks if the path is safe
+func ValidatePath(path string) error {
+	// Prevent directory traversal
+	if strings.Contains(path, "..") {
+		return fmt.Errorf("invalid path: directory traversal detected")
+	}
+	
+	// Basic whitelist check (alphanumeric, /, _, -, .)
+	// This is strict but safe. Adjust regex if you need more characters.
+	// We iterate instead of regex for simplicity/performance in this context
+	for _, char := range path {
+		if !((char >= 'a' && char <= 'z') ||
+			(char >= 'A' && char <= 'Z') ||
+			(char >= '0' && char <= '9') ||
+			char == '/' || char == '_' || char == '-' || char == '.') {
+			return fmt.Errorf("invalid path: contains illegal characters")
+		}
+	}
+
+	return nil
+}
+
 // Upload uploads a file to R2
 func (r *R2Storage) Upload(ctx context.Context, file *multipart.FileHeader, key string) (*StorageResult, error) {
+	if err := ValidatePath(key); err != nil {
+		return nil, err
+	}
 	src, err := file.Open()
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -148,6 +173,9 @@ func (r *R2Storage) Upload(ctx context.Context, file *multipart.FileHeader, key 
 
 // UploadReader uploads content from a reader to R2
 func (r *R2Storage) UploadReader(ctx context.Context, reader io.Reader, key string, contentType string, size int64) (*StorageResult, error) {
+	if err := ValidatePath(key); err != nil {
+		return nil, err
+	}
 	input := &s3.PutObjectInput{
 		Bucket:        aws.String(r.bucket),
 		Key:           aws.String(key),
@@ -172,6 +200,9 @@ func (r *R2Storage) UploadReader(ctx context.Context, reader io.Reader, key stri
 
 // Delete removes a file from R2
 func (r *R2Storage) Delete(ctx context.Context, key string) error {
+	if err := ValidatePath(key); err != nil {
+		return err
+	}
 	input := &s3.DeleteObjectInput{
 		Bucket: aws.String(r.bucket),
 		Key:    aws.String(key),
@@ -187,6 +218,9 @@ func (r *R2Storage) Delete(ctx context.Context, key string) error {
 
 // Get retrieves a file from R2 and returns a reader
 func (r *R2Storage) Get(ctx context.Context, key string) (io.ReadCloser, string, error) {
+	if err := ValidatePath(key); err != nil {
+		return nil, "", err
+	}
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(r.bucket),
 		Key:    aws.String(key),
@@ -207,6 +241,9 @@ func (r *R2Storage) Get(ctx context.Context, key string) (io.ReadCloser, string,
 
 // GetSignedURL generates a presigned URL for temporary access
 func (r *R2Storage) GetSignedURL(ctx context.Context, key string, expiration time.Duration) (string, error) {
+	if err := ValidatePath(key); err != nil {
+		return "", err
+	}
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(r.bucket),
 		Key:    aws.String(key),
@@ -246,6 +283,9 @@ func (l *LocalStorage) IsConfigured() bool {
 
 // Upload saves a file to local filesystem
 func (l *LocalStorage) Upload(ctx context.Context, file *multipart.FileHeader, key string) (*StorageResult, error) {
+	if err := ValidatePath(key); err != nil {
+		return nil, err
+	}
 	src, err := file.Open()
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -262,6 +302,9 @@ func (l *LocalStorage) Upload(ctx context.Context, file *multipart.FileHeader, k
 
 // UploadReader saves content from a reader to local filesystem
 func (l *LocalStorage) UploadReader(ctx context.Context, reader io.Reader, key string, contentType string, size int64) (*StorageResult, error) {
+	if err := ValidatePath(key); err != nil {
+		return nil, err
+	}
 	fullPath := filepath.Join(l.baseDir, key)
 
 	// Create directory structure
@@ -294,6 +337,9 @@ func (l *LocalStorage) UploadReader(ctx context.Context, reader io.Reader, key s
 
 // Delete removes a file from local filesystem
 func (l *LocalStorage) Delete(ctx context.Context, key string) error {
+	if err := ValidatePath(key); err != nil {
+		return err
+	}
 	fullPath := filepath.Join(l.baseDir, key)
 	if err := os.Remove(fullPath); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to delete file: %w", err)
@@ -303,6 +349,9 @@ func (l *LocalStorage) Delete(ctx context.Context, key string) error {
 
 // Get retrieves a file from local filesystem and returns a reader
 func (l *LocalStorage) Get(ctx context.Context, key string) (io.ReadCloser, string, error) {
+	if err := ValidatePath(key); err != nil {
+		return nil, "", err
+	}
 	fullPath := filepath.Join(l.baseDir, key)
 
 	file, err := os.Open(fullPath)

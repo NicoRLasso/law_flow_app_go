@@ -64,3 +64,12 @@ docker-run: ## Run Docker container locally
 dupl: ## Find duplicate code (threshold: 100 tokens), excluding templ files
 	@test -f $(HOME)/go/bin/dupl || { echo "Installing dupl..."; go install github.com/mibk/dupl@latest; }
 	find . -type f -name "*.go" -not -name "*_templ.go" | $(HOME)/go/bin/dupl -files -t 100
+
+security: ## Run security scans (gosec, govulncheck)
+	@echo "Running security checks..."
+	@test -f $(HOME)/go/bin/gosec || { echo "Installing gosec..."; go install github.com/securego/gosec/v2/cmd/gosec@latest; }
+	@test -f $(HOME)/go/bin/govulncheck || { echo "Installing govulncheck..."; go install golang.org/x/vuln/cmd/govulncheck@latest; }
+	@echo ">> Running gosec..."
+	@$(HOME)/go/bin/gosec -exclude-dir=templates -exclude-dir=node_modules ./...
+	@echo ">> Running govulncheck..."
+	@$(HOME)/go/bin/govulncheck ./...

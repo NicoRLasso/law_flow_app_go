@@ -33,6 +33,16 @@ templ UserDeleteConfirmModal(ctx context.Context, user *models.User) {
 					{ i18n.T(ctx, "superadmin.users.delete_modal.cancel") }
 				</button>
 				<button
+					hx-patch={ "/superadmin/users/" + user.ID + "/anonymize" }
+					hx-target="#users-table-container"
+					hx-swap="innerHTML"
+					hx-on::after-request="document.getElementById('modal-container').innerHTML = ''"
+					class="btn btn-error btn-outline font-bold uppercase tracking-widest rounded-sm mr-2"
+					title="Permanently remove PII data (GDPR)"
+				>
+					GDPR Anonymize
+				</button>
+				<button
 					hx-delete={ "/superadmin/users/" + user.ID }
 					hx-target="#users-table-container"
 					hx-swap="innerHTML"

@@ -39,7 +39,7 @@ func GetServiceMilestonesHandler(c echo.Context) error {
 	}
 
 	// Note: partials.ServiceMilestoneList will be created in Phase 4
-	component := partials.ServiceMilestoneList(c.Request().Context(), milestones, progress, currentUser.Role != "client")
+	component := partials.ServiceMilestoneList(c.Request().Context(), milestones, progress, currentUser.Role != "client", serviceID)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
