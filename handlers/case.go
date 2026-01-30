@@ -605,15 +605,9 @@ func UploadCaseDocumentHandler(c echo.Context) error {
 	// Return success message and trigger document list reload
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.HTML(http.StatusOK, `
-			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4">
+			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4" x-init="setTimeout(() => { closeUploadModal(); htmx.trigger('#case-documents-list', 'loadDocuments'); }, 1000)">
 				Document uploaded successfully!
 			</div>
-			<script>
-				setTimeout(function() {
-					closeUploadModal();
-					htmx.trigger('#case-documents-list', 'loadDocuments');
-				}, 1000);
-			</script>
 		`)
 	}
 

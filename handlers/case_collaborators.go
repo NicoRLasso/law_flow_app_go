@@ -100,14 +100,9 @@ func AddCaseCollaboratorHandler(c echo.Context) error {
 	// Return success and trigger page reload
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.HTML(http.StatusOK, `
-			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4">
+			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4" x-init="setTimeout(() => window.location.reload(), 1000)">
 				Collaborator added successfully!
 			</div>
-			<script>
-				setTimeout(function() {
-					window.location.reload();
-				}, 1000);
-			</script>
 		`)
 	}
 
@@ -161,14 +156,9 @@ func RemoveCaseCollaboratorHandler(c echo.Context) error {
 	// Return success and trigger page reload
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.HTML(http.StatusOK, `
-			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4">
+			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4" x-init="setTimeout(() => window.location.reload(), 1000)">
 				Collaborator removed successfully!
 			</div>
-			<script>
-				setTimeout(function() {
-					window.location.reload();
-				}, 1000);
-			</script>
 		`)
 	}
 

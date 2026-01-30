@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"law_flow_app_go/models"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -28,14 +29,20 @@ type ServiceFilters struct {
 }
 
 // GenerateServiceNumber generates a unique service number for a firm
-// Format: SVC-{YEAR}-{SEQUENCE}
-// Example: SVC-2026-00042
+// Format: {FIRM_SLUG}-SVC-{YEAR}-{SEQUENCE}
+// Example: LAW-SVC-2026-00042
 func GenerateServiceNumber(db *gorm.DB, firmID string) (string, error) {
+	// Fetch firm to get slug
+	var firm models.Firm
+	if err := db.First(&firm, "id = ?", firmID).Error; err != nil {
+		return "", fmt.Errorf("failed to fetch firm: %w", err)
+	}
+
 	currentYear := time.Now().Year()
 
 	// Find the highest sequence number for this firm and year
 	var maxService models.LegalService
-	prefix := fmt.Sprintf("SVC-%d-", currentYear)
+	prefix := fmt.Sprintf("%s-SVC-%d-", firm.Slug, currentYear)
 	err := db.Where("firm_id = ? AND service_number LIKE ?", firmID, prefix+"%").
 		Order("service_number DESC").
 		First(&maxService).Error
@@ -44,8 +51,13 @@ func GenerateServiceNumber(db *gorm.DB, firmID string) (string, error) {
 	if err == nil {
 		// Parse sequence from existing service number
 		var parsedSeq int
-		_, scanErr := fmt.Sscanf(maxService.ServiceNumber, "SVC-%d-%d", new(int), &parsedSeq)
-		if scanErr == nil {
+		// Scan format: {SLUG}-SVC-{YEAR}-{SEQ}
+		// Since SLUG can contain dashes, we should be careful, but fmt.Sscanf might work if we know the structure.
+		// A safer way is to find the last dash.
+		parts := strings.Split(maxService.ServiceNumber, "-")
+		if len(parts) >= 4 {
+			seqStr := parts[len(parts)-1]
+			fmt.Sscanf(seqStr, "%d", &parsedSeq)
 			sequence = parsedSeq + 1
 		}
 	} else if err != gorm.ErrRecordNotFound {
@@ -53,7 +65,7 @@ func GenerateServiceNumber(db *gorm.DB, firmID string) (string, error) {
 	}
 
 	// Format service number with zero-padded sequence
-	serviceNumber := fmt.Sprintf("SVC-%d-%05d", currentYear, sequence)
+	serviceNumber := fmt.Sprintf("%s-SVC-%d-%05d", firm.Slug, currentYear, sequence)
 	return serviceNumber, nil
 }
 
@@ -91,6 +103,7 @@ func CanAddService(db *gorm.DB, firmID string) (*LimitCheckResult, error) {
 func GetServiceByID(db *gorm.DB, firmID, serviceID string) (*models.LegalService, error) {
 	var service models.LegalService
 	err := db.Where("firm_id = ? AND id = ?", firmID, serviceID).
+		Preload("Firm").
 		Preload("Client").
 		Preload("Client.DocumentType").
 		Preload("ServiceType").

@@ -72,7 +72,7 @@ templ CaseLogList(ctx context.Context, logs []models.CaseLog, caseID string, cur
 										</button>
 										<button
 											class="btn btn-error btn-xs"
-											{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "bitacora.delete_confirm_title") + "', message: '" + i18n.T(ctx, "bitacora.delete_confirm") + "', confirmUrl: '/api/cases/" + caseID + "/logs/" + log.ID + "', target: '#case-logs-container', swap: 'outerHTML' }, this)" }... }
+											@click={ "openConfirmationModal({ title: '" + i18n.T(ctx, "bitacora.delete_confirm_title") + "', message: '" + i18n.T(ctx, "bitacora.delete_confirm") + "', confirmUrl: '/api/cases/" + caseID + "/logs/" + log.ID + "', target: '#case-logs-container', swap: 'outerHTML' }, $el)" }
 											title={ i18n.T(ctx, "common.delete") }
 										>
 											<i data-lucide="trash-2"></i>

@@ -113,7 +113,7 @@ templ CaseCreateModal(ctx context.Context, user *models.User, clients []models.U
 								class="input input-bordered w-full rounded-xl focus:input-primary h-12"
 								inputmode="numeric"
 								pattern="[0-9]*"
-								oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+								@input="$el.value = $el.value.replace(/[^0-9]/g, '')"
 							/>
 						</div>
 					</div>

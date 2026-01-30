@@ -2,7 +2,6 @@ package components
 
 import (
 	"context"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/services/i18n"
 )
 
@@ -55,64 +54,4 @@ templ ConfirmationModal(ctx context.Context) {
 			</div>
 		</div>
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-		let confirmationModalTriggerElement = null;
-
-		function openConfirmationModal(options, triggerElement) {
-			const modal = document.getElementById('confirmation-modal');
-			const titleEl = document.getElementById('confirmation-modal-title');
-			const msgEl = document.getElementById('confirmation-modal-message');
-			const confirmBtn = document.getElementById('confirmation-modal-btn');
-
-			// Store the element that triggered the modal for relative target resolution
-			confirmationModalTriggerElement = triggerElement || event.currentTarget;
-
-			if (options.title) titleEl.textContent = options.title;
-			if (options.message) msgEl.textContent = options.message;
-
-			// Replace button to remove old event listeners
-			const newBtn = confirmBtn.cloneNode(true);
-			confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-
-			newBtn.onclick = function() {
-				if (options.confirmUrl) {
-					// Resolve target relative to the original trigger element
-					let targetEl = null;
-					if (options.target && confirmationModalTriggerElement) {
-						if (options.target.startsWith('closest ')) {
-							const selector = options.target.replace('closest ', '');
-							targetEl = confirmationModalTriggerElement.closest(selector);
-						} else {
-							targetEl = document.querySelector(options.target);
-						}
-					}
-
-					htmx.ajax(options.confirmMethod || 'DELETE', options.confirmUrl, {
-						target: targetEl || options.target,
-						swap: options.swap || 'innerHTML'
-					});
-				}
-				closeConfirmationModal();
-			};
-
-			modal.classList.remove('hidden');
-		}
-
-		function openConfirmationModalFromData(el) {
-			openConfirmationModal({
-				title: el.getAttribute('data-confirm-title'),
-				message: el.getAttribute('data-confirm-message'),
-				confirmUrl: el.getAttribute('data-confirm-url'),
-				confirmMethod: el.getAttribute('data-confirm-method') || 'DELETE',
-				target: el.getAttribute('data-confirm-target'),
-				swap: el.getAttribute('data-confirm-swap')
-			}, el);
-		}
-
-		function closeConfirmationModal() {
-			const modal = document.getElementById('confirmation-modal');
-			if (modal) modal.classList.add('hidden');
-			confirmationModalTriggerElement = null;
-		}
-	</script>
 }

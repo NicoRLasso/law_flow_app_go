@@ -2,7 +2,6 @@ package partials
 
 import (
 	"context"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"strconv"
@@ -61,6 +60,7 @@ templ CaseLogModal(ctx context.Context, log models.CaseLog, documents []models.C
 							required
 							placeholder={ i18n.T(ctx, "bitacora.title_placeholder") }
 							class="input input-bordered w-full rounded-sm focus:input-primary"
+							x-init="setTimeout(() => $el.focus(), 100)"
 						/>
 					</div>
 					<!-- Type and Date Row -->
@@ -208,12 +208,6 @@ templ CaseLogModal(ctx context.Context, log models.CaseLog, documents []models.C
 			</form>
 		</div>
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-        setTimeout(() => {
-            const titleInput = document.querySelector('input[name="title"]');
-            if (titleInput) titleInput.focus();
-        }, 100);
-    </script>
 }
 
 func formatDateTimeLocal(t *time.Time) string {

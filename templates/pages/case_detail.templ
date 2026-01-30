@@ -2,7 +2,6 @@ package pages
 
 import (
 	"context"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -24,7 +23,41 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 			}())
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
-				<div class="w-full" x-data="{ activeTab: 'summary', sidebarOpen: false }">
+				<div class="w-full" x-data="{ 
+					activeTab: 'summary', 
+					sidebarOpen: false,
+					openUploadModal() {
+						const modal = document.getElementById('upload-document-modal');
+						modal.classList.remove('hidden');
+						modal.style.display = 'flex';
+					},
+					closeUploadModal() {
+						const modal = document.getElementById('upload-document-modal');
+						modal.classList.add('hidden');
+						modal.style.display = 'none';
+						document.getElementById('upload-form').reset();
+					},
+					openPDFViewerModal(docID, caseID, fileName) {
+						const modal = document.getElementById('pdf-viewer-modal');
+						const embedElement = document.getElementById('pdf-embed');
+						const titleElement = document.getElementById('pdf-title');
+						titleElement.textContent = fileName;
+						embedElement.src = `/api/cases/${caseID}/documents/${docID}/view`;
+						modal.classList.remove('hidden');
+						modal.style.display = 'flex';
+					},
+					closePDFViewerModal() {
+						const modal = document.getElementById('pdf-viewer-modal');
+						const embedElement = document.getElementById('pdf-embed');
+						modal.classList.add('hidden');
+						modal.style.display = 'none';
+						embedElement.src = '';
+					},
+					closeTemplateSelectorModal() {
+						const container = document.getElementById('template-modal-container');
+						container.innerHTML = '';
+					}
+				}">
 					<!-- Header with Back Button -->
 					<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
 						<div class="flex items-start sm:items-center gap-4 md:gap-6">
@@ -196,52 +229,6 @@ templ CaseDetail(ctx context.Context, title string, csrfToken string, user *mode
 							}
 						</div>
 					</div>
-					<script nonce={ middleware.GetNonce(ctx) }>
-						function openUploadModal() {
-							const modal = document.getElementById('upload-document-modal');
-							modal.classList.remove('hidden');
-							modal.style.display = 'flex';
-						}
-
-						function closeUploadModal() {
-							const modal = document.getElementById('upload-document-modal');
-							modal.classList.add('hidden');
-							modal.style.display = 'none';
-							document.getElementById('upload-form').reset();
-						}
-
-						function openPDFViewerModal(docID, caseID, fileName) {
-							const modal = document.getElementById('pdf-viewer-modal');
-							const embedElement = document.getElementById('pdf-embed');
-							const titleElement = document.getElementById('pdf-title');
-
-							// Set document title
-							titleElement.textContent = fileName;
-
-							// Load PDF
-							embedElement.src = `/api/cases/${caseID}/documents/${docID}/view`;
-
-							// Show modal
-							modal.classList.remove('hidden');
-							modal.style.display = 'flex';
-						}
-
-						function closePDFViewerModal() {
-							const modal = document.getElementById('pdf-viewer-modal');
-							const embedElement = document.getElementById('pdf-embed');
-
-							// Hide modal
-							modal.classList.add('hidden');
-							modal.style.display = 'none';
-
-							// Clear PDF src to stop loading
-							embedElement.src = '';
-						}
-					function closeTemplateSelectorModal() {
-					const container = document.getElementById('template-modal-container');
-					container.innerHTML = '';
-				}
-				</script>
 				</div>
 			</main>
 			<!-- Upload Document Modal (outside main content) -->
@@ -484,7 +471,30 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 			</div>
 		</div>
 		<!-- Document Filters -->
-		<div class="bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm mb-6">
+		<div class="bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm mb-6" x-data="{
+			filterDocuments() {
+				const keyword = document.getElementById('doc-keyword').value;
+				const docType = document.getElementById('doc-type').value;
+				const container = document.getElementById('case-documents-list');
+				const caseID = container.dataset.caseId;
+
+				let url = `/api/cases/${caseID}/documents?`;
+				if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
+				if (docType) url += `document_type=${encodeURIComponent(docType)}&`;
+
+				// Remove trailing & or ?
+				url = url.replace(/[&?]$/, '');
+
+				// Trigger HTMX request
+				htmx.ajax('GET', url, {
+					target: '#case-documents-list',
+					swap: 'innerHTML'
+				});
+
+				// Mark as loaded
+				container.dataset.loaded = 'true';
+			}
+		}">
 			<form id="case-doc-filters-form" class="flex flex-col md:flex-row gap-4" @submit.prevent>
 				<!-- Keyword Search -->
 				<div class="flex-1 w-full relative">
@@ -540,30 +550,6 @@ templ CaseDocumentsTab(ctx context.Context, caseRecord models.Case, user *models
 			</div>
 		</div>
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-		function filterDocuments() {
-			const keyword = document.getElementById('doc-keyword').value;
-			const docType = document.getElementById('doc-type').value;
-			const container = document.getElementById('case-documents-list');
-			const caseID = container.dataset.caseId;
-
-			let url = `/api/cases/${caseID}/documents?`;
-			if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
-			if (docType) url += `document_type=${encodeURIComponent(docType)}&`;
-
-			// Remove trailing & or ?
-			url = url.replace(/[&?]$/, '');
-
-			// Trigger HTMX request
-			htmx.ajax('GET', url, {
-				target: '#case-documents-list',
-				swap: 'innerHTML'
-			});
-
-			// Mark as loaded
-			container.dataset.loaded = 'true';
-		}
-	</script>
 }
 
 // CaseStatusBadge renders a status badge for cases
@@ -832,7 +818,7 @@ templ CasePartiesTab(ctx context.Context, caseRecord models.Case, currentUser *m
 							</button>
 							<button
 								type="button"
-								{ templ.Attributes{ "onclick": "openConfirmationModal({ title: '" + i18n.T(ctx, "case.detail.parties.delete_title") + "', message: '" + i18n.T(ctx, "case.detail.parties.delete_confirm") + "', confirmUrl: '/api/cases/" + caseRecord.ID + "/party', target: 'body', swap: 'beforeend' }, this)" }... }
+								@click={ "openConfirmationModal({ title: '" + i18n.T(ctx, "case.detail.parties.delete_title") + "', message: '" + i18n.T(ctx, "case.detail.parties.delete_confirm") + "', confirmUrl: '/api/cases/" + caseRecord.ID + "/party', target: 'body', swap: 'beforeend' })" }
 								class="btn btn-sm btn-error btn-outline rounded-sm"
 							>
 								<i data-lucide="trash-2" class="mr-2"></i>

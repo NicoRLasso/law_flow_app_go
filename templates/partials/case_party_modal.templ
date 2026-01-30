@@ -2,7 +2,6 @@ package partials
 
 import (
 	"context"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 )
@@ -175,7 +174,4 @@ templ CasePartyModal(ctx context.Context, caseRecord models.Case, documentTypes 
 			<button @click="close()">close</button>
 		</form>
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-		// Logic migrated to Alpine
-	</script>
 }

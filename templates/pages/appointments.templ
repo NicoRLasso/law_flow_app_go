@@ -2,7 +2,6 @@ package pages
 
 import (
 	"context"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -188,106 +187,5 @@ templ Appointments(ctx context.Context, title string, csrfToken string, user *mo
 				</div>
 			</div>
 		</div>
-		<script nonce={ middleware.GetNonce(ctx) }>
-			function appointmentPage() {
-				return {
-					showCreateModal: false,
-					selectedCase: '',
-					selectedLawyer: '',
-					selectedDate: '',
-					selectedStartTime: '',
-					selectedEndTime: '',
-					slots: [],
-					casesLoaded: false,
-					lawyersLoaded: false,
-					
-					init() {
-						this.$watch('showCreateModal', (value) => {
-							if (value) {
-								if (value) {
-									this.loadCases();
-									this.loadLawyers();
-								}
-							}
-						});
-					},
-					
-					loadCases() {
-						if (this.casesLoaded) return;
-						const select = document.getElementById('case-select');
-						if (!select) return;
-						
-						fetch('/api/appointments/cases')
-							.then(res => res.text())
-							.then(html => {
-								select.innerHTML = html;
-								this.casesLoaded = true;
-							})
-							.catch(err => console.error('Error loading cases:', err));
-					},
-					
-					loadLawyers() {
-						if (this.lawyersLoaded) return;
-						const select = document.getElementById('lawyer-select');
-						if (!select) return;
-						
-						fetch('/api/appointments/lawyers')
-							.then(res => res.text())
-							.then(html => {
-								select.innerHTML = html;
-								this.lawyersLoaded = true;
-							})
-							.catch(err => console.error('Error loading lawyers:', err));
-					},
-					
-					loadSlots() {
-						if (!this.selectedDate) return;
-						
-						const lawyerId = this.selectedLawyer || document.querySelector('input[name="lawyer_id"]')?.value;
-						if (!lawyerId) return;
-						
-						fetch(`/api/appointments/slots?date=${this.selectedDate}&lawyer_id=${lawyerId}`)
-							.then(res => res.json())
-							.then(data => {
-								this.slots = data.slots || [];
-								this.renderSlots();
-							});
-					},
-					
-					renderSlots() {
-						const container = document.getElementById('available-slots');
-						if (!container) return;
-						
-						if (this.slots.length === 0) {
-							container.innerHTML = '<p class="col-span-3 text-base-content/50 text-sm italic py-2">No available slots for this date</p>';
-							return;
-						}
-						
-						container.innerHTML = this.slots.map(slot => {
-							const start = new Date(slot.start_time);
-							const end = new Date(slot.end_time);
-							const timeStr = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-							const isSelected = this.selectedStartTime === slot.start_time;
-							return `
-								<button 
-									type="button"
-									@click="selectSlot('${slot.start_time}', '${slot.end_time}')"
-									class="btn btn-sm rounded-sm ${isSelected ? 'btn-primary' : 'btn-outline border-base-300'}"
-								>${timeStr}</button>
-							`;
-						}).join('');
-						
-						// Re-init Alpine on new elements
-						Alpine.initTree(container);
-					},
-					
-					selectSlot(start, end) {
-						this.selectedStartTime = start;
-						this.selectedEndTime = end;
-						this.renderSlots();
-					}
-				}
-			}
-		</script>
 	}
 }

@@ -3,7 +3,6 @@ package partials
 import (
 	"context"
 	"fmt"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
 	"law_flow_app_go/services/i18n"
@@ -26,26 +25,7 @@ templ ServiceMilestoneList(ctx context.Context, milestones []models.ServiceMiles
 	}
 	<!-- Checklist -->
 	<div
-		x-data="{ 
-		editModalOpen: false, 
-		editMilestoneId: '', 
-		editTitle: '', 
-		editDescription: '', 
-		editDueDate: '',
-		serviceId: '',
-		openEdit(id, title, desc, date, sId) {
-			this.editMilestoneId = id;
-			this.editTitle = title;
-			this.editDescription = desc || '';
-			this.editDueDate = date || '';
-			this.serviceId = sId;
-			this.editModalOpen = true;
-		},
-		closeEdit() {
-			this.editModalOpen = false;
-			this.editMilestoneId = '';
-		}
-	}"
+		x-data={ "{ editModalOpen: false, editMilestoneId: '', editTitle: '', editDescription: '', editDueDate: '', serviceId: '" + serviceID + "', openEdit(id, title, desc, date) { this.editMilestoneId = id; this.editTitle = title; this.editDescription = desc || ''; this.editDueDate = date || ''; this.editModalOpen = true; }, closeEdit() { this.editModalOpen = false; this.editMilestoneId = ''; }, submitEdit() { const form = document.getElementById('edit-milestone-form'); const formData = new FormData(form); const values = {}; formData.forEach((value, key) => { values[key] = value; }); htmx.ajax('PUT', '/api/services/' + this.serviceId + '/milestones/' + this.editMilestoneId, { target: '#milestones-tab-content', swap: 'innerHTML', values: values }).then(() => {}); }, onEditRequest(event) { if (event.detail.successful) { this.closeEdit(); } }, onAddRequest(event) { if (event.detail.successful) { const modal = document.getElementById('add_milestone_modal'); if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; } event.target.reset(); } } }" }
 	>
 		<form 
 			id="milestone-reorder-form" 
@@ -115,7 +95,7 @@ templ MilestoneItem(ctx context.Context, m models.ServiceMilestone, canEdit bool
 			<div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
 				<button
 					type="button"
-					@click={ fmt.Sprintf("openEdit('%s', '%s', '%s', '%s', '%s')", m.ID, m.Title, getMilestoneDescription(m), getMilestoneDueDate(m), m.ServiceID) }
+					@click={ fmt.Sprintf("openEdit('%s', '%s', '%s', '%s')", m.ID, m.Title, getMilestoneDescription(m), getMilestoneDueDate(m)) }
 					class="btn btn-ghost btn-xs btn-square text-primary rounded-sm"
 					title={ i18n.T(ctx, "common.edit") }
 				>
@@ -177,7 +157,7 @@ templ AddMilestoneModal(ctx context.Context, serviceID string) {
 				id="add-milestone-form"
 				hx-post={ fmt.Sprintf("/api/services/%s/milestones", serviceID) }
 				hx-target="#milestones-tab-content"
-				hx-on::after-request="if(event.detail.successful) { document.getElementById('add_milestone_modal').classList.add('hidden'); document.getElementById('add_milestone_modal').style.display='none'; this.reset(); }"
+				@htmx:after-request="onAddRequest($event)"
 				class="flex flex-col gap-5"
 			>
 				<div class="form-control">
@@ -254,9 +234,9 @@ templ UpdateMilestoneModal(ctx context.Context) {
 			</div>
 			<!-- Form -->
 			<form
-				:hx-put="'/api/services/' + serviceId + '/milestones/' + editMilestoneId"
-				hx-target="#milestones-tab-content"
-				hx-on::after-request="if(event.detail.successful) { editModalOpen = false; editMilestoneId = ''; }"
+				id="edit-milestone-form"
+				@submit.prevent="submitEdit()"
+				@htmx:after-request="onEditRequest($event)"
 				class="flex flex-col gap-5"
 			>
 				<div class="form-control">

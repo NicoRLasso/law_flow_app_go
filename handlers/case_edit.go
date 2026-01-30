@@ -342,7 +342,7 @@ func UpdateCaseHandler(c echo.Context) error {
 			strings.Contains(err.Error(), "idx_firm_filing_number") {
 			errMsg := i18n.T(c.Request().Context(), "case.edit.error.duplicate_radicado")
 			if c.Request().Header.Get("HX-Request") == "true" {
-				return c.HTML(http.StatusConflict, fmt.Sprintf(`<div class="p-4 bg-red-500/20 text-red-400 rounded-lg flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5"></i> <span>%s</span></div><script>lucide.createIcons();</script>`, errMsg))
+				return c.HTML(http.StatusConflict, fmt.Sprintf(`<div class="p-4 bg-red-500/20 text-red-400 rounded-lg flex items-center gap-2"><i data-lucide="alert-circle" class="w-5 h-5"></i> <span>%s</span></div>`, errMsg))
 			}
 			return echo.NewHTTPError(http.StatusConflict, errMsg)
 		}
@@ -405,14 +405,9 @@ func UpdateCaseHandler(c echo.Context) error {
 	// Return success response with page reload
 	if c.Request().Header.Get("HX-Request") == "true" {
 		return c.HTML(http.StatusOK, fmt.Sprintf(`
-			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4">
+			<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4" x-init="setTimeout(() => window.location.reload(), 2000)">
 				%s
 			</div>
-			<script>
-				setTimeout(function() {
-					window.location.reload();
-				}, 2000);
-			</script>
 		`, successMsg))
 	}
 

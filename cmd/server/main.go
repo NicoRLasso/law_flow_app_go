@@ -406,6 +406,7 @@ func main() {
 		{
 			serviceShared.GET("", handlers.GetServicesHandler)
 			serviceShared.GET("/:id", handlers.GetServiceHandler)
+			serviceShared.GET("/:id/summary", handlers.GetServiceSummaryHandler)
 			serviceShared.GET("/:id/milestones", handlers.GetServiceMilestonesHandler)
 			serviceShared.GET("/:id/timeline", handlers.GetServiceTimelineHandler)
 			serviceShared.GET("/:id/documents", handlers.GetServiceDocumentsHandler)

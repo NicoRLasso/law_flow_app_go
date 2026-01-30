@@ -30,6 +30,7 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 							data-label-client={ i18n.T(ctx, "calendar.events.client") }
 							data-label-lawyer={ i18n.T(ctx, "calendar.events.lawyer") }
 							data-label-status={ i18n.T(ctx, "calendar.events.status") }
+							x-init="window.initCalendar()"
 						></div>
 					</div>
 				</div>
@@ -57,7 +58,7 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 				<div class="flex items-center justify-between p-6 border-b border-base-200 bg-base-50">
 					<h2 id="modal-event-title" class="text-xl font-serif font-bold text-primary truncate pr-4"></h2>
 					<button
-						@click="document.getElementById('event-detail-modal').classList.add('hidden'); document.getElementById('event-detail-modal').classList.remove('flex'); document.body.style.overflow = '';"
+						@click="window.closeEventModal()"
 						class="btn btn-sm btn-circle btn-primary"
 					>
 						<i data-lucide="x"></i>
@@ -121,13 +122,13 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 				<!-- Footer -->
 				<div class="flex items-center justify-between p-6 border-t border-base-200 bg-base-50 gap-4">
 					<button
-						@click="if(confirm('Are you sure you want to cancel this appointment?')) cancelEvent()"
+						@click="window.cancelEvent()"
 						class="btn btn-error btn-outline btn-sm rounded-sm"
 					>
 						{ i18n.T(ctx, "common.cancel") }
 					</button>
 					<button
-						@click="document.getElementById('event-detail-modal').classList.add('hidden'); document.getElementById('event-detail-modal').classList.remove('flex'); document.body.style.overflow = '';"
+						@click="window.closeEventModal()"
 						class="btn btn-primary btn-sm rounded-sm"
 					>
 						{ i18n.T(ctx, "calendar.modal.close") }
@@ -138,175 +139,6 @@ templ CalendarPage(ctx context.Context, user *models.User, firm *models.Firm, cs
 		<!-- Include FullCalendar -->
 		<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js" nonce={ middleware.GetNonce(ctx) }></script>
 		<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales-all.global.min.js" nonce={ middleware.GetNonce(ctx) }></script>
-		<script nonce={ middleware.GetNonce(ctx) }>
-			// Modal functions (global scope)
-			function openEventModal(event) {
-				const modal = document.getElementById('event-detail-modal');
-				const props = event.extendedProps;
-				
-				// Store current event ID for actions
-				modal.dataset.eventId = event.id;
-
-				// Populate modal
-				document.getElementById('modal-event-title').textContent = event.title;
-				document.getElementById('modal-event-client').textContent = props.clientName || '-';
-				document.getElementById('modal-event-lawyer').textContent = props.lawyer || '-';
-				
-				const statusEl = document.getElementById('modal-event-status');
-				statusEl.textContent = props.status || '-';
-				// Reset classes
-				statusEl.className = 'badge badge-lg font-bold rounded-sm';
-				// Add active status class
-				if (props.status === 'Scheduled' || props.status === 'Confirmed') {
-					statusEl.classList.add('badge-success', 'text-white');
-				} else if (props.status === 'Cancelled') {
-					statusEl.classList.add('badge-error', 'text-white');
-				} else {
-					statusEl.classList.add('badge-neutral', 'text-white');
-				}
-
-				// Format time
-				const startTime = event.start ? event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-				const endTime = event.end ? event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-				const dateStr = event.start ? event.start.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
-				document.getElementById('modal-event-time').textContent = `${dateStr}, ${startTime} - ${endTime}`;
-
-				// Notes (optional)
-				const notesContainer = document.getElementById('modal-notes-container');
-				if (props.notes && props.notes.trim()) {
-					document.getElementById('modal-event-notes').textContent = props.notes;
-					notesContainer.classList.remove('hidden');
-				} else {
-					notesContainer.classList.add('hidden');
-				}
-
-				// Show modal
-				modal.classList.remove('hidden');
-				modal.classList.add('flex');
-				document.body.style.overflow = 'hidden';
-			}
-
-			function closeEventModal() {
-				const modal = document.getElementById('event-detail-modal');
-				modal.classList.add('hidden');
-				modal.classList.remove('flex');
-				document.body.style.overflow = '';
-			}
-
-			function cancelEvent() {
-				const modal = document.getElementById('event-detail-modal');
-				const id = modal.dataset.eventId;
-				if(!id) return;
-
-				if(!confirm('Are you sure you want to cancel this appointment?')) return;
-
-				fetch('/api/appointments/' + id + '/cancel', {
-					method: 'POST',
-					headers: {
-						'X-CSRF-Token': document.querySelector('input[name="gorilla.csrf.Token"]').value
-					}
-				})
-				.then(response => {
-					if(!response.ok) throw new Error('Failed to cancel');
-					return response.json();
-				})
-				.then(() => {
-					closeEventModal();
-					// Refresh calendar events without reloading page
-					var calendarEl = document.getElementById('calendar');
-					var calendar = calendarEl._fullCalendar; 
-					if (calendar) {
-						calendar.refetchEvents();
-					} else {
-						window.location.reload();
-					}
-				})
-				.catch(err => {
-					console.error(err);
-					alert('Error cancelling appointment');
-				});
-			}
-
-			// Close modal on backdrop click
-			document.getElementById('event-detail-modal')?.addEventListener('click', function(e) {
-				if (e.target === this) closeEventModal();
-			});
-
-			// Close modal on Escape key
-			document.addEventListener('keydown', function(e) {
-				if (e.key === 'Escape') closeEventModal();
-			});
-
-			document.addEventListener('DOMContentLoaded', function() {
-				
-				try {
-					var calendarEl = document.getElementById('calendar');
-					if (!calendarEl) {
-						return;
-					}
-
-					if (typeof FullCalendar === 'undefined') {
-						console.error('FullCalendar is not defined! Check script loading.');
-						return;
-					}
-
-					// Data from data attributes
-					const locale = calendarEl.getAttribute('data-locale') || 'en';
-
-					// Responsive view helpers
-					function getInitialView() {
-						if (window.innerWidth < 640) return 'listWeek';
-						if (window.innerWidth < 768) return 'timeGridDay';
-						return 'timeGridWeek';
-					}
-
-					function getToolbarConfig() {
-						if (window.innerWidth < 640) {
-							return { left: 'prev,next', center: 'title', right: 'today' };
-						}
-						if (window.innerWidth < 768) {
-							return { left: 'prev,next today', center: 'title', right: 'timeGridDay,listWeek' };
-						}
-						return { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' };
-					}
-
-					var calendar = new FullCalendar.Calendar(calendarEl, {
-						initialView: getInitialView(),
-						locale: locale,
-						headerToolbar: getToolbarConfig(),
-						themeSystem: 'standard', // Use standard theme so we can override with CSS variables
-						height: '100%',
-						slotMinTime: '08:00:00',
-						slotMaxTime: '20:00:00',
-						allDaySlot: false,
-						navLinks: true,
-						nowIndicator: true,
-						events: '/api/calendar/events',
-						windowResize: function(view) {
-							try {
-								const newView = getInitialView();
-								if (calendar.view.type !== newView) {
-									calendar.changeView(newView);
-								}
-								calendar.setOption('headerToolbar', getToolbarConfig());
-							} catch (e) {
-								console.error('Error in windowResize:', e);
-							}
-						},
-						eventClick: function(info) {
-							openEventModal(info.event);
-						}
-					});
-					
-					// Store instance on element for easy access
-					calendarEl._fullCalendar = calendar;
-					
-					calendar.render();
-				} catch (e) {
-					console.error('CRITICAL ERROR initializing calendar:', e);
-				}
-			});
-		</script>
 		<style nonce={ middleware.GetNonce(ctx) }>
 			/* FullCalendar Theme Overrides for Light/Premium UI */
 			:root {

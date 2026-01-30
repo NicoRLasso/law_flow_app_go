@@ -3,7 +3,6 @@ package pages
 import (
 	"context"
 	"fmt"
-	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/components"
@@ -19,7 +18,67 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 			@components.Navbar(ctx, user, firm, "/services")
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
-				<div class="w-full" x-data="{ activeTab: 'summary', sidebarOpen: false }">
+				<div class="w-full" x-data="{ 
+					activeTab: 'summary', 
+					sidebarOpen: false,
+					openAddMilestoneModal() {
+						const modal = document.getElementById('add_milestone_modal');
+						if (modal) {
+							modal.classList.remove('hidden');
+							modal.style.display = 'flex';
+						}
+					},
+					openAddExpenseModal() {
+						const modal = document.getElementById('add_expense_modal');
+						if (modal) {
+							modal.classList.remove('hidden');
+							modal.style.display = 'flex';
+						}
+					},
+					openUploadModalService() {
+						const modal = document.getElementById('upload-document-modal');
+						if (modal) {
+							modal.classList.remove('hidden');
+							modal.style.display = 'flex';
+						}
+					},
+					closeUploadModalService() {
+						const modal = document.getElementById('upload-document-modal');
+						if (modal) {
+							modal.classList.add('hidden');
+							modal.style.display = 'none';
+							const form = document.getElementById('upload-form');
+							if (form) form.reset();
+						}
+					},
+					openPDFViewerModalService(docID, serviceID, fileName) {
+						const modal = document.getElementById('pdf-viewer-modal-service');
+						const embedElement = document.getElementById('pdf-embed-service');
+						const titleElement = document.getElementById('pdf-title-service');
+
+						if (titleElement) titleElement.textContent = fileName;
+						if (embedElement) embedElement.src = `/api/services/${serviceID}/documents/${docID}/view`;
+
+						if (modal) {
+							modal.classList.remove('hidden');
+							modal.style.display = 'flex';
+						}
+					},
+					closePDFViewerModalService() {
+						const modal = document.getElementById('pdf-viewer-modal-service');
+						const embedElement = document.getElementById('pdf-embed-service');
+
+						if (modal) {
+							modal.classList.add('hidden');
+							modal.style.display = 'none';
+						}
+						if (embedElement) embedElement.src = '';
+					},
+					closeTemplateSelectorModal() {
+						const container = document.getElementById('template-modal-container');
+						if (container) container.innerHTML = '';
+					}
+				}">
 					<!-- Header with Back Button -->
 					<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
 						<div class="flex items-start sm:items-center gap-4 md:gap-6">
@@ -85,7 +144,7 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 								<ul class="flex flex-col">
 									<li>
 										<button
-											@click="activeTab = 'summary'; sidebarOpen = false"
+											@click="activeTab = 'summary'; sidebarOpen = false; htmx.trigger('#summary-tab-content', 'load')"
 											:class="activeTab === 'summary' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
 											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
 										>
@@ -140,7 +199,16 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 						<!-- Main Content Area -->
 						<div class="w-full min-w-0">
 							<!-- Summary Tab -->
-							<div x-show="activeTab === 'summary'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+							<div 
+								x-show="activeTab === 'summary'" 
+								x-transition:enter="transition ease-out duration-300 transform" 
+								x-transition:enter-start="opacity-0 translate-y-2" 
+								x-transition:enter-end="opacity-100 translate-y-0" 
+								class="space-y-6"
+								id="summary-tab-content"
+								hx-get={ fmt.Sprintf("/api/services/%s/summary", service.ID) }
+								hx-trigger="load, refreshSummary from:body"
+							>
 								@ServiceSummaryTab(ctx, service, user, totalExpenses, timeline)
 							</div>
 							<!-- Milestones Tab -->
@@ -238,72 +306,6 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 					</div>
 				</div>
 			</main>
-			<!-- Scripts for Modals -->
-			<script nonce={ middleware.GetNonce(ctx) }>
-				function openAddMilestoneModal() {
-					const modal = document.getElementById('add_milestone_modal');
-					if (modal) {
-						modal.classList.remove('hidden');
-						modal.style.display = 'flex';
-					}
-				}
-
-				function openAddExpenseModal() {
-					const modal = document.getElementById('add_expense_modal');
-					if (modal) {
-						modal.classList.remove('hidden');
-						modal.style.display = 'flex';
-					}
-				}
-
-				function openUploadModalService() {
-					const modal = document.getElementById('upload-document-modal');
-					if (modal) {
-						modal.classList.remove('hidden');
-						modal.style.display = 'flex';
-					}
-				}
-
-				function closeUploadModalService() {
-					const modal = document.getElementById('upload-document-modal');
-					if (modal) {
-						modal.classList.add('hidden');
-						modal.style.display = 'none';
-						const form = document.getElementById('upload-form');
-						if (form) form.reset();
-					}
-				}
-
-				function openPDFViewerModalService(docID, serviceID, fileName) {
-					const modal = document.getElementById('pdf-viewer-modal-service');
-					const embedElement = document.getElementById('pdf-embed-service');
-					const titleElement = document.getElementById('pdf-title-service');
-
-					if (titleElement) titleElement.textContent = fileName;
-					if (embedElement) embedElement.src = `/api/services/${serviceID}/documents/${docID}/view`;
-
-					if (modal) {
-						modal.classList.remove('hidden');
-						modal.style.display = 'flex';
-					}
-				}
-
-				function closePDFViewerModalService() {
-					const modal = document.getElementById('pdf-viewer-modal-service');
-					const embedElement = document.getElementById('pdf-embed-service');
-
-					if (modal) {
-						modal.classList.add('hidden');
-						modal.style.display = 'none';
-					}
-					if (embedElement) embedElement.src = '';
-				}
-
-				function closeTemplateSelectorModal() {
-					const container = document.getElementById('template-modal-container');
-					if (container) container.innerHTML = '';
-				}
-			</script>
 			<!-- Modals (outside main) -->
 			if user.Role != "client" {
 				@partials.UploadDocumentModal(ctx, service.ID)
@@ -350,7 +352,25 @@ templ ServiceDocumentsTab(ctx context.Context, service *models.LegalService, use
 			</div>
 		</div>
 		// Document Filters
-		<div class="bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm mb-6">
+		<div class="bg-base-100 p-4 rounded-sm border border-base-200 shadow-sm mb-6" x-data="{
+			filterDocumentsService() {
+				const keyword = document.getElementById('doc-keyword').value;
+				const docType = document.getElementById('doc-type').value;
+				const container = document.getElementById('service-documents-list');
+				const serviceID = container.dataset.serviceId;
+
+				let url = `/api/services/${serviceID}/documents?`;
+				if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
+				if (docType) url += `document_type=${encodeURIComponent(docType)}&`;
+
+				url = url.replace(/[&?]$/, '');
+
+				htmx.ajax('GET', url, {
+					target: '#service-documents-list',
+					swap: 'innerHTML'
+				});
+			}
+		}">
 			<form id="service-doc-filters-form" class="flex flex-col md:flex-row gap-4" @submit.prevent>
 				// Keyword Search
 				<div class="flex-1 w-full relative">
@@ -405,25 +425,6 @@ templ ServiceDocumentsTab(ctx context.Context, service *models.LegalService, use
 			</div>
 		</div>
 	</div>
-	<script nonce={ middleware.GetNonce(ctx) }>
-		function filterDocumentsService() {
-			const keyword = document.getElementById('doc-keyword').value;
-			const docType = document.getElementById('doc-type').value;
-			const container = document.getElementById('service-documents-list');
-			const serviceID = container.dataset.serviceId;
-
-			let url = `/api/services/${serviceID}/documents?`;
-			if (keyword) url += `keyword=${encodeURIComponent(keyword)}&`;
-			if (docType) url += `document_type=${encodeURIComponent(docType)}&`;
-
-			url = url.replace(/[&?]$/, '');
-
-			htmx.ajax('GET', url, {
-				target: '#service-documents-list',
-				swap: 'innerHTML'
-			});
-		}
-	</script>
 }
 
 templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user *models.User, totalExpenses float64, timeline []models.TimelineEvent) {

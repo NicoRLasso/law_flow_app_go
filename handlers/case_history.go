@@ -300,15 +300,9 @@ func CreateHistoricalCaseHandler(c echo.Context) error {
 	// Return success with redirect
 	c.Response().Header().Set("HX-Trigger", "reload-cases")
 	return c.HTML(http.StatusOK, `
-		<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4">
+		<div class="p-4 bg-green-500/20 text-green-400 rounded-lg mb-4" x-init="setTimeout(() => { document.getElementById('case-history-modal').remove(); document.body.dispatchEvent(new CustomEvent('reload-cases')); }, 1000)">
 			Historical case created successfully!
 		</div>
-		<script>
-			setTimeout(function() {
-				document.getElementById('case-history-modal').remove();
-				document.body.dispatchEvent(new CustomEvent('reload-cases'));
-			}, 1000);
-		</script>
 	`)
 }
 

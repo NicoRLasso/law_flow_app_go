@@ -117,13 +117,8 @@ func CreateServiceActivityHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to create activity")
 	}
 
-	// Update service hours if time entry
-	if activity.ActivityType == models.ActivityTypeTimeEntry {
-		services.UpdateServiceActualHours(db.DB, serviceID)
-	}
-
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger refreshes
+	c.Response().Header().Set("HX-Trigger", `{"refreshTimeline": true, "refreshSummary": true}`)
 
 	return GetServiceActivitiesHandler(c)
 }
@@ -152,12 +147,8 @@ func UpdateServiceActivityHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update activity")
 	}
 
-	if activity.ActivityType == models.ActivityTypeTimeEntry {
-		services.UpdateServiceActualHours(db.DB, serviceID)
-	}
-
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger refreshes
+	c.Response().Header().Set("HX-Trigger", `{"refreshTimeline": true, "refreshSummary": true}`)
 
 	return GetServiceActivitiesHandler(c)
 }
@@ -183,8 +174,8 @@ func DeleteServiceActivityHandler(c echo.Context) error {
 		services.UpdateServiceActualHours(db.DB, serviceID)
 	}
 
-	// Trigger timeline refresh
-	c.Response().Header().Set("HX-Trigger", "refreshTimeline")
+	// Trigger refreshes
+	c.Response().Header().Set("HX-Trigger", `{"refreshTimeline": true, "refreshSummary": true}`)
 
 	return GetServiceActivitiesHandler(c)
 }

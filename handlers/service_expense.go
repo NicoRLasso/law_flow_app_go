@@ -112,6 +112,9 @@ func CreateServiceExpenseHandler(c echo.Context) error {
 		"ServiceExpense", expense.ID, fmt.Sprintf("%.2f", amount),
 		"Expense recorded", nil, expense)
 
+	// Trigger refresh of summary tab
+	c.Response().Header().Set("HX-Trigger", "refreshSummary")
+
 	return GetServiceExpensesHandler(c)
 }
 
@@ -148,6 +151,9 @@ func UpdateServiceExpenseHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update expense")
 	}
 
+	// Trigger refresh of summary tab
+	c.Response().Header().Set("HX-Trigger", "refreshSummary")
+
 	return GetServiceExpensesHandler(c)
 }
 
@@ -180,6 +186,9 @@ func ApproveServiceExpenseHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to update status")
 	}
 
+	// Trigger refresh of summary tab
+	c.Response().Header().Set("HX-Trigger", "refreshSummary")
+
 	return GetServiceExpensesHandler(c)
 }
 
@@ -192,6 +201,9 @@ func DeleteServiceExpenseHandler(c echo.Context) error {
 	if err := db.DB.Where("firm_id = ? AND id = ? AND service_id = ?", currentFirm.ID, expenseID, serviceID).Delete(&models.ServiceExpense{}).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete expense")
 	}
+
+	// Trigger refresh of summary tab
+	c.Response().Header().Set("HX-Trigger", "refreshSummary")
 
 	return GetServiceExpensesHandler(c)
 }
