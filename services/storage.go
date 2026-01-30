@@ -136,7 +136,7 @@ func ValidatePath(path string) error {
 	if strings.Contains(path, "..") {
 		return fmt.Errorf("invalid path: directory traversal detected")
 	}
-	
+
 	// Basic whitelist check (alphanumeric, /, _, -, .)
 	// This is strict but safe. Adjust regex if you need more characters.
 	// We iterate instead of regex for simplicity/performance in this context

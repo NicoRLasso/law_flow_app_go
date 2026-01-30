@@ -98,15 +98,15 @@ func (m *SecurityEventMonitor) triggerAlertLocked(ip, reason string) {
 	// 2. Send Email to Admin (if configured)
 	// TODO: Implement email alert once AdminEmail is added to config
 	/*
-	cfg := config.Load()
-	if cfg.AdminEmail != "" {
-		email := &Email{
-			To:      []string{cfg.AdminEmail},
-			Subject: fmt.Sprintf("Security Alert: %s", reason),
-			TextBody:    fmt.Sprintf("System detected a security event:\n\nType: %s\nIP Address: %s\nTime: %s\n\nPlease investigate.", reason, ip, time.Now().Format(time.RFC1123)),
+		cfg := config.Load()
+		if cfg.AdminEmail != "" {
+			email := &Email{
+				To:      []string{cfg.AdminEmail},
+				Subject: fmt.Sprintf("Security Alert: %s", reason),
+				TextBody:    fmt.Sprintf("System detected a security event:\n\nType: %s\nIP Address: %s\nTime: %s\n\nPlease investigate.", reason, ip, time.Now().Format(time.RFC1123)),
+			}
+			SendEmailAsync(cfg, email)
 		}
-		SendEmailAsync(cfg, email)
-	}
 	*/
 }
 

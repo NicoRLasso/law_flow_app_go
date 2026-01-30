@@ -80,15 +80,15 @@ type Case struct {
 	MigratedBy           *string    `gorm:"type:uuid" json:"migrated_by,omitempty"`
 
 	// Relationships
-	StatusChanger *User          `gorm:"foreignKey:StatusChangedBy" json:"status_changer,omitempty"`
-	Classifier    *User          `gorm:"foreignKey:ClassifiedBy" json:"classifier,omitempty"`
-	Deleter       *User          `gorm:"foreignKey:DeletedBy" json:"deleter,omitempty"`
-	Migrator      *User          `gorm:"foreignKey:MigratedBy" json:"migrator,omitempty"`
-	Subtypes      []CaseSubtype  `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
-	Documents     []CaseDocument `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
+	StatusChanger *User           `gorm:"foreignKey:StatusChangedBy" json:"status_changer,omitempty"`
+	Classifier    *User           `gorm:"foreignKey:ClassifiedBy" json:"classifier,omitempty"`
+	Deleter       *User           `gorm:"foreignKey:DeletedBy" json:"deleter,omitempty"`
+	Migrator      *User           `gorm:"foreignKey:MigratedBy" json:"migrator,omitempty"`
+	Subtypes      []CaseSubtype   `gorm:"many2many:case_subtypes_junction;" json:"subtypes,omitempty"`
+	Documents     []CaseDocument  `gorm:"foreignKey:CaseID" json:"documents,omitempty"`
 	Milestones    []CaseMilestone `gorm:"foreignKey:CaseID" json:"milestones,omitempty"`
-	Collaborators []User         `gorm:"many2many:case_collaborators;" json:"collaborators,omitempty"`
-	OpposingParty *CaseParty     `gorm:"foreignKey:CaseID" json:"opposing_party,omitempty"`
+	Collaborators []User          `gorm:"many2many:case_collaborators;" json:"collaborators,omitempty"`
+	OpposingParty *CaseParty      `gorm:"foreignKey:CaseID" json:"opposing_party,omitempty"`
 }
 
 // BeforeCreate hook to generate UUID and set OpenedAt
