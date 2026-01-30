@@ -397,7 +397,8 @@
     "inactive": "Inactivo",
     "download": "Descargar",
     "search": "Buscar",
-    "page": "Página"
+    "page": "Página",
+    "coming_soon": "Próximamente"
   },
   "auth": {
     "email": "Correo Electrónico",
@@ -895,15 +896,6 @@
         "title": "Eliminar Actividad",
         "message": "¿Está seguro de que desea eliminar esta actividad? Esta acción no se puede deshacer."
       }
-    }
-  },
-  "tools": {
-    "title": "Herramientas",
-    "subtitle": "Herramientas legales útiles",
-    "tab": {
-      "calculators": "Calculadoras",
-      "converters": "Conversores",
-      "generation": "Generación"
     }
   },
   "cases": {
@@ -1857,5 +1849,36 @@
     "purchase_btn": "Comprar",
     "cancel_addon": "Cancelar Complemento",
     "cancel_addon_confirm": "¿Estás seguro de que deseas cancelar este complemento? Se desactivará inmediatamente."
+  },
+  "tools": {
+    "title": "Herramientas",
+    "subtitle": "Herramientas legales útiles",
+    "tab": {
+      "calculators": "Calculadoras",
+      "converters": "Conversores",
+      "generation": "Generación"
+    },
+    "filing_number": {
+      "title": "Constructor de Radicados",
+      "description": "Genera números de radicado para procesos judiciales colombianos",
+      "build_title": "Construir Radicado",
+      "department": "Departamento",
+      "city": "Ciudad",
+      "entity": "Entidad",
+      "specialty": "Especialidad",
+      "court_office": "Despacho",
+      "year": "Año",
+      "process_code": "Código de Proceso",
+      "resource_code": "Código de Recurso",
+      "digits": "dígitos",
+      "generate": "Generar Radicado",
+      "format_info": "Información del Formato",
+      "format_label": "Formato",
+      "select_department_first": "Seleccione un departamento primero",
+      "select_city_first": "Seleccione una ciudad primero",
+      "select_entity_first": "Seleccione una entidad primero",
+      "select_specialty_first": "Seleccione una especialidad primero",
+      "preview": "Vista Previa"
+    }
   }
 }

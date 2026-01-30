@@ -43,8 +43,32 @@ func main() {
 	// Drop FTS triggers before migration to avoid errors when GORM renames tables
 	services.DropFTSTriggers(db.DB)
 
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.CaseMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.Notification{}); err != nil {
+	if err := db.AutoMigrate(
+		// Geographic models (must be first for FK references)
+		&models.Country{}, &models.Department{}, &models.City{},
+		&models.LegalEntity{}, &models.LegalSpecialty{}, &models.CourtOffice{},
+		// Core models
+		&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{},
+		&models.ChoiceCategory{}, &models.ChoiceOption{},
+		&models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{},
+		&models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{},
+		&models.Availability{}, &models.BlockedDate{},
+		&models.AppointmentType{}, &models.Appointment{},
+		&models.AuditLog{},
+		&models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{},
+		&models.SupportTicket{},
+		&models.JudicialProcess{}, &models.JudicialProcessAction{},
+		&models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{},
+		&models.PlanAddOn{}, &models.FirmAddOn{},
+		&models.LegalService{}, &models.ServiceMilestone{}, &models.CaseMilestone{},
+		&models.ServiceDocument{}, &models.ServiceExpense{},
+		&models.Notification{},
+	); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
+	}
+	// Seed geographic data (countries and departments)
+	if err := services.SeedGeography(db.DB); err != nil {
+		log.Printf("[WARNING] Failed to seed geography: %v", err)
 	}
 	if err := services.InitializeFTS5(db.DB); err != nil {
 		log.Printf("[WARNING] Failed to initialize FTS5: %v", err)
@@ -518,6 +542,23 @@ func main() {
 
 		protected.GET("/historical-cases", handlers.HistoricalCasesPageHandler)
 		protected.GET("/tools", handlers.ToolsPageHandler)
+
+		// Geography API Routes (for cascading dropdowns)
+		protected.GET("/api/geography/countries", handlers.GetCountriesHandler)
+		protected.GET("/api/geography/departments", handlers.GetDepartmentsHandler)
+		protected.GET("/api/geography/cities", handlers.GetCitiesHandler)
+		protected.GET("/api/geography/entities", handlers.GetEntitiesHandler)
+		protected.GET("/api/geography/specialties", handlers.GetSpecialtiesHandler)
+		protected.GET("/api/geography/court-offices", handlers.GetCourtOfficesHandler)
+
+		// Filing Number Builder Tool API (admin/lawyer only)
+		filingNumberRoutes := protected.Group("/api/tools/filing-number")
+		filingNumberRoutes.Use(middleware.RequireRole("admin", "lawyer"))
+		{
+			filingNumberRoutes.POST("/build", handlers.BuildFilingNumberHandler)
+			filingNumberRoutes.POST("/parse", handlers.ParseFilingNumberHandler)
+		}
+
 		adminRoutes.GET("/api/lawyers", handlers.GetLawyersForFilterHandler)
 		availabilityRoutes := protected.Group("")
 		availabilityRoutes.Use(middleware.RequireRole("admin", "lawyer"))

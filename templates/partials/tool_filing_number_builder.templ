@@ -1,0 +1,262 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"strconv"
+	"time"
+)
+
+// ToolFilingNumberBuilder is the content partial for the filing number builder tool
+templ ToolFilingNumberBuilder(ctx context.Context, departments []models.Department) {
+	<!-- Builder Card -->
+	<div 
+		class="card bg-base-100 shadow-sm border border-base-200 rounded-sm"
+		x-data="{ 
+			dept: '--', 
+			city: '---', 
+			entity: '--', 
+			specialty: '--', 
+			office: '---',
+			year: new Date().getFullYear().toString(),
+			process: '00000',
+			resource: '00'
+		}"
+	>
+		<div class="card-body p-6">
+			<h2 class="text-xl font-serif font-bold text-primary mb-2 flex items-center gap-2">
+				<i data-lucide="hash" class="w-5 h-5"></i>
+				{ i18n.T(ctx, "tools.filing_number.build_title") }
+			</h2>
+			<p class="text-base-content/60 mb-6">{ i18n.T(ctx, "tools.filing_number.description") }</p>
+
+			<!-- Live Preview -->
+			<div class="bg-base-200/50 p-4 rounded-sm border border-base-300 mb-6">
+				<div class="flex items-center justify-between mb-2">
+					<label class="label pt-0 pb-0">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "tools.filing_number.preview") }</span>
+					</label>
+					<button 
+						type="button"
+						class="btn btn-ghost btn-sm gap-1"
+						x-data="{ copied: false }"
+						x-on:click="
+							const num = dept.replace(/[-]/g, '') + city.replace(/[-]/g, '') + entity.replace(/[-]/g, '') + specialty.replace(/[-]/g, '') + office.replace(/[-]/g, '') + year + process + resource;
+							navigator.clipboard.writeText(num);
+							copied = true;
+							setTimeout(() => copied = false, 2000);
+						"
+					>
+						<i data-lucide="copy" class="w-4 h-4" x-show="!copied"></i>
+						<i data-lucide="check" class="w-4 h-4 text-success" x-show="copied" x-cloak></i>
+						<span x-text="copied ? 'Copied!' : 'Copy'" class="text-xs"></span>
+					</button>
+				</div>
+				<div class="flex flex-wrap items-center gap-1 font-mono text-lg">
+					<span class="px-2 py-1 bg-primary/10 text-primary rounded" x-text="dept"></span>
+					<span class="px-2 py-1 bg-secondary/10 text-secondary rounded" x-text="city"></span>
+					<span class="px-2 py-1 bg-accent/10 text-accent rounded" x-text="entity"></span>
+					<span class="px-2 py-1 bg-info/10 text-info rounded" x-text="specialty"></span>
+					<span class="px-2 py-1 bg-success/10 text-success rounded" x-text="office"></span>
+					<span class="px-2 py-1 bg-warning/10 text-warning rounded" x-text="year"></span>
+					<span class="px-2 py-1 bg-error/10 text-error rounded" x-text="process"></span>
+					<span class="px-2 py-1 bg-base-300 text-base-content rounded" x-text="resource"></span>
+				</div>
+				<div class="flex flex-wrap gap-2 mt-3 text-xs opacity-60">
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-primary/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.department") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-secondary/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.city") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-accent/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.entity") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-info/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.specialty") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-success/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.court_office") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-warning/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.year") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-error/50 rounded"></span>{ i18n.T(ctx, "tools.filing_number.process_code") }</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 bg-base-300 rounded"></span>{ i18n.T(ctx, "tools.filing_number.resource_code") }</span>
+				</div>
+			</div>
+
+			<form class="space-y-6">
+				<!-- Department Selection -->
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "tools.filing_number.department") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select 
+						name="department_id"
+						id="department-select"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
+						hx-get="/api/geography/cities"
+						hx-trigger="change"
+						hx-target="#city-select"
+						hx-swap="innerHTML"
+						hx-include="[name='department_id']"
+						x-on:change="dept = $el.selectedOptions[0]?.dataset.code || '--'; city = '---'; entity = '--'; specialty = '--'; office = '---'"
+						required
+					>
+						<option value="">{ i18n.T(ctx, "common.select") }...</option>
+						for _, dept := range departments {
+							<option value={ dept.ID } data-code={ dept.Code }>{ dept.Name } ({ dept.Code })</option>
+						}
+					</select>
+				</div>
+
+				<!-- City Selection -->
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "tools.filing_number.city") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select 
+						id="city-select"
+						name="city_id"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
+						hx-get="/api/geography/entities"
+						hx-trigger="change"
+						hx-target="#entity-select"
+						hx-swap="innerHTML"
+						hx-include="[name='city_id']"
+						x-on:change="let c = $el.selectedOptions[0]?.dataset.code || ''; city = c.length >= 5 ? c.substring(2, 5) : '---'; entity = '--'; specialty = '--'; office = '---'"
+						required
+					>
+						<option value="">{ i18n.T(ctx, "tools.filing_number.select_department_first") }</option>
+					</select>
+				</div>
+
+				<!-- Entity Selection -->
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "tools.filing_number.entity") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select 
+						id="entity-select"
+						name="entity_id"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
+						hx-get="/api/geography/specialties"
+						hx-trigger="change"
+						hx-target="#specialty-select"
+						hx-swap="innerHTML"
+						hx-include="[name='entity_id']"
+						x-on:change="let e = $el.selectedOptions[0]?.dataset.code || ''; entity = e.length >= 7 ? e.substring(5, 7) : '--'; specialty = '--'; office = '---'"
+						required
+					>
+						<option value="">{ i18n.T(ctx, "tools.filing_number.select_city_first") }</option>
+					</select>
+				</div>
+
+				<!-- Specialty Selection -->
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "tools.filing_number.specialty") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select 
+						id="specialty-select"
+						name="specialty_id"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
+						hx-get="/api/geography/court-offices"
+						hx-trigger="change"
+						hx-target="#court-office-select"
+						hx-swap="innerHTML"
+						hx-include="[name='specialty_id']"
+						x-on:change="let s = $el.selectedOptions[0]?.dataset.code || ''; specialty = s.length >= 9 ? s.substring(7, 9) : '--'; office = '---'"
+						required
+					>
+						<option value="">{ i18n.T(ctx, "tools.filing_number.select_entity_first") }</option>
+					</select>
+				</div>
+
+				<!-- Court Office Selection -->
+				<div class="form-control">
+					<label class="label pt-0 pb-1">
+						<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+							{ i18n.T(ctx, "tools.filing_number.court_office") } <span class="text-error">*</span>
+						</span>
+					</label>
+					<select 
+						id="court-office-select"
+						name="court_office_code"
+						class="select select-bordered w-full rounded-sm focus:select-primary"
+						x-on:change="let o = $el.selectedOptions[0]?.dataset.code || ''; office = o.length >= 12 ? o.substring(9, 12) : (o.length >= 3 ? o.slice(-3) : '---')"
+						required
+					>
+						<option value="">{ i18n.T(ctx, "tools.filing_number.select_specialty_first") }</option>
+					</select>
+				</div>
+
+				<div class="divider"></div>
+
+				<!-- Year, Process Code, Resource Code -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "tools.filing_number.year") } <span class="text-error">*</span>
+							</span>
+						</label>
+						<input 
+							type="number" 
+							name="year"
+							class="input input-bordered w-full rounded-sm focus:input-primary font-mono"
+							value={ strconv.Itoa(time.Now().Year()) }
+							min="1900"
+							max="9999"
+							x-on:input="if(String($el.value).length > 4) $el.value = String($el.value).slice(0, 4); year = String($el.value) || new Date().getFullYear().toString()"
+							required
+						/>
+						<label class="label pb-0">
+							<span class="label-text-alt text-xs opacity-60">4 { i18n.T(ctx, "tools.filing_number.digits") }</span>
+						</label>
+					</div>
+
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "tools.filing_number.process_code") } <span class="text-error">*</span>
+							</span>
+						</label>
+						<input 
+							type="number" 
+							name="process_code"
+							class="input input-bordered w-full rounded-sm focus:input-primary font-mono"
+							placeholder="00001"
+							min="0"
+							max="99999"
+							x-on:input="if(String($el.value).length > 5) $el.value = String($el.value).slice(0, 5); process = String($el.value).padStart(5, '0') || '00000'"
+							required
+						/>
+						<label class="label pb-0">
+							<span class="label-text-alt text-xs opacity-60">5 { i18n.T(ctx, "tools.filing_number.digits") }</span>
+						</label>
+					</div>
+
+					<div class="form-control">
+						<label class="label pt-0 pb-1">
+							<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">
+								{ i18n.T(ctx, "tools.filing_number.resource_code") } <span class="text-error">*</span>
+							</span>
+						</label>
+						<input 
+							type="number" 
+							name="resource_code"
+							class="input input-bordered w-full rounded-sm focus:input-primary font-mono"
+							placeholder="00"
+							min="0"
+							max="99"
+							x-on:input="if(String($el.value).length > 2) $el.value = String($el.value).slice(0, 2); resource = String($el.value).padStart(2, '0') || '00'"
+							required
+						/>
+						<label class="label pb-0">
+							<span class="label-text-alt text-xs opacity-60">2 { i18n.T(ctx, "tools.filing_number.digits") }</span>
+						</label>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+}

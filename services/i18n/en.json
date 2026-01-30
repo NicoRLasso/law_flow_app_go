@@ -399,7 +399,8 @@
     "inactive": "Inactive",
     "download": "Download",
     "search": "Search",
-    "page": "Page"
+    "page": "Page",
+    "coming_soon": "Coming Soon"
   },
   "auth": {
     "email": "Email Address",
@@ -856,15 +857,6 @@
       "select_client": "Select Client",
       "select_type": "Select Type",
       "hours": "Hours"
-    }
-  },
-  "tools": {
-    "title": "Tools",
-    "subtitle": "Useful legal toolings",
-    "tab": {
-      "calculators": "Calculators",
-      "converters": "Converters",
-      "generation": "Generation"
     }
   },
   "cases": {
@@ -1817,5 +1809,36 @@
     "purchase_btn": "Purchase",
     "cancel_addon": "Cancel Add-On",
     "cancel_addon_confirm": "Are you sure you want to cancel this add-on? It will be deactivated immediately."
+  },
+  "tools": {
+    "title": "Tools",
+    "subtitle": "Useful legal toolings",
+    "tab": {
+      "calculators": "Calculators",
+      "converters": "Converters",
+      "generation": "Generation"
+    },
+    "filing_number": {
+      "title": "Filing Number Builder",
+      "description": "Generate filing numbers for Colombian judicial processes",
+      "build_title": "Build Filing Number",
+      "department": "Department",
+      "city": "City",
+      "entity": "Entity",
+      "specialty": "Specialty",
+      "court_office": "Court Office",
+      "year": "Year",
+      "process_code": "Process Code",
+      "resource_code": "Resource Code",
+      "digits": "digits",
+      "generate": "Generate Filing Number",
+      "format_info": "Format Information",
+      "format_label": "Format",
+      "select_department_first": "Select a department first",
+      "select_city_first": "Select a city first",
+      "select_entity_first": "Select an entity first",
+      "select_specialty_first": "Select a specialty first",
+      "preview": "Live Preview"
+    }
   }
 }
