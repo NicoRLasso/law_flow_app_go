@@ -6,7 +6,7 @@ import (
 	"law_flow_app_go/services/i18n"
 )
 
-templ FirmDetailModal(ctx context.Context, firm *models.Firm, errorMessage string) {
+templ FirmDetailModal(ctx context.Context, firm *models.Firm, countries []models.Country, errorMessage string) {
 	<div class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-base-300/80 backdrop-blur-sm">
 		<div class="bg-base-100 border border-base-200 rounded-sm w-full max-w-[95vw] md:max-w-2xl p-4 sm:p-6 md:p-8 shadow-xl relative max-h-[90vh] overflow-y-auto" @click.away="document.getElementById('modal-container').innerHTML = ''">
 			<button @click="document.getElementById('modal-container').innerHTML = ''" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-base-content/40 hover:text-base-content transition-colors">
@@ -87,14 +87,16 @@ templ FirmDetailModal(ctx context.Context, firm *models.Firm, errorMessage strin
 						<label class="label px-0 pb-1">
 							<span class="label-text font-bold uppercase tracking-wider text-xs opacity-50">{ i18n.T(ctx, "firm.info.country") }</span>
 						</label>
-						<input
-							type="text"
+						<select
 							name="country"
-							value={ firm.Country }
+							class="select select-bordered w-full focus:select-primary transition-all rounded-sm font-sans"
 							required
-							class="input input-bordered w-full focus:input-primary transition-all rounded-sm font-sans"
-							placeholder="United States"
-						/>
+						>
+							<option value="" disabled selected?={ firm.CountryID == "" }>Select Country</option>
+							for _, c := range countries {
+								<option value={ c.ID } selected?={ firm.CountryID == c.ID }>{ c.Name }</option>
+							}
+						</select>
 					</div>
 					<div class="form-control w-full flex flex-col gap-1.5">
 						<label class="label px-0 pb-1">

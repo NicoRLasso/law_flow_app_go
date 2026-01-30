@@ -84,7 +84,7 @@ func CreateSession(db *gorm.DB, userID, firmID string, ipAddress, userAgent stri
 func ValidateSession(db *gorm.DB, token string) (*models.Session, error) {
 	var session models.Session
 
-	err := db.Preload("User.Firm").Preload("Firm").
+	err := db.Preload("User.Firm.Country").Preload("Firm.Country").
 		Where("token = ?", token).
 		First(&session).Error
 

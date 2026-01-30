@@ -9,7 +9,8 @@ import (
 	"law_flow_app_go/templates/layouts"
 )
 
-templ FirmSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, subscriptionInfo *services.SubscriptionInfo, availableAddOns []models.PlanAddOn, currencyOptions []models.ChoiceOption) {
+templ FirmSettings(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, subscriptionInfo *services.SubscriptionInfo, availableAddOns []models.PlanAddOn, currencyOptions []models.ChoiceOption, countries []models.Country) {
+
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
@@ -152,7 +153,7 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 											}
 										}"
 											data-original-name={ firm.Name }
-											data-country={ firm.Country }
+											data-country={ firm.Country.Name }
 											data-initial-timezone={ firm.Timezone }
 										>
 											<form
@@ -181,7 +182,18 @@ templ FirmSettings(ctx context.Context, title string, csrfToken string, user *mo
 																{ i18n.T(ctx, "settings.firm.country") } <span class="text-error">*</span>
 															</span>
 														</label>
-														<input type="text" id="country" name="country" x-model="country" @input="updateTimezone()" required class="input input-bordered w-full rounded-sm focus:input-primary"/>
+														<select 
+															id="country-select" 
+															name="country_id" 
+															x-model="country" 
+															@change="updateTimezone()" 
+															required 
+															class="select select-bordered w-full rounded-sm focus:select-primary"
+														>
+															for _, c := range countries {
+																<option value={ c.ID } selected?={ firm.CountryID == c.ID } data-name={ c.Name }>{ c.Name }</option>
+															}
+														</select>
 													</div>
 													<!-- Timezone -->
 													<div class="form-control w-full">

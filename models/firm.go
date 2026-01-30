@@ -19,9 +19,8 @@ type Firm struct {
 
 	Name            string   `gorm:"not null" json:"name"`
 	Slug            string   `gorm:"uniqueIndex;not null" json:"slug"`
-	Country         string   `gorm:"not null" json:"country"`                     // Legacy string field for backward compatibility
-	CountryID       *string  `gorm:"type:uuid;index" json:"country_id,omitempty"` // New FK to countries table
-	CountryRef      *Country `gorm:"foreignKey:CountryID" json:"country_ref,omitempty"`
+	CountryID       string   `gorm:"type:uuid;index;not null" json:"country_id"` // FK to countries table
+	Country         *Country `gorm:"foreignKey:CountryID" json:"country,omitempty"`
 	Timezone        string   `gorm:"not null;default:UTC" json:"timezone"`
 	Address         string   `json:"address"`
 	City            string   `json:"city"`

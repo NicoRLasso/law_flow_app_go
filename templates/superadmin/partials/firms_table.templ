@@ -45,7 +45,11 @@ templ FirmsTable(ctx context.Context, firms []models.Firm) {
 								</div>
 							</td>
 							<td class="text-sm font-medium">
-								<div class="text-base-content">{ firm.Country }</div>
+								<div class="text-base-content">
+									if firm.Country != nil {
+										{ firm.Country.Name }
+									}
+								</div>
 								<div class="text-xs text-base-content/50">{ firm.City }</div>
 							</td>
 							<td>

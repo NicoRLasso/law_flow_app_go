@@ -7,7 +7,7 @@ import (
 	"law_flow_app_go/templates/layouts"
 )
 
-templ FirmSetup(ctx context.Context, title string, csrfToken string, user *models.User) {
+templ FirmSetup(ctx context.Context, title string, csrfToken string, user *models.User, countries []models.Country) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<main class="min-h-screen flex items-center justify-center bg-base-200 relative overflow-hidden py-12 px-4">
 			<div class="w-full max-w-2xl relative z-10">
@@ -49,11 +49,14 @@ templ FirmSetup(ctx context.Context, title string, csrfToken string, user *model
 								</label>
 								<select
 									id="country"
-									name="country"
+									name="country_id"
 									required
 									class="select select-bordered w-full rounded-sm focus:select-primary"
 								>
-									<option value="Colombia" selected>Colombia</option>
+									<option value="" disabled selected>{ i18n.T(ctx, "common.select") }...</option>
+									for _, country := range countries {
+										<option value={ country.ID }>{ country.Name }</option>
+									}
 								</select>
 							</div>
 							<div class="form-control">

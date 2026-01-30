@@ -316,6 +316,8 @@ func SuperadminDeleteUser(c echo.Context) error {
 
 // --- Firm Management Handlers ---
 
+// --- Firm Management Handlers ---
+
 // SuperadminFirmsPageHandler renders the firms management page
 func SuperadminFirmsPageHandler(c echo.Context) error {
 	currentUser := middleware.GetCurrentUser(c)
@@ -323,7 +325,7 @@ func SuperadminFirmsPageHandler(c echo.Context) error {
 
 	// Fetch firms (limit 50 initially)
 	var firms []models.Firm
-	if err := db.DB.Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+	if err := db.DB.Preload("Country").Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
 	}
 
@@ -340,7 +342,7 @@ func SuperadminFirmsPageHandler(c echo.Context) error {
 
 // SuperadminGetFirmsListHTMX returns the filtered firms table
 func SuperadminGetFirmsListHTMX(c echo.Context) error {
-	query := db.DB.Model(&models.Firm{}).Preload("Subscription.Plan")
+	query := db.DB.Model(&models.Firm{}).Preload("Country").Preload("Subscription.Plan")
 
 	// Filters
 	if search := c.QueryParam("search"); search != "" {
@@ -367,7 +369,13 @@ func SuperadminGetFirmsListHTMX(c echo.Context) error {
 
 // SuperadminGetFirmFormNew renders the create firm modal
 func SuperadminGetFirmFormNew(c echo.Context) error {
-	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{}, "")
+	// Fetch active countries
+	countries, err := services.GetActiveCountries(db.DB)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch countries")
+	}
+
+	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{}, countries, "")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -379,7 +387,13 @@ func SuperadminGetFirmFormEdit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
 	}
 
-	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, "")
+	// Fetch active countries
+	countries, err := services.GetActiveCountries(db.DB)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch countries")
+	}
+
+	component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, countries, "")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -389,24 +403,42 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 
 	name := c.FormValue("name")
 	billingEmail := c.FormValue("billing_email")
-	country := c.FormValue("country")
+	countryID := c.FormValue("country")
+
+	// Fetch active countries for potential re-render
+	countries, _ := services.GetActiveCountries(db.DB)
 
 	// Basic Validation
-	if name == "" || billingEmail == "" || country == "" {
+	if name == "" || billingEmail == "" || countryID == "" {
 		component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{
 			Name:         name,
 			BillingEmail: billingEmail,
 			NoreplyEmail: c.FormValue("noreply_email"),
-			Country:      country,
+			CountryID:    countryID,
 			City:         c.FormValue("city"),
 			Address:      c.FormValue("address"),
 			IsActive:     c.FormValue("is_active") == "true",
-		}, "Name, billing email and country are required")
+		}, countries, "Name, billing email and country are required")
+		return component.Render(c.Request().Context(), c.Response().Writer)
+	}
+
+	// Fetch country object
+	country, err := services.GetCountryByID(db.DB, countryID)
+	if err != nil {
+		component := superadmin_partials.FirmDetailModal(c.Request().Context(), &models.Firm{
+			Name:         name,
+			BillingEmail: billingEmail,
+			NoreplyEmail: c.FormValue("noreply_email"),
+			CountryID:    countryID,
+			City:         c.FormValue("city"),
+			Address:      c.FormValue("address"),
+			IsActive:     c.FormValue("is_active") == "true",
+		}, countries, "Invalid country selected")
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
 	// Set default timezone and currency based on country
-	timezone := services.GetDefaultTimezone(country)
+	timezone := services.GetDefaultTimezone(country.Name)
 	if timezone == "" {
 		timezone = "UTC"
 	}
@@ -415,16 +447,17 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 		Name:         name,
 		BillingEmail: billingEmail,
 		NoreplyEmail: c.FormValue("noreply_email"),
+		CountryID:    countryID,
 		Country:      country,
 		Timezone:     timezone,
-		Currency:     services.GetDefaultCurrency(country),
+		Currency:     services.GetDefaultCurrency(country.Name),
 		City:         c.FormValue("city"),
 		Address:      c.FormValue("address"),
 		IsActive:     c.FormValue("is_active") == "true",
 	}
 
 	if err := db.DB.Create(firm).Error; err != nil {
-		component := superadmin_partials.FirmDetailModal(c.Request().Context(), firm, "Failed to create firm: "+err.Error())
+		component := superadmin_partials.FirmDetailModal(c.Request().Context(), firm, countries, "Failed to create firm: "+err.Error())
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -433,20 +466,14 @@ func SuperadminCreateFirmHandler(c echo.Context) error {
 	// Return OOB swap for table update + trigger close modal
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 
-	// Fetch updated firms list for OOB swap
-	// Refactor SuperadminGetFirmsListHTMX logic or call it?
-	// SuperadminGetFirmsListHTMX writes to response directly. We need to wrap it.
-	// We can't easily wrap the output of SuperadminGetFirmsListHTMX because it writes 200 OK headers.
-	// We should manually render the table here wrapped in OOB div.
-
 	var firms []models.Firm
-	if err := db.DB.Model(&models.Firm{}).Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+	if err := db.DB.Model(&models.Firm{}).Preload("Country").Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
 	}
 
 	c.Response().Writer.Write([]byte("<div id='firms-table-container' hx-swap-oob='true'>"))
 	component := superadmin_partials.FirmsTable(c.Request().Context(), firms)
-	err := component.Render(c.Request().Context(), c.Response().Writer)
+	err = component.Render(c.Request().Context(), c.Response().Writer)
 	c.Response().Writer.Write([]byte("</div>"))
 	return err
 }
@@ -461,16 +488,31 @@ func SuperadminUpdateFirm(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "Firm not found")
 	}
 
+	// Fetch active countries for potential re-render
+	countries, _ := services.GetActiveCountries(db.DB)
+
 	firm.Name = c.FormValue("name")
 	firm.BillingEmail = c.FormValue("billing_email")
 	firm.NoreplyEmail = c.FormValue("noreply_email")
-	firm.Country = c.FormValue("country")
+	countryID := c.FormValue("country")
+
+	if firm.CountryID != countryID {
+		country, err := services.GetCountryByID(db.DB, countryID)
+		if err == nil {
+			firm.CountryID = countryID
+			firm.Country = country
+		} else {
+			component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, countries, "Invalid country selected")
+			return component.Render(c.Request().Context(), c.Response().Writer)
+		}
+	}
+
 	firm.City = c.FormValue("city")
 	firm.Address = c.FormValue("address")
 	firm.IsActive = c.FormValue("is_active") == "true"
 
 	if err := db.DB.Save(&firm).Error; err != nil {
-		component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, "Failed to update firm: "+err.Error())
+		component := superadmin_partials.FirmDetailModal(c.Request().Context(), &firm, countries, "Failed to update firm: "+err.Error())
 		return component.Render(c.Request().Context(), c.Response().Writer)
 	}
 
@@ -480,7 +522,7 @@ func SuperadminUpdateFirm(c echo.Context) error {
 	c.Response().Header().Set("HX-Trigger", "closeModal")
 
 	var firms []models.Firm
-	if err := db.DB.Model(&models.Firm{}).Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
+	if err := db.DB.Model(&models.Firm{}).Preload("Country").Preload("Subscription.Plan").Order("created_at DESC").Limit(50).Find(&firms).Error; err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to fetch firms")
 	}
 

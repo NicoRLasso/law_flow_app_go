@@ -81,8 +81,8 @@ func processCase(database *gorm.DB, c models.Case) error {
 	// Get appropriate provider for firm's country
 	// Default to Colombia if country not set, or handle error
 	country := "CO"
-	if c.Firm.Country != "" {
-		country = c.Firm.Country
+	if c.Firm.Country != nil {
+		country = c.Firm.Country.Name
 	}
 
 	provider, err := judicial.GetProvider(country)

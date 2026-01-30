@@ -29,8 +29,15 @@ func FirmSetupHandler(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/dashboard")
 	}
 
+	// Fetch active countries
+	countries, err := services.GetActiveCountries(db.DB)
+	if err != nil {
+		c.Logger().Errorf("Failed to fetch countries: %v", err)
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to load countries")
+	}
+
 	csrfToken := middleware.GetCSRFToken(c)
-	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | LexLegal Cloud", csrfToken, user)
+	component := pages.FirmSetup(c.Request().Context(), "Setup Your Firm | LexLegal Cloud", csrfToken, user, countries)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -53,7 +60,7 @@ func FirmSetupPostHandler(c echo.Context) error {
 
 	// Parse form data
 	name := strings.TrimSpace(c.FormValue("name"))
-	country := strings.TrimSpace(c.FormValue("country"))
+	countryID := strings.TrimSpace(c.FormValue("country_id"))
 	timezone := strings.TrimSpace(c.FormValue("timezone"))
 	address := strings.TrimSpace(c.FormValue("address"))
 	city := strings.TrimSpace(c.FormValue("city"))
@@ -64,24 +71,35 @@ func FirmSetupPostHandler(c echo.Context) error {
 	noreplyEmail := strings.TrimSpace(c.FormValue("noreply_email"))
 
 	// Validate required fields
-	if name == "" || country == "" || billingEmail == "" {
+	if name == "" || countryID == "" || billingEmail == "" {
 		if c.Request().Header.Get("HX-Request") == "true" {
 			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Firm name, country, and billing email are required</div>`)
 		}
 		return c.Redirect(http.StatusSeeOther, "/firm/setup")
 	}
 
+	// Fetch country to get details
+	country, err := services.GetCountryByID(db.DB, countryID)
+	if err != nil {
+		c.Logger().Errorf("Failed to fetch country %s: %v", countryID, err)
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return c.HTML(http.StatusBadRequest, `<div class="text-red-500 text-sm mt-2">Invalid country selected</div>`)
+		}
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid country")
+	}
+
 	// Force timezone based on location
-	if defaultTz := services.GetDefaultTimezone(country); defaultTz != "" {
+	if defaultTz := services.GetDefaultTimezone(country.Name); defaultTz != "" {
 		timezone = defaultTz
 	}
 
 	// Create the firm
 	firm := &models.Firm{
 		Name:            name,
+		CountryID:       countryID,
 		Country:         country,
 		Timezone:        timezone,
-		Currency:        services.GetDefaultCurrency(country),
+		Currency:        services.GetDefaultCurrency(country.Name),
 		Address:         address,
 		City:            city,
 		Phone:           phone,
@@ -109,13 +127,13 @@ func FirmSetupPostHandler(c echo.Context) error {
 	}
 
 	// Seed default choice categories and options for the firm
-	if err := services.SeedDefaultChoices(db.DB, firm.ID, firm.Country); err != nil {
+	if err := services.SeedDefaultChoices(db.DB, firm.ID, firm.Country.Name); err != nil {
 		// Log error but don't fail the firm creation
 		c.Logger().Errorf("Failed to seed default choices for firm %s: %v", firm.ID, err)
 	}
 
 	// Seed case classifications for the firm
-	if err := services.SeedCaseClassifications(db.DB, firm.ID, firm.Country); err != nil {
+	if err := services.SeedCaseClassifications(db.DB, firm.ID, firm.Country.Name); err != nil {
 		// Log error but don't fail the firm creation
 		c.Logger().Errorf("Failed to seed case classifications for firm %s: %v", firm.ID, err)
 	}
@@ -166,11 +184,23 @@ func FirmSettingsPageHandler(c echo.Context) error {
 	// Get available add-ons for the purchase modal
 	availableAddOns, _ := services.GetAvailableAddOns(db.DB)
 
+	// Fetch active countries
+	countries, err := services.GetActiveCountries(db.DB)
+	if err != nil {
+		c.Logger().Errorf("Failed to fetch countries: %v", err)
+	}
+
 	// Get currency options - seed if missing (for existing firms created before currency seeding)
 	currencyOptions, _ := services.GetChoiceOptions(db.DB, firm.ID, models.ChoiceCategoryKeyCurrency)
 	if len(currencyOptions) == 0 {
 		// Seed currency choices for this firm
-		if err := services.SeedCurrencyChoices(db.DB, firm.ID, firm.Country); err != nil {
+		// Safety check for Country being populated
+		countryName := "Colombia" // Default check
+		if firm.Country != nil {
+			countryName = firm.Country.Name
+		}
+
+		if err := services.SeedCurrencyChoices(db.DB, firm.ID, countryName); err != nil {
 			c.Logger().Warnf("Failed to seed currency choices for firm %s: %v", firm.ID, err)
 		}
 		// Retry fetching
@@ -178,7 +208,7 @@ func FirmSettingsPageHandler(c echo.Context) error {
 	}
 
 	// Render the firm settings page
-	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm, subscriptionInfo, availableAddOns, currencyOptions)
+	component := pages.FirmSettings(c.Request().Context(), "Firm Settings | LexLegal Cloud", csrfToken, user, firm, subscriptionInfo, availableAddOns, currencyOptions, countries)
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -203,8 +233,14 @@ func UpdateFirmHandler(c echo.Context) error {
 
 	// Capture old values for audit
 	oldValues := map[string]interface{}{
-		"name":          firm.Name,
-		"country":       firm.Country,
+		"name": firm.Name,
+		"country": // Safely handle potentially missing country relation in old checks (though middleware should load it)
+		func() string {
+			if firm.Country != nil {
+				return firm.Country.Name
+			}
+			return ""
+		}(),
 		"timezone":      firm.Timezone,
 		"address":       firm.Address,
 		"city":          firm.City,
@@ -226,11 +262,11 @@ func UpdateFirmHandler(c echo.Context) error {
 
 	if updateType == "general" {
 		name := strings.TrimSpace(c.FormValue("name"))
-		country := strings.TrimSpace(c.FormValue("country"))
+		countryID := strings.TrimSpace(c.FormValue("country_id"))
 		timezone := strings.TrimSpace(c.FormValue("timezone"))
 		currency := strings.TrimSpace(c.FormValue("currency"))
 
-		if name == "" || country == "" {
+		if name == "" || countryID == "" {
 			return htmxError("Firm name and country are required")
 		}
 
@@ -241,12 +277,23 @@ func UpdateFirmHandler(c echo.Context) error {
 			firm.Slug = models.GenerateSlug(db.DB, name)
 		}
 
-		// Force timezone based on location
-		if defaultTz := services.GetDefaultTimezone(country); defaultTz != "" {
-			timezone = defaultTz
+		// Handle country change
+		if firm.CountryID != countryID {
+			country, err := services.GetCountryByID(db.DB, countryID)
+			if err != nil {
+				return htmxError("Invalid country selected")
+			}
+			firm.CountryID = countryID
+			firm.Country = country
+
+			// Force timezone based on location if not overridden (or re-apply default)
+			if defaultTz := services.GetDefaultTimezone(country.Name); defaultTz != "" {
+				timezone = defaultTz
+			}
+
+			// Update currency default if needed? Maybe not force it here.
 		}
 
-		firm.Country = country
 		firm.Timezone = timezone
 		if currency != "" {
 			firm.Currency = currency
