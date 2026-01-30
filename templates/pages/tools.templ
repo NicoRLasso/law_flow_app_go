@@ -9,7 +9,7 @@ import (
 	"law_flow_app_go/templates/partials"
 )
 
-templ Tools(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, departments []models.Department) {
+templ Tools(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm, departments []models.Department, clients []models.User, lawyers []models.User) {
 	@layouts.Base(ctx, title, csrfToken, nil) {
 		<div class="min-h-screen bg-base-200">
 			@components.Navbar(ctx, user, firm, "/tools")
@@ -35,7 +35,7 @@ templ Tools(ctx context.Context, title string, csrfToken string, user *models.Us
 							>
 								<span class="flex items-center gap-3 font-serif font-bold">
 									<i data-lucide="menu"></i>
-									<span x-text="activeTab === 'filing_number' ? 'Filing Number' : activeTab === 'calculators' ? 'Calculators' : 'Converters'"></span>
+									<span x-text="activeTab === 'filing_number' ? 'Filing Number' : activeTab === 'reports' ? 'Reports' : 'Calculators'"></span>
 								</span>
 								<i data-lucide="chevron-down" class="transition-transform" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
@@ -56,6 +56,16 @@ templ Tools(ctx context.Context, title string, csrfToken string, user *models.Us
 											<span>{ i18n.T(ctx, "tools.filing_number.title") }</span>
 										</button>
 									</li>
+									<li>
+										<button
+											@click="activeTab = 'reports'; sidebarOpen = false"
+											:class="activeTab === 'reports' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="file-spreadsheet" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "reports.title") }</span>
+										</button>
+									</li>
 								</ul>
 							</nav>
 						</aside>
@@ -65,6 +75,11 @@ templ Tools(ctx context.Context, title string, csrfToken string, user *models.Us
 							<!-- Filing Number Builder Tab -->
 							<div x-show="activeTab === 'filing_number'" class="space-y-6">
 								@partials.ToolFilingNumberBuilder(ctx, departments)
+							</div>
+
+							<!-- Report Generator Tab -->
+							<div x-show="activeTab === 'reports'" class="space-y-6" style="display: none;">
+								@partials.ToolReportGenerator(ctx, clients, lawyers)
 							</div>
 
 						</div>

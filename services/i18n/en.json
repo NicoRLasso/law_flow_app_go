@@ -400,7 +400,19 @@
     "download": "Download",
     "search": "Search",
     "page": "Page",
-    "coming_soon": "Coming Soon"
+    "coming_soon": "Coming Soon",
+    "client": "Client",
+    "lawyer": "Lawyer"
+  },
+  "reports": {
+    "title": "Report Generator",
+    "description": "Export data to CSV for analysis",
+    "type": "Report Type",
+    "type.cases": "Cases",
+    "type.services": "Services",
+    "date_start": "Start Date",
+    "date_end": "End Date",
+    "export_csv": "Export CSV"
   },
   "auth": {
     "email": "Email Address",
@@ -1047,7 +1059,7 @@
       "full_name": "Full Name",
       "email": "Email",
       "password": "Password",
-      "min_chars": "Minimum 8 characters",
+      "min_chars": "Minimum 12 characters",
       "role": "Role",
       "select_role": "Select a role",
       "active_user": "Active User",

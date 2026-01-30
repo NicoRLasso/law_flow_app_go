@@ -56,7 +56,7 @@ func LoginPostHandler(c echo.Context) error {
 	// Validate input
 	if email == "" || password == "" {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Email and password are required</span></div>`)
+			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20  px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Email and password are required</span></div>`)
 		}
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
@@ -77,7 +77,7 @@ func LoginPostHandler(c echo.Context) error {
 	// Handle user not found (after password check to maintain constant timing)
 	if err != nil {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Invalid email or password</span></div>`)
+			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20  px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Invalid email or password</span></div>`)
 		}
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
@@ -85,7 +85,7 @@ func LoginPostHandler(c echo.Context) error {
 	// Check if account is locked (after password verification for constant timing)
 	if user.LockoutUntil != nil && time.Now().Before(*user.LockoutUntil) {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Account is locked. Try again later.</span></div>`)
+			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20  px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Account is locked. Try again later.</span></div>`)
 		}
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
@@ -109,7 +109,7 @@ func LoginPostHandler(c echo.Context) error {
 		db.DB.Save(&user)
 
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Invalid email or password</span></div>`)
+			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20  px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Invalid email or password</span></div>`)
 		}
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}
@@ -126,7 +126,7 @@ func LoginPostHandler(c echo.Context) error {
 	// Check if user is active
 	if !user.IsActive {
 		if c.Request().Header.Get("HX-Request") == "true" {
-			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Your account has been deactivated</span></div>`)
+			return c.HTML(http.StatusOK, `<div class="bg-red-500/10 border border-red-500/20  px-4 py-3 rounded-xl flex items-center gap-3 transition-all animate-in fade-in slide-in-from-top-2"><svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="text-sm font-medium">Your account has been deactivated</span></div>`)
 		}
 		return c.Redirect(http.StatusSeeOther, "/login")
 	}

@@ -1,0 +1,94 @@
+package partials
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+)
+
+templ ToolReportGenerator(ctx context.Context, clients []models.User, lawyers []models.User) {
+	<div class="card bg-base-100 shadow-sm border border-base-200" x-init="lucide.createIcons()">
+		<div class="card-body">
+			<h2 class="card-title font-serif text-2xl mb-4 flex items-center gap-2">
+				<i data-lucide="file-spreadsheet" class="w-6 h-6 text-primary"></i>
+				{ i18n.T(ctx, "reports.title") }
+			</h2>
+			<p class="text-base-content/70 mb-6">{ i18n.T(ctx, "reports.description") }</p>
+
+			<form action="/tools/export" method="POST" target="_blank" class="space-y-6">
+				<!-- Report Type -->
+				<div class="form-control">
+					<label class="label">
+						<span class="label-text font-bold">{ i18n.T(ctx, "reports.type") }</span>
+					</label>
+					<select name="report_type" class="select select-bordered w-full" required>
+						<option value="cases">{ i18n.T(ctx, "reports.type.cases") }</option>
+						<option value="services">{ i18n.T(ctx, "reports.type.services") }</option>
+					</select>
+				</div>
+
+				<!-- Date Range -->
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold">{ i18n.T(ctx, "reports.date_start") }</span>
+						</label>
+						<input type="date" name="start_date" class="input input-bordered w-full" />
+					</div>
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold">{ i18n.T(ctx, "reports.date_end") }</span>
+						</label>
+						<input type="date" name="end_date" class="input input-bordered w-full" />
+					</div>
+				</div>
+
+				<!-- Filters -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold">{ i18n.T(ctx, "common.client") }</span>
+						</label>
+						<select name="client_id" class="select select-bordered w-full">
+							<option value="">{ i18n.T(ctx, "common.all") }</option>
+							for _, client := range clients {
+								<option value={ client.ID }>{ client.Name }</option>
+							}
+						</select>
+					</div>
+
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold">{ i18n.T(ctx, "common.lawyer") }</span>
+						</label>
+						<select name="lawyer_id" class="select select-bordered w-full">
+							<option value="">{ i18n.T(ctx, "common.all") }</option>
+							for _, lawyer := range lawyers {
+								<option value={ lawyer.ID }>{ lawyer.Name }</option>
+							}
+						</select>
+					</div>
+
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text font-bold">{ i18n.T(ctx, "common.status") }</span>
+						</label>
+						<select name="status" class="select select-bordered w-full">
+							<option value="">{ i18n.T(ctx, "common.all") }</option>
+							<option value="OPEN">Open</option>
+							<option value="CLOSED">Closed</option>
+							<option value="ON_HOLD">On Hold</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="card-actions justify-end mt-8">
+					<button type="submit" class="btn btn-primary">
+						<i data-lucide="download"></i>
+						{ i18n.T(ctx, "reports.export_csv") }
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}

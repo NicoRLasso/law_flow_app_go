@@ -24,7 +24,7 @@ templ FirmSetup(ctx context.Context, title string, csrfToken string, user *model
 						<h2 class="text-2xl font-serif font-bold mb-2 text-base-content">{ i18n.T(ctx, "firm.setup.create_title") }</h2>
 						<p class="text-base-content/60 text-sm">{ i18n.T(ctx, "firm.setup.enter_info") }</p>
 					</div>
-					<form hx-post="/firm/setup" hx-target="#error-message" hx-swap="innerHTML" class="space-y-6">
+					<form hx-post="/firm/setup" hx-target="#error-message" hx-swap="innerHTML" hx-indicator="#create-firm-spinner" hx-disabled-elt="#create-firm-btn" class="space-y-6">
 						<!-- Error Message Area -->
 						<div id="error-message" class="min-h-[24px]"></div>
 						<!-- Firm Name -->
@@ -165,9 +165,11 @@ templ FirmSetup(ctx context.Context, title string, csrfToken string, user *model
 						<!-- Submit Button -->
 						<div class="pt-6 border-t border-base-200 mt-6">
 							<button
+								id="create-firm-btn"
 								type="submit"
 								class="btn btn-primary w-full rounded-sm gap-2"
 							>
+								<span id="create-firm-spinner" class="loading loading-spinner loading-sm htmx-indicator"></span>
 								<span>{ i18n.T(ctx, "firm.setup.create_btn") }</span>
 								<i data-lucide="arrow-right"></i>
 							</button>

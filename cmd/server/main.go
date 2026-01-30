@@ -559,6 +559,9 @@ func main() {
 			filingNumberRoutes.POST("/parse", handlers.ParseFilingNumberHandler)
 		}
 
+		// Report Generator Tool API
+		protected.POST("/tools/export", handlers.ExportReportHandler, middleware.RequireRole("admin", "lawyer"))
+
 		adminRoutes.GET("/api/lawyers", handlers.GetLawyersForFilterHandler)
 		availabilityRoutes := protected.Group("")
 		availabilityRoutes.Use(middleware.RequireRole("admin", "lawyer"))

@@ -398,7 +398,19 @@
     "download": "Descargar",
     "search": "Buscar",
     "page": "Página",
-    "coming_soon": "Próximamente"
+    "coming_soon": "Próximamente",
+    "client": "Cliente",
+    "lawyer": "Abogado"
+  },
+  "reports": {
+    "title": "Generador de Reportes",
+    "description": "Exportar datos a CSV para análisis",
+    "type": "Tipo de Reporte",
+    "type.cases": "Casos",
+    "type.services": "Servicios",
+    "date_start": "Fecha Inicio",
+    "date_end": "Fecha Fin",
+    "export_csv": "Exportar CSV"
   },
   "auth": {
     "email": "Correo Electrónico",
@@ -1037,7 +1049,7 @@
       "full_name": "Nombre Completo",
       "email": "Correo Electrónico",
       "password": "Contraseña",
-      "min_chars": "Mínimo 8 caracteres",
+      "min_chars": "Mínimo 12 caracteres",
       "role": "Rol",
       "select_role": "Seleccionar un rol",
       "active_user": "Usuario Activo",

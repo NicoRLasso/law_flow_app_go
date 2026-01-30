@@ -142,12 +142,18 @@ func CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Email must be less than 320 characters"})
 	}
 	if len(user.Password) > 72 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return partials.UserFormModal(c.Request().Context(), user, false, "Password must be less than 72 characters").Render(c.Request().Context(), c.Response().Writer)
+		}
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Password must be less than 72 characters"})
 	}
 	if user.Address != nil && len(*user.Address) > 255 {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Address must be less than 255 characters"})
 	}
 	if user.PhoneNumber != nil && len(*user.PhoneNumber) > 20 {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return partials.UserFormModal(c.Request().Context(), user, false, "Phone number must be less than 20 characters").Render(c.Request().Context(), c.Response().Writer)
+		}
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Phone number must be less than 20 characters"})
 	}
 	if user.DocumentNumber != nil && len(*user.DocumentNumber) > 50 {
@@ -156,6 +162,9 @@ func CreateUser(c echo.Context) error {
 
 	// Validate required fields
 	if user.Email == "" || user.Password == "" || user.Name == "" {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return partials.UserFormModal(c.Request().Context(), user, false, "Name, email, and password are required").Render(c.Request().Context(), c.Response().Writer)
+		}
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "Name, email, and password are required",
 		})
@@ -176,6 +185,9 @@ func CreateUser(c echo.Context) error {
 
 	// Validate password strength
 	if err := services.ValidatePassword(user.Password); err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return partials.UserFormModal(c.Request().Context(), user, false, err.Error()).Render(c.Request().Context(), c.Response().Writer)
+		}
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
 		})
@@ -184,6 +196,9 @@ func CreateUser(c echo.Context) error {
 	// Hash password
 	hashedPassword, err := services.HashPassword(user.Password)
 	if err != nil {
+		if c.Request().Header.Get("HX-Request") == "true" {
+			return partials.UserFormModal(c.Request().Context(), user, false, "Failed to hash password").Render(c.Request().Context(), c.Response().Writer)
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to hash password",
 		})
@@ -533,7 +548,7 @@ func GetUsersListHTMX(c echo.Context) error {
 // GetUserFormNew returns the form modal for creating a new user
 func GetUserFormNew(c echo.Context) error {
 	// Render the form modal with empty user
-	component := partials.UserFormModal(c.Request().Context(), nil, false)
+	component := partials.UserFormModal(c.Request().Context(), nil, false, "")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 
@@ -557,7 +572,7 @@ func GetUserFormEdit(c echo.Context) error {
 	}
 
 	// Render the form modal with user data
-	component := partials.UserFormModal(c.Request().Context(), &user, true)
+	component := partials.UserFormModal(c.Request().Context(), &user, true, "")
 	return component.Render(c.Request().Context(), c.Response().Writer)
 }
 

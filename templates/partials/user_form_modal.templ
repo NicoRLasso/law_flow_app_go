@@ -7,7 +7,7 @@ import (
 )
 
 // UserFormModal renders a modal for creating a new user
-templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
+templ UserFormModal(ctx context.Context, user *models.User, isEdit bool, errorMessage string) {
 	<div class="modal modal-open" id="user-modal">
 		<div class="modal-box max-w-lg bg-base-100 rounded-sm max-h-[90vh] flex flex-col overflow-hidden">
 			<!-- Modal Header -->
@@ -32,6 +32,12 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 				</button>
 			</div>
 			<!-- Modal Body -->
+			if errorMessage != "" {
+				<div role="alert" class="alert alert-error mb-4 rounded-sm p-3">
+					<i data-lucide="circle-alert" class="w-5 h-5"></i>
+					<span class="text-sm font-medium">{ errorMessage }</span>
+				</div>
+			}
 			<form
 				if isEdit {
 					hx-put={ getFormAction(user, isEdit) }
@@ -89,7 +95,7 @@ templ UserFormModal(ctx context.Context, user *models.User, isEdit bool) {
 									:type="showPass ? 'text' : 'password'"
 									name="password"
 									required
-									minlength="8"
+									minlength="12"
 									class="input input-bordered w-full rounded-sm focus:input-primary pr-10"
 									placeholder="••••••••"
 								/>
