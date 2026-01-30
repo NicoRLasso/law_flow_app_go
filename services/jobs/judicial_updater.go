@@ -265,15 +265,6 @@ func processCase(database *gorm.DB, c models.Case) error {
 		}
 	}
 
-	// Update generic LastActivityDate if actions found
-	if len(actions) > 0 {
-		latestAction := actions[0] // API returns sorted desc
-		if !latestAction.ActionDate.IsZero() {
-			jp.LastActivityDate = latestAction.ActionDate
-			database.Save(&jp)
-		}
-	}
-
 	// If this was the first sync and we imported data, send a SUMMARY notification
 	if isNewTracking && importedCount > 0 {
 		summaryNotification := models.Notification{

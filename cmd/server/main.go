@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
-	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.ServiceActivity{}, &models.Notification{}); err != nil {
+	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.Notification{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	if err := services.InitializeFTS5(db.DB); err != nil {
@@ -446,14 +446,6 @@ func main() {
 			serviceAdmin.PUT("/:id/expenses/:eid", handlers.UpdateServiceExpenseHandler)
 			serviceAdmin.PATCH("/:id/expenses/:eid/approve", handlers.ApproveServiceExpenseHandler)
 			serviceAdmin.DELETE("/:id/expenses/:eid", handlers.DeleteServiceExpenseHandler)
-
-			// Activities
-			serviceAdmin.GET("/:id/activities", handlers.GetServiceActivitiesHandler)
-			serviceAdmin.GET("/:id/activities/new", handlers.GetServiceActivityForm)
-			serviceAdmin.GET("/:id/activities/:aid/edit-modal", handlers.GetServiceActivityEditModalHandler)
-			serviceAdmin.POST("/:id/activities", handlers.CreateServiceActivityHandler)
-			serviceAdmin.PUT("/:id/activities/:aid", handlers.UpdateServiceActivityHandler)
-			serviceAdmin.DELETE("/:id/activities/:aid", handlers.DeleteServiceActivityHandler)
 
 			// Document Generation
 			serviceAdmin.GET("/:id/templates/modal", handlers.GetServiceTemplateModalHandler)

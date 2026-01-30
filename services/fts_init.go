@@ -69,7 +69,6 @@ func InitializeFTS5(db *gorm.DB) error {
 			service_description,
 			service_objective,
 			client_name,
-			activity_content,
 			milestone_content,
 			document_content,
 			tokenize='unicode61 remove_diacritics 2'
@@ -119,11 +118,6 @@ func InitializeFTS5(db *gorm.DB) error {
 	// Create triggers for legal_services table
 	if err := createServicesTriggers(db); err != nil {
 		log.Printf("[WARNING] Failed to create services triggers: %v", err)
-	}
-
-	// Create triggers for service_activities table
-	if err := createServiceActivitiesTriggers(db); err != nil {
-		log.Printf("[WARNING] Failed to create service_activities triggers: %v", err)
 	}
 
 	// Create triggers for service_milestones table
@@ -485,7 +479,7 @@ func RebuildFTSIndex(db *gorm.DB) error {
 
 		// Insert into FTS
 		db.Exec(`
-			INSERT INTO services_fts (rowid, service_id, firm_id, service_number, service_title, service_description, service_objective, client_name, activity_content, milestone_content, document_content)
+			INSERT INTO services_fts (rowid, service_id, firm_id, service_number, service_title, service_description, service_objective, client_name, milestone_content, document_content)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			rowid, service.ID, service.FirmID, service.ServiceNumber, service.Title,
 			service.Description, service.Objective, service.ClientName,
@@ -516,7 +510,7 @@ func createServicesTriggers(db *gorm.DB) error {
 			INSERT INTO services_fts (
 				rowid, service_id, firm_id, service_number, service_title,
 				service_description, service_objective, client_name,
-				activity_content, milestone_content, document_content
+				milestone_content, document_content
 			)
 			SELECT
 				(SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.id),
@@ -546,7 +540,7 @@ func createServicesTriggers(db *gorm.DB) error {
 			INSERT INTO services_fts (
 				rowid, service_id, firm_id, service_number, service_title,
 				service_description, service_objective, client_name,
-				activity_content, milestone_content, document_content
+				milestone_content, document_content
 			)
 			SELECT
 				(SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.id),
@@ -577,53 +571,6 @@ func createServicesTriggers(db *gorm.DB) error {
 		BEGIN
 			DELETE FROM services_fts WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.id);
 			DELETE FROM services_fts_mapping WHERE service_id = OLD.id;
-		END
-	`).Error
-
-	return err
-}
-
-func createServiceActivitiesTriggers(db *gorm.DB) error {
-	db.Exec(`DROP TRIGGER IF EXISTS service_activities_fts_insert`)
-	db.Exec(`DROP TRIGGER IF EXISTS service_activities_fts_update`)
-	db.Exec(`DROP TRIGGER IF EXISTS service_activities_fts_delete`)
-
-	err := db.Exec(`
-		CREATE TRIGGER IF NOT EXISTS service_activities_fts_insert AFTER INSERT ON service_activities
-		BEGIN
-			UPDATE services_fts SET activity_content = (
-				SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ')
-				FROM service_activities WHERE service_id = NEW.service_id
-			)
-			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
-		END
-	`).Error
-	if err != nil {
-		return err
-	}
-
-	err = db.Exec(`
-		CREATE TRIGGER IF NOT EXISTS service_activities_fts_update AFTER UPDATE ON service_activities
-		BEGIN
-			UPDATE services_fts SET activity_content = (
-				SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ')
-				FROM service_activities WHERE service_id = NEW.service_id
-			)
-			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.service_id);
-		END
-	`).Error
-	if err != nil {
-		return err
-	}
-
-	err = db.Exec(`
-		CREATE TRIGGER IF NOT EXISTS service_activities_fts_delete AFTER DELETE ON service_activities
-		BEGIN
-			UPDATE services_fts SET activity_content = (
-				SELECT GROUP_CONCAT(title || ' ' || COALESCE(content, ''), ' ')
-				FROM service_activities WHERE service_id = OLD.service_id
-			)
-			WHERE rowid = (SELECT rowid FROM services_fts_mapping WHERE service_id = OLD.service_id);
 		END
 	`).Error
 

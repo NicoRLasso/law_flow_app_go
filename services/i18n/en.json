@@ -854,37 +854,6 @@
       "select_client": "Select Client",
       "select_type": "Select Type",
       "hours": "Hours"
-    },
-    "activities": {
-      "title": "Activity Log",
-      "add_title": "Log Activity or Time",
-      "edit_title": "Edit Activity",
-      "list_empty": "No activities recorded yet.",
-      "table": {
-        "date": "Date",
-        "title": "Title",
-        "content": "Content",
-        "duration": "Duration",
-        "actions": "Actions"
-      },
-      "form": {
-        "title": "New Log Entry",
-        "title_placeholder": "E.g., Client call, Drafting documents",
-        "content_placeholder": "Additional details about what was done...",
-        "duration_placeholder": "Minutes (optional)",
-        "occurred_at": "Date and Time"
-      },
-      "type": {
-        "note": "Note",
-        "call": "Call",
-        "meeting": "Meeting",
-        "email": "Email",
-        "time_entry": "Time Entry"
-      },
-      "delete": {
-        "title": "Delete Activity",
-        "message": "Are you sure you want to delete this activity? This action cannot be undone."
-      }
     }
   },
   "cases": {

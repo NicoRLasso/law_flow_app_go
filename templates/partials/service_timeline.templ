@@ -19,8 +19,6 @@ templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, 
 							<div class="w-2 h-2 rounded-full bg-success"></div>
 						} else if event.Type == "estimated_due" {
 							<div class="w-2 h-2 rounded-full bg-warning"></div>
-						} else if event.Type == "activity" {
-							<div class="w-2 h-2 rounded-full bg-info"></div>
 						} else if event.Type == "milestone" {
 							if event.IsCompleted {
 								<div class="w-2 h-2 rounded-full bg-success"></div>
@@ -32,13 +30,7 @@ templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, 
 					<div class="flex-1">
 						<div class="flex items-center justify-between">
 							<div class="flex items-center gap-2">
-								if event.Type == "activity" {
-									<i data-lucide="activity" class="w-3 h-3 text-info"></i>
-									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Activity</span>
-									if event.ActivityType != "" {
-										<span class="badge badge-ghost badge-xs">{ event.ActivityType }</span>
-									}
-								} else if event.Type == "milestone" {
+								if event.Type == "milestone" {
 									<i data-lucide="flag" class="w-3 h-3 text-warning"></i>
 									<span class="text-xs font-bold uppercase tracking-wider text-base-content/60">Milestone</span>
 									if event.IsCompleted {
@@ -52,12 +44,12 @@ templ ServiceTimelineList(ctx context.Context, timeline []models.TimelineEvent, 
 							</div>
 							<span class="text-xs text-base-content/50 font-mono">{ event.Date.Format("02 Jan 2006") }</span>
 						</div>
-						if event.Type == "activity" || event.Type == "milestone" {
+						if event.Type == "milestone" {
 							<p class="text-sm font-medium text-base-content mt-1">{ event.Title }</p>
 						} else {
 							<p class="text-sm text-base-content/70 mt-1">{ event.Description }</p>
 						}
-						if event.Description != "" && (event.Type == "activity" || event.Type == "milestone") {
+						if event.Description != "" && (event.Type == "milestone") {
 							<p class="text-xs text-base-content/60 mt-0.5">{ event.Description }</p>
 						}
 					</div>

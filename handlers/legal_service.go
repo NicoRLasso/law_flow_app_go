@@ -116,12 +116,9 @@ func GetServiceDetailHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve service")
 	}
 
-	// Preload Milestones and Activities for timeline
+	// Preload Milestones for timeline
 	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Milestones).Error; err != nil {
 		fmt.Printf("Error loading milestones: %v\n", err)
-	}
-	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Activities).Error; err != nil {
-		fmt.Printf("Error loading activities: %v\n", err)
 	}
 
 	// Build timeline events (empty for now, will be loaded via HTMX)
@@ -171,12 +168,9 @@ func GetServiceTimelineHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, "Access denied")
 	}
 
-	// Preload Milestones and Activities for timeline
+	// Preload Milestones for timeline
 	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Milestones).Error; err != nil {
 		fmt.Printf("Error loading milestones: %v\n", err)
-	}
-	if err := db.DB.Where("service_id = ?", service.ID).Find(&service.Activities).Error; err != nil {
-		fmt.Printf("Error loading activities: %v\n", err)
 	}
 
 	// Pagination
@@ -272,19 +266,6 @@ func buildServiceTimeline(service *models.LegalService) []models.TimelineEvent {
 			Status:      milestone.Status,
 			IsCompleted: milestone.Status == "COMPLETED",
 		})
-	}
-
-	// Add activities
-	for _, activity := range service.Activities {
-		if activity.OccurredAt != nil {
-			events = append(events, models.TimelineEvent{
-				Date:         *activity.OccurredAt,
-				Type:         "activity",
-				Title:        activity.Title,
-				Description:  activity.Content,
-				ActivityType: activity.ActivityType,
-			})
-		}
 	}
 
 	// Sort events by date (most recent first)

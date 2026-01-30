@@ -9,13 +9,12 @@ import (
 
 // TimelineEvent represents a unified timeline entry for services
 type TimelineEvent struct {
-	Date         time.Time
-	Type         string // "service_created", "service_started", "service_completed", "milestone", "activity"
-	Title        string
-	Description  string
-	Status       string
-	ActivityType string
-	IsCompleted  bool
+	Date        time.Time
+	Type        string // "service_created", "service_started", "service_completed", "milestone"
+	Title       string
+	Description string
+	Status      string
+	IsCompleted bool
 }
 
 // Service status constants (workflow states - must remain fixed)
@@ -95,7 +94,6 @@ type LegalService struct {
 	Milestones    []ServiceMilestone `gorm:"foreignKey:ServiceID" json:"milestones,omitempty"`
 	Documents     []ServiceDocument  `gorm:"foreignKey:ServiceID" json:"documents,omitempty"`
 	Expenses      []ServiceExpense   `gorm:"foreignKey:ServiceID" json:"expenses,omitempty"`
-	Activities    []ServiceActivity  `gorm:"foreignKey:ServiceID" json:"activities,omitempty"`
 	Collaborators []User             `gorm:"many2many:service_collaborators;" json:"collaborators,omitempty"`
 }
 

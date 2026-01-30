@@ -114,9 +114,6 @@ func GetServiceByID(db *gorm.DB, firmID, serviceID string) (*models.LegalService
 		Preload("Documents").
 		Preload("Expenses").
 		Preload("Expenses.Category").
-		Preload("Activities", func(db *gorm.DB) *gorm.DB {
-			return db.Order("created_at DESC")
-		}).
 		Preload("Collaborators").
 		First(&service).Error
 
@@ -209,29 +206,6 @@ func GetServiceApprovedExpenses(db *gorm.DB, serviceID string) (float64, error) 
 	return total, err
 }
 
-// GetServiceTotalBillableMinutes calculates total billable minutes for a service
-func GetServiceTotalBillableMinutes(db *gorm.DB, serviceID string) (int, error) {
-	var total int
-	err := db.Model(&models.ServiceActivity{}).
-		Where("service_id = ? AND activity_type = ? AND is_billable = ?",
-			serviceID, models.ActivityTypeTimeEntry, true).
-		Select("COALESCE(SUM(duration), 0)").
-		Scan(&total).Error
-	return total, err
-}
-
-// UpdateServiceActualHours recalculates and updates actual hours from activities
-func UpdateServiceActualHours(db *gorm.DB, serviceID string) error {
-	totalMinutes, err := GetServiceTotalBillableMinutes(db, serviceID)
-	if err != nil {
-		return err
-	}
-	hours := float64(totalMinutes) / 60.0
-	return db.Model(&models.LegalService{}).
-		Where("id = ?", serviceID).
-		Update("actual_hours", hours).Error
-}
-
 // UpdateServiceStatus updates the status of a service with tracking
 func UpdateServiceStatus(db *gorm.DB, serviceID, newStatus, userID string) error {
 	if !models.IsValidServiceStatus(newStatus) {
@@ -297,11 +271,6 @@ func DeleteService(db *gorm.DB, firmID, serviceID string) error {
 
 		// Delete expenses
 		if err := tx.Where("service_id = ?", serviceID).Delete(&models.ServiceExpense{}).Error; err != nil {
-			return err
-		}
-
-		// Delete activities
-		if err := tx.Where("service_id = ?", serviceID).Delete(&models.ServiceActivity{}).Error; err != nil {
 			return err
 		}
 

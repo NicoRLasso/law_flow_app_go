@@ -132,7 +132,7 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 							>
 								<span class="flex items-center gap-3 font-serif font-bold">
 									<i data-lucide="menu"></i>
-									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'milestones' ? '" + i18n.T(ctx, "services.tab.milestones") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "services.tab.documents") + "' : activeTab === 'expenses' ? '" + i18n.T(ctx, "services.tab.expenses") + "' : '" + i18n.T(ctx, "services.tab.activities") + "'" }></span>
+									<span x-text={ "activeTab === 'summary' ? '" + i18n.T(ctx, "case.detail.tab.summary") + "' : activeTab === 'milestones' ? '" + i18n.T(ctx, "services.tab.milestones") + "' : activeTab === 'documents' ? '" + i18n.T(ctx, "services.tab.documents") + "' : '" + i18n.T(ctx, "services.tab.expenses") + "'" }></span>
 								</span>
 								<i data-lucide="chevron-down" class="transition-transform" :class="{ 'rotate-180': sidebarOpen }"></i>
 							</button>
@@ -180,16 +180,6 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 										>
 											<i data-lucide="dollar-sign" class="w-5 text-center"></i>
 											<span>{ i18n.T(ctx, "services.tab.expenses") }</span>
-										</button>
-									</li>
-									<li>
-										<button
-											@click="activeTab = 'activities'; sidebarOpen = false; setTimeout(() => { const el = document.getElementById('activities-tab-content'); if (el) htmx.trigger(el, 'reveal') }, 50)"
-											:class="activeTab === 'activities' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
-											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
-										>
-											<i data-lucide="activity" class="w-5 text-center"></i>
-											<span>{ i18n.T(ctx, "services.tab.activities") }</span>
 										</button>
 									</li>
 									// Generate tab removed
@@ -269,37 +259,6 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 									</div>
 								</div>
 							</div>
-							<!-- Activities Tab -->
-							<div x-show="activeTab === 'activities'" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
-								<div class="flex items-center justify-between flex-wrap gap-3 mb-4">
-									<h2 class="text-xl font-serif font-bold text-base-content border-b-2 border-primary pb-1 pr-6 inline-block">
-										{ i18n.T(ctx, "services.activities.title") }
-									</h2>
-									if user.Role != "client" {
-										<button
-											type="button"
-											hx-get={ fmt.Sprintf("/api/services/%s/activities/new", service.ID) }
-											hx-target="#activity-modal-container"
-											hx-swap="innerHTML"
-											class="btn btn-primary btn-sm rounded-sm shadow-sm"
-										>
-											<i data-lucide="plus" class="mr-2"></i>
-											{ i18n.T(ctx, "common.add") }
-										</button>
-									}
-								</div>
-								<div
-									id="activities-tab-content"
-									hx-get={ fmt.Sprintf("/api/services/%s/activities", service.ID) }
-									hx-trigger="reveal"
-									class="bg-base-100 rounded-sm border border-base-200 shadow-sm min-h-[200px]"
-								>
-									<div class="flex flex-col items-center justify-center py-12">
-										<span class="loading loading-spinner loading-lg text-primary mb-4"></span>
-										<p class="text-base-content/40 font-medium font-serif">{ i18n.T(ctx, "common.loading") }</p>
-									</div>
-								</div>
-							</div>
 							<!-- Generate Tab -->
 							// Generate tab content removed
 						</div>
@@ -315,7 +274,6 @@ templ ServiceDetail(ctx context.Context, title string, csrfToken string, user *m
 			@partials.PDFViewerModalService(ctx)
 			@components.ConfirmationModal(ctx)
 			<div id="template-modal-container"></div>
-			<div id="activity-modal-container"></div>
 		</div>
 	}
 }
@@ -473,25 +431,21 @@ templ ServiceSummaryTab(ctx context.Context, service *models.LegalService, user 
 					</div>
 				</div>
 			</div>
-			<!-- Priority & Hours -->
+			<!-- Priority & Financial Summary -->
 			<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
 				<div class="card-body p-6">
 					<h2 class="text-lg font-serif font-bold mb-4 text-primary uppercase tracking-widest border-b border-base-200 pb-2">
 						{ i18n.T(ctx, "case.detail.financial_summary") }
 					</h2>
-					<div class="grid grid-cols-2 gap-4">
+					<div class="space-y-4">
 						<div>
 							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "expenses.total") }</label>
 							<p class="text-base-content font-serif text-lg font-bold">{ fmt.Sprintf("%.2f %s", totalExpenses, service.Firm.Currency) }</p>
 						</div>
 						<div>
-							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.hours") }</label>
-							<p class="text-base-content font-serif">{ fmt.Sprintf("%.1f / %.1f", service.ActualHours, func() float64 { if service.EstimatedHours != nil { return *service.EstimatedHours }; return 0.0 }()) }</p>
+							<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.priority") }</label>
+							@PriorityBadge(ctx, service.Priority)
 						</div>
-					</div>
-					<div class="mt-4">
-						<label class="text-xs font-bold uppercase tracking-wider text-base-content/40 mb-1 block">{ i18n.T(ctx, "services.form.priority") }</label>
-						@PriorityBadge(ctx, service.Priority)
 					</div>
 				</div>
 			</div>
