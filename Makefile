@@ -1,4 +1,4 @@
-.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css-build css-watch docker-build docker-run dupl
+.PHONY: help run build clean generate install-deps test dev fmt tidy create-user css css-watch docker-build docker-run dupl
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -15,10 +15,10 @@ generate: ## Generate Templ templates
 	$(HOME)/go/bin/templ generate
 
 css: ## Build CSS with Tailwind v4
-	bun x @tailwindcss/cli -i static/css/input.css -o static/css/style.css --minify
+	bun x tailwindcss -i static/css/input.css -o static/css/style.css --minify
 
 css-watch: ## Watch CSS changes
-	bun x @tailwindcss/cli -i static/css/input.css -o static/css/style.css --watch
+	bun x tailwindcss -i static/css/input.css -o static/css/style.css --watch
 
 air:
 	$(HOME)/go/bin/air

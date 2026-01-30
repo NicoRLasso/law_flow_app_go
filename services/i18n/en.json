@@ -38,6 +38,7 @@
     "cases": "Cases",
     "services": "Services",
     "historical_cases": "Historical Cases",
+    "tools": "Tools",
     "info_title": "Firm Information",
     "info": {
       "name": "Firm Name",
@@ -855,6 +856,15 @@
       "select_client": "Select Client",
       "select_type": "Select Type",
       "hours": "Hours"
+    }
+  },
+  "tools": {
+    "title": "Tools",
+    "subtitle": "Useful legal toolings",
+    "tab": {
+      "calculators": "Calculators",
+      "converters": "Converters",
+      "generation": "Generation"
     }
   },
   "cases": {

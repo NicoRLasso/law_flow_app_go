@@ -29,10 +29,10 @@ COPY . .
 RUN templ generate
 
 # Build CSS with Tailwind v4
-RUN bun x @tailwindcss/cli -i static/css/input.css -o static/css/style.css --minify
+RUN bun x tailwindcss -i static/css/input.css -o static/css/style.css --minify
 
 # Build with CGO for SQLite (uses cached dependencies)
-RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o server cmd/server/main.go
+RUN CGO_ENABLED=1 go build -tags "fts5" -ldflags="-s -w" -o server cmd/server/main.go
 
 # Headless shell stage - get Chrome headless binary
 FROM chromedp/headless-shell:latest AS headless

@@ -3,10 +3,10 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@tailwindcss/cli": "next",
+    "@tailwindcss/cli": "latest",
     "bun-types": "latest",
     "daisyui": "latest",
-    "tailwindcss": "next"
+    "tailwindcss": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

@@ -39,6 +39,10 @@ func main() {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
 	defer db.Close()
+
+	// Drop FTS triggers before migration to avoid errors when GORM renames tables
+	services.DropFTSTriggers(db.DB)
+
 	if err := db.AutoMigrate(&models.Firm{}, &models.User{}, &models.Session{}, &models.PasswordResetToken{}, &models.ChoiceCategory{}, &models.ChoiceOption{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.Case{}, &models.CaseParty{}, &models.CaseDocument{}, &models.CaseLog{}, &models.Availability{}, &models.BlockedDate{}, &models.AppointmentType{}, &models.Appointment{}, &models.AuditLog{}, &models.TemplateCategory{}, &models.DocumentTemplate{}, &models.GeneratedDocument{}, &models.SupportTicket{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.Plan{}, &models.FirmSubscription{}, &models.FirmUsage{}, &models.PlanAddOn{}, &models.FirmAddOn{}, &models.LegalService{}, &models.ServiceMilestone{}, &models.CaseMilestone{}, &models.ServiceDocument{}, &models.ServiceExpense{}, &models.Notification{}); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
@@ -167,7 +171,7 @@ func main() {
 		}
 
 		requestID := c.Response().Header().Get(echo.HeaderXRequestID)
-		
+
 		// If it's an HTMX request, we might want to return a nice alert
 		if c.Request().Header.Get("HX-Request") == "true" {
 			c.HTML(code, fmt.Sprintf(`
@@ -513,6 +517,7 @@ func main() {
 		}
 
 		protected.GET("/historical-cases", handlers.HistoricalCasesPageHandler)
+		protected.GET("/tools", handlers.ToolsPageHandler)
 		adminRoutes.GET("/api/lawyers", handlers.GetLawyersForFilterHandler)
 		availabilityRoutes := protected.Group("")
 		availabilityRoutes.Use(middleware.RequireRole("admin", "lawyer"))

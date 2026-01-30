@@ -38,6 +38,7 @@
     "cases": "Casos",
     "services": "Servicios",
     "historical_cases": "Casos Históricos",
+    "tools": "Herramientas",
     "info_title": "Información de la Firma",
     "info": {
       "name": "Nombre de la Firma",
@@ -894,6 +895,15 @@
         "title": "Eliminar Actividad",
         "message": "¿Está seguro de que desea eliminar esta actividad? Esta acción no se puede deshacer."
       }
+    }
+  },
+  "tools": {
+    "title": "Herramientas",
+    "subtitle": "Herramientas legales útiles",
+    "tab": {
+      "calculators": "Calculadoras",
+      "converters": "Conversores",
+      "generation": "Generación"
     }
   },
   "cases": {

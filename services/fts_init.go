@@ -7,6 +7,23 @@ import (
 	"gorm.io/gorm"
 )
 
+// DropFTSTriggers removes all FTS-related triggers to prevent migration issues
+func DropFTSTriggers(db *gorm.DB) {
+	triggers := []string{
+		"cases_fts_insert", "cases_fts_update", "cases_fts_delete",
+		"case_logs_fts_insert", "case_logs_fts_update", "case_logs_fts_delete",
+		"case_parties_fts_insert", "case_parties_fts_update", "case_parties_fts_delete",
+		"case_documents_fts_insert", "case_documents_fts_update", "case_documents_fts_delete",
+		"services_fts_insert", "services_fts_update", "services_fts_delete",
+		"service_milestones_fts_insert", "service_milestones_fts_update", "service_milestones_fts_delete",
+		"service_documents_fts_insert", "service_documents_fts_update", "service_documents_fts_delete",
+	}
+
+	for _, t := range triggers {
+		db.Exec("DROP TRIGGER IF EXISTS " + t)
+	}
+}
+
 // InitializeFTS5 creates the FTS5 virtual table and triggers if they don't exist
 func InitializeFTS5(db *gorm.DB) error {
 	log.Println("Initializing FTS5 search index...")

@@ -90,7 +90,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 									@click="casesOpen = !casesOpen"
 									class={ "flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
-										if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" {
+										if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" || currentPath == "/tools" {
 											return "text-primary bg-primary/5 border-b-2 border-primary font-bold"
 										}
 										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
@@ -168,6 +168,19 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 											>
 												<i data-lucide="archive" class="w-4 h-4 opacity-70"></i>
 												{ i18n.T(ctx, "nav.historical_cases") }
+											</a>
+											<a
+												href="/tools"
+												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
+									func() string {
+										if currentPath == "/tools" {
+											return "text-primary font-bold bg-primary/5"
+										}
+										return "text-base-content/80"
+									}() }
+											>
+												<i data-lucide="wrench" class="w-4 h-4 opacity-70"></i>
+												{ i18n.T(ctx, "nav.tools") }
 											</a>
 										}
 									</div>
@@ -404,6 +417,9 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 							if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
 								<a href="/historical-cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
 									{ i18n.T(ctx, "nav.historical_cases") }
+								</a>
+								<a href="/tools" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+									{ i18n.T(ctx, "nav.tools") }
 								</a>
 							}
 						</div>

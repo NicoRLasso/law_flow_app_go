@@ -1,0 +1,125 @@
+package pages
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Tools(ctx context.Context, title string, csrfToken string, user *models.User, firm *models.Firm) {
+	@layouts.Base(ctx, title, csrfToken, nil) {
+		<div class="min-h-screen bg-base-200">
+			@components.Navbar(ctx, user, firm, "/tools")
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12 flex justify-center">
+				<div class="w-full" x-data="{ 
+					activeTab: 'calculators', 
+					sidebarOpen: false
+				}">
+					<!-- Header -->
+					<div class="mb-8">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content mb-2">{ i18n.T(ctx, "tools.title") }</h1>
+						<p class="text-base-content/60 font-sans">{ i18n.T(ctx, "tools.subtitle") }</p>
+					</div>
+
+					<!-- Layout with Sidebar -->
+					<div class="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 md:gap-8 items-start">
+						<!-- Sidebar Navigation -->
+						<aside class="w-full">
+							<!-- Mobile Toggle -->
+							<button
+								@click="sidebarOpen = !sidebarOpen"
+								class="md:hidden w-full flex items-center justify-between p-4 bg-base-100 border border-base-200 rounded-sm mb-4"
+							>
+								<span class="flex items-center gap-3 font-serif font-bold">
+									<i data-lucide="menu"></i>
+									<span x-text="activeTab === 'calculators' ? 'Calculators' : activeTab === 'converters' ? 'Converters' : 'Generation'"></span>
+								</span>
+								<i data-lucide="chevron-down" class="transition-transform" :class="{ 'rotate-180': sidebarOpen }"></i>
+							</button>
+
+							<!-- Navigation Menu -->
+							<nav
+								class="bg-base-100 rounded-sm border border-base-200 shadow-sm overflow-hidden"
+								:class="{ 'hidden md:block': !sidebarOpen }"
+							>
+								<ul class="flex flex-col">
+									<li>
+										<button
+											@click="activeTab = 'calculators'; sidebarOpen = false"
+											:class="activeTab === 'calculators' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="calculator" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "tools.tab.calculators") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'converters'; sidebarOpen = false"
+											:class="activeTab === 'converters' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="refresh-cw" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "tools.tab.converters") }</span>
+										</button>
+									</li>
+									<li>
+										<button
+											@click="activeTab = 'generation'; sidebarOpen = false"
+											:class="activeTab === 'generation' ? 'border-l-4 border-primary bg-primary/5 text-primary font-bold' : 'text-base-content/70 hover:bg-base-50 hover:text-base-content border-l-4 border-transparent'"
+											class="w-full text-left px-5 py-4 font-serif transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="file-text" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "tools.tab.generation") }</span>
+										</button>
+									</li>
+								</ul>
+							</nav>
+						</aside>
+
+						<!-- Main Content Area -->
+						<div class="w-full min-w-0">
+							<!-- Calculators Tab -->
+							<div x-show="activeTab === 'calculators'" class="space-y-6">
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-6">
+										<h2 class="text-xl font-serif font-bold text-primary mb-4">{ i18n.T(ctx, "tools.tab.calculators") }</h2>
+										<div class="p-8 bg-base-200/50 rounded-sm border border-dashed border-base-300 text-center">
+											<p class="text-base-content/40 font-serif italic">Calculators toolings coming soon...</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Converters Tab -->
+							<div x-show="activeTab === 'converters'" class="space-y-6">
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-6">
+										<h2 class="text-xl font-serif font-bold text-primary mb-4">{ i18n.T(ctx, "tools.tab.converters") }</h2>
+										<div class="p-8 bg-base-200/50 rounded-sm border border-dashed border-base-300 text-center">
+											<p class="text-base-content/40 font-serif italic">Converters toolings coming soon...</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Generation Tab -->
+							<div x-show="activeTab === 'generation'" class="space-y-6">
+								<div class="card bg-base-100 shadow-sm border border-base-200 rounded-sm">
+									<div class="card-body p-6">
+										<h2 class="text-xl font-serif font-bold text-primary mb-4">{ i18n.T(ctx, "tools.tab.generation") }</h2>
+										<div class="p-8 bg-base-200/50 rounded-sm border border-dashed border-base-300 text-center">
+											<p class="text-base-content/40 font-serif italic">Generation toolings coming soon...</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}
