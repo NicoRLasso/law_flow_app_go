@@ -16,7 +16,7 @@ import (
 // 1. Query param "lang" (sets cookie)
 // 2. Cookie "lang"
 // 3. Accept-Language header
-// 4. Default ("en")
+// 4. Default ("es")
 func Locale(cfg *config.Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -25,7 +25,7 @@ func Locale(cfg *config.Config) echo.MiddlewareFunc {
 			if lang != "" {
 				// Validate supported languages (basic check)
 				if lang != "en" && lang != "es" {
-					lang = "en"
+					lang = "es"
 				}
 
 				// Set cookie
@@ -53,8 +53,10 @@ func Locale(cfg *config.Config) echo.MiddlewareFunc {
 				accept := c.Request().Header.Get("Accept-Language")
 				if strings.Contains(accept, "es") {
 					lang = "es"
-				} else {
+				} else if strings.Contains(accept, "en") {
 					lang = "en"
+				} else {
+					lang = "es"
 				}
 			}
 
@@ -97,5 +99,5 @@ func GetLocale(c echo.Context) string {
 	if lang, ok := val.(string); ok {
 		return lang
 	}
-	return "en"
+	return "es"
 }

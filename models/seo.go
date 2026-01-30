@@ -23,8 +23,8 @@ func DefaultSEO(title, description string) *SEO {
 		Description: description,
 		OGType:      "website",
 		TwitterCard: "summary_large_image",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	}
 }
 

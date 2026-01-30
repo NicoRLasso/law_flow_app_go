@@ -17,7 +17,7 @@ var fs embed.FS
 var (
 	translations = make(map[string]map[string]string)
 	mutex        sync.RWMutex
-	defaultLang  = "en"
+	defaultLang  = "es"
 )
 
 // Load initializes the translations from the embedded JSON files.
@@ -129,7 +129,7 @@ type contextKey string
 
 const LocaleContextKey contextKey = "locale"
 
-// GetLocale extracts the locale from the context, defaulting to "en".
+// GetLocale extracts the locale from the context, defaulting to "es".
 // It looks for a string value stored under "locale" (set by middleware).
 func GetLocale(ctx context.Context) string {
 	// Try to get from echo context if available (passed as std context)

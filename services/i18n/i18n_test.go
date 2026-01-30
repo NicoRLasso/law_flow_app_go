@@ -75,7 +75,7 @@ func TestFormat(t *testing.T) {
 func TestGetLocale(t *testing.T) {
 	t.Run("Default locale", func(t *testing.T) {
 		ctx := context.Background()
-		assert.Equal(t, "en", GetLocale(ctx))
+		assert.Equal(t, "es", GetLocale(ctx))
 	})
 
 	t.Run("Locale from LocaleContextKey", func(t *testing.T) {
@@ -95,12 +95,12 @@ func TestTranslateLogic(t *testing.T) {
 	// Back up existing if any
 	oldTrans := translations
 	translations = make(map[string]map[string]string)
-	translations["en"] = map[string]string{
-		"test.hello":   "Hello",
-		"test.welcome": "Welcome {name}",
-	}
 	translations["es"] = map[string]string{
-		"test.hello": "Hola",
+		"test.hello":   "Hola",
+		"test.welcome": "Bienvenido {name}",
+	}
+	translations["en"] = map[string]string{
+		"test.hello": "Hello",
 	}
 	mutex.Unlock()
 
@@ -116,12 +116,12 @@ func TestTranslateLogic(t *testing.T) {
 	})
 
 	t.Run("Fallback to default", func(t *testing.T) {
-		// es doesn't have test.welcome, should fallback to en
-		assert.Equal(t, "Welcome Juan", Translate("es", "test.welcome", map[string]interface{}{"name": "Juan"}))
+		// en doesn't have test.welcome, should fallback to es
+		assert.Equal(t, "Bienvenido Juan", Translate("en", "test.welcome", map[string]interface{}{"name": "Juan"}))
 	})
 
 	t.Run("Fallback to key", func(t *testing.T) {
-		assert.Equal(t, "missing.key", Translate("es", "missing.key"))
+		assert.Equal(t, "missing.key", Translate("en", "missing.key"))
 	})
 }
 

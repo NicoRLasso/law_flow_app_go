@@ -17,8 +17,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary_large_image",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"about": {
 		Title:       "About Us | LexLegal Cloud",
@@ -28,8 +28,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary_large_image",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"contact": {
 		Title:       "Contact Us | LexLegal Cloud",
@@ -39,8 +39,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary_large_image",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"security": {
 		Title:       "Security | LexLegal Cloud",
@@ -50,8 +50,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary_large_image",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"privacy": {
 		Title:       "Privacy Policy | LexLegal Cloud",
@@ -61,8 +61,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"terms": {
 		Title:       "Terms of Service | LexLegal Cloud",
@@ -72,8 +72,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"cookies": {
 		Title:       "Cookie Policy | LexLegal Cloud",
@@ -83,8 +83,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 	"compliance": {
 		Title:       "Compliance | LexLegal Cloud",
@@ -94,8 +94,8 @@ var pageSEO = map[string]*models.SEO{
 		OGImage:     defaultOGImage,
 		OGType:      "website",
 		TwitterCard: "summary_large_image",
-		Locale:      "en",
-		AltLocales:  []string{"es"},
+		Locale:      "es",
+		AltLocales:  []string{"en"},
 	},
 }
 

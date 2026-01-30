@@ -27,6 +27,8 @@ func setupCaseImportTestDB() *gorm.DB {
 		&models.CaseSubtype{},
 		&models.ChoiceCategory{},
 		&models.ChoiceOption{},
+		&models.CaseMilestone{},
+		&models.Notification{},
 	)
 
 	// Initialize i18n

@@ -80,7 +80,7 @@ func TestLocale(t *testing.T) {
 
 		err := handler(c)
 		assert.NoError(t, err)
-		assert.Equal(t, "en", c.Get("locale"))
+		assert.Equal(t, "es", c.Get("locale"))
 	})
 
 	t.Run("RequestContext", func(t *testing.T) {
@@ -151,6 +151,6 @@ func TestGetLocale(t *testing.T) {
 
 	t.Run("WithoutLocale", func(t *testing.T) {
 		c := e.NewContext(nil, nil)
-		assert.Equal(t, "en", GetLocale(c))
+		assert.Equal(t, "es", GetLocale(c))
 	})
 }
