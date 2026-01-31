@@ -58,8 +58,13 @@ func TestGenerateResetToken(t *testing.T) {
 	t.Run("Clears old tokens", func(t *testing.T) {
 		db := setupResetTestDB()
 		db.Create(&models.User{ID: "u3", Email: email, IsActive: true})
-		GenerateResetToken(db, email)
-		GenerateResetToken(db, email)
+		// Use a transaction to avoid database locking issues
+		tx := db.Begin()
+		GenerateResetToken(tx, email)
+		tx.Commit()
+		tx = db.Begin()
+		GenerateResetToken(tx, email)
+		tx.Commit()
 		var count int64
 		db.Model(&models.PasswordResetToken{}).Count(&count)
 		assert.Equal(t, int64(1), count)
