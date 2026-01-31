@@ -23,7 +23,7 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 					</div>
 					<h1 class="text-5xl lg:text-7xl font-serif font-bold mb-6 text-base-content leading-tight">
 						{ i18n.T(ctx, "pages.security.hero_title") }
-						<span class="block text-primary italic mt-3">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
+						<span class="block text-gradient-primary italic mt-3">{ i18n.T(ctx, "pages.security.hero_highlight") }</span>
 					</h1>
 					<p class="py-6 text-xl lg:text-2xl opacity-80 font-sans max-w-3xl mx-auto leading-relaxed">
 						{ i18n.T(ctx, "pages.security.hero_desc") }
@@ -36,7 +36,7 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 			<div class="container mx-auto px-6">
 				<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
 					<!-- Encryption -->
-					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="mb-6 w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
 						</div>
@@ -46,7 +46,7 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 						</p>
 					</div>
 					<!-- Infrastructure -->
-					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="mb-6 w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
 						</div>
@@ -56,7 +56,7 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 						</p>
 					</div>
 					<!-- Compliance -->
-					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="mb-6 w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 						</div>
@@ -66,7 +66,7 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 						</p>
 					</div>
 					<!-- Access Control -->
-					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="group p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="mb-6 w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
 						</div>
@@ -85,21 +85,21 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 					{ i18n.T(ctx, "landing.trust.label") }
 				</p>
 				<div class="flex flex-wrap justify-center gap-6 lg:gap-10">
-					<div class="flex items-center gap-4 px-8 py-4 border border-base-200 rounded-xl bg-base-50 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+					<div class="flex items-center gap-4 px-8 py-4 border border-base-200 rounded-xl bg-base-50 hover:border-primary/30 hover-lift transition-all duration-300">
 						<span class="text-2xl">🔒</span>
 						<div class="flex flex-col text-left">
 							<span class="font-bold font-serif text-lg">SOC 2 Type II</span>
 							<span class="text-xs opacity-70 uppercase tracking-wider">{ i18n.T(ctx, "landing.trust.soc2") }</span>
 						</div>
 					</div>
-					<div class="flex items-center gap-4 px-8 py-4 border border-base-200 rounded-xl bg-base-50 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+					<div class="flex items-center gap-4 px-8 py-4 border border-base-200 rounded-xl bg-base-50 hover:border-primary/30 hover-lift transition-all duration-300">
 						<span class="text-2xl">🇪🇺</span>
 						<div class="flex flex-col text-left">
 							<span class="font-bold font-serif text-lg">GDPR</span>
 							<span class="text-xs opacity-70 uppercase tracking-wider">{ i18n.T(ctx, "landing.trust.gdpr") }</span>
 						</div>
 					</div>
-					<div class="flex items-center gap-4 px-8 py-4 border border-base-200 rounded-xl bg-base-50 hover:border-primary/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+					<div class="flex items-center gap-4 px-8 py-4 border border-base-200 rounded-xl bg-base-50 hover:border-primary/30 hover-lift transition-all duration-300">
 						<span class="text-2xl">🛡️</span>
 						<div class="flex flex-col text-left">
 							<span class="font-bold font-serif text-lg">256-bit SSL</span>
@@ -118,7 +118,7 @@ templ Security(ctx context.Context, title string, csrfToken string, seo *models.
 				<p class="text-xl lg:text-2xl mb-10 opacity-90 font-sans leading-relaxed">
 					{ i18n.T(ctx, "pages.security.cta_desc") }
 				</p>
-				<a href="/contact" class="btn btn-lg btn-white text-primary border-none hover:bg-white/90 rounded-lg font-serif px-12 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+				<a href="/contact" class="btn btn-lg btn-white text-primary border-none hover:bg-white/90 rounded-lg font-serif px-12 shadow-xl hover-lift transition-all duration-300">
 					{ i18n.T(ctx, "landing.pricing.book_demo") }
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 				</a>

@@ -16,11 +16,13 @@ templ Cookies(ctx context.Context, title string, csrfToken string, seo *models.S
 					<div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-6">
 						<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
 					</div>
-					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "pages.cookies.title") }</h1>
+					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-4 text-base-content">
+						<span class="text-gradient-primary">{ i18n.T(ctx, "pages.cookies.title") }</span>
+					</h1>
 					<p class="text-lg opacity-60 font-serif italic">{ i18n.T(ctx, "pages.cookies.updated") }</p>
 				</div>
 				<!-- Content Card -->
-				<div class="bg-base-100 p-10 lg:p-16 border border-base-200 shadow-lg rounded-xl relative overflow-hidden">
+				<div class="bg-base-100 p-10 lg:p-16 border border-base-200 shadow-lg rounded-xl relative overflow-hidden hover-lift transition-all duration-300">
 					<!-- Decorative top border -->
 					<div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
 					<!-- Background decoration -->

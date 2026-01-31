@@ -1,6 +1,34 @@
 @import "tailwindcss";
+
 @plugin "daisyui" {
-  themes: autumn --default;
+  themes: lexlegal --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "lexlegal";
+  default: true;
+  --color-base-100: #ffffff;
+  --color-base-200: #F8F9FA;
+  --color-base-300: #E5E7EB;
+  --color-base-content: #001F3F;
+
+  --color-primary: #001F3F;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #003366;
+  --color-secondary-content: #ffffff;
+
+  --color-accent: #D4AF37;
+  --color-accent-content: #001F3F;
+    
+  --color-info: #E0C05A;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  
+  --radius-box: 1rem;
+  --radius-btn: 0.5rem;
+  --radius-badge: 1.9rem;
 }
 
 @source "../../**/*.{templ,go}";
@@ -8,32 +36,16 @@
 @theme {
   --font-sans: "Lato", sans-serif;
   --font-serif: "Playfair Display", serif;
-}
-
-/* Custom Autumn Theme Overrides - Golden Autumn Palette */
-@layer theme {
-  :root {
-    /* Primary - Golden orange */
-    --p: oklch(70% 0.16 60);
-    --pf: oklch(65% 0.14 60);
-    --ps: oklch(75% 0.18 60);
-
-    /* Accent - Rich gold */
-    --a: oklch(75% 0.20 50);
-    --af: oklch(40% 0.14 50);
-
-    /* Info - Bright gold */
-    --in: oklch(72% 0.22 55);
-
-    /* Success - Golden green */
-    --su: oklch(68% 0.16 145);
-
-    /* Warning - Golden yellow */
-    --wa: oklch(80% 0.18 65);
-
-    /* Error - Golden red */
-    --er: oklch(65% 0.18 25);
-  }
+  
+  /* Additional Tailwind colors referencing theme vars */
+  --color-primary: var(--color-primary);
+  --color-primary-content: var(--color-primary-content);
+  --color-accent: var(--color-accent);
+  --color-base-100: var(--color-base-100);
+  /* Legacy mapping for components still using old var names if any */
+  --p: var(--color-primary);
+  --a: var(--color-accent);
+  --b2: var(--color-base-200);
 }
 
 /* Smooth scroll behavior */
@@ -64,10 +76,10 @@ html {
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.3);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary), transparent 70%);
   }
   50% {
-    box-shadow: 0 0 40px rgba(var(--color-primary-rgb), 0.6);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--color-primary), transparent 40%);
   }
 }
 
@@ -131,7 +143,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-focus);
+  background: color-mix(in srgb, var(--color-primary), black 10%);
 }
 
 /* Focus visible improvements */

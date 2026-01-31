@@ -23,7 +23,7 @@ templ Compliance(ctx context.Context, title string, csrfToken string, seo *model
 					</div>
 					<h1 class="text-5xl lg:text-7xl font-serif font-bold mb-6 text-base-content leading-tight">
 						{ i18n.T(ctx, "pages.compliance.hero_title") }
-						<span class="block text-primary italic mt-3">{ i18n.T(ctx, "pages.compliance.hero_highlight") }</span>
+						<span class="block text-gradient-primary italic mt-3">{ i18n.T(ctx, "pages.compliance.hero_highlight") }</span>
 					</h1>
 					<p class="py-6 text-xl lg:text-2xl opacity-80 font-sans max-w-3xl mx-auto leading-relaxed">
 						{ i18n.T(ctx, "pages.compliance.hero_desc") }
@@ -36,48 +36,48 @@ templ Compliance(ctx context.Context, title string, csrfToken string, seo *model
 			<div class="container mx-auto px-6">
 				<div class="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
 					<!-- HTTPS Encryption -->
-					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
 						</div>
 						<div>
-							<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.compliance.encryption_title") }</h3>
+							<h3 class="text-xl font-serif font-bold mb-3 group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.compliance.encryption_title") }</h3>
 							<p class="opacity-70 text-base leading-relaxed font-sans">
 								{ i18n.T(ctx, "pages.compliance.encryption_desc") }
 							</p>
 						</div>
 					</div>
 					<!-- Secure Authentication -->
-					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
 						</div>
 						<div>
-							<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.compliance.auth_title") }</h3>
+							<h3 class="text-xl font-serif font-bold mb-3 group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.compliance.auth_title") }</h3>
 							<p class="opacity-70 text-base leading-relaxed font-sans">
 								{ i18n.T(ctx, "pages.compliance.auth_desc") }
 							</p>
 						</div>
 					</div>
 					<!-- Data Privacy -->
-					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 						</div>
 						<div>
-							<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.compliance.privacy_title") }</h3>
+							<h3 class="text-xl font-serif font-bold mb-3 group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.compliance.privacy_title") }</h3>
 							<p class="opacity-70 text-base leading-relaxed font-sans">
 								{ i18n.T(ctx, "pages.compliance.privacy_desc") }
 							</p>
 						</div>
 					</div>
 					<!-- Role-Based Access -->
-					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1">
+					<div class="flex gap-6 p-8 bg-base-100 rounded-xl border border-base-200 hover:border-primary/40 hover-lift transition-all duration-300">
 						<div class="w-16 h-16 bg-primary/5 rounded-xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 							<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
 						</div>
 						<div>
-							<h3 class="text-xl font-serif font-bold mb-3">{ i18n.T(ctx, "pages.compliance.access_title") }</h3>
+							<h3 class="text-xl font-serif font-bold mb-3 group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.compliance.access_title") }</h3>
 							<p class="opacity-70 text-base leading-relaxed font-sans">
 								{ i18n.T(ctx, "pages.compliance.access_desc") }
 							</p>
@@ -95,7 +95,7 @@ templ Compliance(ctx context.Context, title string, csrfToken string, seo *model
 				<p class="text-xl lg:text-2xl mb-10 opacity-90 font-sans leading-relaxed">
 					{ i18n.T(ctx, "pages.compliance.cta_desc") }
 				</p>
-				<a href="/contact" class="btn btn-lg btn-white text-primary border-none hover:bg-white/90 rounded-lg font-serif px-12 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+				<a href="/contact" class="btn btn-lg btn-white text-primary border-none hover:bg-white/90 rounded-lg font-serif px-12 shadow-xl hover-lift transition-all duration-300">
 					{ i18n.T(ctx, "footer.contact") }
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 				</a>

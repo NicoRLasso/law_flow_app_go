@@ -18,7 +18,7 @@ templ Contact(ctx context.Context, title string, csrfToken string, seo *models.S
 			</div>
 			<div class="hero-content flex-col lg:flex-row-reverse gap-12 lg:gap-20 w-full max-w-7xl z-10 p-6 lg:p-12">
 				<!-- Right Side - Contact Form (Enhanced Card) -->
-				<div class="card shrink-0 w-full max-w-lg shadow-2xl bg-base-100 border border-base-200 rounded-lg overflow-hidden">
+				<div class="card shrink-0 w-full max-w-lg shadow-2xl bg-base-100 border border-base-200 rounded-lg overflow-hidden hover-lift transition-all duration-300">
 					<!-- Decorative Top Border -->
 					<div class="h-1.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
 					<div class="card-body p-8 lg:p-10">
@@ -59,7 +59,7 @@ templ Contact(ctx context.Context, title string, csrfToken string, seo *models.S
 								</div>
 							</div>
 							<div class="form-control mt-8">
-								<button type="submit" class="btn btn-primary w-full rounded-lg font-serif text-lg h-14 hover:shadow-[0_8px_30px_rgba(var(--p),0.3)] transition-all duration-300 group">
+								<button type="submit" class="btn btn-primary w-full rounded-lg font-serif text-lg h-14 hover-lift shadow-lg hover:shadow-primary/40 transition-all duration-300 group">
 									{ i18n.T(ctx, "pages.contact.form.send") }
 									<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 								</button>
@@ -83,13 +83,13 @@ templ Contact(ctx context.Context, title string, csrfToken string, seo *models.S
 						</div>
 					</div>
 					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight text-base-content">
-						{ i18n.T(ctx, "pages.contact.title") }
+						<span class="text-gradient-primary">{ i18n.T(ctx, "pages.contact.title") }</span>
 					</h1>
 					<p class="py-6 text-xl opacity-80 font-sans max-w-xl mx-auto lg:mx-0 leading-relaxed">
 						{ i18n.T(ctx, "pages.contact.desc") }
 					</p>
 					<div class="space-y-6 mt-10">
-						<div class="flex items-center gap-5 justify-center lg:justify-start p-4 rounded-lg hover:bg-base-200/50 transition-colors duration-300 group">
+						<div class="flex items-center gap-5 justify-center lg:justify-start p-4 rounded-lg hover:bg-base-200/50 hover-lift transition-all duration-300 group">
 							<div class="w-14 h-14 rounded-xl border border-primary/20 flex items-center justify-center text-primary bg-primary/5 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 								<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
 							</div>
@@ -98,7 +98,7 @@ templ Contact(ctx context.Context, title string, csrfToken string, seo *models.S
 								<p class="text-sm opacity-70 font-sans">{ i18n.T(ctx, "pages.contact.promo.fast_desc") }</p>
 							</div>
 						</div>
-						<div class="flex items-center gap-5 justify-center lg:justify-start p-4 rounded-lg hover:bg-base-200/50 transition-colors duration-300 group">
+						<div class="flex items-center gap-5 justify-center lg:justify-start p-4 rounded-lg hover:bg-base-200/50 hover-lift transition-all duration-300 group">
 							<div class="w-14 h-14 rounded-xl border border-primary/20 flex items-center justify-center text-primary bg-primary/5 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 								<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 							</div>
@@ -107,7 +107,7 @@ templ Contact(ctx context.Context, title string, csrfToken string, seo *models.S
 								<p class="text-sm opacity-70 font-sans">{ i18n.T(ctx, "pages.contact.promo.secure_desc") }</p>
 							</div>
 						</div>
-						<div class="flex items-center gap-5 justify-center lg:justify-start p-4 rounded-lg hover:bg-base-200/50 transition-colors duration-300 group">
+						<div class="flex items-center gap-5 justify-center lg:justify-start p-4 rounded-lg hover:bg-base-200/50 hover-lift transition-all duration-300 group">
 							<div class="w-14 h-14 rounded-xl border border-primary/20 flex items-center justify-center text-primary bg-primary/5 group-hover:bg-primary group-hover:text-primary-content transition-all duration-300">
 								<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
 							</div>
