@@ -49,7 +49,12 @@ func AcceptConsentHandler(c echo.Context) error {
 
 // GetConsentModalHandler returns the consent modal if user needs to accept
 func GetConsentModalHandler(c echo.Context) error {
-	user := c.Get("user").(*models.User)
+	user, ok := c.Get("user").(*models.User)
+	if !ok || user == nil {
+		// If no user is logged in, no consent is needed
+		return c.NoContent(http.StatusOK)
+	}
+
 	ctx := c.Request().Context()
 	csrfToken := middleware.GetCSRFToken(c)
 

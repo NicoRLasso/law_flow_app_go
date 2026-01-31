@@ -275,6 +275,8 @@ func main() {
 	e.GET("/", handlers.LandingHandler)
 	e.GET("/login", handlers.LoginHandler)
 	e.POST("/login", handlers.LoginPostHandler, middleware.LoginRateLimiter.Middleware())
+	e.GET("/logout", handlers.LogoutHandler)
+	e.GET("/api/consent/modal", handlers.GetConsentModalHandler)
 	e.GET("/forgot-password", handlers.ForgotPasswordHandler)
 	e.POST("/forgot-password", handlers.ForgotPasswordPostHandler, middleware.PasswordResetRateLimiter.Middleware())
 	e.GET("/reset-password", handlers.ResetPasswordHandler)
@@ -349,13 +351,7 @@ func main() {
 		protected.GET("/support", handlers.SupportPageHandler)
 		protected.GET("/api/support/tickets", handlers.GetSupportTicketsHandler)
 		protected.POST("/api/support/contact", handlers.SubmitSupportRequestHandler)
-		protected.GET("/users", handlers.UsersPageHandler)
-		protected.GET("/users", handlers.UsersPageHandler)
-		protected.GET("/api/users", handlers.GetUsers)
-		protected.GET("/api/users/list", handlers.GetUsersListHTMX)
-		protected.GET("/api/users/:id", handlers.GetUser)
-		protected.GET("/api/users/:id/edit", handlers.GetUserFormEdit)
-		protected.PUT("/api/users/:id", handlers.UpdateUser)
+
 		adminRoutes := protected.Group("")
 		adminRoutes.Use(middleware.RequireRole("admin"))
 		{
@@ -386,7 +382,16 @@ func main() {
 		}
 
 		// Consent routes (All authenticated users)
-		protected.GET("/api/consent/modal", handlers.GetConsentModalHandler)
+		userRoutes := protected.Group("")
+		userRoutes.Use(middleware.RequireRole("user", "lawyer", "admin"))
+		{
+			userRoutes.GET("/users", handlers.UsersPageHandler)
+			userRoutes.GET("/api/users", handlers.GetUsers)
+			userRoutes.GET("/api/users/list", handlers.GetUsersListHTMX)
+			userRoutes.GET("/api/users/:id", handlers.GetUser)
+			userRoutes.GET("/api/users/:id/edit", handlers.GetUserFormEdit)
+			userRoutes.PUT("/api/users/:id", handlers.UpdateUser)
+		}
 		protected.POST("/api/consent/accept", handlers.AcceptConsentHandler)
 		protected.POST("/api/consent/revoke", handlers.RevokeConsentHandler)
 
@@ -395,7 +400,7 @@ func main() {
 		protected.POST("/api/user/arco", handlers.CreateComplianceARCORequestHandler)
 
 		// Compliance Center routes (Admin only)
-		complianceRoutes := protected.Group("/compliance")
+		complianceRoutes := protected.Group("/admin/compliance")
 		complianceRoutes.Use(middleware.RequireRole("admin"))
 		{
 			complianceRoutes.GET("", handlers.ComplianceDashboardHandler)

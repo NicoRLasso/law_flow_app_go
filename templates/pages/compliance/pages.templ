@@ -21,13 +21,13 @@ type ConsentsPageData struct {
 templ ConsentsPage(ctx context.Context, data ConsentsPageData) {
 	@layouts.Base(ctx, i18n.T(ctx, "compliance.consent.title"), "", nil) {
 		<div class="min-h-screen bg-base-200">
-			@components.Navbar(ctx, data.User, data.Firm, "/compliance/consents")
+			@components.Navbar(ctx, data.User, data.Firm, "/admin/compliance/consents")
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
 				<div class="w-full space-y-6">
 					<!-- Breadcrumb -->
 					<div class="text-sm breadcrumbs">
 						<ul>
-							<li><a href="/compliance">{ i18n.T(ctx, "compliance.title") }</a></li>
+							<li><a href="/admin/compliance">{ i18n.T(ctx, "compliance.title") }</a></li>
 							<li>{ i18n.T(ctx, "compliance.consent.title") }</li>
 						</ul>
 					</div>
@@ -61,7 +61,7 @@ type ARCOPageData struct {
 templ ARCOPage(ctx context.Context, data ARCOPageData) {
 	@layouts.Base(ctx, i18n.T(ctx, "compliance.arco.title"), "", nil) {
 		<div class="min-h-screen bg-base-200">
-			@components.Navbar(ctx, data.User, data.Firm, "/compliance/arco")
+			@components.Navbar(ctx, data.User, data.Firm, "/admin/compliance/arco")
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
 				<div class="w-full space-y-6">
 					<!-- Breadcrumb -->
@@ -82,7 +82,7 @@ templ ARCOPage(ctx context.Context, data ARCOPageData) {
 						<!-- Status Filter -->
 						<select 
 							class="select select-bordered select-sm" 
-							hx-get="/compliance/arco"
+							hx-get="/admin/compliance/arco"
 							hx-target="#arco-table-container"
 							hx-trigger="change"
 							name="status"
@@ -117,7 +117,7 @@ type AuditPageData struct {
 templ AuditPage(ctx context.Context, data AuditPageData) {
 	@layouts.Base(ctx, i18n.T(ctx, "compliance.audit.title"), "", nil) {
 		<div class="min-h-screen bg-base-200">
-			@components.Navbar(ctx, data.User, data.Firm, "/compliance/audit")
+			@components.Navbar(ctx, data.User, data.Firm, "/admin/compliance/audit")
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
 				<div class="w-full space-y-6">
 					<!-- Breadcrumb -->

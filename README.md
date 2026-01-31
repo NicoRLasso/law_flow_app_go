@@ -34,6 +34,9 @@ The app will be available at `http://localhost:8080`.
 - **Document Engine:** Create, edit (Custom Editor), and generate PDFs from templates with dynamic variable substitution.
 - **Audit System:** Comprehensive logging of all system actions for security and compliance.
 - **Internationalization (i18n):** Full support for English and Spanish.
+- **Extrajudicial Services:** Specialized module for managing legal services (Divorce, Wills, Trademark) with expense and document tracking.
+- **Productivity Tools:** Power tools for lawyers including filing number generators and advanced reporting.
+- **Habeas Data Compliance:** Full support for ARCO rights (Access, Rectification, Cancellation, Opposition) and data transparency.
 - **Modern UI:** Responsive dashboard, interactive forms, and real-time partial updates via HTMX.
 
 ## 📂 Project Structure

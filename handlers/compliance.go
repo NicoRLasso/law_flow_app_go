@@ -169,7 +169,7 @@ func CreateComplianceARCORequestHandler(c echo.Context) error {
 		return c.HTML(http.StatusOK, `<div class="p-4 bg-green-100 text-green-800 rounded-lg">Request submitted successfully</div>`)
 	}
 
-	return c.Redirect(http.StatusSeeOther, "/compliance")
+	return c.Redirect(http.StatusSeeOther, "/admin/compliance")
 }
 
 // ResolveComplianceARCORequestHandler resolves an ARCO request (approve/deny)
@@ -213,7 +213,7 @@ func ResolveComplianceARCORequestHandler(c echo.Context) error {
 		return GetComplianceARCORequestsHandler(c)
 	}
 
-	return c.Redirect(http.StatusSeeOther, "/compliance/arco")
+	return c.Redirect(http.StatusSeeOther, "/admin/compliance/arco")
 }
 
 // ExportComplianceUserDataHandler generates a ZIP file with all user data (Right of Portability)

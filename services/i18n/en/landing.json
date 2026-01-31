@@ -49,6 +49,14 @@
       "time": {
         "title": "Appointments & Scheduling",
         "description": "Manage appointments with integrated calendar, availability settings, and client booking."
+      },
+      "services": {
+        "title": "Extrajudicial Services",
+        "description": "Manage divorce, wills, and trademark procedures efficiently with dedicated tracking."
+      },
+      "tools": {
+        "title": "Power Tools",
+        "description": "Boost productivity with Filing Number Generators and Advanced Reporting."
       }
     },
     "showcase": {
@@ -81,6 +89,11 @@
       "security": {
         "title": "Secure Platform",
         "description": "Your data is protected with encryption and secure authentication. Role-based access controls keep sensitive information safe."
+      },
+      "compliance": {
+        "title": "Habeas Data Compliant",
+        "description": "Full support for ARCO rights ensures your firm stays compliant with data protection laws.",
+        "metric": "Compliance"
       }
     },
     "how_it_works": {
@@ -234,7 +247,9 @@
       "section5_title": "5. Information Security",
       "section5_content": "We have implemented the necessary technical, administrative, and human security measures to protect your information and prevent its adulteration, loss, lateral consultation, use, or unauthorized or fraudulent access, complying with the standards required by the Superintendence of Industry and Commerce.",
       "section6_title": "6. Attention Channel (Habeas Data)",
-      "section6_content": "To exercise your rights as a data holder, you can contact us at any time at the email address:"
+      "section6_content": "To exercise your rights as a data holder, you can contact us at any time at the email address:",
+      "section7_title": "7. How to Exercise Your Rights (ARCO)",
+      "section7_content": "You can exercise your rights to Access, Rectify, Cancel, and Oppose the processing of your data directly through your account settings. Go to 'Profile Settings > Privacy & Data' to manage your information or submit an ARCO request."
     },
     "terms": {
       "title": "Terms of Service",
@@ -295,9 +310,9 @@
       "mission_desc": "We're building the operating system for the modern law practice. Our mission is to eliminate administrative busywork so lawyers can focus on what they do best: practicing law.",
       "values": {
         "innovation_title": "Innovation",
-        "innovation_desc": "We constantly push the boundaries of legal tech, using AI and automation to solve real-world problems.",
+        "innovation_desc": "We constantly push the boundaries of legal tech, delivering powerful tools and specialized services to solve real-world problems.",
         "trust_title": "Trust",
-        "trust_desc": "Security and reliability are at the core of everything we build. Your data is our top priority.",
+        "trust_desc": "Security, reliability, and full compliance (Habeas Data) are at the core of everything we build. Your data rights are our top priority.",
         "partnership_title": "Partnership",
         "partnership_desc": "We succeed when our customers succeed. We're not just a vendor; we're a partner in your growth."
       },

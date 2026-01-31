@@ -25,235 +25,169 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 					</a>
 					<!-- Desktop Navigation -->
 					<div class="hidden md:flex items-center gap-2">
-						// Superadmin Navigation
-						if user.Role == "superadmin" {
-							<div class="hidden md:flex ml-10 space-x-1">
-								<a
-									href="/superadmin/dashboard"
-									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
-									func() string {
-										if currentPath == "/superadmin/dashboard" {
-											return "text-primary bg-primary/5 border-b-2 border-primary"
-										}
-										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
-									}() }
-								>
-									{ i18n.T(ctx, "nav.dashboard") }
-								</a>
-								<a
-									href="/superadmin/users"
-									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
-									func() string {
-										if currentPath == "/superadmin/users" {
-											return "text-primary bg-primary/5 border-b-2 border-primary"
-										}
-										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
-									}() }
-								>
-									{ i18n.T(ctx, "nav.users") }
-								</a>
-								<a
-									href="/superadmin/firms"
-									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
-									func() string {
-										if currentPath == "/superadmin/firms" {
-											return "text-primary bg-primary/5 border-b-2 border-primary"
-										}
-										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
-									}() }
-								>
-									{ i18n.T(ctx, "nav.firms") }
-								</a>
-								<a
-									href="/superadmin/support"
-									class={ "px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
-									func() string {
-										if currentPath == "/superadmin/support" {
-											return "text-primary bg-primary/5 border-b-2 border-primary"
-										}
-										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
-									}() }
-								>
-									{ i18n.T(ctx, "nav.support_tickets") }
-								</a>
-							</div>
-						} else {
-							// Users (first)
+						// Users (first)
+						if user.Role == "admin" || user.Role == "lawyer" {
 							if currentPath == "/users" {
 								<a href="/users" class="px-4 py-2 rounded-sm text-sm font-bold text-primary bg-primary/5 border-b-2 border-primary transition-all font-serif">{ i18n.T(ctx, "nav.users") }</a>
 							} else {
 								<a href="/users" class="px-4 py-2 rounded-sm text-sm font-medium text-base-content/70 hover:text-primary hover:bg-base-200/50 transition-all font-serif">{ i18n.T(ctx, "nav.users") }</a>
 							}
-							// Cases Dropdown (second)
-							<div x-data="{ casesOpen: false }" class="relative">
+						}
+						// Cases Dropdown (second)
+						<div x-data="{ casesOpen: false }" class="relative">
+							<button
+								@click="casesOpen = !casesOpen"
+								class={ "flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
+								func() string {
+									if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" || currentPath == "/tools" {
+										return "text-primary bg-primary/5 border-b-2 border-primary font-bold"
+									}
+									return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
+								}() }
+							>
+								{ i18n.T(ctx, "nav.services") }
+								<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': casesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+								</svg>
+							</button>
+							<div
+								x-show="casesOpen"
+								@click.away="casesOpen = false"
+								x-transition:enter="transition ease-out duration-200"
+								x-transition:enter-start="opacity-0 translate-y-2"
+								x-transition:enter-end="opacity-100 translate-y-0"
+								x-transition:leave="transition ease-in duration-150"
+								x-transition:leave-start="opacity-100 translate-y-0"
+								x-transition:leave-end="opacity-0 translate-y-2"
+								class="absolute left-1/2 -translate-x-1/2 mt-2 w-56 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden"
+								style="display: none;"
+							>
+								<div class="p-1 space-y-0.5">
+									<a
+										href="/cases"
+										class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
+									func() string {
+										if currentPath == "/cases" {
+											return "text-primary font-bold bg-primary/5"
+										}
+										return "text-base-content/80"
+									}() }
+									>
+										<i data-lucide="scale" class="w-4 h-4 opacity-70"></i>
+										{ i18n.T(ctx, "nav.cases") }
+									</a>
+									<a
+										href="/services"
+										class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
+									func() string {
+										if currentPath == "/services" {
+											return "text-primary font-bold bg-primary/5"
+										}
+										return "text-base-content/80"
+									}() }
+									>
+										<i data-lucide="briefcase" class="w-4 h-4 opacity-70"></i>
+										{ i18n.T(ctx, "nav.services") }
+									</a>
+									if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+										<a
+											href="/historical-cases"
+											class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
+								func() string {
+									if currentPath == "/historical-cases" {
+										return "text-primary font-bold bg-primary/5"
+									}
+									return "text-base-content/80"
+								}() }
+										>
+											<i data-lucide="archive" class="w-4 h-4 opacity-70"></i>
+											{ i18n.T(ctx, "nav.historical_cases") }
+										</a>
+										<a
+											href="/tools"
+											class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
+								func() string {
+									if currentPath == "/tools" {
+										return "text-primary font-bold bg-primary/5"
+									}
+									return "text-base-content/80"
+								}() }
+										>
+											<i data-lucide="wrench" class="w-4 h-4 opacity-70"></i>
+											{ i18n.T(ctx, "nav.tools") }
+										</a>
+									}
+								</div>
+							</div>
+						</div>
+						// Templates (fourth - admin only)
+						if user.Role == "admin" || user.Role == "lawyer" {
+							if currentPath == "/templates" {
+								<a href="/templates" class="px-4 py-2 rounded-sm text-sm font-bold text-primary bg-primary/5 border-b-2 border-primary transition-all font-serif">{ i18n.T(ctx, "nav.templates") }</a>
+							} else {
+								<a href="/templates" class="px-4 py-2 rounded-sm text-sm font-medium text-base-content/70 hover:text-primary hover:bg-base-200/50 transition-all font-serif">{ i18n.T(ctx, "nav.templates") }</a>
+							}
+						}
+						if user.Role == "admin" || user.Role == "lawyer" {
+							// Calendars Dropdown (fourth)
+							<div x-data="{ calendarsOpen: false }" class="relative">
 								<button
-									@click="casesOpen = !casesOpen"
+									@click="calendarsOpen = !calendarsOpen"
 									class={ "flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
 									func() string {
-										if currentPath == "/cases" || currentPath == "/case-requests" || currentPath == "/historical-cases" || currentPath == "/tools" {
+										if currentPath == "/availability" || currentPath == "/appointments" || currentPath == "/calendar" {
 											return "text-primary bg-primary/5 border-b-2 border-primary font-bold"
 										}
 										return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
 									}() }
 								>
-									{ i18n.T(ctx, "nav.services") }
-									<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': casesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									Calendars
+									<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': calendarsOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 									</svg>
 								</button>
 								<div
-									x-show="casesOpen"
-									@click.away="casesOpen = false"
+									x-show="calendarsOpen"
+									@click.away="calendarsOpen = false"
 									x-transition:enter="transition ease-out duration-200"
 									x-transition:enter-start="opacity-0 translate-y-2"
 									x-transition:enter-end="opacity-100 translate-y-0"
 									x-transition:leave="transition ease-in duration-150"
 									x-transition:leave-start="opacity-100 translate-y-0"
 									x-transition:leave-end="opacity-0 translate-y-2"
-									class="absolute left-1/2 -translate-x-1/2 mt-2 w-56 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden"
+									class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden"
 									style="display: none;"
 								>
 									<div class="p-1 space-y-0.5">
 										<a
-											href="/cases"
+											href="/calendar"
 											class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 										func() string {
-											if currentPath == "/cases" {
+											if currentPath == "/calendar" {
 												return "text-primary font-bold bg-primary/5"
 											}
 											return "text-base-content/80"
 										}() }
 										>
-											<i data-lucide="scale" class="w-4 h-4 opacity-70"></i>
-											{ i18n.T(ctx, "nav.cases") }
+											Calendar
 										</a>
 										<a
-											href="/services"
+											href="/appointments"
 											class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
 										func() string {
-											if currentPath == "/services" {
+											if currentPath == "/appointments" {
 												return "text-primary font-bold bg-primary/5"
 											}
 											return "text-base-content/80"
 										}() }
 										>
-											<i data-lucide="briefcase" class="w-4 h-4 opacity-70"></i>
-											{ i18n.T(ctx, "nav.services") }
+											{ i18n.T(ctx, "nav.appointments") }
 										</a>
-										if user.Role == "client" {
-											<a
-												href="/api/client/requests"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-											func() string {
-												if currentPath == "/api/client/requests" {
-													return "text-primary font-bold bg-primary/5"
-												}
-												return "text-base-content/80"
-											}() }
-											>
-												<i data-lucide="file-plus" class="w-4 h-4 opacity-70"></i>
-												{ i18n.T(ctx, "case.request.my_requests") }
-											</a>
-										}
-										if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
-											<a
-												href="/historical-cases"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-									func() string {
-										if currentPath == "/historical-cases" {
-											return "text-primary font-bold bg-primary/5"
-										}
-										return "text-base-content/80"
-									}() }
-											>
-												<i data-lucide="archive" class="w-4 h-4 opacity-70"></i>
-												{ i18n.T(ctx, "nav.historical_cases") }
-											</a>
-											<a
-												href="/tools"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-									func() string {
-										if currentPath == "/tools" {
-											return "text-primary font-bold bg-primary/5"
-										}
-										return "text-base-content/80"
-									}() }
-											>
-												<i data-lucide="wrench" class="w-4 h-4 opacity-70"></i>
-												{ i18n.T(ctx, "nav.tools") }
-											</a>
-										}
 									</div>
 								</div>
 							</div>
-							// Templates (fourth - admin only)
-							if user.Role == "admin" || user.Role == "lawyer" {
-								if currentPath == "/templates" {
-									<a href="/templates" class="px-4 py-2 rounded-sm text-sm font-bold text-primary bg-primary/5 border-b-2 border-primary transition-all font-serif">{ i18n.T(ctx, "nav.templates") }</a>
-								} else {
-									<a href="/templates" class="px-4 py-2 rounded-sm text-sm font-medium text-base-content/70 hover:text-primary hover:bg-base-200/50 transition-all font-serif">{ i18n.T(ctx, "nav.templates") }</a>
-								}
-							}
-							if user.Role == "admin" || user.Role == "lawyer" {
-								// Calendars Dropdown (fourth)
-								<div x-data="{ calendarsOpen: false }" class="relative">
-									<button
-										@click="calendarsOpen = !calendarsOpen"
-										class={ "flex items-center gap-1.5 px-4 py-2 rounded-sm text-sm font-medium transition-all font-serif",
-										func() string {
-											if currentPath == "/availability" || currentPath == "/appointments" || currentPath == "/calendar" {
-												return "text-primary bg-primary/5 border-b-2 border-primary font-bold"
-											}
-											return "text-base-content/70 hover:text-primary hover:bg-base-200/50"
-										}() }
-									>
-										Calendars
-										<svg class="w-3.5 h-3.5 transition-transform duration-200" :class="{ 'rotate-180': calendarsOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-										</svg>
-									</button>
-									<div
-										x-show="calendarsOpen"
-										@click.away="calendarsOpen = false"
-										x-transition:enter="transition ease-out duration-200"
-										x-transition:enter-start="opacity-0 translate-y-2"
-										x-transition:enter-end="opacity-100 translate-y-0"
-										x-transition:leave="transition ease-in duration-150"
-										x-transition:leave-start="opacity-100 translate-y-0"
-										x-transition:leave-end="opacity-0 translate-y-2"
-										class="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-base-100 border border-base-200 rounded-sm shadow-xl z-50 overflow-hidden"
-										style="display: none;"
-									>
-										<div class="p-1 space-y-0.5">
-											<a
-												href="/calendar"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-											func() string {
-												if currentPath == "/calendar" {
-													return "text-primary font-bold bg-primary/5"
-												}
-												return "text-base-content/80"
-											}() }
-											>
-												Calendar
-											</a>
-											<a
-												href="/appointments"
-												class={ "flex items-center justify-start gap-3 px-4 py-3 text-sm font-serif transition-all hover:bg-base-200/50",
-											func() string {
-												if currentPath == "/appointments" {
-													return "text-primary font-bold bg-primary/5"
-												}
-												return "text-base-content/80"
-											}() }
-											>
-												{ i18n.T(ctx, "nav.appointments") }
-											</a>
-										</div>
-									</div>
-								</div>
-							}
 						}
+					
 					</div>
 				</div>
 				<!-- Right Section: Search & Profile -->
@@ -337,7 +271,7 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
 										{ i18n.T(ctx, "audit.title") }
 									</a>
-									<a href="/compliance" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
+									<a href="/admin/compliance" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:text-primary hover:bg-base-200/50 transition-all font-serif">
 										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 										{ i18n.T(ctx, "compliance.title") }
 									</a>
@@ -381,80 +315,63 @@ templ Navbar(ctx context.Context, user *models.User, firm *models.Firm, currentP
 			}
 			<!-- Menu Items (Simplified for Mobile) -->
 			<div class="p-2 space-y-1 overflow-y-auto max-h-[70vh]">
-				if user.Role == "superadmin" {
-					<a href="/superadmin/dashboard" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-						{ i18n.T(ctx, "nav.dashboard") }
-					</a>
-					<a href="/superadmin/users" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-						{ i18n.T(ctx, "nav.users") }
-					</a>
-					<a href="/superadmin/firms" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-						{ i18n.T(ctx, "nav.firms") }
-					</a>
-					<a href="/superadmin/support" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-						{ i18n.T(ctx, "nav.support_tickets") }
-					</a>
-				} else {
+			    if user.Role == "admin" || user.Role == "lawyer" {
 					<a href="/users" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
 						{ i18n.T(ctx, "nav.users") }
 					</a>
-					<!-- Mobile Cases Section -->
-					<div x-data="{ casesExpanded: false }" class="space-y-1">
-						<button @click="casesExpanded = !casesExpanded" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-							<span>{ i18n.T(ctx, "nav.services") }</span>
-							<svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': casesExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				}
+				<!-- Mobile Cases Section -->
+				<div x-data="{ casesExpanded: false }" class="space-y-1">
+					<button @click="casesExpanded = !casesExpanded" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						<span>{ i18n.T(ctx, "nav.services") }</span>
+						<svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': casesExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+						</svg>
+					</button>
+					<div x-show="casesExpanded" class="pl-4 space-y-1" style="display: none;">
+						<a href="/cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+							{ i18n.T(ctx, "nav.cases") }
+						</a>
+						<a href="/services" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+							{ i18n.T(ctx, "nav.services") }
+						</a>
+						if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
+							<a href="/historical-cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+								{ i18n.T(ctx, "nav.historical_cases") }
+							</a>
+							<a href="/tools" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+								{ i18n.T(ctx, "nav.tools") }
+							</a>
+						}
+					</div>
+				</div>
+				if user.Role == "admin" || user.Role == "lawyer" {
+					<a href="/templates" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+						{ i18n.T(ctx, "nav.templates") }
+					</a>
+					<!-- Mobile Calendars Section -->
+					<div x-data="{ calendarsExpanded: false }" class="space-y-1">
+						<button @click="calendarsExpanded = !calendarsExpanded" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
+							<span>Calendars</span>
+							<svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': calendarsExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
 							</svg>
 						</button>
-						<div x-show="casesExpanded" class="pl-4 space-y-1" style="display: none;">
-							<a href="/cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-								{ i18n.T(ctx, "nav.cases") }
+						<div x-show="calendarsExpanded" class="pl-4 space-y-1" style="display: none;">
+							<a href="/calendar" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+								Calendar
 							</a>
-							<a href="/services" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-								{ i18n.T(ctx, "nav.services") }
+							<a href="/availability" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+								{ i18n.T(ctx, "nav.availability") }
 							</a>
-							if user.Role == "client" {
-								<a href="/api/client/requests" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									{ i18n.T(ctx, "case.request.my_requests") }
-								</a>
-							}
-							if user.Role == "admin" || user.Role == "lawyer" || user.Role == "staff" {
-								<a href="/historical-cases" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									{ i18n.T(ctx, "nav.historical_cases") }
-								</a>
-								<a href="/tools" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									{ i18n.T(ctx, "nav.tools") }
-								</a>
-							}
+							<a href="/appointments" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
+								{ i18n.T(ctx, "nav.appointments") }
+							</a>
 						</div>
 					</div>
-					if user.Role == "admin" || user.Role == "lawyer" {
-						<a href="/templates" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-							{ i18n.T(ctx, "nav.templates") }
-						</a>
-						<!-- Mobile Calendars Section -->
-						<div x-data="{ calendarsExpanded: false }" class="space-y-1">
-							<button @click="calendarsExpanded = !calendarsExpanded" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-base-content/80 hover:bg-base-200 rounded-sm font-serif">
-								<span>Calendars</span>
-								<svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': calendarsExpanded }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-								</svg>
-							</button>
-							<div x-show="calendarsExpanded" class="pl-4 space-y-1" style="display: none;">
-								<a href="/calendar" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									Calendar
-								</a>
-								<a href="/availability" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									{ i18n.T(ctx, "nav.availability") }
-								</a>
-								<a href="/appointments" class="block px-4 py-2 text-sm text-base-content/70 hover:text-primary font-serif">
-									{ i18n.T(ctx, "nav.appointments") }
-								</a>
-							</div>
-						</div>
-					}
 				}
-			</div>
+			
+		</div>
 		</div>
 	</nav>
 }

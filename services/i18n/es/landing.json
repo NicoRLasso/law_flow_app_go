@@ -49,6 +49,14 @@
       "time": {
         "title": "Citas y Programación",
         "description": "Gestiona citas con calendario integrado, configuración de disponibilidad y reservas de clientes."
+      },
+      "services": {
+        "title": "Servicios Extrajudiciales",
+        "description": "Gestiona divorcios, testamentos y reclamos de marca eficientemente con seguimiento dedicado."
+      },
+      "tools": {
+        "title": "Herramientas de Poder",
+        "description": "Aumenta la productividad con Generadores de Radicados y Reportes Avanzados."
       }
     },
     "showcase": {
@@ -81,6 +89,11 @@
       "security": {
         "title": "Plataforma Segura",
         "description": "Tus datos están protegidos con encriptación y autenticación segura. Los controles de acceso basados en roles mantienen segura la información sensible."
+      },
+      "compliance": {
+        "title": "Cumplimiento Habeas Data",
+        "description": "Soporte total para derechos ARCO asegura que su firma cumpla con las leyes de protección de datos.",
+        "metric": "Cumplimiento"
       }
     },
     "how_it_works": {
@@ -233,7 +246,9 @@
       "section5_title": "5. Seguridad de la Información",
       "section5_content": "Hemos implementado las medidas de seguridad técnicas, administrativas y humanas necesarias para proteger tu información y prevenir su adulteración, pérdida, consulta lateral, uso o acceso no autorizado o fraudulento, cumpliendo con los estándares exigidos por la Superintendencia de Industria y Comercio.",
       "section6_title": "6. Canal de Atención (Habeas Data)",
-      "section6_content": "Para ejercer tus derechos como titular de datos, puedes contactarnos en cualquier momento al correo electrónico:"
+      "section6_content": "Para ejercer tus derechos como titular de datos, puedes contactarnos en cualquier momento al correo electrónico:",
+      "section7_title": "7. Cómo Ejercer Tus Derechos (ARCO)",
+      "section7_content": "Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación y Oposición al tratamiento de tus datos directamente a través de la configuración de tu cuenta. Ve a 'Configuración de Perfil > Privacidad y Datos' para gestionar tu información o enviar una solicitud ARCO."
     },
     "terms": {
       "title": "Términos de Servicio",
@@ -294,9 +309,9 @@
       "mission_desc": "Estamos construyendo el sistema operativo para la práctica legal moderna. Nuestra misión es eliminar el trabajo administrativo para que los abogados puedan enfocarse en lo que mejor hacen: practicar leyes.",
       "values": {
         "innovation_title": "Innovación",
-        "innovation_desc": "Constantemente empujamos los límites de la tecnología legal, usando IA y automatización para resolver problemas del mundo real.",
+        "innovation_desc": "Constantemente empujamos los límites de la tecnología legal, entregando herramientas poderosas y servicios especializados para resolver problemas del mundo real.",
         "trust_title": "Confianza",
-        "trust_desc": "La seguridad y confiabilidad están en el núcleo de todo lo que construimos. Tus datos son nuestra máxima prioridad.",
+        "trust_desc": "La seguridad, confiabilidad y el cumplimiento total (Habeas Data) están en el núcleo de todo lo que construimos. Tus derechos de datos son nuestra máxima prioridad.",
         "partnership_title": "Asociación",
         "partnership_desc": "Tenemos éxito cuando nuestros clientes tienen éxito. No somos solo un proveedor; somos un socio en tu crecimiento."
       },

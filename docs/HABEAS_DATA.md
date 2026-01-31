@@ -30,7 +30,7 @@ LexLegal Cloud implements comprehensive compliance with **Colombian Law 1581 of 
 | **Rectification** | `SubjectRightsRequest.Type="RECTIFY"` | `ResolveComplianceARCORequestHandler` |
 | **Cancellation** | `SubjectRightsRequest.Type="CANCEL"` | `ExportComplianceUserDataHandler` |
 | **Opposition** | `SubjectRightsRequest.Type="OPPOSITION"` | — |
-| **Portability** | ZIP export at `/compliance/export` | `ExportComplianceUserDataHandler` |
+| **Portability** | ZIP export at `/admin/compliance/export` | `ExportComplianceUserDataHandler` |
 
 ---
 
@@ -83,7 +83,7 @@ LexLegal Cloud implements comprehensive compliance with **Colombian Law 1581 of 
 | Encryption | `services/encryption_service.go` |
 | Breach alerts | `services/security_monitor.go` |
 | Compliance emails | `services/compliance_emails.go` |
-| UI Dashboard | `/compliance` route |
+| UI Dashboard | `/admin/compliance` route |
 
 ---
 

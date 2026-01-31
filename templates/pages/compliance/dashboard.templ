@@ -22,7 +22,7 @@ templ Dashboard(ctx context.Context, data DashboardData) {
 	@layouts.Base(ctx, i18n.T(ctx, "compliance.title"), "", nil) {
 		<div class="min-h-screen bg-base-200">
 			<!-- Navigation Bar -->
-			@components.Navbar(ctx, data.User, data.Firm, "/compliance")
+			@components.Navbar(ctx, data.User, data.Firm, "/admin/compliance")
 			<!-- Main Content -->
 			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
 				<div class="w-full space-y-6">
@@ -49,7 +49,7 @@ templ Dashboard(ctx context.Context, data DashboardData) {
 									<p class="text-2xl font-bold text-base-content font-serif">{ strconv.FormatInt(data.ConsentCount, 10) }</p>
 								</div>
 							</div>
-							<a href="/compliance/consents" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "common.view_all") } →</a>
+							<a href="/admin/compliance/consents" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "common.view_all") } →</a>
 						</div>
 
 						<!-- Pending ARCO Requests -->
@@ -65,7 +65,7 @@ templ Dashboard(ctx context.Context, data DashboardData) {
 									<p class="text-2xl font-bold text-base-content font-serif">{ strconv.FormatInt(data.PendingRequests, 10) }</p>
 								</div>
 							</div>
-							<a href="/compliance/arco" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "common.view_all") } →</a>
+							<a href="/admin/compliance/arco" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "common.view_all") } →</a>
 						</div>
 
 						<!-- Data Export -->
@@ -81,16 +81,16 @@ templ Dashboard(ctx context.Context, data DashboardData) {
 									<p class="text-lg text-base-content/80 font-serif">{ i18n.T(ctx, "compliance.export.description") }</p>
 								</div>
 							</div>
-							<a href="/compliance/export" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "compliance.export.download") } →</a>
+							<a href="/admin/compliance/export" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "compliance.export.download") } →</a>
 						</div>
 					</div>
 
 					<!-- Navigation Tabs -->
 					<div class="bg-base-100 rounded-sm shadow-sm border border-base-200">
 						<div class="tabs tabs-bordered p-4">
-							<a href="/compliance/consents" class="tab tab-bordered">{ i18n.T(ctx, "compliance.consent.title") }</a>
-							<a href="/compliance/arco" class="tab tab-bordered">{ i18n.T(ctx, "compliance.arco.title") }</a>
-							<a href="/compliance/audit" class="tab tab-bordered">{ i18n.T(ctx, "compliance.audit.title") }</a>
+							<a href="/admin/compliance/consents" class="tab tab-bordered">{ i18n.T(ctx, "compliance.consent.title") }</a>
+							<a href="/admin/compliance/arco" class="tab tab-bordered">{ i18n.T(ctx, "compliance.arco.title") }</a>
+							<a href="/admin/compliance/audit" class="tab tab-bordered">{ i18n.T(ctx, "compliance.audit.title") }</a>
 						</div>
 					</div>
 

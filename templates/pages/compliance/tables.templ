@@ -93,7 +93,7 @@ templ ConsentLogTable(ctx context.Context, consents []models.ConsentLog, page in
 				TotalPages:  totalPages,
 				Limit:       20,
 				Total:       total,
-				BaseURL:     "/compliance/consents",
+				BaseURL:     "/admin/compliance/consents",
 				TargetID:    "#consent-table-container",
 			})
 		</div>
@@ -157,7 +157,7 @@ templ ARCORequestTable(ctx context.Context, requests []models.SubjectRightsReque
 								if req.Status == models.SubjectRequestStatusPending {
 									<div class="flex gap-1">
 										<button
-											hx-post={ "/compliance/arco/" + req.ID + "/resolve" }
+											hx-post={ "/admin/compliance/arco/" + req.ID + "/resolve" }
 											hx-vals='{"action": "approve", "response": "Solicitud aprobada"}'
 											hx-target="#arco-table-container"
 											class="btn btn-success btn-xs gap-1"
@@ -165,7 +165,7 @@ templ ARCORequestTable(ctx context.Context, requests []models.SubjectRightsReque
 											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
 										</button>
 										<button
-											hx-post={ "/compliance/arco/" + req.ID + "/resolve" }
+											hx-post={ "/admin/compliance/arco/" + req.ID + "/resolve" }
 											hx-vals='{"action": "deny", "response": "Solicitud denegada"}'
 											hx-target="#arco-table-container"
 											class="btn btn-error btn-xs gap-1"
@@ -189,7 +189,7 @@ templ ARCORequestTable(ctx context.Context, requests []models.SubjectRightsReque
 				TotalPages:  totalPages,
 				Limit:       20,
 				Total:       total,
-				BaseURL:     "/compliance/arco",
+				BaseURL:     "/admin/compliance/arco",
 				TargetID:    "#arco-table-container",
 			})
 		</div>
@@ -322,7 +322,7 @@ templ AuditLogTable(ctx context.Context, logs []models.AuditLog, page int, total
 				TotalPages:  totalPages,
 				Limit:       50,
 				Total:       total,
-				BaseURL:     "/compliance/audit",
+				BaseURL:     "/admin/compliance/audit",
 				TargetID:    "#audit-table-container",
 			})
 		</div>
