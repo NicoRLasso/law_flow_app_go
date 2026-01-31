@@ -1,0 +1,165 @@
+{
+  "expenses": {
+    "add": "Add Expense",
+    "add_title": "Record Expense",
+    "edit_title": "Edit Expense",
+    "list_empty": "No expenses recorded yet.",
+    "total": "Total Expenses",
+    "table": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "description": "Description",
+      "amount": "Amount",
+      "date": "Date Incurred",
+      "add": "Add Expense"
+    },
+    "action": {
+      "edit": "Edit",
+      "approve": "Approve",
+      "reject": "Reject"
+    }
+  },
+  "services": {
+    "title": "Legal Services",
+    "subtitle": "Manage extrajudicial legal services",
+    "new": "New Service",
+    "client": "Client",
+    "type": "Type",
+    "table": {
+      "number": "#",
+      "title": "Title",
+      "client": "Client",
+      "type": "Type",
+      "status": "Status",
+      "actions": "Actions",
+      "empty": "No services found."
+    },
+    "status": {
+      "INTAKE": "Intake",
+      "IN_PROGRESS": "In Progress",
+      "ON_HOLD": "On Hold",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "tab": {
+      "milestones": "Milestones",
+      "documents": "Documents",
+      "expenses": "Expenses",
+      "activities": "Activities",
+      "generate": "Generate"
+    },
+    "create": {
+      "title": "Create New Service",
+      "submit": "Create Service"
+    },
+    "edit": {
+      "title": "Edit Legal Service"
+    },
+    "detail": {
+      "info_title": "Service Information"
+    },
+    "milestones": {
+      "add": "Add Milestone",
+      "add_title": "Add New Milestone",
+      "edit_title": "Edit Milestone",
+      "delete_confirm": "Are you sure you want to delete this milestone?",
+      "list_empty": "No milestones recorded yet.",
+      "progress": {
+        "title": "Milestone Progress"
+      },
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending"
+      },
+      "form": {
+        "title": "Title",
+        "description": "Description",
+        "due_date": "Due Date"
+      }
+    },
+    "generate": {
+      "templates": {
+        "title": "Select Template"
+      },
+      "select_template": "Template",
+      "document_name": "Document Name",
+      "document_name_placeholder": "Ex: Service Agreement - Client X",
+      "info": "The document will be generated using the data from this service.",
+      "submit": "Generate Document",
+      "preview": {
+        "title": "Preview",
+        "placeholder": "Select a template to view preview"
+      }
+    },
+    "documents": {
+      "upload": {
+        "title": "Upload Document",
+        "subtitle": "Upload a new document to this service",
+        "file_label": "Document File",
+        "accepted_formats": "Accepted formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)",
+        "type_label": "Document Type",
+        "select_type": "Select a type...",
+        "desc_label": "Description",
+        "desc_placeholder": "Optional description of the document...",
+        "btn": "Upload",
+        "cancel": "Cancel"
+      },
+      "form": {
+        "file": "Document File",
+        "type": "Document Type",
+        "description": "Description",
+        "type_intake": "Intake",
+        "type_working": "Working",
+        "type_deliverable": "Deliverable",
+        "type_reference": "Reference"
+      },
+      "table": {
+        "file_name": "File Name",
+        "type": "Type",
+        "size": "Size",
+        "uploaded_by": "Uploaded By",
+        "uploaded_at": "Uploaded At",
+        "actions": "Actions",
+        "system": "System",
+        "empty": "No documents found"
+      },
+      "visibility": {
+        "label": "Visibility",
+        "public": "Public",
+        "private": "Private",
+        "toggle_public": "Make visible to client",
+        "toggle_private": "Hide from client",
+        "public_desc": "Visible to client"
+      },
+      "delete": {
+        "title": "Delete Document",
+        "message": "Are you sure you want to delete this document? This action cannot be undone."
+      },
+      "viewer": {
+        "title": "Document Viewer",
+        "close_tooltip": "Close viewer"
+      }
+    },
+    "form": {
+      "title": "Service Title",
+      "title_placeholder": "E.g., Contract Review for Smith Corp",
+      "client": "Client",
+      "type": "Service Type",
+      "priority": "Priority",
+      "assign_to": "Assign To",
+      "description": "Description",
+      "description_placeholder": "Enter detailed description...",
+      "objective": "Objective",
+      "objective_placeholder": "What is the primary goal?",
+      "select_client": "Select Client",
+      "select_type": "Select Type",
+      "hours": "Hours"
+    }
+  }
+}

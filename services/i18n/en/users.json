@@ -1,0 +1,148 @@
+{
+  "users": {
+    "title": "User Management",
+    "description": "Manage users, admins, lawyers, staff, and clients",
+    "add_user": "Add User",
+    "filters": {
+      "role": "Role:",
+      "status": "Status:",
+      "all_roles": "All Roles",
+      "all_status": "All Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "last_login": "Last Login",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "never": "Never",
+      "empty": "No users found",
+      "empty_hint": "Add users to get started"
+    },
+    "modal": {
+      "add_title": "Add New User",
+      "edit_title": "Edit User",
+      "full_name": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "min_chars": "Minimum 12 characters",
+      "role": "Role",
+      "select_role": "Select a role",
+      "active_user": "Active User",
+      "inactive_desc": "Inactive users cannot log in",
+      "cancel": "Cancel",
+      "create_btn": "Create User",
+      "update_btn": "Update User",
+      "role_help": {
+        "admin": "Full access.",
+        "lawyer": "Manage cases.",
+        "staff": "Limited access.",
+        "client": "View own cases."
+      }
+    },
+    "roles": {
+      "admin": "Admin",
+      "lawyer": "Lawyer",
+      "staff": "Staff",
+      "client": "Client"
+    },
+    "delete_modal": {
+      "title": "Delete User",
+      "confirm": "Are you sure you want to delete {name}?",
+      "warning": "This action cannot be undone. The user will be permanently removed from the system.",
+      "cancel": "Cancel",
+      "delete_btn": "Delete User"
+    }
+  },
+  "superadmin": {
+    "dashboard": {
+      "title": "Superadmin Dashboard",
+      "total_firms": "Total Firms",
+      "total_users": "Total Users",
+      "active_users": "Active Users",
+      "pending_users": "Pending Setup",
+      "quick_actions": "Quick Actions",
+      "manage_users": "Manage Users",
+      "manage_firms": "Manage Firms",
+      "create_user": "Create User",
+      "recent_activity": {
+        "new_firms": "New Firms",
+        "new_users": "New Users",
+        "no_firms": "No firms created yet",
+        "no_users": "No users created yet"
+      }
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage all users across the platform.",
+      "create_user": "Create User",
+      "search_placeholder": "Search users...",
+      "role_filter": {
+        "all": "All Roles",
+        "superadmin": "Superadmin",
+        "admin": "Admin",
+        "lawyer": "Lawyer",
+        "staff": "Staff",
+        "client": "Client"
+      },
+      "firm_filter": {
+        "all": "All Firms",
+        "none": "No Firm"
+      },
+      "status_filter": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "firm": "Firm",
+        "joined": "Joined",
+        "actions": "Actions",
+        "no_results": "No users found matching your criteria.",
+        "no_firm": "No Firm"
+      },
+      "modal": {
+        "create_title": "Create New User",
+        "edit_title": "Edit User",
+        "full_name": "Full Name",
+        "email": "Email Address",
+        "password": "Password",
+        "password_edit_hint": "Password (leave blank to keep current)",
+        "role": "Role",
+        "status": "Status",
+        "firm": "Firm",
+        "firm_no_firm": "No Firm (User will set up)",
+        "active": "Active",
+        "inactive": "Inactive",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "create": "Create User"
+      },
+      "delete_modal": {
+        "title": "Delete User",
+        "confirm": "Are you sure you want to delete {name}?",
+        "warning": "This action will perform a soft delete. The user will essentially be deactivated and hidden, but data remains in the database.",
+        "cancel": "Cancel",
+        "delete": "Delete User"
+      }
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "firms": "Firms",
+      "logout": "Log out"
+    },
+    "support": {
+      "title": "Support Tickets",
+      "subtitle": "Manage support tickets"
+    }
+  }
+}

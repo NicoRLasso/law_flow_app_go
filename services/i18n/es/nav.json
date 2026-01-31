@@ -1,0 +1,91 @@
+{
+  "contact_modal": {
+    "title": "Agendar Demo",
+    "description": "Complete el formulario a continuación para programar una demostración personalizada de LexLegal Cloud.",
+    "name": "Nombre Completo",
+    "name_placeholder": "Ingrese su nombre completo",
+    "email": "Correo Electrónico",
+    "email_placeholder": "Ingrese su correo electrónico",
+    "message": "Mensaje (Opcional)",
+    "message_placeholder": "Cuéntenos sobre su firma y qué está buscando...",
+    "error": "Algo salió mal. Por favor intente de nuevo más tarde.",
+    "success_title": "¡Solicitud Enviada!",
+    "success_message": "¡Gracias! Nuestro equipo lo contactará en breve para programar su demostración."
+  },
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Panel de Control",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "firm_settings": "Configuración de Firma",
+    "users": "Usuarios",
+    "cases": "Casos",
+    "services": "Servicios",
+    "historical_cases": "Casos Históricos",
+    "tools": "Herramientas",
+    "info_title": "Información de la Firma",
+    "info": {
+      "name": "Nombre de la Firma",
+      "billing_email": "Email de Facturación",
+      "noreply_email": "Email No-Reply",
+      "country": "País",
+      "city": "Ciudad",
+      "address": "Dirección"
+    },
+    "setup": {
+      "title": "Configuración de Firma",
+      "subtitle": "Configure los detalles de su firma",
+      "create_title": "Crear Nueva Firma",
+      "create_btn": "Crear Firma",
+      "country": "País",
+      "city": "Ciudad"
+    },
+    "delete": {
+      "confirm_message": "¿Está seguro de que desea eliminar la firma {name}?",
+      "warning_message": "Esto eliminará todos los usuarios, casos y datos asociados con esta firma."
+    },
+    "appointments": "Citas",
+    "profile_settings": "Configuración de Perfil",
+    "features": "Características",
+    "benefits": "Beneficios",
+    "pricing": "Precios",
+    "availability": "Disponibilidad",
+    "templates": "Plantillas",
+    "support": "Soporte",
+    "support_tickets": "Tickets de Soporte",
+    "ticket_response": "Respuesta del Ticket",
+    "status": {
+      "open": "Abierto",
+      "in_progress": "En Progreso",
+      "resolved": "Resuelto",
+      "closed": "Cerrado",
+      "accepted": "Aceptado"
+    }
+  },
+  "footer": {
+    "product": "Producto",
+    "features": "Características",
+    "pricing": "Precios",
+    "security": "Seguridad",
+    "integrations": "Integraciones",
+    "roadmap": "Roadmap",
+    "company": "Compañía",
+    "about": "Nosotros",
+    "blog": "Blog",
+    "careers": "Carreras",
+    "contact": "Contacto",
+    "partners": "Socios",
+    "legal": "Legal",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "cookies": "Política de Cookies",
+    "compliance": "Cumplimiento",
+    "status": "Estado",
+    "changelog": "Changelog",
+    "docs": "Documentación",
+    "rights": "© 2026 LexLegal Cloud. Todos los derechos reservados.",
+    "slogan": "Gestión moderna para firmas de abogados modernas. Optimiza tu flujo de trabajo y enfócate en lo que importa."
+  }
+}

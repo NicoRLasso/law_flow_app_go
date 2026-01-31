@@ -10,7 +10,7 @@ import (
 	"sync"
 )
 
-//go:embed *.json
+//go:embed en/*.json es/*.json
 var fs embed.FS
 
 // translations stores flattened keys: "en" -> "nav.home" -> "Home"
@@ -20,35 +20,46 @@ var (
 	defaultLang  = "es"
 )
 
+// supportedLocales lists the language subdirectories to load.
+var supportedLocales = []string{"en", "es"}
+
 // Load initializes the translations from the embedded JSON files.
-// It searches for any .json file in the locales directory (embedded) and loads it.
+// It reads JSON files from language subdirectories (e.g., en/*.json, es/*.json)
+// and merges them into a single flattened map per language.
 func Load() error {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	entries, err := fs.ReadDir(".")
-	if err != nil {
-		return fmt.Errorf("failed to read embedded locales: %w", err)
-	}
+	for _, lang := range supportedLocales {
+		flat := make(map[string]string)
 
-	for _, entry := range entries {
-		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".json") {
-			lang := strings.TrimSuffix(entry.Name(), ".json")
-			content, err := fs.ReadFile(entry.Name())
+		entries, err := fs.ReadDir(lang)
+		if err != nil {
+			return fmt.Errorf("failed to read locale directory %s: %w", lang, err)
+		}
+
+		for _, entry := range entries {
+			if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".json") {
+				continue
+			}
+
+			filePath := lang + "/" + entry.Name()
+			content, err := fs.ReadFile(filePath)
 			if err != nil {
-				return fmt.Errorf("failed to read locale file %s: %w", entry.Name(), err)
+				return fmt.Errorf("failed to read locale file %s: %w", filePath, err)
 			}
 
 			var result map[string]interface{}
 			if err := json.Unmarshal(content, &result); err != nil {
-				return fmt.Errorf("failed to unmarshal locale %s: %w", entry.Name(), err)
+				return fmt.Errorf("failed to unmarshal locale %s: %w", filePath, err)
 			}
 
-			flat := make(map[string]string)
+			// Merge into the flat map
 			flatten("", result, flat)
-			translations[lang] = flat
-			log.Printf("Loaded locale: %s (%d keys)", lang, len(flat))
 		}
+
+		translations[lang] = flat
+		log.Printf("Loaded locale: %s (%d keys)", lang, len(flat))
 	}
 
 	return nil

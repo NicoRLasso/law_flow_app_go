@@ -1,0 +1,91 @@
+{
+  "contact_modal": {
+    "title": "Book a Demo",
+    "description": "Fill out the form below to schedule a personalized demo of LexLegal Cloud.",
+    "name": "Full Name",
+    "name_placeholder": "Enter your full name",
+    "email": "Email Address",
+    "email_placeholder": "Enter your email address",
+    "message": "Message (Optional)",
+    "message_placeholder": "Tell us about your firm and what you're looking for...",
+    "error": "Something went wrong. Please try again later.",
+    "success_title": "Request Sent!",
+    "success_message": "Thank you! Our team will contact you shortly to schedule your demo."
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "settings": "Settings",
+    "firm_settings": "Firm Settings",
+    "users": "Users",
+    "cases": "Cases",
+    "services": "Services",
+    "historical_cases": "Historical Cases",
+    "tools": "Tools",
+    "info_title": "Firm Information",
+    "info": {
+      "name": "Firm Name",
+      "billing_email": "Billing Email",
+      "noreply_email": "No-Reply Email",
+      "country": "Country",
+      "city": "City",
+      "address": "Address"
+    },
+    "setup": {
+      "title": "Firm Setup",
+      "subtitle": "Configure your firm details",
+      "create_title": "Create New Firm",
+      "create_btn": "Create Firm",
+      "country": "Country",
+      "city": "City"
+    },
+    "delete": {
+      "confirm_message": "Are you sure you want to delete the firm {name}?",
+      "warning_message": "This will delete all users, cases, and data associated with this firm."
+    },
+    "appointments": "Appointments",
+    "profile_settings": "Profile Settings",
+    "features": "Features",
+    "benefits": "Benefits",
+    "pricing": "Pricing",
+    "availability": "Availability",
+    "templates": "Templates",
+    "support": "Support",
+    "support_tickets": "Support Tickets",
+    "ticket_response": "Ticket Response",
+    "status": {
+      "open": "Open",
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed",
+      "accepted": "Accepted"
+    }
+  },
+  "footer": {
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "security": "Security",
+    "integrations": "Integrations",
+    "roadmap": "Roadmap",
+    "company": "Company",
+    "about": "About",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact",
+    "partners": "Partners",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "compliance": "Compliance",
+    "status": "Status",
+    "changelog": "Changelog",
+    "docs": "Documentation",
+    "rights": "© 2026 LexLegal Cloud. All rights reserved.",
+    "slogan": "Modern practice management for modern law firms. Streamline your workflow and focus on what matters."
+  }
+}

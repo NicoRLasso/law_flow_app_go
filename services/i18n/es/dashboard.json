@@ -1,0 +1,60 @@
+{
+  "dashboard": {
+    "notifications": {
+      "title": "Notificaciones",
+      "mark_all_read": "Marcar todo como leído",
+      "new_judicial_action": "Nueva actuación judicial",
+      "empty": "No hay notificaciones nuevas"
+    },
+    "greeting": "Bienvenido de nuevo",
+    "welcome": "Bienvenido de nuevo, {name}",
+    "overview": "Resumen General",
+    "subtitle": "Esto es lo que está pasando con tu práctica hoy.",
+    "subtitle_client": "Bienvenido a su portal de cliente.",
+    "stats": {
+      "active_cases": "Casos Activos",
+      "my_active_cases": "Mis Casos Activos",
+      "total_clients": "Clientes Totales",
+      "completed_monthly": "Completados Este Mes",
+      "pending_tasks": "Tareas Pendientes",
+      "my_upcoming_appointments": "Mis Próximas Citas",
+      "urgent_label": "Urgente"
+    },
+    "firm_info": {
+      "label": "Información de la Firma",
+      "name": "Nombre de la Firma",
+      "location": "Ubicación",
+      "timezone": "Zona Horaria",
+      "contact": "Contacto",
+      "billing_email": "Correo de Facturación",
+      "info_email": "Correo de Información"
+    },
+    "quick_actions": {
+      "label": "Acciones Rápidas",
+      "users_title": "Gestionar Usuarios",
+      "users_desc": "Añadir y editar usuarios",
+      "upload_doc_title": "Subir Documento",
+      "upload_doc_desc": "Añadir nuevo documento"
+    },
+    "recent_cases": {
+      "label": "Casos Recientes",
+      "no_cases": "No hay casos recientes",
+      "no_cases_hint": "Los casos en los que trabajes aparecerán aquí"
+    },
+    "upcoming_appointments": {
+      "label": "Próximas Citas",
+      "no_appointments": "No hay citas próximas",
+      "no_appointments_hint": "Las citas programadas aparecerán aquí"
+    }
+  },
+  "reports": {
+    "title": "Generador de Reportes",
+    "description": "Exportar datos a CSV para análisis",
+    "type": "Tipo de Reporte",
+    "type.cases": "Casos",
+    "type.services": "Servicios",
+    "date_start": "Fecha Inicio",
+    "date_end": "Fecha Fin",
+    "export_csv": "Exportar CSV"
+  }
+}

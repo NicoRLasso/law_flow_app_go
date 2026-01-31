@@ -1,0 +1,390 @@
+{
+  "judicial": {
+    "process_info": "Información del Proceso",
+    "office": "Despacho",
+    "judge": "Juez",
+    "type": "Tipo",
+    "location": "Ubicación",
+    "subjects": "Partes Involucradas",
+    "last_updated": "Última Actualización",
+    "actions_history": "Historial de Actuaciones",
+    "no_actions": "No se encontraron actuaciones para este proceso.",
+    "registered": "Registrado",
+    "term": "Término",
+    "loading": "Cargando información del proceso...",
+    "not_found": {
+      "title": "Proceso No Encontrado",
+      "desc_pending": " No hemos encontrado información judicial asociada al número de radicado",
+      "desc_no_radicado": "Este caso no tiene un número de radicado asociado para consultar."
+    },
+    "sync_info": "El sistema intentará sincronizar automáticamente esta noche.",
+    "missing_radicado": "Edita el caso para añadir un número de radicado y habilitar la consulta."
+  },
+  "cases": {
+    "detail": {
+      "title": "Detalles del Caso",
+      "tab": {
+        "unified": "Unificado"
+      }
+    },
+    "title": "Casos",
+    "description": {
+      "admin": "Gestionar todos los casos de tu firma",
+      "user": "Ver y gestionar tus casos asignados"
+    },
+    "filters": {
+      "status": "Estado:",
+      "assigned_to": "Asignado A:",
+      "from": "Desde:",
+      "to": "Hasta:",
+      "search_label": "Buscar:",
+      "search_placeholder": "Número de caso, título...",
+      "all_status": "Todos los Estados",
+      "all_lawyers": "Todos los Abogados",
+      "search_button": "Buscar"
+    },
+    "status": {
+      "open": "Abierto",
+      "on_hold": "En Espera",
+      "closed": "Cerrado"
+    },
+    "table": {
+      "number": "Número de Caso",
+      "title": "Título",
+      "client": "Cliente",
+      "assigned_to": "Asignado A",
+      "status": "Estado",
+      "opened": "Abierto",
+      "actions": "Acciones",
+      "unassigned": "Sin Asignar",
+      "details": "Detalles",
+      "empty": "No se encontraron casos"
+    },
+    "document": {
+      "delete": {
+        "title": "Eliminar Documento",
+        "message": "¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer."
+      }
+    },
+    "history": {
+      "page_title": "Casos Históricos",
+      "page_description": "Ver y gestionar casos migrados en papel",
+      "title": "Agregar Caso Histórico",
+      "description": "Migrar un caso en papel al sistema",
+      "add_button": "Agregar Caso en Papel",
+      "original_date": "Fecha Original de Apertura",
+      "original_number": "Número de Caso Original",
+      "migration_notes": "Notas de Migración",
+      "migration_notes_placeholder": "Notas sobre esta migración de caso en papel...",
+      "create": "Crear Caso Histórico",
+      "badge": "Papel",
+      "step1_title": "Cliente",
+      "step2_title": "Detalles del Caso",
+      "client_mode_existing": "Seleccionar cliente existente",
+      "client_mode_new": "Crear nuevo cliente",
+      "client_name": "Nombre del Cliente",
+      "client_email": "Correo Electrónico",
+      "client_phone": "Teléfono",
+      "client_doc_type": "Tipo de Documento",
+      "client_doc_number": "Número de Documento",
+      "select_client": "Seleccionar cliente",
+      "upload_documents": "Subir Documentos",
+      "upload_hint": "Sube documentos del caso (PDF, imágenes, etc.)",
+      "next": "Siguiente",
+      "previous": "Anterior",
+      "no_clients": "No hay clientes disponibles"
+    },
+    "title_label": "Título del Caso",
+    "title_placeholder": "Título breve del caso...",
+    "description_label": "Descripción",
+    "description_placeholder": "Describe el caso...",
+    "client": "Cliente",
+    "select_client": "Seleccionar cliente",
+    "assigned_lawyer": "Abogado Asignado",
+    "select_lawyer": "Seleccionar abogado",
+    "classification": "Clasificación",
+    "domain": "Dominio",
+    "select_domain": "Seleccionar dominio",
+    "branch": "Rama",
+    "select_branch": "Seleccionar rama",
+    "subtypes": "Subtipos",
+    "milestones": {
+      "add": "Agregar Hito",
+      "add_title": "Agregar Nuevo Hito",
+      "edit_title": "Editar Hito",
+      "delete_confirm": "¿Estás seguro de que deseas eliminar este hito?",
+      "list_empty": "Aún no hay hitos registrados.",
+      "progress": {
+        "title": "Progreso de Hitos"
+      },
+      "status": {
+        "completed": "Completado",
+        "pending": "Pendiente"
+      },
+      "form": {
+        "title": "Título",
+        "description": "Descripción",
+        "due_date": "Fecha Límite"
+      }
+    },
+    "import": {
+      "title": "Importar Casos",
+      "modal_title": "Importar Casos desde Excel",
+      "instruction_step1": "Paso 1: Descargar Plantilla Excel",
+      "instruction_step2": "Paso 2: Subir Archivo Excel (.xlsx)",
+      "download_template": "Descargar Plantilla",
+      "upload_file": "Subir Archivo Excel",
+      "review": "Paso 3: Revisar",
+      "btn_import": "Importar Casos",
+      "sheets": {
+        "instructions": "Instrucciones",
+        "clients": "Clientes",
+        "cases": "Casos"
+      },
+      "instructions": {
+        "title": "Instrucciones para Importar Casos",
+        "considerations": "Consideraciones",
+        "cons_1": "No renombrar las hojas 'Clientes' y 'Casos'.",
+        "cons_2": "El 'Correo del Cliente' es el identificador único. Si el cliente no existe, se creará una nueva cuenta de usuario.",
+        "cons_3": "Los valores de Estado deben ser: ABIERTO, CERRADO u ON_HOLD.",
+        "cons_4": "Las fechas deben estar en formato AAAA-MM-DD.",
+        "cons_5": "El Número de Caso Legado se almacenará como Número de Caso Histórico.",
+        "cons_6": "El Tipo de Documento debe coincidir con los códigos del sistema (CC, NIT, PASSPORT, etc).",
+        "cons_7": "La Clasificación (Dominio, Rama, Subtipo) es opcional.",
+        "valid_classifications": "Clasificaciones Disponibles:",
+        "example": "Datos de Ejemplo"
+      },
+      "headers": {
+        "email": "Correo del Cliente",
+        "name": "Nombre del Cliente",
+        "phone": "Teléfono",
+        "document_type": "Tipo de Documento",
+        "document_number": "Número de Documento",
+        "filing_number": "Número de Radicado",
+        "legacy_number": "Número de Caso Legado",
+        "case_title": "Título del Caso",
+        "description": "Descripción",
+        "domain": "Dominio",
+        "branch": "Rama",
+        "subtype": "Subtipo",
+        "status": "Estado",
+        "opened_date": "Fecha de Apertura",
+        "closed_date": "Fecha de Cierre"
+      },
+      "success_msg": "Importación completada exitosamente.",
+      "summary_total": "Total Procesados",
+      "summary_success": "Exitosos",
+      "summary_failed": "Fallidos"
+    }
+  },
+  "case": {
+    "request": {
+      "new_btn": "Solicitar Nuevo Caso",
+      "title": "Solicitar Nuevo Caso",
+      "success_message": "¡Solicitud enviada exitosamente! Nos pondremos en contacto pronto.",
+      "my_requests": "Mis Solicitudes",
+      "no_requests": "No has realizado ninguna solicitud aún."
+    },
+    "title": "Caso",
+    "detail": {
+      "title": "Detalles del Caso",
+      "case_number": "Número de Caso",
+      "financial_summary": "Resumen Financiero",
+      "radicado": "Número de Radicado",
+      "edit_btn": "Editar Caso",
+      "edit_short": "Editar",
+      "tab": {
+        "summary": "Resumen",
+        "parties": "Partes",
+        "documents": "Documentos",
+        "bitacora": "Bitácora"
+      },
+      "parties": {
+        "client_section": "Cliente",
+        "opposing_section": "Contraparte",
+        "add_demandante": "Agregar Demandante",
+        "add_demandado": "Agregar Demandado",
+        "no_opposing": "No se ha añadido ninguna contraparte",
+        "role_demandante": "Demandante",
+        "role_demandado": "Demandado",
+        "edit_btn": "Editar",
+        "delete_btn": "Eliminar",
+        "delete_confirm": "¿Estás seguro de que deseas eliminar esta contraparte?",
+        "delete_title": "Eliminar Contraparte",
+        "modal": {
+          "add_title": "Agregar Contraparte",
+          "edit_title": "Editar Contraparte",
+          "name": "Nombre",
+          "name_placeholder": "Nombre completo",
+          "email": "Correo Electrónico",
+          "email_placeholder": "correo@ejemplo.com",
+          "phone": "Teléfono",
+          "phone_placeholder": "+57 300 123 4567",
+          "document_type": "Tipo de Documento",
+          "select_document_type": "Seleccionar tipo...",
+          "document_number": "Número de Documento",
+          "document_placeholder": "Número de identificación",
+          "save_btn": "Guardar",
+          "cancel_btn": "Cancelar"
+        }
+      },
+      "info_title": "Información del Caso",
+      "type": "Tipo",
+      "desc": "Descripción",
+      "timeline_title": "Línea de Tiempo",
+      "opened": "Abierto",
+      "closed": "Cerrado",
+      "assignment_title": "Asignación",
+      "assigned_lawyer": "Abogado Asignado",
+      "unassigned": "Sin Asignar",
+      "classification_title": "Clasificación",
+      "domain": "Dominio",
+      "branch": "Rama",
+      "subtypes": "Subtipos",
+      "upload_btn": "Subir Documento",
+      "search_placeholder": "Buscar documentos...",
+      "filter": {
+        "all_types": "Todos los Tipos",
+        "apply": "Aplicar Filtros"
+      },
+      "loading": "Cargando documentos...",
+      "client_title": "Información del Cliente",
+      "phone": "Teléfono",
+      "no_client": "No hay información del cliente disponible",
+      "collaborators": "Colaboradores",
+      "no_collaborators": "No hay colaboradores asignados",
+      "add_collaborator": "Agregar Colaborador",
+      "remove_collaborator": "Remover",
+      "remove_collaborator_confirm": "¿Estás seguro de que deseas remover a este colaborador?",
+      "select_collaborator": "Seleccionar colaborador...",
+      "modal": {
+        "title": "Detalles del Caso",
+        "case_number": "Número de Caso",
+        "case_info": "Información del Caso",
+        "client_info": "Información del Cliente",
+        "assignment": "Asignación",
+        "classification": "Clasificación",
+        "documents": "Documentos",
+        "timeline": "Línea de Tiempo",
+        "download": "Descargar",
+        "no_docs": "No hay documentos adjuntos",
+        "closed": "Cerrado",
+        "close_btn": "Cerrar"
+      }
+    },
+    "document": {
+      "upload": {
+        "title": "Subir Documento",
+        "file_label": "Archivo del Documento",
+        "accepted_formats": "Formatos aceptados: PDF, DOC, DOCX, TXT, JPG, PNG (Máx 10MB)",
+        "type_label": "Tipo de Documento",
+        "select_type": "Seleccionar tipo...",
+        "desc_label": "Descripción",
+        "desc_placeholder": "Descripción opcional del documento...",
+        "btn": "Subir",
+        "cancel": "Cancelar"
+      },
+      "table": {
+        "file_name": "Nombre del Archivo",
+        "type": "Tipo",
+        "size": "Tamaño",
+        "uploaded_by": "Subido Por",
+        "uploaded_at": "Subido El",
+        "actions": "Acciones",
+        "system": "Sistema",
+        "view": "Ver",
+        "empty": "No se encontraron documentos"
+      },
+      "viewer": {
+        "title": "Visor de Documentos",
+        "close_tooltip": "Cerrar (Esc)"
+      },
+      "types": {
+        "initial_request": "Solicitud Inicial",
+        "evidence": "Evidencia",
+        "contract": "Contrato",
+        "correspondence": "Correspondencia",
+        "legal_brief": "Escrito Legal",
+        "court_filing": "Presentación Judicial",
+        "invoice": "Factura",
+        "other": "Otro"
+      },
+      "visibility": {
+        "label": "Visibilidad",
+        "public": "Público",
+        "private": "Privado",
+        "toggle_public": "Hacer visible al cliente",
+        "toggle_private": "Ocultar al cliente",
+        "public_desc": "El cliente puede ver este documento"
+      },
+      "create_from_template": "Crear con Plantilla",
+      "template_modal": {
+        "title": "Generar Documento desde Plantilla",
+        "subtitle": "Selecciona una plantilla para generar un documento con datos del caso",
+        "name_placeholder": "Ingresa el nombre del documento...",
+        "success": "Documento generado exitosamente",
+        "info_note": "La información que no esté disponible en el caso aparecerá en blanco en el documento generado."
+      }
+    },
+    "edit": {
+      "title": "Editar Caso",
+      "status": "Estado",
+      "radicado": "Número de Radicado",
+      "radicado_placeholder": "Ingresar número de radicado...",
+      "description": "Descripción",
+      "desc_placeholder": "Ingresar descripción del caso...",
+      "client": "Cliente",
+      "lawyer": "Abogado Asignado",
+      "unassigned": "Sin Asignar",
+      "classification_section": "Clasificación",
+      "select_domain": "Seleccionar Dominio",
+      "select_branch": "Seleccionar Rama",
+      "select_branch_first": "Selecciona una rama para ver los subtipos",
+      "save": "Guardar Cambios",
+      "cancel": "Cancelar"
+    },
+    "status": {
+      "open": "Abierto",
+      "on_hold": "En Espera",
+      "closed": "Cerrado"
+    }
+  },
+  "bitacora": {
+    "title": "Bitácora",
+    "add_entry": "Agregar Entrada",
+    "search_placeholder": "Buscar entradas...",
+    "loading": "Cargando bitácora...",
+    "empty": "No hay entradas en la bitácora",
+    "create_first_hint": "Haz clic en 'Agregar Entrada' para comenzar",
+    "filter": {
+      "all_types": "Todos los Tipos"
+    },
+    "types": {
+      "note": "Nota",
+      "document": "Documento",
+      "call": "Llamada",
+      "meeting": "Reunión"
+    },
+    "entry_type": "Tipo de Entrada",
+    "title_label": "Título",
+    "title_placeholder": "Breve descripción...",
+    "content_label": "Contenido",
+    "content_placeholder": "Notas detalladas...",
+    "document_reference": "Referencia de Documento",
+    "select_document": "Seleccionar documento...",
+    "contact_name": "Nombre del Contacto",
+    "contact_name_placeholder": "Persona contactada",
+    "contact_phone": "Teléfono",
+    "occurred_at": "Fecha y Hora",
+    "duration": "Duración",
+    "duration_unit": "en minutos",
+    "minutes": "min",
+    "contact": "Contacto",
+    "by": "Por",
+    "create": "Crear Entrada",
+    "edit_title": "Editar Entrada",
+    "view_title": "Ver Entrada",
+    "delete_confirm_title": "Eliminar Entrada",
+    "delete_confirm": "¿Está seguro de que desea eliminar esta entrada?"
+  }
+}

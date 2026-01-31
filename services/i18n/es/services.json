@@ -1,0 +1,165 @@
+{
+  "expenses": {
+    "add": "Agregar Gasto",
+    "add_title": "Registrar Gasto",
+    "edit_title": "Editar Gasto",
+    "list_empty": "Aún no hay gastos registrados.",
+    "total": "Total de Gastos",
+    "table": {
+      "date": "Fecha",
+      "description": "Descripción",
+      "category": "Categoría",
+      "amount": "Monto",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "form": {
+      "description": "Descripción",
+      "amount": "Monto",
+      "date": "Fecha",
+      "add": "Agregar Gasto"
+    },
+    "action": {
+      "edit": "Editar",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    }
+  },
+  "services": {
+    "title": "Servicios Legales",
+    "subtitle": "Gestionar servicios legales extrajudiciales",
+    "new": "Nuevo Servicio",
+    "client": "Cliente",
+    "type": "Tipo",
+    "table": {
+      "number": "#",
+      "title": "Título",
+      "client": "Cliente",
+      "type": "Tipo",
+      "status": "Estado",
+      "actions": "Acciones",
+      "empty": "No se encontraron servicios."
+    },
+    "status": {
+      "INTAKE": "Recepción",
+      "IN_PROGRESS": "En Progreso",
+      "ON_HOLD": "En Espera",
+      "COMPLETED": "Completado",
+      "CANCELLED": "Cancelado"
+    },
+    "tab": {
+      "milestones": "Hitos",
+      "documents": "Documentos",
+      "expenses": "Gastos",
+      "activities": "Actividades",
+      "generate": "Generar"
+    },
+    "create": {
+      "title": "Crear Nuevo Servicio",
+      "submit": "Crear Servicio"
+    },
+    "edit": {
+      "title": "Editar Servicio Legal"
+    },
+    "detail": {
+      "info_title": "Información del Servicio"
+    },
+    "milestones": {
+      "add": "Agregar Hito",
+      "add_title": "Agregar Nuevo Hito",
+      "edit_title": "Editar Hito",
+      "delete_confirm": "¿Estás seguro de que deseas eliminar este hito?",
+      "list_empty": "Aún no hay hitos registrados.",
+      "progress": {
+        "title": "Progreso de Hitos"
+      },
+      "status": {
+        "completed": "Completado",
+        "pending": "Pendiente"
+      },
+      "form": {
+        "title": "Título",
+        "description": "Descripción",
+        "due_date": "Fecha Límite"
+      }
+    },
+    "generate": {
+      "templates": {
+        "title": "Seleccionar Plantilla"
+      },
+      "select_template": "Plantilla",
+      "document_name": "Nombre del Documento",
+      "document_name_placeholder": "Ej: Contrato de Servicio - Cliente X",
+      "info": "El documento será generado usando los datos de este servicio.",
+      "submit": "Generar Documento",
+      "preview": {
+        "title": "Vista Previa",
+        "placeholder": "Selecciona una plantilla para ver la vista previa"
+      }
+    },
+    "documents": {
+      "upload": {
+        "title": "Subir Documento",
+        "subtitle": "Sube un nuevo documento a este servicio",
+        "file_label": "Archivo del Documento",
+        "accepted_formats": "Formatos aceptados: PDF, DOC, DOCX, TXT, JPG, PNG (Máx 10MB)",
+        "type_label": "Tipo de Documento",
+        "select_type": "Seleccionar tipo...",
+        "desc_label": "Descripción",
+        "desc_placeholder": "Descripción opcional del documento...",
+        "btn": "Subir",
+        "cancel": "Cancelar"
+      },
+      "form": {
+        "file": "Archivo",
+        "type": "Tipo de Documento",
+        "description": "Descripción",
+        "type_intake": "Recepción",
+        "type_working": "Trabajo",
+        "type_deliverable": "Entregable",
+        "type_reference": "Referencia"
+      },
+      "table": {
+        "file_name": "Nombre del Archivo",
+        "type": "Tipo",
+        "size": "Tamaño",
+        "uploaded_by": "Subido Por",
+        "uploaded_at": "Subido El",
+        "actions": "Acciones",
+        "system": "Sistema",
+        "empty": "No se encontraron documentos"
+      },
+      "visibility": {
+        "label": "Visibilidad",
+        "public": "Público",
+        "private": "Privado",
+        "toggle_public": "Hacer visible al cliente",
+        "toggle_private": "Ocultar al cliente",
+        "public_desc": "Visible para el cliente"
+      },
+      "delete": {
+        "title": "Eliminar Documento",
+        "message": "¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer."
+      },
+      "viewer": {
+        "title": "Visor de Documentos",
+        "close_tooltip": "Cerrar visor"
+      }
+    },
+    "form": {
+      "title": "Título del Servicio",
+      "title_placeholder": "Ej: Revisión de Contrato para Corp. Smith",
+      "client": "Cliente",
+      "type": "Tipo de Servicio",
+      "priority": "Prioridad",
+      "assign_to": "Asignar A",
+      "description": "Descripción",
+      "description_placeholder": "Ingrese descripción detallada...",
+      "objective": "Objetivo",
+      "objective_placeholder": "¿Cuál es el objetivo principal?",
+      "select_client": "Seleccionar Cliente",
+      "select_type": "Seleccionar Tipo",
+      "hours": "Horas"
+    }
+  }
+}

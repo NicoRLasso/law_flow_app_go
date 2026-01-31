@@ -1,0 +1,390 @@
+{
+  "judicial": {
+    "process_info": "Process Information",
+    "office": "Court Office",
+    "judge": "Judge",
+    "type": "Type",
+    "location": "Location",
+    "subjects": "Involved Parties",
+    "last_updated": "Last Updated",
+    "actions_history": "Actions History",
+    "no_actions": "No actions found for this process.",
+    "registered": "Registered",
+    "term": "Term",
+    "loading": "Loading process information...",
+    "not_found": {
+      "title": "Process Not Found",
+      "desc_pending": " We haven't found judicial information associated with the filing number",
+      "desc_no_radicado": "This case does not have an associated filing number (radicado) to query."
+    },
+    "sync_info": "The system will attempt to automatically sync tonight.",
+    "missing_radicado": "Edit the case to add a filing number and enable polling."
+  },
+  "cases": {
+    "detail": {
+      "title": "Case Details",
+      "tab": {
+        "unified": "Unified"
+      }
+    },
+    "title": "Cases",
+    "description": {
+      "admin": "Manage all cases in your firm",
+      "user": "View and manage your assigned cases"
+    },
+    "filters": {
+      "status": "Status:",
+      "assigned_to": "Assigned To:",
+      "from": "From:",
+      "to": "To:",
+      "search_label": "Search:",
+      "search_placeholder": "Case number, title...",
+      "all_status": "All Status",
+      "all_lawyers": "All Lawyers",
+      "search_button": "Search"
+    },
+    "status": {
+      "open": "Open",
+      "on_hold": "On Hold",
+      "closed": "Closed"
+    },
+    "table": {
+      "number": "Case Number",
+      "title": "Title",
+      "client": "Client",
+      "assigned_to": "Assigned To",
+      "status": "Status",
+      "opened": "Opened",
+      "actions": "Actions",
+      "unassigned": "Unassigned",
+      "details": "Details",
+      "empty": "No cases found"
+    },
+    "document": {
+      "delete": {
+        "title": "Delete Document",
+        "message": "Are you sure you want to delete this document? This action cannot be undone."
+      }
+    },
+    "history": {
+      "page_title": "Historical Cases",
+      "page_description": "View and manage migrated paper cases",
+      "title": "Add Historical Case",
+      "description": "Migrate a paper-based case to the system",
+      "add_button": "Add Paper Case",
+      "original_date": "Original Filing Date",
+      "original_number": "Original Case Number",
+      "migration_notes": "Migration Notes",
+      "migration_notes_placeholder": "Notes about this paper case migration...",
+      "create": "Create Historical Case",
+      "badge": "Paper",
+      "step1_title": "Client",
+      "step2_title": "Case Details",
+      "client_mode_existing": "Select existing client",
+      "client_mode_new": "Create new client",
+      "client_name": "Client Name",
+      "client_email": "Email",
+      "client_phone": "Phone",
+      "client_doc_type": "Document Type",
+      "client_doc_number": "Document Number",
+      "select_client": "Select a client",
+      "upload_documents": "Upload Documents",
+      "upload_hint": "Upload case documents (PDF, images, etc.)",
+      "next": "Next",
+      "previous": "Previous",
+      "no_clients": "No clients available"
+    },
+    "title_label": "Case Title",
+    "title_placeholder": "Brief case title...",
+    "description_label": "Description",
+    "description_placeholder": "Describe the case...",
+    "client": "Client",
+    "select_client": "Select a client",
+    "assigned_lawyer": "Assigned Lawyer",
+    "select_lawyer": "Select a lawyer",
+    "classification": "Classification",
+    "domain": "Domain",
+    "select_domain": "Select domain",
+    "branch": "Branch",
+    "select_branch": "Select branch",
+    "subtypes": "Subtypes",
+    "milestones": {
+      "add": "Add Milestone",
+      "add_title": "Add New Milestone",
+      "edit_title": "Edit Milestone",
+      "delete_confirm": "Are you sure you want to delete this milestone?",
+      "list_empty": "No milestones recorded yet.",
+      "progress": {
+        "title": "Milestone Progress"
+      },
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending"
+      },
+      "form": {
+        "title": "Title",
+        "description": "Description",
+        "due_date": "Due Date"
+      }
+    },
+    "import": {
+      "title": "Import Cases",
+      "modal_title": "Import Cases from Excel",
+      "instruction_step1": "Step 1: Download Excel Template",
+      "instruction_step2": "Step 2: Upload Excel File (.xlsx)",
+      "download_template": "Download Template",
+      "upload_file": "Upload Excel File",
+      "review": "Step 3: Review",
+      "btn_import": "Import Cases",
+      "sheets": {
+        "instructions": "Instructions",
+        "clients": "Clients",
+        "cases": "Cases"
+      },
+      "instructions": {
+        "title": "Instructions for Importing Cases",
+        "considerations": "Considerations",
+        "cons_1": "Do not rename the sheets 'Clients' and 'Cases'.",
+        "cons_2": "The 'Client Email' is the unique identifier. If the client does not exist, a new user account will be created.",
+        "cons_3": "Status values must be: OPEN, CLOSED, or ON_HOLD.",
+        "cons_4": "Dates must be in YYYY-MM-DD format.",
+        "cons_5": "Legacy Case Number will be stored as Historical Case Number.",
+        "cons_6": "Document Type must match system codes (CC, NIT, PASSPORT, etc).",
+        "cons_7": "Classification (Domain, Branch, Subtype) is optional.",
+        "valid_classifications": "Available Classifications:",
+        "example": "Example Data"
+      },
+      "headers": {
+        "email": "Client Email",
+        "name": "Client Name",
+        "phone": "Phone",
+        "document_type": "Document Type",
+        "document_number": "Document Number",
+        "filing_number": "Filing Number",
+        "legacy_number": "Legacy Case Number",
+        "case_title": "Case Title",
+        "description": "Description",
+        "domain": "Domain",
+        "branch": "Branch",
+        "subtype": "Subtype",
+        "status": "Status",
+        "opened_date": "Opened Date",
+        "closed_date": "Closed Date"
+      },
+      "success_msg": "Import completed successfully.",
+      "summary_total": "Total Processed",
+      "summary_success": "Success",
+      "summary_failed": "Failed"
+    }
+  },
+  "case": {
+    "request": {
+      "new_btn": "Request New Case",
+      "title": "Request New Case",
+      "success_message": "Request submitted successfully! We will contact you soon.",
+      "my_requests": "My Requests",
+      "no_requests": "You haven't made any requests yet."
+    },
+    "title": "Case",
+    "detail": {
+      "title": "Case Details",
+      "case_number": "Case Number",
+      "financial_summary": "Financial Summary",
+      "radicado": "Filing Number",
+      "edit_btn": "Edit Case",
+      "edit_short": "Edit",
+      "tab": {
+        "summary": "Summary",
+        "parties": "Parties",
+        "documents": "Documents",
+        "bitacora": "Activity Log"
+      },
+      "parties": {
+        "client_section": "Client",
+        "opposing_section": "Opposing Party",
+        "add_demandante": "Add Plaintiff",
+        "add_demandado": "Add Defendant",
+        "no_opposing": "No opposing party has been added",
+        "role_demandante": "Plaintiff",
+        "role_demandado": "Defendant",
+        "edit_btn": "Edit",
+        "delete_btn": "Delete",
+        "delete_confirm": "Are you sure you want to delete this opposing party?",
+        "delete_title": "Delete Opposing Party",
+        "modal": {
+          "add_title": "Add Opposing Party",
+          "edit_title": "Edit Opposing Party",
+          "name": "Name",
+          "name_placeholder": "Full name",
+          "email": "Email",
+          "email_placeholder": "email@example.com",
+          "phone": "Phone",
+          "phone_placeholder": "+1 555 123 4567",
+          "document_type": "Document Type",
+          "select_document_type": "Select type...",
+          "document_number": "Document Number",
+          "document_placeholder": "ID number",
+          "save_btn": "Save",
+          "cancel_btn": "Cancel"
+        }
+      },
+      "info_title": "Case Information",
+      "type": "Type",
+      "desc": "Description",
+      "timeline_title": "Timeline",
+      "opened": "Opened",
+      "closed": "Closed",
+      "assignment_title": "Assignment",
+      "assigned_lawyer": "Assigned Lawyer",
+      "unassigned": "Unassigned",
+      "classification_title": "Classification",
+      "domain": "Domain",
+      "branch": "Branch",
+      "subtypes": "Subtypes",
+      "upload_btn": "Upload Document",
+      "search_placeholder": "Search documents...",
+      "filter": {
+        "all_types": "All Types",
+        "apply": "Apply Filters"
+      },
+      "loading": "Loading documents...",
+      "client_title": "Client Information",
+      "phone": "Phone",
+      "no_client": "No client information available",
+      "collaborators": "Collaborators",
+      "no_collaborators": "No collaborators assigned",
+      "add_collaborator": "Add Collaborator",
+      "remove_collaborator": "Remove",
+      "remove_collaborator_confirm": "Are you sure you want to remove this collaborator?",
+      "select_collaborator": "Select a collaborator...",
+      "modal": {
+        "title": "Case Details",
+        "case_number": "Case Number",
+        "case_info": "Case Information",
+        "client_info": "Client Information",
+        "assignment": "Assignment",
+        "classification": "Classification",
+        "documents": "Documents",
+        "timeline": "Timeline",
+        "download": "Download",
+        "no_docs": "No documents attached",
+        "closed": "Closed",
+        "close_btn": "Close"
+      }
+    },
+    "document": {
+      "upload": {
+        "title": "Upload Document",
+        "file_label": "Document File",
+        "accepted_formats": "Accepted formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max 10MB)",
+        "type_label": "Document Type",
+        "select_type": "Select a type...",
+        "desc_label": "Description",
+        "desc_placeholder": "Optional description of the document...",
+        "btn": "Upload",
+        "cancel": "Cancel"
+      },
+      "table": {
+        "file_name": "File Name",
+        "type": "Type",
+        "size": "Size",
+        "uploaded_by": "Uploaded By",
+        "uploaded_at": "Uploaded At",
+        "actions": "Actions",
+        "system": "System",
+        "view": "View",
+        "empty": "No documents found"
+      },
+      "viewer": {
+        "title": "Document Viewer",
+        "close_tooltip": "Close (Esc)"
+      },
+      "types": {
+        "initial_request": "Initial Request",
+        "evidence": "Evidence",
+        "contract": "Contract",
+        "correspondence": "Correspondence",
+        "legal_brief": "Legal Brief",
+        "court_filing": "Court Filing",
+        "invoice": "Invoice",
+        "other": "Other"
+      },
+      "visibility": {
+        "label": "Visibility",
+        "public": "Public",
+        "private": "Private",
+        "toggle_public": "Make visible to client",
+        "toggle_private": "Hide from client",
+        "public_desc": "Client can view this document"
+      },
+      "create_from_template": "Create with Template",
+      "template_modal": {
+        "title": "Generate Document from Template",
+        "subtitle": "Select a template to generate a document with case data",
+        "name_placeholder": "Enter document name...",
+        "success": "Document generated successfully",
+        "info_note": "Information that is not available in the case will appear blank in the generated document."
+      }
+    },
+    "edit": {
+      "title": "Edit Case",
+      "status": "Status",
+      "radicado": "Filing Number",
+      "radicado_placeholder": "Enter filing number...",
+      "description": "Description",
+      "desc_placeholder": "Enter case description...",
+      "client": "Client",
+      "lawyer": "Assigned Lawyer",
+      "unassigned": "Unassigned",
+      "classification_section": "Classification",
+      "select_domain": "Select Domain",
+      "select_branch": "Select Branch",
+      "select_branch_first": "Select a branch to view subtypes",
+      "save": "Save Changes",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "open": "Open",
+      "on_hold": "On Hold",
+      "closed": "Closed"
+    }
+  },
+  "bitacora": {
+    "title": "Activity Log",
+    "add_entry": "Add Entry",
+    "search_placeholder": "Search entries...",
+    "loading": "Loading activity log...",
+    "empty": "No activity log entries yet",
+    "create_first_hint": "Click 'Add Entry' to get started",
+    "filter": {
+      "all_types": "All Types"
+    },
+    "types": {
+      "note": "Note",
+      "document": "Document",
+      "call": "Call",
+      "meeting": "Meeting"
+    },
+    "entry_type": "Entry Type",
+    "title_label": "Title",
+    "title_placeholder": "Brief description...",
+    "content_label": "Content",
+    "content_placeholder": "Detailed notes...",
+    "document_reference": "Document Reference",
+    "select_document": "Select a document...",
+    "contact_name": "Contact Name",
+    "contact_name_placeholder": "Person contacted",
+    "contact_phone": "Phone Number",
+    "occurred_at": "Date & Time",
+    "duration": "Duration",
+    "duration_unit": "in minutes",
+    "minutes": "min",
+    "contact": "Contact",
+    "by": "By",
+    "create": "Create Entry",
+    "edit_title": "Edit Entry",
+    "view_title": "View Entry",
+    "delete_confirm_title": "Delete Entry",
+    "delete_confirm": "Are you sure you want to delete this entry?"
+  }
+}

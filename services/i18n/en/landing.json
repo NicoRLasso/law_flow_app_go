@@ -1,0 +1,310 @@
+{
+  "landing": {
+    "hero": {
+      "label": "Legal Practice Management",
+      "title_prefix": "Transform Your",
+      "title_suffix": "Legal Practice",
+      "description": "Streamline your law firm operations with case management, document templates, appointment scheduling, and secure client collaboration. Focus on practicing law, not paperwork.",
+      "cta_primary": "Start Free Trial",
+      "cta_secondary": "Explore Features",
+      "trial_note": "14-day free trial · No credit card required",
+      "social_proof": "Trusted by law firms worldwide"
+    },
+    "highlights": {
+      "secure": "Bank-Level Security",
+      "fast": "Lightning Fast",
+      "responsive": "Mobile Ready",
+      "multilingual": "Multi-Language"
+    },
+    "logos": {
+      "title": "Trusted by law firms worldwide"
+    },
+    "stats": {
+      "cases": "Case Management",
+      "uptime": "Uptime SLA",
+      "firms": "Scalable",
+      "support": "Support"
+    },
+    "features": {
+      "label": "Features",
+      "title": "Everything You Need",
+      "subtitle": "Powerful tools designed specifically for modern law practices",
+      "cta": "See All Features",
+      "case_management": {
+        "title": "Case Management",
+        "description": "Centralize all case information with smart organization and search. Track case status, manage documents, and collaborate seamlessly with your team."
+      },
+      "automation": {
+        "title": "Audit Logs & History",
+        "description": "Keep track of all changes and activities with detailed audit logs and case history."
+      },
+      "portal": {
+        "title": "Client Portal",
+        "description": "Secure client access to case updates and documents."
+      },
+      "documents": {
+        "title": "Document Templates",
+        "description": "Create and manage reusable document templates with variable substitution for quick document generation."
+      },
+      "time": {
+        "title": "Appointments & Scheduling",
+        "description": "Manage appointments with integrated calendar, availability settings, and client booking."
+      }
+    },
+    "showcase": {
+      "label": "See It In Action",
+      "title": "Everything You Need, One Dashboard",
+      "subtitle": "Intuitive interface designed for legal professionals who value their time",
+      "cta": "Try It Free",
+      "feature1": "Real-time Sync",
+      "feature2": "Smart Search",
+      "feature3": "Auto Backup"
+    },
+    "benefits": {
+      "label": "Benefits",
+      "title": "Why Choose LexLegal Cloud",
+      "time": {
+        "title": "Save Time",
+        "description": "Streamline case management and reduce administrative overhead. Focus on what matters most—serving clients and winning cases.",
+        "metric": "Efficiency"
+      },
+      "revenue": {
+        "title": "Stay Organized",
+        "description": "Keep all your case information, documents, and client data in one centralized platform. Never lose track of important details.",
+        "metric": "Organization"
+      },
+      "collaboration": {
+        "title": "Improve Collaboration",
+        "description": "Keep your team aligned with shared case access, appointment scheduling, and role-based permissions.",
+        "metric": "Teamwork"
+      },
+      "security": {
+        "title": "Secure Platform",
+        "description": "Your data is protected with encryption and secure authentication. Role-based access controls keep sensitive information safe."
+      }
+    },
+    "how_it_works": {
+      "label": "How It Works",
+      "title": "Get Started in 3 Simple Steps",
+      "step1": {
+        "title": "Sign Up",
+        "description": "Create your account in under 2 minutes. No credit card required to start your free trial."
+      },
+      "step2": {
+        "title": "Import Your Data",
+        "description": "We migrate your existing cases, clients, and documents automatically from your current system."
+      },
+      "step3": {
+        "title": "Start Managing",
+        "description": "Begin streamlining your practice immediately with our intuitive interface and guided setup."
+      }
+    },
+    "community": {
+      "label": "Join Us",
+      "title": "Be Part of the Future of Legal Tech",
+      "description": "We're building the next generation of legal practice management. Join our growing community of forward-thinking law firms.",
+      "cta": "Get Early Access"
+    },
+    "testimonials": {
+      "label": "Testimonials",
+      "title": "Trusted by Leading Firms",
+      "testimonial1": {
+        "quote": "LexLegal Cloud transformed our practice. We've cut administrative time by 60% and our clients love the portal.",
+        "name": "Sarah Chen",
+        "title": "Partner, Chen & Associates"
+      },
+      "testimonial2": {
+        "quote": "The workflow automation is a game-changer. We handle 3x more cases with the same team size.",
+        "name": "Michael Rodriguez",
+        "title": "Managing Attorney, Rodriguez Law"
+      },
+      "testimonial3": {
+        "quote": "Best investment we've made. Time tracking alone increased our billable hours by 25%.",
+        "name": "Emily Thompson",
+        "title": "Founder, Thompson Legal"
+      }
+    },
+    "pricing": {
+      "label": "Pricing",
+      "title": "Simple, Transparent Pricing",
+      "subtitle": "Choose the plan that fits your practice",
+      "per_month": "month",
+      "get_started": "Get Started",
+      "contact_sales": "Contact Sales",
+      "popular": "Most Popular",
+      "coming_soon": "Coming Soon",
+      "coming_soon_desc": "We are currently finalizing our pricing plans. Stay tuned!",
+      "book_demo": "Book a Demo"
+    },
+    "trust": {
+      "label": "Security",
+      "title": "Your Data, Protected",
+      "soc2": "Secure Auth",
+      "gdpr": "Data Privacy",
+      "encryption": "HTTPS Encryption",
+      "aba": "Role-Based Access"
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "How secure is my data?",
+        "answer": "We use bank-level 256-bit encryption for all data in transit and at rest. Our infrastructure is SOC 2 Type II certified and we undergo regular third-party security audits. Your data is backed up daily and stored in geographically distributed data centers."
+      },
+      "q2": {
+        "question": "Can I migrate from my current system?",
+        "answer": "Yes! We offer free data migration assistance for all new customers. Our team will work with you to import your existing cases, contacts, and documents from most major practice management systems."
+      },
+      "q3": {
+        "question": "Is there a free trial?",
+        "answer": "Absolutely! We offer a 14-day free trial with full access to all features. No credit card required. You can upgrade, downgrade, or cancel at any time."
+      },
+      "q4": {
+        "question": "What kind of support do you offer?",
+        "answer": "All plans include email support with response times under 24 hours. Professional and Enterprise plans get priority support with faster response times. Enterprise customers also receive a dedicated account manager and 24/7 phone support."
+      },
+      "q5": {
+        "question": "Can I customize workflows?",
+        "answer": "Yes! Our workflow builder allows you to create custom automation tailored to your practice. Professional and Enterprise plans include advanced workflow features and custom integrations with your existing tools."
+      }
+    },
+
+    "final_cta": {
+      "title": "Ready to Transform Your Practice?",
+      "subtitle": "Contact our support team for any questions or assistance.",
+      "button": "Email Support",
+      "no_credit_card": "No credit card required",
+      "cancel_anytime": "Cancel anytime"
+    },
+    "mobile_cta": "Start Free Trial"
+  },
+  "pages": {
+    "contact": {
+      "title": "Contact Us",
+      "label": "Get in Touch",
+      "desc": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+      "form": {
+        "title": "Send Us a Message",
+        "name": "Name",
+        "email": "Email",
+        "message": "Message",
+        "send": "Send Message",
+        "or_email": "Or email us directly at"
+      },
+      "promo": {
+        "tagline": "Let's Build Something Great Together",
+        "desc": "Whether you're looking to streamline your practice or have questions about our platform, we're here to help.",
+        "fast_title": "Quick Response",
+        "fast_desc": "We respond to all inquiries within 24 hours",
+        "secure_title": "Secure & Confidential",
+        "secure_desc": "Your information is protected with bank-grade encryption",
+        "support_title": "Expert Support",
+        "support_desc": "Our team of legal tech specialists is ready to help"
+      }
+    },
+    "security": {
+      "title": "Security",
+      "label": "Security First",
+      "hero_title": "Bank-Grade Security for",
+      "hero_highlight": "Legal Data",
+      "hero_desc": "We protect your sensitive client information with industry-leading encryption, strict access controls, and regular security audits.",
+      "encryption_title": "Encryption",
+      "encryption_desc": "Data is encrypted in transit using tls 1.3 and at rest using AES-256. Your documents and communications are secure from the moment they leave your device.",
+      "infrastructure_title": "Infrastructure",
+      "infrastructure_desc": "Hosted on secure, SOC 2 compliant cloud infrastructure with automated backups and geographic redundancy to ensure high availability.",
+      "compliance_title": "Compliance",
+      "compliance_desc": "We are committed to maintaining compliance with global standards including GDPR, CCPA, and legal industry regulations for data handling.",
+      "access_title": "Access Control",
+      "access_desc": "Role-based access control (RBAC), multi-factor authentication (MFA), and detailed audit logs give you complete control and visibility over your data.",
+      "cta_title": "Ready to secure your practice?",
+      "cta_desc": "Join hundreds of law firms trusting LexLegal Cloud with their data."
+    },
+    "privacy": {
+      "title": "Data Processing Policy",
+      "updated": "Last updated: January 2026",
+      "intro": "LexLegal Cloud respects the personal data and information provided by its current, past, and potential clients. This Personal Data Protection Policy establishes the purposes, measures, and procedures for our databases, as well as the mechanisms available to data holders to know, update, rectify, delete provided data, or revoke the authorization granted with the acceptance of this policy, in accordance with Statutory Law 1581 of 2012 and Decree 1377 of 2013.",
+      "section1_title": "1. Data Controller",
+      "section1_content": "LexLegal Cloud, as the entity responsible for processing personal data, informs that collected data will be processed legally, lawfully, confidentially, and securely.",
+      "section2_title": "2. Purpose of Processing",
+      "section2_content": "The processing of personal data has the following purposes: a) To carry out relevant management for the development of the company's social object. b) To send invitations to events, manage processes (requests, complaints, claims). c) To manage the contractual relationship with the client. d) Billing and accounting management. e) To conduct satisfaction surveys.",
+      "section3_title": "3. Rights of Data Holders",
+      "section3_content": "As the holder of your personal data, you have the right to: (i) Access your data free of charge. (ii) Know, update, and rectify your information regarding partial, inaccurate, incomplete, fractionated, misleading data, or data whose processing is prohibited. (iii) Request proof of the authorization granted. (iv) File complaints with the Superintendence of Industry and Commerce (SIC). (v) Revoke authorization and/or request data deletion.",
+      "section4_title": "4. Authorization",
+      "section4_content": "The processing of personal data carried out by the company requires the free, prior, express, and informed consent of the data holder. By accepting this policy, you state that the data provided is truthful and that you have the authority to authorize its processing.",
+      "section5_title": "5. Information Security",
+      "section5_content": "We have implemented the necessary technical, administrative, and human security measures to protect your information and prevent its adulteration, loss, lateral consultation, use, or unauthorized or fraudulent access, complying with the standards required by the Superintendence of Industry and Commerce.",
+      "section6_title": "6. Attention Channel (Habeas Data)",
+      "section6_content": "To exercise your rights as a data holder, you can contact us at any time at the email address:"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "updated": "Last updated: January 2026",
+      "intro": "Please read these Terms of Service carefully before using the LexLegal Cloud application.",
+      "section1_title": "1. Acceptance of Terms",
+      "section1_content": "By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.",
+      "section2_title": "2. Accounts",
+      "section2_content": "When you create an account with us, you must provide us information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.",
+      "section3_title": "3. Intellectual Property",
+      "section3_content": "The Service and its original content, features and functionality are and will remain the exclusive property of LexLegal Cloud Inc and its licensors.",
+      "section4_title": "4. User Content",
+      "section4_content": "You retain all rights to the content you upload to the Service. By uploading content, you grant us a license to store and display that content as necessary to provide the Service.",
+      "section5_title": "5. Termination",
+      "section5_content": "We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.",
+      "section6_title": "6. Limitation of Liability",
+      "section6_content": "In no event shall LexLegal Cloud Inc, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages.",
+      "section7_title": "7. Governing Law",
+      "section7_content": "These Terms shall be governed and construed in accordance with the laws of the Republic of Colombia. Any dispute related to these terms shall be submitted to the competent judges of the Republic of Colombia."
+    },
+    "cookies": {
+      "title": "Cookie Policy",
+      "updated": "Last updated: January 2026",
+      "intro": "This Cookie Policy explains what cookies are and how we use them.",
+      "section1_title": "What are cookies?",
+      "section1_content": "Cookies are small text files that are sent to your web browser by a website you visit. A cookie file is stored in your web browser and allows the Service or a third-party to recognize you and make your next visit easier and the Service more useful to you.",
+      "section2_title": "How LexLegal Cloud uses cookies",
+      "section2_content": "When you use and access the Service, we may place a number of cookies files in your web browser. We use cookies for the following purposes: to enable certain functions of the Service, to provide analytics, to store your preferences, to enable advertisements delivery, including behavioral advertising.",
+      "section3_title": "Essential Cookies",
+      "section3_content": "We use essential cookies to authenticate users and prevent fraudulent use of user accounts.",
+      "section4_title": "Analytics Cookies",
+      "section4_content": "We use analytics cookies to track information about how the Service is used so we can make improvements. We may also use analytics cookies to test new features or pages.",
+      "section5_title": "Your Choices",
+      "section5_content": "You can control and/or delete cookies as you wish. You can delete all cookies that are already on your computer and you can set most browsers to prevent them from being placed. If you do this, however, you may have to manually adjust some preferences every time you visit a site and some services and functionalities may not work."
+    },
+    "compliance": {
+      "title": "Security",
+      "label": "Security",
+      "hero_title": "Security",
+      "hero_highlight": "First",
+      "hero_desc": "We prioritize the security and privacy of your data with industry best practices.",
+      "encryption_title": "HTTPS Encryption",
+      "encryption_desc": "All data transmitted between your browser and our servers is encrypted using TLS/SSL, ensuring your information remains private and secure.",
+      "auth_title": "Secure Authentication",
+      "auth_desc": "Password hashing with bcrypt and secure session management protect your account from unauthorized access.",
+      "privacy_title": "Data Privacy",
+      "privacy_desc": "Your data belongs to you. We follow strict data handling practices and never share your information with third parties.",
+      "access_title": "Role-Based Access Control",
+      "access_desc": "Granular permissions ensure that users only access the information they need. Administrators, lawyers, staff, and clients each have appropriate access levels.",
+      "cta_title": "Questions about security?",
+      "cta_desc": "Our team is ready to discuss your specific security requirements."
+    },
+    "about": {
+      "title": "About Us",
+      "mission_label": "Our Mission",
+      "mission_title": "Empowering Law Firms to",
+      "mission_highlight": "Work Smarter",
+      "mission_desc": "We're building the operating system for the modern law practice. Our mission is to eliminate administrative busywork so lawyers can focus on what they do best: practicing law.",
+      "values": {
+        "innovation_title": "Innovation",
+        "innovation_desc": "We constantly push the boundaries of legal tech, using AI and automation to solve real-world problems.",
+        "trust_title": "Trust",
+        "trust_desc": "Security and reliability are at the core of everything we build. Your data is our top priority.",
+        "partnership_title": "Partnership",
+        "partnership_desc": "We succeed when our customers succeed. We're not just a vendor; we're a partner in your growth."
+      },
+      "team_title": "Meet the Team",
+      "team_desc": "A diverse team of engineers, designers, and legal experts.",
+      "cta_title": "Ready to join us?",
+      "cta_desc": "Start transforming your practice today."
+    }
+  }
+}

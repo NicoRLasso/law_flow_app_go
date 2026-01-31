@@ -1,0 +1,98 @@
+{
+  "app": {
+    "name": "LexLegal Cloud",
+    "description": "Legal Practice Management Simplified",
+    "tagline": "Practice Management Evolved"
+  },
+  "action": {
+    "view": "View",
+    "mark_resolved": "Mark Resolved",
+    "mark_in_progress": "Mark In Progress",
+    "mark_closed": "Close Ticket",
+    "reply": "Reply",
+    "view_response": "View Response",
+    "take_ticket": "Take Ticket"
+  },
+  "common": {
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "select": "Select",
+    "select_option": "Select an option",
+    "required_fields": "Please fill in all required fields",
+    "save": "Save",
+    "save_changes": "Save Changes",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "learn_more": "Learn more",
+    "created_at": "Created At",
+    "updated_at": "Updated At",
+    "status": "Status",
+    "actions": "Actions",
+    "language": "Language",
+    "add": "Add",
+    "english": "English",
+    "spanish": "Spanish",
+    "not_set": "Not set",
+    "na": "N/A",
+    "loading": "Loading...",
+    "close": "Close",
+    "unassigned": "Unassigned",
+    "confirm_delete": "Confirm Deletion",
+    "status_all": "All Status",
+    "all": "All",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} results",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "reset": "Reset",
+    "optional": "Optional",
+    "settings": "Settings",
+    "active": "Active",
+    "inactive": "Inactive",
+    "download": "Download",
+    "search": "Search",
+    "page": "Page",
+    "coming_soon": "Coming Soon",
+    "client": "Client",
+    "lawyer": "Lawyer"
+  },
+  "priority": {
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+  "search": {
+    "placeholder": "Search cases, notes, documents...",
+    "no_results": "No results found",
+    "no_results_hint": "Try different keywords",
+    "view_all_results": "View all results",
+    "searching": "Searching...",
+    "match_in_case": "Found in case",
+    "match_in_log": "Found in notes",
+    "match_in_document": "Found in document",
+    "match_in_party": "Found in opposing party"
+  },
+  "email": {
+    "subject": {
+      "welcome": "Welcome to LexLegalCloud App!",
+      "firm_setup": "Firm Setup Complete - lexlegalcloud App",
+      "password_reset": "Password Reset Request - lexlegalcloud App",
+      "lawyer_assignment": "New Case Assigned - {caseNumber}",
+      "collaborator_added": "Added as Collaborator - Case {caseNumber}",
+      "appointment_confirmation": "Appointment Confirmed - {firmName}",
+      "appointment_reminder": "Appointment Reminder - Tomorrow @ {time}",
+      "appointment_cancelled": "Appointment Cancelled - {firmName}",
+      "lawyer_appointment_notification": "New Appointment: {clientName} - {date} @ {time}",
+      "new_user_welcome": "Welcome to lexlegalcloud - Your Account Credentials"
+    }
+  }
+}

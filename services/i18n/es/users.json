@@ -1,0 +1,148 @@
+{
+  "users": {
+    "title": "Gestión de Usuarios",
+    "description": "Gestiona usuarios, administradores, abogados, personal y clientes",
+    "add_user": "Agregar Usuario",
+    "filters": {
+      "role": "Rol:",
+      "status": "Estado:",
+      "all_roles": "Todos los Roles",
+      "all_status": "Todos los Estados",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "table": {
+      "name": "Nombre",
+      "email": "Correo",
+      "role": "Rol",
+      "status": "Estado",
+      "last_login": "Último Acceso",
+      "actions": "Acciones",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "never": "Nunca",
+      "empty": "No se encontraron usuarios",
+      "empty_hint": "Agrega usuarios para comenzar"
+    },
+    "modal": {
+      "add_title": "Agregar Nuevo Usuario",
+      "edit_title": "Editar Usuario",
+      "full_name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "password": "Contraseña",
+      "min_chars": "Mínimo 12 caracteres",
+      "role": "Rol",
+      "select_role": "Seleccionar un rol",
+      "active_user": "Usuario Activo",
+      "inactive_desc": "Los usuarios inactivos no pueden iniciar sesión",
+      "cancel": "Cancelar",
+      "create_btn": "Crear Usuario",
+      "update_btn": "Actualizar Usuario",
+      "role_help": {
+        "admin": "Acceso completo.",
+        "lawyer": "Gestionar casos.",
+        "staff": "Acceso limitado.",
+        "client": "Ver sus casos."
+      }
+    },
+    "roles": {
+      "admin": "Admin",
+      "lawyer": "Abogado",
+      "staff": "Personal",
+      "client": "Cliente"
+    },
+    "delete_modal": {
+      "title": "Eliminar Usuario",
+      "confirm": "¿Estás seguro de que deseas eliminar a {name}?",
+      "warning": "Esta acción no se puede deshacer. El usuario será eliminado permanentemente del sistema.",
+      "cancel": "Cancelar",
+      "delete_btn": "Eliminar Usuario"
+    }
+  },
+  "superadmin": {
+    "dashboard": {
+      "title": "Panel de Superadmin",
+      "total_firms": "Firmas Totales",
+      "total_users": "Usuarios Totales",
+      "active_users": "Usuarios Activos",
+      "pending_users": "Pendientes de Config",
+      "quick_actions": "Acciones Rápidas",
+      "manage_users": "Gestionar Usuarios",
+      "manage_firms": "Gestionar Firmas",
+      "create_user": "Crear Usuario",
+      "recent_activity": {
+        "new_firms": "Nuevas Firmas",
+        "new_users": "Nuevos Usuarios",
+        "no_firms": "No hay firmas creadas aún",
+        "no_users": "No hay usuarios creados aún"
+      }
+    },
+    "users": {
+      "title": "Gestión de Usuarios",
+      "subtitle": "Gestionar todos los usuarios de la plataforma.",
+      "create_user": "Crear Usuario",
+      "search_placeholder": "Buscar usuarios...",
+      "role_filter": {
+        "all": "Todos los Roles",
+        "superadmin": "Superadmin",
+        "admin": "Admin",
+        "lawyer": "Abogado",
+        "staff": "Personal",
+        "client": "Cliente"
+      },
+      "firm_filter": {
+        "all": "Todas las Firmas",
+        "none": "Sin Firma"
+      },
+      "status_filter": {
+        "all": "Todos los Estados",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "table": {
+        "user": "Usuario",
+        "role": "Rol",
+        "status": "Estado",
+        "firm": "Firma",
+        "joined": "Unido",
+        "actions": "Acciones",
+        "no_results": "No se encontraron usuarios con esos criterios.",
+        "no_firm": "Sin Firma"
+      },
+      "modal": {
+        "create_title": "Crear Nuevo Usuario",
+        "edit_title": "Editar Usuario",
+        "full_name": "Nombre Completo",
+        "email": "Correo Electrónico",
+        "password": "Contraseña",
+        "password_edit_hint": "Contraseña (dejar en blanco para mantener actual)",
+        "role": "Rol",
+        "status": "Estado",
+        "firm": "Firma",
+        "firm_no_firm": "Sin Firma (Usuario la configurará)",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "cancel": "Cancelar",
+        "save": "Guardar Cambios",
+        "create": "Crear Usuario"
+      },
+      "delete_modal": {
+        "title": "Eliminar Usuario",
+        "confirm": "¿Estás seguro de que deseas eliminar a {name}?",
+        "warning": "Esta acción realizará un borrado lógico. El usuario será desactivado y ocultado, pero los datos permanecerán en la base de datos.",
+        "cancel": "Cancelar",
+        "delete": "Eliminar Usuario"
+      }
+    },
+    "nav": {
+      "dashboard": "Tablero",
+      "users": "Usuarios",
+      "firms": "Firmas",
+      "logout": "Cerrar Sesión"
+    },
+    "support": {
+      "title": "Tickets de Soporte",
+      "subtitle": "Gestionar tickets de soporte"
+    }
+  }
+}

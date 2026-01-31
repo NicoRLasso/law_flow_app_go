@@ -1,0 +1,254 @@
+{
+  "audit": {
+    "title": "Registros de Auditoría",
+    "noLogs": "No se encontraron registros que coincidan con su búsqueda.",
+    "filters": {
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "resourceType": "Tipo de Recurso",
+      "action": "Acción",
+      "searchPlaceholder": "Buscar registros..."
+    },
+    "table": {
+      "timestamp": "Marca de tiempo",
+      "user": "Usuario",
+      "action": "Acción",
+      "resource": "Recurso",
+      "description": "Descripción",
+      "details": "Detalles"
+    },
+    "actions": {
+      "create": "Crear",
+      "update": "Actualizar",
+      "delete": "Eliminar",
+      "view": "Ver",
+      "download": "Descargar",
+      "visibility": "Cambio de Visibilidad",
+      "login": "Inicio de Sesión",
+      "logout": "Cierre de Sesión"
+    },
+    "verbs": {
+      "created": "creó",
+      "updated": "actualizó",
+      "deleted": "eliminó",
+      "viewed": "vio",
+      "downloaded": "descargó",
+      "visibility": "cambió la visibilidad de"
+    },
+    "resources": {
+      "case": "Caso",
+      "user": "Usuario",
+      "document": "Documento",
+      "appointment": "Cita",
+      "blocked_date": "Fecha Bloqueada",
+      "availability": "Disponibilidad",
+      "firm": "Firma",
+      "template": "Plantilla",
+      "generated_document": "Documento Generado",
+      "appointment_type": "Tipo de Cita"
+    },
+    "viewChanges": "Ver Cambios",
+    "changeDetails": "Detalles del Cambio",
+    "oldValues": "Valores Anteriores",
+    "newValues": "Nuevos Valores",
+    "field": "Campo",
+    "diff": {
+      "field": "Campo",
+      "old": "Valor Anterior",
+      "new": "Nuevo Valor"
+    }
+  },
+  "compliance": {
+    "title": "Centro de Cumplimiento",
+    "subtitle": "Gestión de datos personales y cumplimiento normativo",
+    "consent": {
+      "title": "Registro de Consentimientos",
+      "policy_text": "Autorización para el Tratamiento de Datos Personales (Ley 1581 de 2012)\n\nEl titular de los datos personales autoriza a la firma legal a recolectar, almacenar, usar, circular, suprimir, procesar, compilar, intercambiar, dar tratamiento, actualizar, y disponer de los datos personales suministrados para las siguientes finalidades:\n\n1. Gestión de procesos judiciales y extrajudiciales.\n2. Comunicaciones relacionadas con el servicio legal contratado.\n3. Facturación y gestión de cobros.\n4. Cumplimiento de obligaciones legales.\n\nEl titular tiene derecho a conocer, actualizar, rectificar y suprimir sus datos personales, así como a revocar la autorización otorgada.",
+      "type": {
+        "DATA_PROCESSING": "Tratamiento de Datos",
+        "MARKETING": "Comunicaciones de Marketing",
+        "COOKIES": "Cookies"
+      },
+      "granted": "Otorgado",
+      "revoked": "Revocado",
+      "date": "Fecha",
+      "ip_address": "Dirección IP",
+      "policy_version": "Versión de Política"
+    },
+    "arco": {
+      "title": "Solicitudes ARCO",
+      "subtitle": "Gestión de derechos de los titulares de datos",
+      "new_request": "Nueva Solicitud",
+      "type": {
+        "ACCESS": "Acceso",
+        "RECTIFY": "Rectificación",
+        "CANCEL": "Cancelación",
+        "OPPOSITION": "Oposición",
+        "PORTABILITY": "Portabilidad"
+      },
+      "status": {
+        "PENDING": "Pendiente",
+        "IN_REVIEW": "En Revisión",
+        "APPROVED": "Aprobado",
+        "DENIED": "Denegado",
+        "COMPLETED": "Completado"
+      },
+      "justification": "Justificación",
+      "response": "Respuesta",
+      "resolve": "Resolver",
+      "approve": "Aprobar",
+      "deny": "Denegar"
+    },
+    "export": {
+      "title": "Exportar Mis Datos",
+      "description": "Descargue una copia de todos sus datos personales almacenados en la plataforma.",
+      "download": "Descargar Datos",
+      "generating": "Generando archivo..."
+    },
+    "deletion": {
+      "title": "Solicitar Eliminación",
+      "description": "Solicite la eliminación permanente de sus datos personales.",
+      "request": "Solicitar Eliminación",
+      "certificate_title": "Certificado de Eliminación de Datos"
+    },
+    "audit": {
+      "title": "Registro de Auditoría",
+      "description": "Historial inmutable de acciones sobre datos personales"
+    },
+    "alerts": {
+      "breach_detected": "Posible brecha de seguridad detectada",
+      "massive_download": "Descarga masiva de documentos detectada"
+    }
+  },
+  "support": {
+    "title": "Centro de Soporte",
+    "subtitle": "Obtenga ayuda con la gestión de su práctica legal",
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "q1": "¿Cómo restablezco mi contraseña?",
+      "a1": "Puede restablecer su contraseña haciendo clic en '¿Olvidó su contraseña?' en la página de inicio de sesión.",
+      "q2": "¿Cómo agrego un nuevo usuario?",
+      "a2": "Los administradores pueden agregar nuevos usuarios desde la página de Usuarios en el panel de control.",
+      "q3": "¿Son seguros mis datos?",
+      "a3": "Sí, utilizamos encriptación de grado bancario para proteger sus datos."
+    },
+    "contact_info": {
+      "title": "Información de Contacto",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "address": "Dirección"
+    },
+    "success": {
+      "submitted": "Su solicitud de soporte ha sido enviada exitosamente."
+    },
+    "form": {
+      "title": "Contactar Soporte",
+      "name": "Su Nombre",
+      "email": "Su Correo",
+      "subject": "Asunto",
+      "subject_placeholder": "¿En qué podemos ayudarle?",
+      "message": "Mensaje",
+      "message_placeholder": "Por favor describa su problema en detalle...",
+      "submit": "Enviar Mensaje"
+    },
+    "tickets": {
+      "title": "Mis Tickets",
+      "filter_status": "Estado",
+      "filter_user": "Usuario",
+      "user_all": "Todos los Usuarios",
+      "status_all": "Todos los Estados",
+      "id": "ID Ticket",
+      "subject": "Asunto",
+      "user": "Enviado Por",
+      "status": "Estado",
+      "date": "Fecha",
+      "empty_title": "No se encontraron tickets",
+      "empty_desc": "No ha enviado ningún ticket de soporte todavía."
+    },
+    "status": {
+      "open": "Abierto",
+      "in_progress": "En Progreso",
+      "resolved": "Resuelto",
+      "closed": "Cerrado",
+      "accepted": "Aceptado"
+    },
+    "message": "Mensaje",
+    "user_info": "Información del Usuario",
+    "table": {
+      "status": "Estado",
+      "subject": "Asunto",
+      "user": "Usuario",
+      "date": "Fecha",
+      "message": "Mensaje",
+      "empty": "No hay tickets encontrados"
+    },
+    "field": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "subject": "Asunto",
+      "message": "Mensaje",
+      "role": "Rol"
+    }
+  },
+  "subscription": {
+    "users": "Usuarios",
+    "unlimited": "Ilimitado",
+    "storage": "Almacenamiento",
+    "cases": "Casos",
+    "trial_days_remaining": "Prueba: {days} días restantes",
+    "trial_ends_on": "La prueba finaliza el {date}",
+    "renews_on": "Se renueva el {date}",
+    "max_users": "Usuarios Máximos",
+    "max_storage": "Almacenamiento Máximo",
+    "max_cases": "Casos Máximos",
+    "templates": "Plantillas de Documentos",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "current_plan": "Plan Actual",
+    "manage_billing_desc": "Gestiona tu suscripción y detalles de facturación",
+    "free_trial": "Gratis/Prueba",
+    "active_addons": "Complementos Activos",
+    "no_active_addons": "No hay complementos activos.",
+    "buy_addons": "Comprar Complementos",
+    "purchase_modal_title": "Comprar Complementos",
+    "purchase_modal_desc": "Selecciona un complemento para aumentar la capacidad de tu firma.",
+    "add_users": "Añade {count} usuarios a tu equipo.",
+    "add_storage": "Añade {size} de almacenamiento.",
+    "add_cases": "Añade {count} procesos judiciales.",
+    "unlock_templates": "Desbloquea la función de plantillas de documentos.",
+    "purchase_btn": "Comprar",
+    "cancel_addon": "Cancelar Complemento",
+    "cancel_addon_confirm": "¿Estás seguro de que deseas cancelar este complemento? Se desactivará inmediatamente."
+  },
+  "tools": {
+    "title": "Herramientas",
+    "subtitle": "Herramientas legales útiles",
+    "tab": {
+      "calculators": "Calculadoras",
+      "converters": "Conversores",
+      "generation": "Generación"
+    },
+    "filing_number": {
+      "title": "Constructor de Radicados",
+      "description": "Genera números de radicado para procesos judiciales colombianos",
+      "build_title": "Construir Radicado",
+      "department": "Departamento",
+      "city": "Ciudad",
+      "entity": "Entidad",
+      "specialty": "Especialidad",
+      "court_office": "Despacho",
+      "year": "Año",
+      "process_code": "Código de Proceso",
+      "resource_code": "Código de Recurso",
+      "digits": "dígitos",
+      "generate": "Generar Radicado",
+      "format_info": "Información del Formato",
+      "format_label": "Formato",
+      "select_department_first": "Seleccione un departamento primero",
+      "select_city_first": "Seleccione una ciudad primero",
+      "select_entity_first": "Seleccione una entidad primero",
+      "select_specialty_first": "Seleccione una especialidad primero",
+      "preview": "Vista Previa"
+    }
+  }
+}

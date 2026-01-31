@@ -1,0 +1,60 @@
+{
+  "dashboard": {
+    "notifications": {
+      "title": "Notifications",
+      "mark_all_read": "Mark all as read",
+      "new_judicial_action": "New judicial action",
+      "empty": "No new notifications"
+    },
+    "greeting": "Welcome back",
+    "welcome": "Welcome back, {name}",
+    "overview": "Overview",
+    "subtitle": "Here's what's happening with your practice today.",
+    "subtitle_client": "Welcome to your client portal.",
+    "stats": {
+      "active_cases": "Active Cases",
+      "my_active_cases": "My Active Cases",
+      "total_clients": "Total Clients",
+      "completed_monthly": "Completed This Month",
+      "pending_tasks": "Pending Tasks",
+      "my_upcoming_appointments": "My Upcoming Appointments",
+      "urgent_label": "Urgent"
+    },
+    "firm_info": {
+      "label": "Firm Information",
+      "name": "Firm Name",
+      "location": "Location",
+      "timezone": "Timezone",
+      "contact": "Contact",
+      "billing_email": "Billing Email",
+      "info_email": "Info Email"
+    },
+    "quick_actions": {
+      "label": "Quick Actions",
+      "users_title": "Manage Users",
+      "users_desc": "Add & edit users",
+      "upload_doc_title": "Upload Document",
+      "upload_doc_desc": "Add new document"
+    },
+    "recent_cases": {
+      "label": "Recent Cases",
+      "no_cases": "No recent cases",
+      "no_cases_hint": "Cases you work on will appear here"
+    },
+    "upcoming_appointments": {
+      "label": "Upcoming Appointments",
+      "no_appointments": "No upcoming appointments",
+      "no_appointments_hint": "Scheduled appointments will appear here"
+    }
+  },
+  "reports": {
+    "title": "Report Generator",
+    "description": "Export data to CSV for analysis",
+    "type": "Report Type",
+    "type.cases": "Cases",
+    "type.services": "Services",
+    "date_start": "Start Date",
+    "date_end": "End Date",
+    "export_csv": "Export CSV"
+  }
+}

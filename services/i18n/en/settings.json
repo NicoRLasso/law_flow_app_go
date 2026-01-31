@@ -1,0 +1,256 @@
+{
+  "settings": {
+    "profile": {
+      "title": "Profile Settings",
+      "desc": "Manage your personal information and account settings",
+      "info_title": "Personal Information",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "language": "Language",
+      "address": "Address",
+      "doc_number": "Document Number",
+      "save_btn": "Save Changes"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "account": "Account Info"
+    },
+    "security": {
+      "title": "Change Password",
+      "current_pass": "Current Password",
+      "new_pass": "New Password",
+      "confirm_pass": "Confirm New Password",
+      "change_btn": "Change Password"
+    },
+    "account": {
+      "title": "Account Information",
+      "role": "Role",
+      "status": "Status",
+      "firm": "Firm"
+    },
+    "firm": {
+      "title": "Firm Settings",
+      "desc": "Manage your firm's information and configuration",
+      "info_title": "Firm Information",
+      "name": "Firm Name",
+      "country": "Country",
+      "timezone": "Timezone",
+      "currency": "Currency",
+      "address": "Address",
+      "city": "City",
+      "phone": "Phone Number",
+      "desc_label": "Description",
+      "desc_ph": "Brief description of your firm",
+      "save_btn": "Save Changes"
+    },
+    "nav": {
+      "general": "General",
+      "email": "Email Config",
+      "branding": "Branding",
+      "details": "Firm Details",
+      "templates": "Templates",
+      "classifications": "Classifications"
+    },
+    "email": {
+      "title": "Email Configuration",
+      "billing": "Billing Email",
+      "billing_desc": "Email for billing and invoices",
+      "info": "Info Email",
+      "info_desc": "General information email",
+      "noreply": "No-Reply Email",
+      "noreply_desc": "Email address for sending automated notifications (required)",
+      "sender_name": "Email Sender Name",
+      "sender_name_desc": "Display name shown in sent emails (required)",
+      "save_btn": "Save Email Settings"
+    },
+    "details": {
+      "title": "Firm Details",
+      "id": "Firm ID",
+      "slug": "Slug",
+      "created": "Created"
+    },
+    "templates": {
+      "categories_title": "Template Categories",
+      "categories_desc": "Organize your document templates into categories for better management.",
+      "add_category": "Add Category",
+      "category_modal_title": "Category",
+      "category_name": "Category Name",
+      "category_description": "Description (optional)",
+      "no_categories": "No categories yet. Create one to organize your templates.",
+      "delete_category_confirm": "Are you sure you want to delete this category?"
+    },
+    "branding": {
+      "title": "Firm Branding",
+      "desc": "Customize your firm's logo and branding. This will appear in the navigation bar and email signatures.",
+      "current_logo": "Current Logo",
+      "logo_uploaded": "Logo is active",
+      "no_logo": "No logo uploaded",
+      "remove_logo": "Remove Logo",
+      "upload_new": "Upload New Logo",
+      "upload_btn": "Upload",
+      "upload_hint": "Supported formats: PNG, JPG, JPEG, SVG. Maximum size: 2MB."
+    },
+    "classifications": {
+      "title": "Case Classifications",
+      "desc": "Manage case type classifications for your firm",
+      "add_subtype": "Add Subtype",
+      "edit_subtype": "Edit Subtype",
+      "subtype_details": "Subtype Details",
+      "domain": "Domain",
+      "branch": "Branch",
+      "subtype": "Subtype",
+      "system_badge": "System",
+      "active": "Active",
+      "inactive": "Inactive",
+      "no_data": "No classifications found. Classifications are seeded when the firm is created.",
+      "no_branches": "No branches in this domain",
+      "name": "Name",
+      "name_placeholder": "Enter subtype name...",
+      "code": "Code",
+      "code_hint": "Unique identifier (e.g., CIVIL_DIVORCE). Will be uppercase.",
+      "description": "Description",
+      "order": "Sort Order",
+      "complexity": "Complexity",
+      "duration": "Typical Duration (days)",
+      "duration_hint": "Estimated days to complete this type of case",
+      "select_domain_first": "Select a domain first",
+      "select_branch_hint": "Select a domain and branch to view subtypes",
+      "no_subtypes": "No subtypes found for this branch",
+      "days_short": "days"
+    }
+  },
+  "availability": {
+    "title": "Availability Settings",
+    "desc": "Manage your working hours and blocked dates",
+    "nav": {
+      "schedule": "Weekly Schedule",
+      "blocked": "Blocked Dates",
+      "settings": "Settings"
+    },
+    "schedule": {
+      "title": "Standard Working Hours",
+      "desc": "Define when you're available to take appointments",
+      "add_slot": "Add Time Slot",
+      "add_first": "Add Your First Time Slot",
+      "day": "Day",
+      "start": "Start Time",
+      "end": "End Time",
+      "active": "Active",
+      "no_slots": "No availability slots configured",
+      "no_slots_hint": "Add time slots to let clients know when you're available for appointments",
+      "save": "Save Changes",
+      "delete_confirm": "Delete this time slot?"
+    },
+    "blocked": {
+      "title": "Blocked Dates",
+      "desc": "Block dates when you're unavailable for appointments",
+      "add": "Block Date",
+      "add_first": "Block Your First Date",
+      "date": "Date",
+      "reason": "Reason",
+      "full_day": "Full Day",
+      "time_range": "Time Range",
+      "no_blocked": "No blocked dates",
+      "no_blocked_hint": "Block dates for vacations, holidays, or when you're not available",
+      "reasons": {
+        "vacation": "Vacation",
+        "holiday": "Holiday",
+        "personal": "Personal",
+        "other": "Other"
+      },
+      "delete_confirm": "Remove this blocked date?"
+    },
+    "settings": {
+      "title": "Buffer Settings",
+      "buffer": "Buffer Between Appointments",
+      "buffer_desc": "Time gap between consecutive appointments",
+      "minutes": "minutes",
+      "admin_only": "Only administrators can change buffer settings"
+    },
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "errors": {
+      "invalid_day": "Invalid day of week",
+      "times_required": "Start and end time are required",
+      "end_after_start": "End time must be after start time",
+      "check_failed": "Failed to check availability",
+      "slot_overlaps": "Slot overlaps with existing availability",
+      "create_failed": "Failed to create slot",
+      "update_failed": "Failed to update slot",
+      "delete_failed": "Failed to delete slot",
+      "dates_required": "Start and end dates are required",
+      "end_date_after_start": "End date must be after start date",
+      "blocked_save_failed": "Failed to save block",
+      "blocked_delete_failed": "Failed to delete blocked date"
+    },
+    "success": {
+      "slot_added": "Slot added successfully",
+      "slot_updated": "Slot updated",
+      "blocked_added": "Blocked successfully"
+    }
+  },
+  "appointments": {
+    "title": "Appointments",
+    "description": "Manage scheduled appointments with clients",
+    "new": "New Appointment",
+    "filter": {
+      "all_status": "All Status"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No Show"
+    },
+    "table": {
+      "datetime": "Date & Time",
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "status": "Status",
+      "actions": "Actions",
+      "empty": "No appointments found"
+    },
+    "form": {
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "date": "Date",
+      "time_slot": "Available Time Slots",
+      "notes": "Notes",
+      "notes_placeholder": "Optional notes about the appointment...",
+      "select_client": "Select a client...",
+      "select_lawyer": "Select a lawyer...",
+      "select_case": "Select a case...",
+      "select_date_first": "Select a date to see available slots"
+    },
+    "create": {
+      "title": "Schedule Appointment",
+      "submit": "Book Appointment"
+    },
+    "cancel_confirm_title": "Cancel Appointment",
+    "cancel_confirm_msg": "Are you sure you want to cancel this appointment?"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "description": "Manage your schedule and appointments",
+    "events": {
+      "client": "Client",
+      "lawyer": "Lawyer",
+      "status": "Status"
+    },
+    "modal": {
+      "time": "Time",
+      "notes": "Notes",
+      "close": "Close"
+    }
+  }
+}

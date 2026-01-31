@@ -1,0 +1,256 @@
+{
+  "settings": {
+    "profile": {
+      "title": "Configuración de Perfil",
+      "desc": "Administra tu información personal y configuración de cuenta",
+      "info_title": "Información Personal",
+      "name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Número de Teléfono",
+      "language": "Idioma",
+      "address": "Dirección",
+      "doc_number": "Número de Documento",
+      "save_btn": "Guardar Cambios"
+    },
+    "tabs": {
+      "profile": "Perfil",
+      "security": "Seguridad",
+      "account": "Info de Cuenta"
+    },
+    "security": {
+      "title": "Cambiar Contraseña",
+      "current_pass": "Contraseña Actual",
+      "new_pass": "Nueva Contraseña",
+      "confirm_pass": "Confirmar Nueva Contraseña",
+      "change_btn": "Cambiar Contraseña"
+    },
+    "account": {
+      "title": "Información de Cuenta",
+      "role": "Rol",
+      "status": "Estado",
+      "firm": "Firma"
+    },
+    "firm": {
+      "title": "Configuración de Firma",
+      "desc": "Gestiona la información y configuración de tu firma",
+      "info_title": "Información de la Firma",
+      "name": "Nombre de la Firma",
+      "country": "País",
+      "timezone": "Zona Horaria",
+      "currency": "Moneda",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "phone": "Número de Teléfono",
+      "desc_label": "Descripción",
+      "desc_ph": "Breve descripción de tu firma",
+      "save_btn": "Guardar Cambios"
+    },
+    "nav": {
+      "general": "General",
+      "email": "Config. de Email",
+      "branding": "Imagen de Marca",
+      "details": "Detalles de Firma",
+      "templates": "Plantillas",
+      "classifications": "Clasificaciones"
+    },
+    "email": {
+      "title": "Configuración de Email",
+      "billing": "Email de Facturación",
+      "billing_desc": "Email para facturación y cobros",
+      "info": "Email de Información",
+      "info_desc": "Email de información general",
+      "noreply": "Email No-Reply",
+      "noreply_desc": "Dirección de email para enviar notificaciones automáticas (requerido)",
+      "sender_name": "Nombre del Remitente",
+      "sender_name_desc": "Nombre que se mostrará en los correos enviados (requerido)",
+      "save_btn": "Guardar Configuración de Email"
+    },
+    "details": {
+      "title": "Detalles de la Firma",
+      "id": "ID de Firma",
+      "slug": "Slug",
+      "created": "Creado"
+    },
+    "templates": {
+      "categories_title": "Categorías de Plantillas",
+      "categories_desc": "Organiza tus plantillas de documentos en categorías para una mejor gestión.",
+      "add_category": "Agregar Categoría",
+      "category_modal_title": "Categoría",
+      "category_name": "Nombre de Categoría",
+      "category_description": "Descripción (opcional)",
+      "no_categories": "Aún no hay categorías. Crea una para organizar tus plantillas.",
+      "delete_category_confirm": "¿Estás seguro de que deseas eliminar esta categoría?"
+    },
+    "branding": {
+      "title": "Imagen de Marca de la Firma",
+      "desc": "Personaliza el logo e imagen de marca de tu firma. Esto aparecerá en la barra de navegación y firmas de correo.",
+      "current_logo": "Logo Actual",
+      "logo_uploaded": "El logo está activo",
+      "no_logo": "No hay logo cargado",
+      "remove_logo": "Eliminar Logo",
+      "upload_new": "Subir Nuevo Logo",
+      "upload_btn": "Subir",
+      "upload_hint": "Formatos soportados: PNG, JPG, JPEG, SVG. Tamaño máximo: 2MB."
+    },
+    "classifications": {
+      "title": "Clasificaciones de Casos",
+      "desc": "Administra las clasificaciones de tipos de caso para tu firma",
+      "add_subtype": "Agregar Subtipo",
+      "edit_subtype": "Editar Subtipo",
+      "subtype_details": "Detalles del Subtipo",
+      "domain": "Dominio",
+      "branch": "Rama",
+      "subtype": "Subtipo",
+      "system_badge": "Sistema",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "no_data": "No se encontraron clasificaciones. Las clasificaciones se crean cuando se crea la firma.",
+      "no_branches": "No hay ramas en este dominio",
+      "name": "Nombre",
+      "name_placeholder": "Ingresa el nombre del subtipo...",
+      "code": "Código",
+      "code_hint": "Identificador único (ej: CIVIL_DIVORCIO). Será en mayúsculas.",
+      "description": "Descripción",
+      "order": "Orden",
+      "complexity": "Complejidad",
+      "duration": "Duración Típica (días)",
+      "duration_hint": "Días estimados para completar este tipo de caso",
+      "select_domain_first": "Selecciona un dominio primero",
+      "select_branch_hint": "Selecciona un dominio y rama para ver los subtipos",
+      "no_subtypes": "No se encontraron subtipos para esta rama",
+      "days_short": "días"
+    }
+  },
+  "availability": {
+    "title": "Configuración de Disponibilidad",
+    "desc": "Gestiona tus horarios de trabajo y fechas bloqueadas",
+    "nav": {
+      "schedule": "Horario Semanal",
+      "blocked": "Fechas Bloqueadas",
+      "settings": "Configuración"
+    },
+    "schedule": {
+      "title": "Horario de Trabajo Estándar",
+      "desc": "Define cuándo estás disponible para citas",
+      "add_slot": "Agregar Horario",
+      "add_first": "Agrega Tu Primer Horario",
+      "day": "Día",
+      "start": "Hora de Inicio",
+      "end": "Hora de Fin",
+      "active": "Activo",
+      "no_slots": "No hay horarios de disponibilidad configurados",
+      "no_slots_hint": "Agrega horarios para que los clientes sepan cuándo estás disponible para citas",
+      "save": "Guardar Cambios",
+      "delete_confirm": "¿Eliminar este horario?"
+    },
+    "blocked": {
+      "title": "Fechas Bloqueadas",
+      "desc": "Bloquea fechas cuando no estés disponible para citas",
+      "add": "Bloquear Fecha",
+      "add_first": "Bloquea Tu Primera Fecha",
+      "date": "Fecha",
+      "reason": "Razón",
+      "full_day": "Día Completo",
+      "time_range": "Rango de Horas",
+      "no_blocked": "No hay fechas bloqueadas",
+      "no_blocked_hint": "Bloquea fechas para vacaciones, feriados o cuando no estés disponible",
+      "reasons": {
+        "vacation": "Vacaciones",
+        "holiday": "Feriado",
+        "personal": "Personal",
+        "other": "Otro"
+      },
+      "delete_confirm": "¿Eliminar esta fecha bloqueada?"
+    },
+    "settings": {
+      "title": "Configuración de Buffer",
+      "buffer": "Buffer Entre Citas",
+      "buffer_desc": "Tiempo de espera entre citas consecutivas",
+      "minutes": "minutos",
+      "admin_only": "Solo los administradores pueden cambiar la configuración del buffer"
+    },
+    "days": {
+      "sunday": "Domingo",
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado"
+    },
+    "errors": {
+      "invalid_day": "Día de la semana inválido",
+      "times_required": "La hora de inicio y fin son requeridas",
+      "end_after_start": "La hora de fin debe ser después de la hora de inicio",
+      "check_failed": "Error al verificar disponibilidad",
+      "slot_overlaps": "El horario se superpone con una disponibilidad existente",
+      "create_failed": "Error al crear horario",
+      "update_failed": "Error al actualizar horario",
+      "delete_failed": "Error al eliminar horario",
+      "dates_required": "Las fechas de inicio y fin son requeridas",
+      "end_date_after_start": "La fecha de fin debe ser posterior a la fecha de inicio",
+      "blocked_save_failed": "Error al guardar el bloqueo",
+      "blocked_delete_failed": "Error al eliminar la fecha bloqueada"
+    },
+    "success": {
+      "slot_added": "Horario agregado exitosamente",
+      "slot_updated": "Horario actualizado",
+      "blocked_added": "Bloqueado exitosamente"
+    }
+  },
+  "appointments": {
+    "title": "Citas",
+    "description": "Gestiona las citas programadas con clientes",
+    "new": "Nueva Cita",
+    "filter": {
+      "all_status": "Todos los Estados"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmada",
+      "completed": "Completada",
+      "cancelled": "Cancelada",
+      "no_show": "No Asistió"
+    },
+    "table": {
+      "datetime": "Fecha y Hora",
+      "client": "Cliente",
+      "lawyer": "Abogado",
+      "status": "Estado",
+      "actions": "Acciones",
+      "empty": "No se encontraron citas"
+    },
+    "form": {
+      "client": "Cliente",
+      "lawyer": "Abogado",
+      "date": "Fecha",
+      "time_slot": "Horarios Disponibles",
+      "notes": "Notas",
+      "notes_placeholder": "Notas opcionales sobre la cita...",
+      "select_client": "Seleccionar cliente...",
+      "select_lawyer": "Seleccionar abogado...",
+      "select_case": "Seleccionar caso...",
+      "select_date_first": "Selecciona una fecha para ver los horarios disponibles"
+    },
+    "create": {
+      "title": "Programar Cita",
+      "submit": "Agendar Cita"
+    },
+    "cancel_confirm_title": "Cancelar Cita",
+    "cancel_confirm_msg": "¿Estás seguro de que deseas cancelar esta cita?"
+  },
+  "calendar": {
+    "title": "Calendario",
+    "description": "Gestiona tu agenda y citas",
+    "events": {
+      "client": "Cliente",
+      "lawyer": "Abogado",
+      "status": "Estado"
+    },
+    "modal": {
+      "time": "Horario",
+      "notes": "Notas",
+      "close": "Cerrar"
+    }
+  }
+}
