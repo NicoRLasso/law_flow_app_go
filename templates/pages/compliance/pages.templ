@@ -1,0 +1,145 @@
+package compliance
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+)
+
+// ConsentsPageData contains data for the consents page
+type ConsentsPageData struct {
+	User     *models.User
+	Firm     *models.Firm
+	Consents []models.ConsentLog
+	Page     int
+	Total    int
+	Pages    int
+}
+
+templ ConsentsPage(ctx context.Context, data ConsentsPageData) {
+	@layouts.Base(ctx, i18n.T(ctx, "compliance.consent.title"), "", nil) {
+		<div class="min-h-screen bg-base-200">
+			@components.Navbar(ctx, data.User, data.Firm, "/compliance/consents")
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
+				<div class="w-full space-y-6">
+					<!-- Breadcrumb -->
+					<div class="text-sm breadcrumbs">
+						<ul>
+							<li><a href="/compliance">{ i18n.T(ctx, "compliance.title") }</a></li>
+							<li>{ i18n.T(ctx, "compliance.consent.title") }</li>
+						</ul>
+					</div>
+					<!-- Header -->
+					<div class="border-b border-base-300 pb-6 mb-8">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">
+							{ i18n.T(ctx, "compliance.consent.title") }
+						</h1>
+						<p class="text-base-content/60 mt-2 font-sans">{ i18n.T(ctx, "compliance.consent.policy_text")[:100] }...</p>
+					</div>
+					<!-- Table Container -->
+					<div id="consent-table-container">
+						@ConsentLogTable(ctx, data.Consents, data.Page, data.Pages, data.Total)
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}
+
+// ARCOPageData contains data for the ARCO requests page
+type ARCOPageData struct {
+	User     *models.User
+	Firm     *models.Firm
+	Requests []models.SubjectRightsRequest
+	Page     int
+	Total    int
+	Pages    int
+}
+
+templ ARCOPage(ctx context.Context, data ARCOPageData) {
+	@layouts.Base(ctx, i18n.T(ctx, "compliance.arco.title"), "", nil) {
+		<div class="min-h-screen bg-base-200">
+			@components.Navbar(ctx, data.User, data.Firm, "/compliance/arco")
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
+				<div class="w-full space-y-6">
+					<!-- Breadcrumb -->
+					<div class="text-sm breadcrumbs">
+						<ul>
+							<li><a href="/compliance">{ i18n.T(ctx, "compliance.title") }</a></li>
+							<li>{ i18n.T(ctx, "compliance.arco.title") }</li>
+						</ul>
+					</div>
+					<!-- Header -->
+					<div class="border-b border-base-300 pb-6 mb-8 flex justify-between items-start">
+						<div>
+							<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">
+								{ i18n.T(ctx, "compliance.arco.title") }
+							</h1>
+							<p class="text-base-content/60 mt-2 font-sans">{ i18n.T(ctx, "compliance.arco.subtitle") }</p>
+						</div>
+						<!-- Status Filter -->
+						<select 
+							class="select select-bordered select-sm" 
+							hx-get="/compliance/arco"
+							hx-target="#arco-table-container"
+							hx-trigger="change"
+							name="status"
+						>
+							<option value="">{ i18n.T(ctx, "common.status_all") }</option>
+							<option value="PENDING">{ i18n.T(ctx, "compliance.arco.status.PENDING") }</option>
+							<option value="IN_REVIEW">{ i18n.T(ctx, "compliance.arco.status.IN_REVIEW") }</option>
+							<option value="APPROVED">{ i18n.T(ctx, "compliance.arco.status.APPROVED") }</option>
+							<option value="DENIED">{ i18n.T(ctx, "compliance.arco.status.DENIED") }</option>
+						</select>
+					</div>
+					<!-- Table Container -->
+					<div id="arco-table-container">
+						@ARCORequestTable(ctx, data.Requests, data.Page, data.Pages, data.Total)
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}
+
+// AuditPageData contains data for the audit logs page
+type AuditPageData struct {
+	User  *models.User
+	Firm  *models.Firm
+	Logs  []models.AuditLog
+	Page  int
+	Total int
+	Pages int
+}
+
+templ AuditPage(ctx context.Context, data AuditPageData) {
+	@layouts.Base(ctx, i18n.T(ctx, "compliance.audit.title"), "", nil) {
+		<div class="min-h-screen bg-base-200">
+			@components.Navbar(ctx, data.User, data.Firm, "/compliance/audit")
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
+				<div class="w-full space-y-6">
+					<!-- Breadcrumb -->
+					<div class="text-sm breadcrumbs">
+						<ul>
+							<li><a href="/compliance">{ i18n.T(ctx, "compliance.title") }</a></li>
+							<li>{ i18n.T(ctx, "compliance.audit.title") }</li>
+						</ul>
+					</div>
+					<!-- Header -->
+					<div class="border-b border-base-300 pb-6 mb-8">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">
+							{ i18n.T(ctx, "compliance.audit.title") }
+						</h1>
+						<p class="text-base-content/60 mt-2 font-sans">{ i18n.T(ctx, "compliance.audit.description") }</p>
+					</div>
+					<!-- Table Container -->
+					<div id="audit-table-container">
+						@AuditLogTable(ctx, data.Logs, data.Page, data.Pages, data.Total)
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}

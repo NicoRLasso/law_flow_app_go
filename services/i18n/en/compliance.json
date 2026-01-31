@@ -25,7 +25,15 @@
       "download": "Download",
       "visibility": "Visibility Change",
       "login": "Login",
-      "logout": "Logout"
+      "logout": "Logout",
+      "LOGIN": "Login",
+      "LOGOUT": "Logout",
+      "CREATE": "Create",
+      "UPDATE": "Update",
+      "DELETE": "Delete",
+      "VIEW": "View",
+      "DOWNLOAD": "Download",
+      "VISIBILITY_CHANGE": "Visibility Change"
     },
     "verbs": {
       "created": "created",
@@ -117,7 +125,8 @@
     },
     "alerts": {
       "breach_detected": "Potential security breach detected",
-      "massive_download": "Massive document download detected"
+      "massive_download": "Massive document download detected",
+      "action_required": "Please review immediately and take appropriate action."
     }
   },
   "support": {

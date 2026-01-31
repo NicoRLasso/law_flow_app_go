@@ -15,7 +15,21 @@
     "tabs": {
       "profile": "Perfil",
       "security": "Seguridad",
-      "account": "Info de Cuenta"
+      "account": "Info de Cuenta",
+      "privacy": "Privacidad y Datos"
+    },
+    "privacy": {
+      "title": "Privacidad y Derechos de Datos",
+      "export_title": "Portabilidad de Datos",
+      "export_desc": "Descarga una copia de todos tus datos personales en formato JSON/ZIP (Derecho a la Portabilidad - Art. 9 Ley 1581).",
+      "download_btn": "Descargar Mis Datos",
+      "arco_title": "Ejercicio de Derechos ARCO",
+      "arco_desc": "Envía una solicitud para Acceder, Rectificar, Cancelar u Oponerte al tratamiento de tus datos (Habeas Data).",
+      "request_type": "Tipo de Solicitud",
+      "justification": "Justificación",
+      "justification_ph": "Describe detalladamente el motivo de tu solicitud...",
+      "submit_btn": "Enviar Solicitud",
+      "success_msg": "Solicitud enviada correctamente. Recibirás un correo de confirmación."
     },
     "security": {
       "title": "Cambiar Contraseña",

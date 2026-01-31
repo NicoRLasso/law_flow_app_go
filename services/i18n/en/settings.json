@@ -15,7 +15,21 @@
     "tabs": {
       "profile": "Profile",
       "security": "Security",
-      "account": "Account Info"
+      "account": "Account Info",
+      "privacy": "Privacy & Data"
+    },
+    "privacy": {
+      "title": "Privacy & Data Rights",
+      "export_title": "Data Portability",
+      "export_desc": "Download a copy of all your personal data in JSON/ZIP format (Right to Portability).",
+      "download_btn": "Download My Data",
+      "arco_title": "Exercise Data Rights (ARCO)",
+      "arco_desc": "Submit a request to Access, Rectify, Cancel, or Oppose the processing of your data.",
+      "request_type": "Request Type",
+      "justification": "Justification",
+      "justification_ph": "Describe the reason for your request in detail...",
+      "submit_btn": "Submit Request",
+      "success_msg": "Request submitted successfully. You will receive a confirmation email."
     },
     "security": {
       "title": "Change Password",

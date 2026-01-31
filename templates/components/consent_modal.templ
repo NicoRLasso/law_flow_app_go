@@ -1,0 +1,89 @@
+package components
+
+import (
+	"context"
+	"law_flow_app_go/services/i18n"
+)
+
+// ConsentModal renders a modal for data processing consent (Art. 9 Law 1581)
+templ ConsentModal(ctx context.Context, csrfToken string) {
+	<div 
+		id="consent-modal"
+		class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+		x-data="{ loading: false }"
+	>
+		<div class="bg-base-100 rounded-sm shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-300">
+			<!-- Header -->
+			<div class="p-6 border-b border-base-200">
+				<div class="flex items-center gap-3">
+					<div class="p-3 bg-primary/10 rounded-full">
+						<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+						</svg>
+					</div>
+					<div>
+						<h2 class="text-xl font-bold text-base-content font-serif">
+							{ i18n.T(ctx, "consent.modal.title") }
+						</h2>
+						<p class="text-sm text-base-content/60">
+							{ i18n.T(ctx, "consent.modal.subtitle") }
+						</p>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Policy Text -->
+			<div class="flex-1 overflow-y-auto p-6">
+				<div class="prose prose-sm max-w-none">
+					<div class="bg-base-200/50 p-4 rounded-sm border border-base-300 text-sm text-base-content/80 whitespace-pre-line">
+						{ i18n.T(ctx, "compliance.consent.policy_text") }
+					</div>
+				</div>
+				
+				<!-- Legal Notice -->
+				<div class="mt-4 p-4 bg-warning/10 border border-warning/30 rounded-sm">
+					<div class="flex items-start gap-2">
+						<svg class="w-5 h-5 text-warning flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+						</svg>
+						<p class="text-sm text-warning-content/80">
+							{ i18n.T(ctx, "consent.modal.legal_notice") }
+						</p>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Actions -->
+			<div class="p-6 border-t border-base-200 bg-base-50">
+				<div class="flex flex-col sm:flex-row gap-3">
+					<button
+						hx-post="/api/consent/accept"
+						hx-vals={ `{"csrf_token": "` + csrfToken + `", "consent_type": "DATA_PROCESSING"}` }
+						hx-target="#consent-modal"
+						hx-swap="delete"
+						class="flex-1 btn btn-primary gap-2"
+						:class="{ 'loading': loading }"
+						@click="loading = true"
+					>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+						</svg>
+						{ i18n.T(ctx, "consent.modal.accept") }
+					</button>
+					<a 
+						href="/logout"
+						class="flex-1 btn btn-outline btn-error gap-2"
+					>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+						{ i18n.T(ctx, "consent.modal.decline") }
+					</a>
+				</div>
+				<p class="text-xs text-base-content/50 text-center mt-4">
+					{ i18n.T(ctx, "consent.modal.decline_notice") }
+				</p>
+			</div>
+		</div>
+	</div>
+}

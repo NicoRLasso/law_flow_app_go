@@ -1,0 +1,357 @@
+package compliance
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"strconv"
+)
+
+// ConsentLogTable renders the consent logs table with pagination
+templ ConsentLogTable(ctx context.Context, consents []models.ConsentLog, page int, totalPages int, total int) {
+	if len(consents) == 0 {
+		<div class="text-center py-16 bg-base-50">
+			<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+				<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+				</svg>
+			</div>
+			<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "compliance.consent.no_records") }</p>
+		</div>
+	} else {
+		<!-- Table Container -->
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.user") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "compliance.consent.type.DATA_PROCESSING") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "common.status") }</th>
+						<th class="hidden lg:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "compliance.consent.ip_address") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "compliance.consent.date") }</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, consent := range consents {
+						<tr class="hover group">
+							<!-- User -->
+							<td>
+								<div class="flex items-center gap-2">
+									<div class="avatar placeholder">
+										<div class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center">
+											if consent.User.Name != "" {
+												<span class="text-[10px] font-bold">{ string([]rune(consent.User.Name)[0]) }</span>
+											} else {
+												<span class="text-[10px] font-bold">?</span>
+											}
+										</div>
+									</div>
+									<div class="flex flex-col">
+										<span class="font-serif font-bold text-base-content group-hover:text-primary transition-colors">{ consent.User.Name }</span>
+										<span class="text-xs text-base-content/50">{ consent.User.Email }</span>
+									</div>
+								</div>
+							</td>
+							<!-- Consent Type -->
+							<td>
+								<span class="badge badge-sm badge-outline font-mono">
+									{ i18n.T(ctx, "compliance.consent.type." + string(consent.ConsentType)) }
+								</span>
+							</td>
+							<!-- Status -->
+							<td class="hidden md:table-cell">
+								if consent.Granted {
+									<span class="badge badge-sm badge-success text-white font-bold">
+										{ i18n.T(ctx, "compliance.consent.granted") }
+									</span>
+								} else {
+									<span class="badge badge-sm badge-error text-white font-bold">
+										{ i18n.T(ctx, "compliance.consent.revoked") }
+									</span>
+								}
+							</td>
+							<!-- IP Address -->
+							<td class="hidden lg:table-cell">
+								<span class="font-mono text-sm text-base-content/50">{ consent.IPAddress }</span>
+							</td>
+							<!-- Date -->
+							<td>
+								<span class="text-xs text-base-content/50 font-mono">
+									{ consent.CreatedAt.Format("2006-01-02 15:04") }
+								</span>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination Controls -->
+		<div class="mt-4 p-4 border-t border-base-200">
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: page,
+				TotalPages:  totalPages,
+				Limit:       20,
+				Total:       total,
+				BaseURL:     "/compliance/consents",
+				TargetID:    "#consent-table-container",
+			})
+		</div>
+	}
+}
+
+// ARCORequestTable renders the ARCO requests table with pagination
+templ ARCORequestTable(ctx context.Context, requests []models.SubjectRightsRequest, page int, totalPages int, total int) {
+	if len(requests) == 0 {
+		<div class="text-center py-16 bg-base-50">
+			<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+				<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+				</svg>
+			</div>
+			<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "compliance.arco.no_requests") }</p>
+		</div>
+	} else {
+		<!-- Table Container -->
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+						<th class="font-serif font-bold uppercase tracking-wider">ID</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.user") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "common.type") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "common.status") }</th>
+						<th class="hidden lg:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "compliance.consent.date") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "common.actions") }</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, req := range requests {
+						<tr class="hover group">
+							<!-- ID -->
+							<td>
+								<span class="font-mono text-sm font-bold text-base-content">{ req.ID[:8] }...</span>
+							</td>
+							<!-- User -->
+							<td>
+								<div class="flex flex-col">
+									<span class="font-serif font-bold text-base-content group-hover:text-primary transition-colors">{ req.UserEmail }</span>
+								</div>
+							</td>
+							<!-- Type -->
+							<td class="hidden md:table-cell">
+								@ARCOTypeBadge(ctx, string(req.RequestType))
+							</td>
+							<!-- Status -->
+							<td>
+								@ARCOStatusBadge(ctx, string(req.Status))
+							</td>
+							<!-- Date -->
+							<td class="hidden lg:table-cell">
+								<span class="text-xs text-base-content/50 font-mono">
+									{ req.CreatedAt.Format("2006-01-02 15:04") }
+								</span>
+							</td>
+							<!-- Actions -->
+							<td>
+								if req.Status == models.SubjectRequestStatusPending {
+									<div class="flex gap-1">
+										<button
+											hx-post={ "/compliance/arco/" + req.ID + "/resolve" }
+											hx-vals='{"action": "approve", "response": "Solicitud aprobada"}'
+											hx-target="#arco-table-container"
+											class="btn btn-success btn-xs gap-1"
+										>
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+										</button>
+										<button
+											hx-post={ "/compliance/arco/" + req.ID + "/resolve" }
+											hx-vals='{"action": "deny", "response": "Solicitud denegada"}'
+											hx-target="#arco-table-container"
+											class="btn btn-error btn-xs gap-1"
+										>
+											<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+										</button>
+									</div>
+								} else {
+									<span class="text-xs text-base-content/30 italic">-</span>
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination Controls -->
+		<div class="mt-4 p-4 border-t border-base-200">
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: page,
+				TotalPages:  totalPages,
+				Limit:       20,
+				Total:       total,
+				BaseURL:     "/compliance/arco",
+				TargetID:    "#arco-table-container",
+			})
+		</div>
+	}
+}
+
+// ARCOTypeBadge renders a badge for ARCO request type
+templ ARCOTypeBadge(ctx context.Context, requestType string) {
+	<span class={ "badge badge-sm font-bold", getARCOTypeClass(requestType) }>
+		{ i18n.T(ctx, "compliance.arco.type." + requestType) }
+	</span>
+}
+
+// ARCOStatusBadge renders a badge for ARCO request status
+templ ARCOStatusBadge(ctx context.Context, status string) {
+	<span class={ "badge badge-sm font-bold", getARCOStatusClass(status) }>
+		{ i18n.T(ctx, "compliance.arco.status." + status) }
+	</span>
+}
+
+func getARCOTypeClass(requestType string) string {
+	switch requestType {
+	case "ACCESS":
+		return "badge-info text-white"
+	case "RECTIFY":
+		return "badge-warning"
+	case "CANCEL":
+		return "badge-error text-white"
+	case "OPPOSITION":
+		return "badge-secondary text-white"
+	case "PORTABILITY":
+		return "badge-primary text-white"
+	default:
+		return "badge-ghost"
+	}
+}
+
+func getARCOStatusClass(status string) string {
+	switch status {
+	case "PENDING":
+		return "badge-warning"
+	case "IN_REVIEW":
+		return "badge-info text-white"
+	case "APPROVED", "COMPLETED":
+		return "badge-success text-white"
+	case "DENIED":
+		return "badge-error text-white"
+	default:
+		return "badge-ghost"
+	}
+}
+
+// AuditLogTable renders the audit logs table with pagination
+templ AuditLogTable(ctx context.Context, logs []models.AuditLog, page int, totalPages int, total int) {
+	if len(logs) == 0 {
+		<div class="text-center py-16 bg-base-50">
+			<div class="w-16 h-16 mx-auto mb-4 rounded-full bg-base-200 flex items-center justify-center text-base-content/40">
+				<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+				</svg>
+			</div>
+			<p class="font-serif italic text-base-content/60">{ i18n.T(ctx, "audit.noLogs") }</p>
+		</div>
+	} else {
+		<!-- Table Container -->
+		<div class="overflow-x-auto">
+			<table class="table w-full">
+				<thead>
+					<tr class="bg-base-200/50 border-b border-base-200 text-base-content/70">
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.timestamp") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.user") }</th>
+						<th class="hidden md:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.action") }</th>
+						<th class="hidden lg:table-cell font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.resource") }</th>
+						<th class="font-serif font-bold uppercase tracking-wider">{ i18n.T(ctx, "audit.table.description") }</th>
+					</tr>
+				</thead>
+				<tbody>
+					for _, log := range logs {
+						<tr class="hover group">
+							<!-- Timestamp -->
+							<td>
+								<span class="text-xs text-base-content/50 font-mono">
+									{ log.CreatedAt.Format("2006-01-02 15:04") }
+								</span>
+							</td>
+							<!-- User -->
+							<td>
+								<div class="flex items-center gap-2">
+									<div class="avatar placeholder">
+										<div class="bg-primary/10 text-primary rounded-full w-6 h-6 flex items-center justify-center">
+											if log.UserName != "" {
+												<span class="text-[10px] font-bold">{ string([]rune(log.UserName)[0]) }</span>
+											} else {
+												<span class="text-[10px] font-bold">S</span>
+											}
+										</div>
+									</div>
+									<div class="flex flex-col">
+										<span class="font-serif font-bold text-sm text-base-content group-hover:text-primary transition-colors">{ log.UserName }</span>
+										<span class="text-xs text-base-content/50">{ log.UserRole }</span>
+									</div>
+								</div>
+							</td>
+							<!-- Action -->
+							<td class="hidden md:table-cell">
+								<span class={ "badge badge-sm font-bold", getActionBadgeClass(string(log.Action)) }>
+									{ i18n.T(ctx, "audit.actions." + string(log.Action)) }
+								</span>
+							</td>
+							<!-- Resource -->
+							<td class="hidden lg:table-cell">
+								<div class="flex flex-col">
+									<span class="font-mono text-sm text-base-content/70">{ log.ResourceType }</span>
+									<span class="text-xs text-base-content/40 truncate max-w-[100px]">{ log.ResourceID }</span>
+								</div>
+							</td>
+							<!-- Description -->
+							<td>
+								<span class="text-sm text-base-content/70 line-clamp-1">{ log.Description }</span>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination Controls -->
+		<div class="mt-4 p-4 border-t border-base-200">
+			@components.Pagination(ctx, components.PaginationData{
+				CurrentPage: page,
+				TotalPages:  totalPages,
+				Limit:       50,
+				Total:       total,
+				BaseURL:     "/compliance/audit",
+				TargetID:    "#audit-table-container",
+			})
+		</div>
+	}
+}
+
+func getActionBadgeClass(action string) string {
+	switch action {
+	case "CREATE":
+		return "badge-success text-white"
+	case "UPDATE":
+		return "badge-info text-white"
+	case "DELETE":
+		return "badge-error text-white"
+	case "VIEW", "DOWNLOAD":
+		return "badge-primary text-white"
+	case "LOGIN", "LOGOUT":
+		return "badge-secondary text-white"
+	default:
+		return "badge-ghost"
+	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// Keep strconv imported for potential future use
+var _ = strconv.Itoa

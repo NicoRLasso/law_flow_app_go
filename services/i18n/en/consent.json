@@ -1,0 +1,12 @@
+{
+  "consent": {
+    "modal": {
+      "title": "Data Processing Authorization",
+      "subtitle": "Law 1581 of 2012 - Habeas Data",
+      "legal_notice": "In accordance with Law 1581 of 2012, we require your express authorization to process your personal data. This authorization is necessary to provide you with our legal services.",
+      "accept": "I accept the processing of my data",
+      "decline": "I do not accept",
+      "decline_notice": "If you do not accept the processing of your data, we cannot provide our services and your session will be closed."
+    }
+  }
+}

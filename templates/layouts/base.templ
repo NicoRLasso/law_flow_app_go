@@ -109,6 +109,8 @@ templ Base(ctx context.Context, title string, csrfToken string, seo *models.SEO)
 			</script>
 		</head>
 		<body class="bg-background text-foreground">
+			<!-- Consent Modal Check -->
+			<div hx-get="/api/consent/modal" hx-trigger="load" hx-swap="beforeend"></div>
 			{ children... }
 		</body>
 	</html>

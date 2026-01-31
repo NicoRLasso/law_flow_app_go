@@ -1,0 +1,12 @@
+{
+  "consent": {
+    "modal": {
+      "title": "Autorización de Tratamiento de Datos",
+      "subtitle": "Ley 1581 de 2012 - Habeas Data",
+      "legal_notice": "De acuerdo con la Ley 1581 de 2012, requerimos su autorización expresa para el tratamiento de sus datos personales. Esta autorización es necesaria para poder prestarle nuestros servicios legales.",
+      "accept": "Acepto el tratamiento de mis datos",
+      "decline": "No acepto",
+      "decline_notice": "Si no acepta el tratamiento de sus datos, no podremos prestarle nuestros servicios y se cerrará su sesión."
+    }
+  }
+}

@@ -1,0 +1,155 @@
+package compliance
+
+import (
+	"context"
+	"law_flow_app_go/models"
+	"law_flow_app_go/services/i18n"
+	"law_flow_app_go/templates/components"
+	"law_flow_app_go/templates/layouts"
+	"strconv"
+)
+
+// DashboardData contains data for the compliance dashboard
+type DashboardData struct {
+	User            *models.User
+	Firm            *models.Firm
+	ConsentCount    int64
+	PendingRequests int64
+	RecentAuditLogs []models.AuditLog
+}
+
+templ Dashboard(ctx context.Context, data DashboardData) {
+	@layouts.Base(ctx, i18n.T(ctx, "compliance.title"), "", nil) {
+		<div class="min-h-screen bg-base-200">
+			<!-- Navigation Bar -->
+			@components.Navbar(ctx, data.User, data.Firm, "/compliance")
+			<!-- Main Content -->
+			<main class="container mx-auto px-4 md:px-6 py-8 md:py-12">
+				<div class="w-full space-y-6">
+					<!-- Header -->
+					<div class="border-b border-base-300 pb-6 mb-8">
+						<h1 class="text-3xl md:text-4xl font-serif font-bold text-base-content">
+							{ i18n.T(ctx, "compliance.title") }
+						</h1>
+						<p class="text-base-content/60 mt-2 font-sans">{ i18n.T(ctx, "compliance.subtitle") }</p>
+					</div>
+
+					<!-- Stats Grid -->
+					<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+						<!-- Consent Records -->
+						<div class="bg-base-100 rounded-sm shadow-sm border border-base-200 p-6">
+							<div class="flex items-center gap-4">
+								<div class="p-3 bg-primary/10 rounded-sm">
+									<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+									</svg>
+								</div>
+								<div>
+									<p class="text-sm text-base-content/60 font-sans">{ i18n.T(ctx, "compliance.consent.title") }</p>
+									<p class="text-2xl font-bold text-base-content font-serif">{ strconv.FormatInt(data.ConsentCount, 10) }</p>
+								</div>
+							</div>
+							<a href="/compliance/consents" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "common.view_all") } →</a>
+						</div>
+
+						<!-- Pending ARCO Requests -->
+						<div class="bg-base-100 rounded-sm shadow-sm border border-base-200 p-6">
+							<div class="flex items-center gap-4">
+								<div class="p-3 bg-warning/10 rounded-sm">
+									<svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+									</svg>
+								</div>
+								<div>
+									<p class="text-sm text-base-content/60 font-sans">{ i18n.T(ctx, "compliance.arco.title") }</p>
+									<p class="text-2xl font-bold text-base-content font-serif">{ strconv.FormatInt(data.PendingRequests, 10) }</p>
+								</div>
+							</div>
+							<a href="/compliance/arco" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "common.view_all") } →</a>
+						</div>
+
+						<!-- Data Export -->
+						<div class="bg-base-100 rounded-sm shadow-sm border border-base-200 p-6">
+							<div class="flex items-center gap-4">
+								<div class="p-3 bg-success/10 rounded-sm">
+									<svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+									</svg>
+								</div>
+								<div>
+									<p class="text-sm text-base-content/60 font-sans">{ i18n.T(ctx, "compliance.export.title") }</p>
+									<p class="text-lg text-base-content/80 font-serif">{ i18n.T(ctx, "compliance.export.description") }</p>
+								</div>
+							</div>
+							<a href="/compliance/export" class="mt-4 block text-sm text-primary hover:underline">{ i18n.T(ctx, "compliance.export.download") } →</a>
+						</div>
+					</div>
+
+					<!-- Navigation Tabs -->
+					<div class="bg-base-100 rounded-sm shadow-sm border border-base-200">
+						<div class="tabs tabs-bordered p-4">
+							<a href="/compliance/consents" class="tab tab-bordered">{ i18n.T(ctx, "compliance.consent.title") }</a>
+							<a href="/compliance/arco" class="tab tab-bordered">{ i18n.T(ctx, "compliance.arco.title") }</a>
+							<a href="/compliance/audit" class="tab tab-bordered">{ i18n.T(ctx, "compliance.audit.title") }</a>
+						</div>
+					</div>
+
+					<!-- Recent Audit Logs -->
+					<div class="bg-base-100 rounded-sm shadow-sm border border-base-200">
+						<div class="p-6 border-b border-base-200">
+							<h2 class="text-lg font-semibold text-base-content font-serif">
+								{ i18n.T(ctx, "compliance.audit.title") }
+							</h2>
+							<p class="text-sm text-base-content/60 font-sans">
+								{ i18n.T(ctx, "compliance.audit.description") }
+							</p>
+						</div>
+						<div class="overflow-x-auto">
+							<table class="table w-full">
+								<thead>
+									<tr class="bg-base-200/50">
+										<th class="text-xs font-bold uppercase">{ i18n.T(ctx, "audit.table.timestamp") }</th>
+										<th class="text-xs font-bold uppercase">{ i18n.T(ctx, "audit.table.user") }</th>
+										<th class="text-xs font-bold uppercase">{ i18n.T(ctx, "audit.table.action") }</th>
+										<th class="text-xs font-bold uppercase">{ i18n.T(ctx, "audit.table.resource") }</th>
+										<th class="text-xs font-bold uppercase">{ i18n.T(ctx, "audit.table.description") }</th>
+									</tr>
+								</thead>
+								<tbody>
+									for _, log := range data.RecentAuditLogs {
+										<tr class="hover:bg-base-200/30">
+											<td class="text-sm text-base-content/70 whitespace-nowrap">
+												{ log.CreatedAt.Format("2006-01-02 15:04") }
+											</td>
+											<td class="text-sm text-base-content">
+												{ log.UserName }
+											</td>
+											<td class="text-sm">
+												<span class="badge badge-sm badge-outline">
+													{ i18n.T(ctx, "audit.actions." + string(log.Action)) }
+												</span>
+											</td>
+											<td class="text-sm text-base-content/70">
+												{ log.ResourceType }
+											</td>
+											<td class="text-sm text-base-content/60 max-w-xs truncate">
+												{ log.Description }
+											</td>
+										</tr>
+									}
+									if len(data.RecentAuditLogs) == 0 {
+										<tr>
+											<td colspan="5" class="text-center py-8 text-base-content/50">
+												{ i18n.T(ctx, "audit.noLogs") }
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	}
+}

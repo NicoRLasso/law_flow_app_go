@@ -25,7 +25,15 @@
       "download": "Descargar",
       "visibility": "Cambio de Visibilidad",
       "login": "Inicio de Sesión",
-      "logout": "Cierre de Sesión"
+      "logout": "Cierre de Sesión",
+      "LOGIN": "Inicio de Sesión",
+      "LOGOUT": "Cierre de Sesión",
+      "CREATE": "Crear",
+      "UPDATE": "Actualizar",
+      "DELETE": "Eliminar",
+      "VIEW": "Ver",
+      "DOWNLOAD": "Descargar",
+      "VISIBILITY_CHANGE": "Cambio de Visibilidad"
     },
     "verbs": {
       "created": "creó",
@@ -73,7 +81,8 @@
       "revoked": "Revocado",
       "date": "Fecha",
       "ip_address": "Dirección IP",
-      "policy_version": "Versión de Política"
+      "policy_version": "Versión de Política",
+      "no_records": "No hay registros de consentimiento"
     },
     "arco": {
       "title": "Solicitudes ARCO",
@@ -117,7 +126,8 @@
     },
     "alerts": {
       "breach_detected": "Posible brecha de seguridad detectada",
-      "massive_download": "Descarga masiva de documentos detectada"
+      "massive_download": "Descarga masiva de documentos detectada",
+      "action_required": "Por favor revise inmediatamente y tome las medidas apropiadas."
     }
   },
   "support": {

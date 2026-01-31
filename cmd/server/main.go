@@ -63,6 +63,8 @@ func main() {
 		&models.LegalService{}, &models.ServiceMilestone{}, &models.CaseMilestone{},
 		&models.ServiceDocument{}, &models.ServiceExpense{},
 		&models.Notification{},
+		// Compliance models (Law 1581 - Habeas Data)
+		&models.ConsentLog{}, &models.SubjectRightsRequest{},
 	); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
@@ -383,6 +385,26 @@ func main() {
 			adminRoutes.DELETE("/api/subtypes/:id", handlers.DeleteSubtypeHandler)
 		}
 
+		// Consent routes (All authenticated users)
+		protected.GET("/api/consent/modal", handlers.GetConsentModalHandler)
+		protected.POST("/api/consent/accept", handlers.AcceptConsentHandler)
+		protected.POST("/api/consent/revoke", handlers.RevokeConsentHandler)
+
+		// User Compliance routes (Data Rights)
+		protected.GET("/api/user/export", handlers.ExportComplianceUserDataHandler)
+		protected.POST("/api/user/arco", handlers.CreateComplianceARCORequestHandler)
+
+		// Compliance Center routes (Admin only)
+		complianceRoutes := protected.Group("/compliance")
+		complianceRoutes.Use(middleware.RequireRole("admin"))
+		{
+			complianceRoutes.GET("", handlers.ComplianceDashboardHandler)
+			complianceRoutes.GET("/consents", handlers.GetComplianceConsentLogsHandler)
+			complianceRoutes.GET("/arco", handlers.GetComplianceARCORequestsHandler)
+			complianceRoutes.POST("/arco/:id/resolve", handlers.ResolveComplianceARCORequestHandler)
+			complianceRoutes.GET("/audit", handlers.GetComplianceAuditLogsHandler)
+			complianceRoutes.GET("/export", handlers.ExportComplianceUserDataHandler)
+		}
 		templateRoutes := protected.Group("/templates")
 		templateRoutes.Use(middleware.RequireRole("admin", "lawyer"))
 		{

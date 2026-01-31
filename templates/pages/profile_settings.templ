@@ -73,6 +73,16 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 											<span>{ i18n.T(ctx, "settings.tabs.account") }</span>
 										</button>
 									</li>
+									<li>
+										<button
+											@click="activeTab = 'privacy'; sidebarOpen = false"
+											:class="activeTab === 'privacy' ? 'bg-primary text-primary-content border-l-4 border-l-primary-focus font-bold' : 'text-base-content/70 hover:bg-base-200 hover:text-base-content border-l-4 border-l-transparent'"
+											class="w-full text-left px-5 py-4 transition-all duration-200 flex items-center gap-3"
+										>
+											<i data-lucide="shield" class="w-5 text-center"></i>
+											<span>{ i18n.T(ctx, "settings.tabs.privacy") }</span>
+										</button>
+									</li>
 								</ul>
 							</nav>
 						</aside>
@@ -363,6 +373,86 @@ templ ProfileSettings(ctx context.Context, title string, csrfToken string, user 
 											<span class="font-serif font-bold text-base-content">{ firm.Name }</span>
 										</div>
 									</div>
+								</div>
+							</div>
+							<!-- Privacy Tab -->
+							<div x-show="activeTab === 'privacy'" x-transition class="space-y-6">
+								<!-- Data Portability Card -->
+								<div class="bg-base-100 rounded-sm p-8 border border-base-200 shadow-sm">
+									<h2 class="text-xl font-serif font-bold mb-4 flex items-center gap-2 pb-4 border-b border-base-200">
+										<i data-lucide="download" class="text-primary"></i>
+										{ i18n.T(ctx, "settings.privacy.export_title") }
+									</h2>
+									<p class="text-base-content/70 mb-6">{ i18n.T(ctx, "settings.privacy.export_desc") }</p>
+									<a
+										href="/api/user/export"
+										class="btn btn-primary gap-2"
+									>
+										<i data-lucide="file-archive"></i>
+										{ i18n.T(ctx, "settings.privacy.download_btn") }
+									</a>
+								</div>
+								
+								<!-- ARCO Rights Card -->
+								<div class="bg-base-100 rounded-sm p-8 border border-base-200 shadow-sm">
+									<h2 class="text-xl font-serif font-bold mb-6 flex items-center gap-2 pb-4 border-b border-base-200">
+										<i data-lucide="scale" class="text-primary"></i>
+										{ i18n.T(ctx, "settings.privacy.arco_title") }
+									</h2>
+									<p class="text-base-content/70 mb-6">{ i18n.T(ctx, "settings.privacy.arco_desc") }</p>
+									
+									<form
+										hx-post="/api/user/arco"
+										hx-target="#arco-message"
+										hx-swap="innerHTML"
+										class="space-y-6"
+										@submit.after="$el.reset()"
+									>
+										<!-- Request Type -->
+										<div class="form-control">
+											<label for="request_type" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.privacy.request_type") } <span class="text-error">*</span></span>
+											</label>
+											<select
+												id="request_type"
+												name="request_type"
+												required
+												class="select select-bordered w-full rounded-sm focus:select-primary"
+											>
+												<option value="" disabled selected>{ i18n.T(ctx, "common.select_option") }</option>
+												<option value="ACCESS">{ i18n.T(ctx, "compliance.arco.type.ACCESS") }</option>
+												<option value="RECTIFY">{ i18n.T(ctx, "compliance.arco.type.RECTIFY") }</option>
+												<option value="CANCEL">{ i18n.T(ctx, "compliance.arco.type.CANCEL") } (Delete)</option>
+												<option value="OPPOSITION">{ i18n.T(ctx, "compliance.arco.type.OPPOSITION") }</option>
+											</select>
+										</div>
+										
+										<!-- Justification -->
+										<div class="form-control">
+											<label for="justification" class="label pt-0 pb-1">
+												<span class="label-text text-xs font-bold uppercase tracking-wider opacity-60">{ i18n.T(ctx, "settings.privacy.justification") } <span class="text-error">*</span></span>
+											</label>
+											<textarea
+												id="justification"
+												name="justification"
+												required
+												rows="3"
+												placeholder={ i18n.T(ctx, "settings.privacy.justification_ph") }
+												class="textarea textarea-bordered w-full rounded-sm focus:textarea-primary"
+											></textarea>
+										</div>
+										
+										<!-- Message Container -->
+										<div id="arco-message"></div>
+										
+										<!-- Submit Button -->
+										<div class="flex justify-end pt-4 border-t border-base-200">
+											<button type="submit" class="btn btn-warning gap-2">
+												<i data-lucide="send"></i>
+												<span>{ i18n.T(ctx, "settings.privacy.submit_btn") }</span>
+											</button>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>

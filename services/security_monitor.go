@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"law_flow_app_go/config"
 	"log"
 	"sync"
 	"time"
@@ -95,19 +96,9 @@ func (m *SecurityEventMonitor) triggerAlertLocked(ip, reason string) {
 	alertMsg := fmt.Sprintf("[SECURITY ALERT] %s from IP: %s", reason, ip)
 	log.Println(alertMsg)
 
-	// 2. Send Email to Admin (if configured)
-	// TODO: Implement email alert once AdminEmail is added to config
-	/*
-		cfg := config.Load()
-		if cfg.AdminEmail != "" {
-			email := &Email{
-				To:      []string{cfg.AdminEmail},
-				Subject: fmt.Sprintf("Security Alert: %s", reason),
-				TextBody:    fmt.Sprintf("System detected a security event:\n\nType: %s\nIP Address: %s\nTime: %s\n\nPlease investigate.", reason, ip, time.Now().Format(time.RFC1123)),
-			}
-			SendEmailAsync(cfg, email)
-		}
-	*/
+	// 2. Send Email to Compliance Officer asynchronously
+	// Note: This runs in a goroutine to avoid blocking
+	go m.sendSecurityAlertEmail(ip, "", reason, "WARNING")
 }
 
 // GetRecentAlerts returns a copy of recent alerts
@@ -118,6 +109,39 @@ func (m *SecurityEventMonitor) GetRecentAlerts() []SecurityAlert {
 	alertsCopy := make([]SecurityAlert, len(m.alerts))
 	copy(alertsCopy, m.alerts)
 	return alertsCopy
+}
+
+// sendSecurityAlertEmail sends a breach notification email to the admin
+func (m *SecurityEventMonitor) sendSecurityAlertEmail(ip, userID, reason, alertType string) {
+	cfg := config.Load()
+	if cfg == nil {
+		log.Printf("Failed to load config for security alert email")
+		return
+	}
+
+	// Get admin email from firm or config
+	adminEmail := cfg.EmailFrom // Fallback to system email
+	if adminEmail == "" {
+		log.Println("No admin email configured for security alerts")
+		return
+	}
+
+	email := BuildBreachNotificationEmail(
+		adminEmail,
+		"System Administrator",
+		"LexLegal Cloud",
+		alertType,
+		reason,
+		ip,
+		userID,
+		"es", // Default to Spanish
+	)
+
+	if err := SendEmail(cfg, email); err != nil {
+		log.Printf("Failed to send security alert email: %v", err)
+	} else {
+		log.Printf("Security alert email sent to %s", adminEmail)
+	}
 }
 
 // cleanup periodically removes stale data
