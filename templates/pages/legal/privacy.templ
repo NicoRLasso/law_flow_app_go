@@ -9,34 +9,59 @@ import (
 
 templ Privacy(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
-		<div class="py-20 bg-base-100 min-h-screen">
+		<div class="py-16 lg:py-24 bg-base-100 min-h-screen">
 			<div class="container mx-auto px-6 max-w-4xl">
+				<!-- Header Section -->
 				<div class="text-center mb-16">
-					<h1 class="text-5xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "pages.privacy.title") }</h1>
+					<div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-6">
+						<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+					</div>
+					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "pages.privacy.title") }</h1>
 					<p class="text-lg opacity-60 font-serif italic">{ i18n.T(ctx, "pages.privacy.updated") }</p>
 				</div>
-				<div class="bg-base-100 p-12 md:p-16 border border-base-200 shadow-sm relative">
+				<!-- Content Card -->
+				<div class="bg-base-100 p-10 lg:p-16 border border-base-200 shadow-lg rounded-xl relative overflow-hidden">
 					<!-- Decorative top border -->
-					<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
-					<article class="prose max-w-none prose-lg prose-headings:font-serif prose-headings:font-bold prose-p:font-sans prose-p:leading-relaxed">
-						<p class="lead font-serif text-xl border-l-4 border-primary pl-6 pt-2  pb-4 italic bg-base-200/50">
-							{ i18n.T(ctx, "pages.privacy.intro") }
-						</p>
-						<h3>{ i18n.T(ctx, "pages.privacy.section1_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.privacy.section1_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.privacy.section2_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.privacy.section2_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.privacy.section3_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.privacy.section3_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.privacy.section4_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.privacy.section4_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.privacy.section5_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.privacy.section5_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.privacy.section6_title") }</h3>
-						<p>
-							{ i18n.T(ctx, "pages.privacy.section6_content") }
-							<a href="mailto:support@LexLegalCloud.org" class="link link-primary font-bold">support@LexLegalCloud.org</a>.
-						</p>
+					<div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
+					<!-- Background decoration -->
+					<div class="absolute top-0 right-0 w-[400px] h-[400px] opacity-5 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary via-base-100 to-base-100"></div>
+					<article class="prose max-w-none prose-lg prose-headings:font-serif prose-headings:font-bold prose-headings:text-2xl prose-p:font-sans prose-p:leading-relaxed prose-p:text-base prose-a:text-primary prose-a:no-underline hover:prose-a:underline relative z-10">
+						<!-- Intro Section -->
+						<div class="mb-10 p-6 bg-gradient-to-br from-primary/5 to-primary/0 rounded-xl border-l-4 border-primary">
+							<p class="lead font-serif text-xl italic text-base-content/90 m-0">
+								{ i18n.T(ctx, "pages.privacy.intro") }
+							</p>
+						</div>
+						<!-- Content Sections -->
+						<div class="space-y-8">
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.privacy.section1_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.privacy.section1_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.privacy.section2_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.privacy.section2_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.privacy.section3_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.privacy.section3_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.privacy.section4_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.privacy.section4_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.privacy.section5_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.privacy.section5_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.privacy.section6_title") }</h3>
+								<p class="opacity-80">
+									{ i18n.T(ctx, "pages.privacy.section6_content") }
+									<a href="mailto:support@LexLegalCloud.org" class="link link-primary font-bold hover:underline decoration-2 underline-offset-4">support@LexLegalCloud.org</a>.
+								</p>
+							</div>
+						</div>
 					</article>
 				</div>
 			</div>

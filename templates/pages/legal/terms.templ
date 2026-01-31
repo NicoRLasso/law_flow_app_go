@@ -9,33 +9,60 @@ import (
 
 templ Terms(ctx context.Context, title string, csrfToken string, seo *models.SEO) {
 	@layouts.WebsiteLayout(ctx, title, csrfToken, seo) {
-		<div class="py-20 bg-base-100 min-h-screen">
+		<div class="py-16 lg:py-24 bg-base-100 min-h-screen">
 			<div class="container mx-auto px-6 max-w-4xl">
+				<!-- Header Section -->
 				<div class="text-center mb-16">
-					<h1 class="text-5xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "pages.terms.title") }</h1>
+					<div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-6">
+						<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+					</div>
+					<h1 class="text-5xl lg:text-6xl font-serif font-bold mb-4 text-base-content">{ i18n.T(ctx, "pages.terms.title") }</h1>
 					<p class="text-lg opacity-60 font-serif italic">{ i18n.T(ctx, "pages.terms.updated") }</p>
 				</div>
-				<div class="bg-base-100 p-12 md:p-16 border border-base-200 shadow-sm relative">
+				<!-- Content Card -->
+				<div class="bg-base-100 p-10 lg:p-16 border border-base-200 shadow-lg rounded-xl relative overflow-hidden">
 					<!-- Decorative top border -->
-					<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
-					<article class="prose max-w-none prose-lg prose-headings:font-serif prose-headings:font-bold prose-p:font-sans prose-p:leading-relaxed">
-						<p class="lead font-serif text-xl border-l-4 border-primary pl-6 pt-2  pb-4 italic bg-base-200/50">
-							{ i18n.T(ctx, "pages.terms.intro") }
-						</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section1_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section1_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section2_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section2_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section3_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section3_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section4_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section4_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section5_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section5_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section6_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section6_content") }</p>
-						<h3>{ i18n.T(ctx, "pages.terms.section7_title") }</h3>
-						<p>{ i18n.T(ctx, "pages.terms.section7_content") }</p>
+					<div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
+					<!-- Background decoration -->
+					<div class="absolute top-0 right-0 w-[400px] h-[400px] opacity-5 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary via-base-100 to-base-100"></div>
+					<article class="prose max-w-none prose-lg prose-headings:font-serif prose-headings:font-bold prose-headings:text-2xl prose-p:font-sans prose-p:leading-relaxed prose-p:text-base prose-a:text-primary prose-a:no-underline hover:prose-a:underline relative z-10">
+						<!-- Intro Section -->
+						<div class="mb-10 p-6 bg-gradient-to-br from-primary/5 to-primary/0 rounded-xl border-l-4 border-primary">
+							<p class="lead font-serif text-xl italic text-base-content/90 m-0">
+								{ i18n.T(ctx, "pages.terms.intro") }
+							</p>
+						</div>
+						<!-- Content Sections -->
+						<div class="space-y-8">
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section1_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section1_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section2_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section2_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section3_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section3_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section4_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section4_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section5_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section5_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section6_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section6_content") }</p>
+							</div>
+							<div class="group">
+								<h3 class="group-hover:text-primary transition-colors duration-300">{ i18n.T(ctx, "pages.terms.section7_title") }</h3>
+								<p class="opacity-80">{ i18n.T(ctx, "pages.terms.section7_content") }</p>
+							</div>
+						</div>
 					</article>
 				</div>
 			</div>

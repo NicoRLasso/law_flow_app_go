@@ -10,6 +10,142 @@
   --font-serif: "Playfair Display", serif;
 }
 
+/* Custom Autumn Theme Overrides - Golden Autumn Palette */
+@layer theme {
+  :root {
+    /* Primary - Golden orange */
+    --p: oklch(70% 0.16 60);
+    --pf: oklch(65% 0.14 60);
+    --ps: oklch(75% 0.18 60);
+
+    /* Accent - Rich gold */
+    --a: oklch(75% 0.20 50);
+    --af: oklch(40% 0.14 50);
+
+    /* Info - Bright gold */
+    --in: oklch(72% 0.22 55);
+
+    /* Success - Golden green */
+    --su: oklch(68% 0.16 145);
+
+    /* Warning - Golden yellow */
+    --wa: oklch(80% 0.18 65);
+
+    /* Error - Golden red */
+    --er: oklch(65% 0.18 25);
+  }
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(var(--color-primary-rgb), 0.6);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Gradient text effect */
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glassmorphism effects */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-base-200);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-focus);
+}
+
+/* Focus visible improvements */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-primary-content);
+}
+
 /* Editor Content Typography */
 @layer components {
   .editor-content h1 {

@@ -208,6 +208,113 @@ function initAccordions() {
 }
 
 /* ============================================
+   LANDING PAGE ENHANCEMENTS
+   ============================================ */
+
+// Counter Animation for Stats Section
+function initLandingCounters() {
+    const counters = document.querySelectorAll('.counter');
+    if (counters.length === 0) return;
+
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseFloat(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+
+                let current = 0;
+
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString();
+                    }
+                };
+
+                updateCounter();
+                observer.unobserve(counter);
+            }
+        });
+    }, observerOptions);
+
+    counters.forEach(counter => observer.observe(counter));
+}
+
+// Parallax Effect for Hero Image
+function initLandingParallax() {
+    const parallaxElements = document.querySelectorAll('[data-parallax]');
+    if (parallaxElements.length === 0) return;
+
+    if (prefersReducedMotion) return;
+
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+
+        parallaxElements.forEach(element => {
+            const speed = 0.3;
+            const translateY = scrolled * speed;
+            element.style.transform = `translateY(${translateY}px)`;
+        });
+    }, { passive: true });
+}
+
+// Enhanced Feature Card Hover Effects
+function initFeatureCards() {
+    const featureCards = document.querySelectorAll('.group.p-8');
+    if (featureCards.length === 0) return;
+
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('shadow-xl');
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('shadow-xl');
+        });
+    });
+}
+
+// Smooth Scroll for Navigation Links
+function initLandingSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+
+            const target = document.querySelector(targetId);
+            if (target) {
+                e.preventDefault();
+                const offset = 80; // Account for fixed navbar
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: prefersReducedMotion ? 'auto' : 'smooth'
+                });
+            }
+        });
+    });
+}
+
+// Initialize Landing Page Enhancements
+function initLandingPage() {
+    initLandingCounters();
+    initLandingParallax();
+    initFeatureCards();
+    initLandingSmoothScroll();
+}
+
+/* ============================================
    INITIALIZE ALL SCRIPTS
    ============================================ */
 
@@ -218,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initStickyCTA();
     initSmoothScroll();
     initAccordions();
+    initLandingPage(); // Initialize landing page enhancements
 
     // Toast Notification Handler
     document.body.addEventListener('show-toast', function(evt) {
