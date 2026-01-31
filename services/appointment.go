@@ -287,7 +287,7 @@ func GetFirmLawyersWithAvailability(db *gorm.DB, firmID string) ([]models.User, 
 	// Get lawyers with role 'lawyer' or 'admin' who have at least one active availability slot
 	err := db.
 		Where("firm_id = ? AND role IN (?) AND is_active = ?", firmID, []string{"lawyer", "admin"}, true).
-		Where("id IN (SELECT DISTINCT lawyer_id FROM availabilities WHERE is_active = ?))", true).
+		Where("id IN (SELECT DISTINCT lawyer_id FROM availabilities WHERE is_active = ?)", true).
 		Find(&lawyers).Error
 
 	return lawyers, err

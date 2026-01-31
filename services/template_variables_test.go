@@ -93,6 +93,79 @@ func TestBuildTemplateDataFromCase(t *testing.T) {
 	})
 }
 
+func TestBuildTemplateDataFromService(t *testing.T) {
+	now := time.Now()
+	firm := &models.Firm{
+		Name:    "Firm Name",
+		Address: "Firm Address",
+		City:    "Firm City",
+		Phone:   "555-FIRM",
+	}
+
+	client := models.User{
+		ID:             "u1",
+		Name:           "John Client",
+		Email:          "john@client.com",
+		PhoneNumber:    stringToPtr("111-222"),
+		DocumentType:   &models.ChoiceOption{Label: "CC"},
+		DocumentNumber: stringToPtr("998877"),
+		Address:        stringToPtr("Client St 123"),
+	}
+
+	lawyer := models.User{
+		Name:        "Jane Lawyer",
+		Email:       "jane@firm.com",
+		PhoneNumber: stringToPtr("333-444"),
+	}
+
+	estHours := 10.5
+	serviceRecord := &models.LegalService{
+		ServiceNumber:    "SVC-2026-X",
+		Title:            "Service Title",
+		Description:      "Detailed description",
+		Objective:        "Test Objective",
+		Status:           models.ServiceStatusInProgress,
+		Priority:         models.ServicePriorityHigh,
+		StartedAt:        &now,
+		EstimatedDueDate: &now,
+		EstimatedHours:   &estHours,
+		ActualHours:      5.0,
+		Client:           client,
+		AssignedTo:       &lawyer,
+		ServiceType:      &models.ChoiceOption{Label: "Legal Consultation"},
+	}
+
+	t.Run("Full data extraction", func(t *testing.T) {
+		data := BuildTemplateDataFromService(serviceRecord, firm)
+
+		// Assert Firm
+		assert.Equal(t, firm.Name, data.Firm.Name)
+
+		// Assert Client
+		assert.Equal(t, client.Name, data.Client.Name)
+		assert.Equal(t, "CC", data.Client.DocumentType)
+
+		// Assert Service
+		assert.Equal(t, serviceRecord.ServiceNumber, data.Service.Number)
+		assert.Equal(t, "Service Title", data.Service.Title)
+		assert.Equal(t, "Legal Consultation", data.Service.ServiceType)
+		assert.Equal(t, "In Progress", data.Service.Status)
+		assert.Equal(t, "High", data.Service.Priority)
+		assert.Equal(t, now.Format("January 2, 2006"), data.Service.StartedAt)
+		assert.Equal(t, "10.50", data.Service.EstimatedHours)
+		assert.Equal(t, "5", data.Service.ActualHours)
+
+		// Assert Lawyer
+		assert.Equal(t, lawyer.Name, data.Lawyer.Name)
+	})
+}
+
+func TestFormatFloat(t *testing.T) {
+	assert.Equal(t, "10", formatFloat(10.0))
+	assert.Equal(t, "10.50", formatFloat(10.5))
+	assert.Equal(t, "10.55", formatFloat(10.55))
+}
+
 func TestGetVariableDictionary(t *testing.T) {
 	ctx := context.Background()
 	dict := GetVariableDictionary(ctx)

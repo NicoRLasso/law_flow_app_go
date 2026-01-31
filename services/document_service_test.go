@@ -70,10 +70,6 @@ func setupDocumentTestDB() *gorm.DB {
 	return db
 }
 
-func stringToPtr(s string) *string {
-	return &s
-}
-
 func TestGetDocumentPath(t *testing.T) {
 	doc := &models.CaseDocument{
 		FirmID:   "firm-1",

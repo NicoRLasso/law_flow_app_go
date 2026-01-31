@@ -171,7 +171,7 @@ func HasTemplatesAccess(db *gorm.DB, firmID string, plan *models.Plan) bool {
 	// Check if purchased as add-on
 	var count int64
 	db.Model(&models.FirmAddOn{}).
-		Joins("JOIN plan_addons ON firm_addons.addon_id = plan_addons.id").
+		Joins("JOIN plan_addons ON firm_addons.add_on_id = plan_addons.id").
 		Where("firm_addons.firm_id = ? AND plan_addons.type = ? AND firm_addons.is_active = ?",
 			firmID, models.AddOnTypeTemplates, true).
 		Count(&count)

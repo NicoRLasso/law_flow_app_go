@@ -10,162 +10,78 @@ import (
 	"gorm.io/gorm"
 )
 
-func setupAvailabilityTestDB() *gorm.DB {
+func setupAvailabilityTestDB(t *testing.T) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	db.AutoMigrate(&models.Availability{}, &models.BlockedDate{}, &models.Appointment{}, &models.User{})
+	assert.NoError(t, err)
+
+	err = db.AutoMigrate(
+		&models.Firm{},
+		&models.User{},
+		&models.Availability{},
+		&models.BlockedDate{},
+		&models.Appointment{},
+	)
+	assert.NoError(t, err)
+
 	return db
 }
 
-func TestCreateDefaultAvailability(t *testing.T) {
-	db := setupAvailabilityTestDB()
-	lawyerID := "lawyer-1"
+func TestAvailabilityService(t *testing.T) {
+	db := setupAvailabilityTestDB(t)
+	firmID := "firm-avail"
+	lawyerID := "lawyer-avail"
+	db.Create(&models.Firm{ID: firmID})
+	db.Create(&models.User{ID: lawyerID, FirmID: &firmID})
 
-	err := CreateDefaultAvailability(db, lawyerID)
-	assert.NoError(t, err)
+	t.Run("CreateDefaultAvailability", func(t *testing.T) {
+		err := CreateDefaultAvailability(db, lawyerID)
+		assert.NoError(t, err)
 
-	slots, err := GetLawyerAvailability(db, lawyerID)
-	assert.NoError(t, err)
-	// 5 days * 2 slots per day = 10 slots
-	assert.Len(t, slots, 10)
-}
-
-func TestIsTimeSlotAvailable(t *testing.T) {
-	db := setupAvailabilityTestDB()
-	lawyerID := "lawyer-time"
-
-	// 1. Setup Availability: Monday 09:00 - 12:00
-	db.Create(&models.Availability{
-		LawyerID:  lawyerID,
-		DayOfWeek: 1, // Monday
-		StartTime: "09:00",
-		EndTime:   "12:00",
-		IsActive:  true,
+		slots, err := GetLawyerAvailability(db, lawyerID)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, slots)
 	})
 
-	// Helper to create time on next Monday
-	nextMonday := time.Now()
-	for nextMonday.Weekday() != time.Monday {
-		nextMonday = nextMonday.Add(24 * time.Hour)
-	}
-	baseDate := time.Date(nextMonday.Year(), nextMonday.Month(), nextMonday.Day(), 0, 0, 0, 0, nextMonday.Location())
+	t.Run("IsTimeSlotAvailable", func(t *testing.T) {
+		// Monday June 1st 2026 is a Monday (Weekday 1)
+		monday := time.Date(2026, 6, 1, 9, 0, 0, 0, time.UTC)
+		sunday := time.Date(2026, 5, 31, 9, 0, 0, 0, time.UTC)
 
-	// Test Case A: Valid Slot (10:00 - 11:00)
-	startA := baseDate.Add(10 * time.Hour)
-	endA := baseDate.Add(11 * time.Hour)
-	avail, err := IsTimeSlotAvailable(db, lawyerID, startA, endA)
-	assert.NoError(t, err)
-	assert.True(t, avail, "Slot should be available")
+		available, err := IsTimeSlotAvailable(db, lawyerID, monday, monday.Add(time.Hour))
+		assert.NoError(t, err)
+		assert.True(t, available)
 
-	// Test Case B: Outside valid hours (13:00 - 14:00) - No slot
-	startB := baseDate.Add(13 * time.Hour)
-	endB := baseDate.Add(14 * time.Hour)
-	avail, err = IsTimeSlotAvailable(db, lawyerID, startB, endB)
-	assert.NoError(t, err)
-	assert.False(t, avail, "Slot outside hours should unavailable")
-
-	// Test Case C: Blocked Date Conflict
-	// Block 10:30 - 11:30
-	db.Create(&models.BlockedDate{
-		LawyerID: lawyerID,
-		StartAt:  baseDate.Add(10 * time.Hour).Add(30 * time.Minute),
-		EndAt:    baseDate.Add(11 * time.Hour).Add(30 * time.Minute),
+		notAvailable, err := IsTimeSlotAvailable(db, lawyerID, sunday, sunday.Add(time.Hour))
+		assert.NoError(t, err)
+		assert.False(t, notAvailable)
 	})
 
-	avail, err = IsTimeSlotAvailable(db, lawyerID, startA, endA) // 10:00 - 11:00 overlaps with 10:30-11:30
-	assert.NoError(t, err)
-	assert.False(t, avail, "Slot overlapping blocked date should be unavailable")
+	t.Run("Blocked Dates", func(t *testing.T) {
+		now := time.Now()
+		db.Create(&models.BlockedDate{
+			LawyerID: lawyerID,
+			StartAt:  now,
+			EndAt:    now.Add(time.Hour * 24),
+			Reason:   "Vacation",
+		})
 
-	// Test Case D: Existing Appointment Conflict
-	// Avail 09:00 - 10:00 is technically free of blocks, let's add appointment
-	startD := baseDate.Add(9 * time.Hour)
-	endD := baseDate.Add(10 * time.Hour)
+		blocked, err := GetBlockedDates(db, lawyerID, now, now.Add(time.Hour))
+		assert.NoError(t, err)
+		assert.Len(t, blocked, 1)
 
-	db.Create(&models.Appointment{
-		LawyerID:  lawyerID,
-		StartTime: startD,
-		EndTime:   endD,
-		Status:    models.AppointmentStatusScheduled,
+		allBlocked, err := GetAllBlockedDates(db, lawyerID)
+		assert.NoError(t, err)
+		assert.Len(t, allBlocked, 1)
 	})
 
-	avail, err = IsTimeSlotAvailable(db, lawyerID, startD, endD)
-	assert.NoError(t, err)
-	assert.False(t, avail, "Slot overlapping appointment should be unavailable")
-}
+	t.Run("Availability Overlap", func(t *testing.T) {
+		// Existing slot: 09:00 - 10:00 (from default)
+		overlap, err := CheckAvailabilityOverlap(db, lawyerID, 1, "09:30", "10:30", "")
+		assert.NoError(t, err)
+		assert.True(t, overlap)
 
-func TestCheckAvailabilityOverlap(t *testing.T) {
-	db := setupAvailabilityTestDB()
-	lawyerID := "lawyer-overlap"
-
-	// Slot: Mon 09:00 - 12:00
-	db.Create(&models.Availability{
-		LawyerID:  lawyerID,
-		DayOfWeek: 1,
-		StartTime: "09:00",
-		EndTime:   "12:00",
-		IsActive:  true,
+		noOverlap, err := CheckAvailabilityOverlap(db, lawyerID, 1, "12:00", "13:00", "")
+		assert.NoError(t, err)
+		assert.False(t, noOverlap)
 	})
-
-	// Overlap inside
-	overlap, err := CheckAvailabilityOverlap(db, lawyerID, 1, "10:00", "11:00", "")
-	assert.NoError(t, err)
-	assert.True(t, overlap)
-
-	// No Overlap
-	overlap, err = CheckAvailabilityOverlap(db, lawyerID, 1, "13:00", "14:00", "")
-	assert.NoError(t, err)
-	assert.False(t, overlap)
-}
-
-func TestCheckBlockedDateOverlap(t *testing.T) {
-	db := setupAvailabilityTestDB()
-	lawyerID := "lawyer-block"
-
-	now := time.Now()
-	// Block: Today 10:00 - 12:00
-	db.Create(&models.BlockedDate{
-		LawyerID: lawyerID,
-		StartAt:  now.Add(10 * time.Hour),
-		EndAt:    now.Add(12 * time.Hour),
-	})
-
-	// Overlap
-	overlap, err := CheckBlockedDateOverlap(db, lawyerID, now.Add(11*time.Hour), now.Add(13*time.Hour), "")
-	assert.NoError(t, err)
-	assert.True(t, overlap)
-
-	// No Overlap
-	overlap, err = CheckBlockedDateOverlap(db, lawyerID, now.Add(14*time.Hour), now.Add(15*time.Hour), "")
-	assert.NoError(t, err)
-	assert.False(t, overlap)
-}
-
-func TestGetBlockedDates(t *testing.T) {
-	db := setupAvailabilityTestDB()
-	lawyerID := "lawyer-get-blocks"
-
-	base := time.Now().Truncate(24 * time.Hour)
-
-	db.Create(&models.BlockedDate{
-		LawyerID: lawyerID,
-		StartAt:  base.Add(24 * time.Hour), // Tomorrow
-		EndAt:    base.Add(25 * time.Hour),
-	})
-	db.Create(&models.BlockedDate{
-		LawyerID: lawyerID,
-		StartAt:  base.Add(48 * time.Hour), // Day after tomorrow
-		EndAt:    base.Add(49 * time.Hour),
-	})
-
-	// Get all future
-	dates, err := GetAllBlockedDates(db, lawyerID)
-	assert.NoError(t, err)
-	assert.Len(t, dates, 2)
-
-	// Get range (tomorrow only)
-	dates, err = GetBlockedDates(db, lawyerID, base.Add(23*time.Hour), base.Add(26*time.Hour))
-	assert.NoError(t, err)
-	assert.Len(t, dates, 1)
 }

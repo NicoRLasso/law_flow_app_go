@@ -120,8 +120,72 @@ func TestSendEmail_NoBody(t *testing.T) {
 	assert.Contains(t, err.Error(), "email must have either HTMLBody or TextBody")
 }
 
+func TestBuildEmailFunctions(t *testing.T) {
+	// Setup temporary templates
+	tmpTemplatesDir := "templates/emails"
+	os.MkdirAll(tmpTemplatesDir, 0755)
+	defer os.RemoveAll("templates")
+
+	// Create dummy templates for all builders
+	templates := []string{
+		"welcome", "firm_setup", "password_reset", "collaborator_added",
+		"appointment_confirmation", "appointment_reminder", "appointment_cancelled",
+		"lawyer_notification", "new_user_welcome", "support_notification",
+	}
+	for _, tpl := range templates {
+		os.WriteFile(filepath.Join(tmpTemplatesDir, tpl+".html"), []byte("HTML Body {{.}}"), 0644)
+		os.WriteFile(filepath.Join(tmpTemplatesDir, tpl+".txt"), []byte("Text Body {{.}}"), 0644)
+	}
+
+	t.Run("BuildWelcomeEmail", func(t *testing.T) {
+		email := BuildWelcomeEmail("test@test.com", "John", "en")
+		assert.Equal(t, []string{"test@test.com"}, email.To)
+	})
+
+	t.Run("BuildCollaboratorAddedEmail", func(t *testing.T) {
+		email := BuildCollaboratorAddedEmail("collab@test.com", "Collab", "SVC-001", "Client", "Lawyer", "en")
+		assert.Equal(t, []string{"collab@test.com"}, email.To)
+	})
+
+	t.Run("BuildAppointmentConfirmationEmail", func(t *testing.T) {
+		data := AppointmentConfirmationEmailData{FirmName: "Test Firm"}
+		email := BuildAppointmentConfirmationEmail("client@test.com", data, "en")
+		assert.Equal(t, []string{"client@test.com"}, email.To)
+	})
+
+	t.Run("BuildPasswordResetEmail", func(t *testing.T) {
+		email := BuildPasswordResetEmail("test@test.com", "John", "http://reset", "1 hour", "en")
+		assert.Equal(t, []string{"test@test.com"}, email.To)
+	})
+
+	t.Run("BuildNewUserWelcomeEmail", func(t *testing.T) {
+		email := BuildNewUserWelcomeEmail("test@test.com", "John", "pass123", "http://login", "en")
+		assert.Equal(t, []string{"test@test.com"}, email.To)
+		assert.Contains(t, email.HTMLBody, "pass123")
+	})
+
+	t.Run("BuildAppointmentCancelledEmail", func(t *testing.T) {
+		data := AppointmentCancelledEmailData{FirmName: "Test Firm", Date: "2026-01-01"}
+		email := BuildAppointmentCancelledEmail("client@test.com", data, "en")
+		assert.Equal(t, []string{"client@test.com"}, email.To)
+	})
+
+	t.Run("BuildSupportTicketNotificationEmail", func(t *testing.T) {
+		email := BuildSupportTicketNotificationEmail("admin@test.com", "Admin", "User", "user@test.com", "T-001", "Help", "Body", "en")
+		assert.Equal(t, []string{"admin@test.com"}, email.To)
+	})
+}
+
 func TestTruncate(t *testing.T) {
 	s := "Hello World"
 	assert.Equal(t, "Hello", truncate(s, 5))
 	assert.Equal(t, "Hello World", truncate(s, 20))
+}
+
+func TestSendEmailAsync(t *testing.T) {
+	cfg := &config.Config{EmailTestMode: true}
+	email := &Email{To: []string{"test@test.com"}, Subject: "Async", HTMLBody: "Hello"}
+
+	// Just ensure it doesn't panic
+	SendEmailAsync(cfg, email)
 }

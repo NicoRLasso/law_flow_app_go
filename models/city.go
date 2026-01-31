@@ -19,7 +19,7 @@ type City struct {
 
 	Code     string `gorm:"size:10;not null;uniqueIndex:idx_city_dept_code" json:"code"` // City code (e.g., "05001" for Medellín)
 	Name     string `gorm:"size:100;not null" json:"name"`
-	IsActive bool   `gorm:"default:true" json:"is_active"`
+	IsActive bool   `json:"is_active"`
 
 	// Relationships
 	Entities []LegalEntity `gorm:"foreignKey:CityID" json:"entities,omitempty"`

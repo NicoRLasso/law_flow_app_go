@@ -19,7 +19,7 @@ type LegalEntity struct {
 
 	Code     string `gorm:"size:15;not null;uniqueIndex" json:"code"` // Entity code (e.g., "0500131")
 	Name     string `gorm:"size:200;not null" json:"name"`
-	IsActive bool   `gorm:"default:true" json:"is_active"`
+	IsActive bool   `json:"is_active"`
 
 	// Relationships
 	Specialties []LegalSpecialty `gorm:"foreignKey:EntityID" json:"specialties,omitempty"`

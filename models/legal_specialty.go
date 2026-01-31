@@ -19,7 +19,7 @@ type LegalSpecialty struct {
 
 	Code     string `gorm:"size:15;not null;uniqueIndex" json:"code"` // Specialty code (e.g., "050013103")
 	Name     string `gorm:"size:150;not null" json:"name"`
-	IsActive bool   `gorm:"default:true" json:"is_active"`
+	IsActive bool   `json:"is_active"`
 
 	// Relationships
 	CourtOffices []CourtOffice `gorm:"foreignKey:SpecialtyID" json:"court_offices,omitempty"`

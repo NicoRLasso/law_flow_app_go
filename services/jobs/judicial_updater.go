@@ -37,7 +37,7 @@ func StartScheduler(database *gorm.DB) {
 func UpdateAllJudicialProcesses(database *gorm.DB) {
 	// 1. Find all Open Cases with a Filing Number (Radicado) and preload Firm to get Country
 	var cases []models.Case
-	if err := database.Preload("Firm").Where("status = ? AND filing_number IS NOT NULL AND filing_number != ''", models.CaseStatusOpen).Find(&cases).Error; err != nil {
+	if err := database.Preload("Firm.Country").Where("status = ? AND filing_number IS NOT NULL AND filing_number != ''", models.CaseStatusOpen).Find(&cases).Error; err != nil {
 		log.Printf("[JOB] Error fetching cases for update: %v", err)
 		return
 	}
@@ -61,7 +61,7 @@ func UpdateSingleCase(database *gorm.DB, caseID string) error {
 	log.Printf("[JOB] UpdateSingleCase called for caseID: %s", caseID)
 	var c models.Case
 	// Need to preload Firm to get Country
-	if err := database.Preload("Firm").Where("id = ?", caseID).First(&c).Error; err != nil {
+	if err := database.Preload("Firm.Country").Where("id = ?", caseID).First(&c).Error; err != nil {
 		return err
 	}
 

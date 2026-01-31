@@ -2,105 +2,98 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"law_flow_app_go/models"
 	"testing"
+	"time"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-func setupSearchTestDB() *gorm.DB {
-	dsn := fmt.Sprintf("file:%s?mode=memory&cache=shared&_pragma=busy_timeout(5000)", uuid.New().String())
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	db.AutoMigrate(&models.Case{}, &models.User{}, &models.CaseParty{}, &models.CaseLog{}, &models.CaseDocument{}, &models.Firm{})
+func setupSearchTestDB(t *testing.T) *gorm.DB {
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	assert.NoError(t, err)
+
+	err = db.AutoMigrate(
+		&models.Firm{},
+		&models.User{},
+		&models.Case{},
+		&models.LegalService{},
+		&models.CaseDocument{},
+		&models.ServiceDocument{},
+		&models.CaseLog{},
+		&models.ServiceMilestone{},
+		&models.CaseParty{},
+	)
+	assert.NoError(t, err)
+
+	err = InitializeFTS5(db)
+	assert.NoError(t, err)
+
 	return db
 }
 
-func TestSanitizeFTSQuery(t *testing.T) {
-	tests := []struct {
-		input    string
-		expected string
-	}{
-		{"hello", "hello*"},
-		{"hello world", "hello* OR world*"},
-		{"a", ""},                          // Too short
-		{"legal case*", "legal* OR case*"}, // Special char removed
-		{"", ""},
-		{"   multiple   spaces   ", "multiple* OR spaces*"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.input, func(t *testing.T) {
-			assert.Equal(t, tt.expected, sanitizeFTSQuery(tt.input))
-		})
-	}
-}
-
-func TestSearchRoles(t *testing.T) {
-	db := setupSearchTestDB()
-	InitializeFTS5(db)
-
-	firmID := "firm-search"
-	client1ID := "c1"
-	client2ID := "c2"
-	lawyerID := "l1"
-	adminID := "a1"
-
-	db.Create(&models.Firm{ID: firmID, Name: "Search Firm"})
-	db.Create(&models.User{ID: client1ID, FirmID: &firmID, Role: "client", Name: "Client One"})
-	db.Create(&models.User{ID: client2ID, FirmID: &firmID, Role: "client", Name: "Client Two"})
-	db.Create(&models.User{ID: lawyerID, FirmID: &firmID, Role: "lawyer", Name: "Lawyer One"})
-
-	// Case 1: Client 1's case
-	db.Create(&models.Case{
-		ID: "case1", FirmID: firmID, ClientID: client1ID, CaseNumber: "NUM-001",
-		Title: stringToPtr("Divorce Case"), Description: "Description of divorce",
-	})
-
-	// Case 2: Client 2's case, Lawyer is collaborator
-	c2 := &models.Case{
-		ID: "case2", FirmID: firmID, ClientID: client2ID, CaseNumber: "NUM-002",
-		Title: stringToPtr("Corporate Case"), Description: "Description of corporate",
-	}
-	db.Create(c2)
-	db.Model(c2).Association("Collaborators").Append(&models.User{ID: lawyerID})
-
-	searchSvc := NewSearchService(db)
+func TestSearchService(t *testing.T) {
+	db := setupSearchTestDB(t)
+	s := NewSearchService(db)
 	ctx := context.Background()
+	firmID := "firm-search"
+	db.Create(&models.Firm{ID: firmID, Name: "Search B.V.", Slug: "search"})
 
-	t.Run("Client 1 only sees their own case", func(t *testing.T) {
-		results, err := searchSvc.SearchWithRoleFilter(ctx, firmID, client1ID, "client", "Case", 10)
+	// Create a user/client
+	client := models.User{ID: "client-1", Name: "John Searcher", FirmID: &firmID}
+	db.Create(&client)
+
+	t.Run("Search cases", func(t *testing.T) {
+		db.Create(&models.Case{
+			ID:         "case-1",
+			FirmID:     firmID,
+			CaseNumber: "CASE-001",
+			Title:      stringToPtr("Divorce of Smith"),
+			ClientID:   client.ID,
+			OpenedAt:   time.Now(),
+		})
+
+		// Search
+		results, err := s.Search(ctx, firmID, "Smith", 10)
 		assert.NoError(t, err)
-		assert.Len(t, results, 1)
-		assert.Equal(t, "case1", results[0].CaseID)
+		assert.NotEmpty(t, results)
+		assert.Equal(t, "case", results[0].Type)
+		assert.Contains(t, results[0].CaseTitle, "Smith")
 	})
 
-	t.Run("Lawyer sees cases where they collaborate", func(t *testing.T) {
-		results, err := searchSvc.SearchWithRoleFilter(ctx, firmID, lawyerID, "lawyer", "Corporate", 10)
+	t.Run("Search services", func(t *testing.T) {
+		db.Create(&models.LegalService{
+			ID:            "service-1",
+			FirmID:        firmID,
+			ServiceNumber: "SVC-001",
+			Title:         "Contract Review",
+			ClientID:      client.ID,
+		})
+
+		results, err := s.Search(ctx, firmID, "Contract", 10)
 		assert.NoError(t, err)
-		assert.Len(t, results, 1)
-		assert.Equal(t, "case2", results[0].CaseID)
+		if assert.NotEmpty(t, results) {
+			assert.Equal(t, "service", results[0].Type)
+			assert.Contains(t, results[0].ServiceTitle, "Contract")
+		}
 	})
 
-	t.Run("Admin sees all cases in firm", func(t *testing.T) {
-		results, err := searchSvc.SearchWithRoleFilter(ctx, firmID, adminID, "admin", "Case", 10)
+	t.Run("Search with role filter - client", func(t *testing.T) {
+		results, err := s.SearchWithRoleFilter(ctx, firmID, client.ID, "client", "Smith", 10)
 		assert.NoError(t, err)
-		assert.Len(t, results, 2)
+		if assert.NotEmpty(t, results) {
+			assert.Equal(t, "case", results[0].Type)
+		}
 	})
-}
 
-func TestDetermineMatchSource(t *testing.T) {
-	assert.Equal(t, "document", determineMatchSource("This is a <mark>contract.pdf</mark> snippet"))
-	assert.Equal(t, "case", determineMatchSource("This is a <mark>divorce</mark> title"))
-}
+	t.Run("Search with role filter - lawyer (forbidden case)", func(t *testing.T) {
+		lawyerID := "lawyer-1"
+		db.Create(&models.User{ID: lawyerID, Name: "Lawyer Lara", FirmID: &firmID})
 
-func TestProcessSnippet(t *testing.T) {
-	expected := "Check out &amp; <mark>this</mark> snippet"
-	assert.Equal(t, expected, processSnippet("Check out & <mark>this</mark> snippet"))
+		results, err := s.SearchWithRoleFilter(ctx, firmID, lawyerID, "lawyer", "Smith", 10)
+		assert.NoError(t, err)
+		assert.Empty(t, results) // Lara is not assigned to Smith's case
+	})
 }

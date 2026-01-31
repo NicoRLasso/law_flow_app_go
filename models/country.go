@@ -16,7 +16,7 @@ type Country struct {
 
 	Code     string `gorm:"size:3;uniqueIndex;not null" json:"code"` // ISO 3166-1 alpha-3 (COL, USA, etc.)
 	Name     string `gorm:"size:100;not null" json:"name"`
-	IsActive bool   `gorm:"default:true" json:"is_active"`
+	IsActive bool   `json:"is_active"`
 
 	// Relationships
 	Departments []Department `gorm:"foreignKey:CountryID" json:"departments,omitempty"`

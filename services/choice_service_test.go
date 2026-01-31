@@ -66,20 +66,20 @@ func TestSeedDefaultChoices(t *testing.T) {
 	db := setupChoiceTestDB()
 	firmID := "firm-seed"
 
-	// Test Default (Priority)
+	// Test Default (Priority, Service Type, Expense Category, Currency)
 	err := SeedDefaultChoices(db, firmID, "Generic")
 	assert.NoError(t, err)
 
 	var catCount int64
 	db.Model(&models.ChoiceCategory{}).Where("firm_id = ?", firmID).Count(&catCount)
-	assert.Equal(t, int64(1), catCount) // Only Priority
+	assert.Equal(t, int64(4), catCount) // Priority, Service Type, Expense Category, Currency
 
-	// Test Colombia
+	// Test Colombia (Previous 4 + Document Type)
 	err = SeedDefaultChoices(db, firmID, "Colombia")
 	assert.NoError(t, err)
 
 	db.Model(&models.ChoiceCategory{}).Where("firm_id = ?", firmID).Count(&catCount)
-	assert.Equal(t, int64(2), catCount) // Priority + Document Type
+	assert.Equal(t, int64(5), catCount) // 4 + Document Type
 
 	var docTypeCat models.ChoiceCategory
 	db.Where("firm_id = ? AND key = ?", firmID, "document_type").First(&docTypeCat)

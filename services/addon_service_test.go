@@ -174,3 +174,73 @@ func TestRenewRecurringAddOns(t *testing.T) {
 	db.First(&updated, "id = ?", firmAddOn.ID)
 	assert.True(t, updated.ExpiresAt.After(time.Now()))
 }
+func TestGetFirmAddOnsByType(t *testing.T) {
+	db := setupTestDB(t)
+	firmID := "f1"
+	db.Create(&models.Firm{ID: firmID})
+
+	a1 := models.PlanAddOn{Name: "U1", Type: models.AddOnTypeUsers}
+	db.Create(&a1)
+	db.Create(&models.FirmAddOn{FirmID: firmID, AddOnID: a1.ID, IsActive: true})
+
+	addons, err := GetFirmAddOnsByType(db, firmID, models.AddOnTypeUsers)
+	assert.NoError(t, err)
+	assert.Len(t, addons, 1)
+}
+
+func TestCancelAddOn(t *testing.T) {
+	db := setupTestDB(t)
+	fa := models.FirmAddOn{IsActive: true}
+	db.Create(&fa)
+
+	err := CancelAddOn(db, fa.ID)
+	assert.NoError(t, err)
+
+	var updated models.FirmAddOn
+	db.First(&updated, "id = ?", fa.ID)
+	assert.False(t, updated.IsActive)
+}
+
+func TestPurchaseTemplates(t *testing.T) {
+	db := setupTestDB(t)
+	firmID := "f-templ"
+	db.Create(&models.Firm{ID: firmID})
+
+	addon := models.PlanAddOn{Name: "Templates", Type: models.AddOnTypeTemplates, PriceOneTime: 2000, IsActive: true}
+	db.Create(&addon)
+
+	err := PurchaseTemplates(db, firmID, nil)
+	assert.NoError(t, err)
+
+	// Second purchase should fail
+	err = PurchaseTemplates(db, firmID, nil)
+	assert.ErrorIs(t, err, ErrAddOnAlreadyOwned)
+}
+
+func TestExpireAddOns(t *testing.T) {
+	db := setupTestDB(t)
+	past := time.Now().AddDate(0, 0, -1)
+	fa := models.FirmAddOn{IsActive: true, ExpiresAt: &past, IsPermanent: false}
+	db.Create(&fa)
+
+	err := ExpireAddOns(db)
+	assert.NoError(t, err)
+
+	var updated models.FirmAddOn
+	db.First(&updated, "id = ?", fa.ID)
+	assert.False(t, updated.IsActive)
+}
+
+func TestGetFirmAddOnSummary(t *testing.T) {
+	db := setupTestDB(t)
+	firmID := "f-summary"
+	db.Create(&models.Firm{ID: firmID})
+
+	uAddon := models.PlanAddOn{Type: models.AddOnTypeUsers, UnitsIncluded: 5, IsActive: true}
+	db.Create(&uAddon)
+	db.Create(&models.FirmAddOn{FirmID: firmID, AddOnID: uAddon.ID, Quantity: 1, IsActive: true})
+
+	summary, err := GetFirmAddOnSummary(db, firmID)
+	assert.NoError(t, err)
+	assert.Equal(t, 5, summary.ExtraUsers)
+}

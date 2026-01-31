@@ -16,12 +16,42 @@ func setupCaseTestDB() *gorm.DB {
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&models.Case{}, &models.Firm{})
+	db.AutoMigrate(
+		&models.Case{},
+		&models.Firm{},
+		&models.User{},
+		&models.CaseDomain{},
+		&models.CaseBranch{},
+		&models.CaseSubtype{},
+		&models.CaseMilestone{},
+	)
 	return db
 }
 
 func stringPtr(s string) *string {
 	return &s
+}
+
+func TestGetCaseByID(t *testing.T) {
+	db := setupCaseTestDB()
+	firmID := "firm-get"
+	caseID := "case-get"
+
+	db.Create(&models.Firm{ID: firmID, Name: "Get Firm", Slug: "GET"})
+	db.Create(&models.Case{ID: caseID, FirmID: firmID, CaseNumber: "GET-001", Title: stringPtr("Title")})
+
+	t.Run("Valid Case", func(t *testing.T) {
+		res, err := GetCaseByID(db, firmID, caseID)
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, "Title", *res.Title)
+	})
+
+	t.Run("Non Existent Case", func(t *testing.T) {
+		res, err := GetCaseByID(db, firmID, "other")
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
 }
 
 func TestGenerateCaseNumber(t *testing.T) {

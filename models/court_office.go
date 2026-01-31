@@ -19,7 +19,7 @@ type CourtOffice struct {
 
 	Code     string `gorm:"size:20;not null;uniqueIndex" json:"code"` // Court office code (e.g., "050013103001")
 	Name     string `gorm:"size:250;not null" json:"name"`
-	IsActive bool   `gorm:"default:true" json:"is_active"`
+	IsActive bool   `json:"is_active"`
 }
 
 // BeforeCreate hook to generate UUID

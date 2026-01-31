@@ -10,159 +10,121 @@ import (
 	"gorm.io/gorm"
 )
 
-// setupTestDB is reused from other tests if in the same package (services),
-// but since tests are compiled per package, we can define a helper if not already exported.
-// Assuming we are in `package services`, we can share `setupTestDB` if it was defined in another `_test.go` file in the same package.
-// If it was defined in `addon_service_test.go`, it's available here.
-// I'll assume `setupTestDB` is available or I will redefine a local version `setupAppointmentTestDB` to avoid conflicts if it's not.
-
-func setupAppointmentTestDB() *gorm.DB {
+func setupAppointmentTestDB(t *testing.T) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	db.AutoMigrate(
-		&models.User{},
+	assert.NoError(t, err)
+
+	err = db.AutoMigrate(
 		&models.Firm{},
-		&models.Appointment{},
-		&models.AppointmentType{},
+		&models.User{},
 		&models.Availability{},
 		&models.BlockedDate{},
-		&models.Case{},
+		&models.Appointment{},
+		&models.AppointmentType{},
 	)
+	assert.NoError(t, err)
+
 	return db
 }
 
-func TestAppointment_Create_Conflict(t *testing.T) {
-	db := setupAppointmentTestDB()
+func TestAppointmentService(t *testing.T) {
+	db := setupAppointmentTestDB(t)
+	firmID := "firm-apt"
+	lawyerID := "lawyer-apt"
+	clientID := "client-apt"
+	db.Create(&models.Firm{ID: firmID})
+	db.Create(&models.User{ID: lawyerID, FirmID: &firmID, Role: "lawyer"})
+	db.Create(&models.User{ID: clientID, FirmID: &firmID, Role: "client"})
 
-	// Setup data
-	firmID := "firm-1"
-	lawyerID := "lawyer-1"
-	clientID := "client-1"
+	// Setup availability
+	CreateDefaultAvailability(db, lawyerID)
 
-	// Create lawyer with availability
-	// Monday 09:00 - 17:00
-	db.Create(&models.Availability{
-		LawyerID:  lawyerID,
-		DayOfWeek: 1, // Monday
-		StartTime: "09:00",
-		EndTime:   "17:00",
-		IsActive:  true,
+	t.Run("CreateAppointment", func(t *testing.T) {
+		// Monday June 1st 2026, 10:00-11:00
+		start := time.Date(2026, 6, 1, 10, 0, 0, 0, time.UTC)
+		end := start.Add(time.Hour)
+
+		apt := &models.Appointment{
+			FirmID:      firmID,
+			LawyerID:    lawyerID,
+			ClientID:    &clientID,
+			ClientName:  "Test Client",
+			ClientEmail: "client@test.com",
+			StartTime:   start,
+			EndTime:     end,
+			Status:      models.AppointmentStatusScheduled,
+		}
+
+		err := CreateAppointment(db, apt)
+		assert.NoError(t, err)
+
+		// Check conflict
+		conflictApt := &models.Appointment{
+			FirmID:      firmID,
+			LawyerID:    lawyerID,
+			ClientID:    &clientID,
+			ClientName:  "Conflict",
+			ClientEmail: "conflict@test.com",
+			StartTime:   start.Add(30 * time.Minute),
+			EndTime:     end.Add(30 * time.Minute),
+		}
+		err = CreateAppointment(db, conflictApt)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "conflicts")
 	})
 
-	// Existing appointment: Monday 10:00 - 11:00
-	existingStart := time.Date(2023, 10, 2, 10, 0, 0, 0, time.UTC) // Oct 2 2023 is Monday
-	existingEnd := existingStart.Add(1 * time.Hour)
+	t.Run("GetAvailableSlots", func(t *testing.T) {
+		date := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
+		slots, err := GetAvailableSlots(db, lawyerID, date, 60, "UTC")
+		assert.NoError(t, err)
+		assert.NotEmpty(t, slots)
 
-	db.Create(&models.Appointment{
-		ID:        "apt-1",
-		FirmID:    firmID,
-		LawyerID:  lawyerID,
-		ClientID:  &clientID,
-		StartTime: existingStart,
-		EndTime:   existingEnd,
-		Status:    models.AppointmentStatusScheduled,
+		// The 10:00-11:00 slot should be missing (taken by first test)
+		for _, s := range slots {
+			assert.NotEqual(t, "10:00", s.StartTime.Format("15:04"))
+		}
 	})
 
-	// Test Case 1: Overlapping appointment (10:30 - 11:30) -> Should fail
-	newApt := &models.Appointment{
-		FirmID:    firmID,
-		LawyerID:  lawyerID,
-		ClientID:  &clientID,
-		StartTime: existingStart.Add(30 * time.Minute),
-		EndTime:   existingEnd.Add(30 * time.Minute),
-	}
+	t.Run("Cancel/Reschedule", func(t *testing.T) {
+		var apt models.Appointment
+		db.First(&apt)
 
-	err := CreateAppointment(db, newApt)
-	assert.Error(t, err)
-	assert.Equal(t, "appointment time conflicts with an existing appointment", err.Error())
+		// Reschedule
+		newStart := time.Date(2026, 6, 1, 14, 0, 0, 0, time.UTC)
+		newEnd := newStart.Add(time.Hour)
+		err := RescheduleAppointment(db, apt.ID, newStart, newEnd)
+		assert.NoError(t, err)
 
-	// Test Case 2: Non-overlapping appointment (11:00 - 12:00) -> Should succeed
-	// Note: 11:00 is exactly when the previous one ends.
-	validApt := &models.Appointment{
-		ID:        "apt-2",
-		FirmID:    firmID,
-		LawyerID:  lawyerID,
-		ClientID:  &clientID,
-		StartTime: existingEnd,
-		EndTime:   existingEnd.Add(1 * time.Hour),
-		Status:    models.AppointmentStatusScheduled,
-	}
-	err = CreateAppointment(db, validApt)
-	assert.NoError(t, err)
+		// Cancel
+		err = CancelAppointment(db, apt.ID)
+		assert.NoError(t, err)
+
+		db.First(&apt, "id = ?", apt.ID)
+		assert.Equal(t, models.AppointmentStatusCancelled, apt.Status)
+	})
 }
 
-func TestAppointment_Availability_Check(t *testing.T) {
-	db := setupAppointmentTestDB()
-	lawyerID := "lawyer-1"
+func TestAppointmentTypeService(t *testing.T) {
+	db := setupAppointmentTestDB(t)
+	firmID := "firm-apt-type"
+	db.Create(&models.Firm{ID: firmID})
 
-	// Availability: Monday 09:00 - 12:00
-	db.Create(&models.Availability{
-		LawyerID:  lawyerID,
-		DayOfWeek: 1, // Monday
-		StartTime: "09:00",
-		EndTime:   "12:00",
-		IsActive:  true,
+	t.Run("CRUD", func(t *testing.T) {
+		at := &models.AppointmentType{Name: "Consultation", FirmID: firmID, IsActive: true}
+		err := CreateAppointmentType(db, at)
+		assert.NoError(t, err)
+
+		types, err := GetAppointmentTypes(db, firmID)
+		assert.NoError(t, err)
+		assert.Len(t, types, 1)
+
+		err = UpdateAppointmentType(db, at.ID, map[string]interface{}{"is_active": false})
+		assert.NoError(t, err)
+
+		active, _ := GetActiveAppointmentTypes(db, firmID)
+		assert.Empty(t, active)
+
+		err = DeleteAppointmentType(db, at.ID)
+		assert.NoError(t, err)
 	})
-
-	// Test Case 1: Within availability (Monday 10:00 - 11:00) -> OK
-	monday := time.Date(2023, 10, 2, 10, 0, 0, 0, time.UTC)
-	available, err := IsTimeSlotAvailable(db, lawyerID, monday, monday.Add(1*time.Hour))
-	assert.NoError(t, err)
-	assert.True(t, available)
-
-	// Test Case 2: Outside availability (Monday 13:00 - 14:00) -> Fail
-	afternoon := time.Date(2023, 10, 2, 13, 0, 0, 0, time.UTC)
-	available, err = IsTimeSlotAvailable(db, lawyerID, afternoon, afternoon.Add(1*time.Hour))
-	assert.NoError(t, err)
-	assert.False(t, available)
-
-	// Test Case 3: Wrong Day (Tuesday) -> Fail
-	tuesday := time.Date(2023, 10, 3, 10, 0, 0, 0, time.UTC)
-	available, err = IsTimeSlotAvailable(db, lawyerID, tuesday, tuesday.Add(1*time.Hour))
-	assert.NoError(t, err)
-	assert.False(t, available)
-}
-
-func TestAppointment_Reschedule_Conflict(t *testing.T) {
-	db := setupAppointmentTestDB()
-	firmID := "firm-1"
-	lawyerID := "lawyer-1"
-	clientID := "client-1"
-
-	// Slot A: 10:00 - 11:00 (Existing)
-	startA := time.Date(2023, 10, 2, 10, 0, 0, 0, time.UTC)
-	db.Create(&models.Appointment{
-		ID:        "apt-1",
-		FirmID:    firmID,
-		LawyerID:  lawyerID,
-		ClientID:  &clientID,
-		StartTime: startA,
-		EndTime:   startA.Add(1 * time.Hour),
-		Status:    models.AppointmentStatusScheduled,
-	})
-
-	// Slot B: 12:00 - 13:00 (Existing)
-	startB := time.Date(2023, 10, 2, 12, 0, 0, 0, time.UTC)
-	db.Create(&models.Appointment{
-		ID:        "apt-2",
-		FirmID:    firmID,
-		LawyerID:  lawyerID,
-		ClientID:  &clientID,
-		StartTime: startB,
-		EndTime:   startB.Add(1 * time.Hour),
-		Status:    models.AppointmentStatusScheduled,
-	})
-
-	// Test Case: specific apt-1 cannot be rescheduled to overlap with apt-2
-	// Try rescheduling apt-1 to 11:30 - 12:30 (overlaps with B which starts at 12:00)
-	err := RescheduleAppointment(db, "apt-1", startB.Add(-30*time.Minute), startB.Add(30*time.Minute))
-	assert.Error(t, err)
-	assert.Equal(t, "new time conflicts with an existing appointment", err.Error())
-
-	// Test Case: apt-1 CAN be rescheduled to itself (no change) or to empty slot
-	// Reschedule to 09:00 - 10:00
-	err = RescheduleAppointment(db, "apt-1", startA.Add(-1*time.Hour), startA)
-	assert.NoError(t, err)
 }

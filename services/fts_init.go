@@ -493,7 +493,7 @@ func RebuildFTSIndex(db *gorm.DB) error {
 		// Insert into FTS
 		db.Exec(`
 			INSERT INTO services_fts (rowid, service_id, firm_id, service_number, service_title, service_description, service_objective, client_name, milestone_content, document_content)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			rowid, service.ID, service.FirmID, service.ServiceNumber, service.Title,
 			service.Description, service.Objective, service.ClientName,
 			milestones, documents)
@@ -526,7 +526,7 @@ func createServicesTriggers(db *gorm.DB) error {
 				milestone_content, document_content
 			)
 			SELECT
-				(SELECT rowid FROM services_fts_mapping WHERE service_id = NEW.id),
+				m.rowid,
 				NEW.id,
 				NEW.firm_id,
 				NEW.service_number,
@@ -535,9 +535,9 @@ func createServicesTriggers(db *gorm.DB) error {
 				COALESCE(NEW.objective, ''),
 				COALESCE((SELECT name FROM users WHERE id = NEW.client_id), ''),
 				'',
-				'',
 				''
-			WHERE NEW.deleted_at IS NULL;
+			FROM services_fts_mapping m WHERE m.service_id = NEW.id
+			AND NEW.deleted_at IS NULL;
 		END
 	`).Error
 	if err != nil {

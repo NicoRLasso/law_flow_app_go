@@ -19,7 +19,7 @@ type Department struct {
 
 	Code     string `gorm:"size:10;not null;uniqueIndex:idx_dept_country_code" json:"code"` // Department code (e.g., "05" for Antioquia)
 	Name     string `gorm:"size:100;not null" json:"name"`
-	IsActive bool   `gorm:"default:true" json:"is_active"`
+	IsActive bool   `json:"is_active"`
 
 	// Relationships
 	Cities []City `gorm:"foreignKey:DepartmentID" json:"cities,omitempty"`

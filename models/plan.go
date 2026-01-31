@@ -37,7 +37,7 @@ type Plan struct {
 	MaxUsers         int   `gorm:"not null" json:"max_users"`
 	MaxStorageBytes  int64 `gorm:"not null" json:"max_storage_bytes"`
 	MaxCases         int   `gorm:"not null" json:"max_cases"`
-	TemplatesEnabled bool  `gorm:"not null;default:true" json:"templates_enabled"`
+	TemplatesEnabled bool  `gorm:"not null;default:false" json:"templates_enabled"`
 
 	// Trial specific
 	TrialDays   int  `gorm:"not null;default:0" json:"trial_days"`

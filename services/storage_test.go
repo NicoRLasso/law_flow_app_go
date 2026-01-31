@@ -111,6 +111,20 @@ func TestKeyGeneration(t *testing.T) {
 		key := GenerateGeneratedDocumentKey(firmID, caseID, filename)
 		assert.Contains(t, key, "firms/f1/cases/c1/generated")
 	})
+
+	t.Run("GenerateServiceDocumentKey", func(t *testing.T) {
+		serviceID := "s1"
+		key := GenerateServiceDocumentKey(firmID, serviceID, filename)
+		assert.Contains(t, key, "firms/f1/services/s1")
+		assert.True(t, strings.HasSuffix(key, ".pdf"))
+	})
+
+	t.Run("GenerateServiceGeneratedDocumentKey", func(t *testing.T) {
+		serviceID := "s1"
+		key := GenerateServiceGeneratedDocumentKey(firmID, serviceID, filename)
+		assert.Contains(t, key, "firms/f1/services/s1/generated")
+		assert.True(t, strings.HasSuffix(key, ".pdf"))
+	})
 }
 
 func TestIsConfigured(t *testing.T) {

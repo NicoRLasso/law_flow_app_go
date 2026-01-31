@@ -39,7 +39,7 @@ func (m *MockProvider) GetProcessActions(processID string) ([]judicial.GenericAc
 
 func setupJudicialJobTestDB(dsn string) *gorm.DB {
 	db, _ := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
-	db.AutoMigrate(&models.Firm{}, &models.Case{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.User{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.ChoiceOption{})
+	db.AutoMigrate(&models.Firm{}, &models.Case{}, &models.CaseDomain{}, &models.CaseBranch{}, &models.CaseSubtype{}, &models.User{}, &models.JudicialProcess{}, &models.JudicialProcessAction{}, &models.ChoiceOption{}, &models.Notification{}, &models.Country{})
 	return db
 }
 
@@ -53,7 +53,12 @@ func TestProcessCase(t *testing.T) {
 	db := setupJudicialJobTestDB(testDSN)
 
 	firmID := uuid.New().String()
-	firm := models.Firm{ID: firmID, Name: "Test Firm", Country: "CO_PROCESS"}
+	firm := models.Firm{
+		ID:        firmID,
+		Name:      "Test Firm",
+		CountryID: uuid.New().String(),
+		Country:   &models.Country{Name: "CO_PROCESS"},
+	}
 	db.Create(&firm)
 
 	caseRecord := models.Case{
@@ -139,7 +144,12 @@ func TestUpdateAllJudicialProcesses(t *testing.T) {
 	db := setupJudicialJobTestDB(testDSN)
 
 	firmID := uuid.New().String()
-	firm := models.Firm{ID: firmID, Name: "Test Firm", Country: "CO_ALL"}
+	firm := models.Firm{
+		ID:        firmID,
+		Name:      "Test Firm",
+		CountryID: uuid.New().String(),
+		Country:   &models.Country{Name: "CO_ALL"},
+	}
 	db.Create(&firm)
 
 	db.Create(&models.Case{

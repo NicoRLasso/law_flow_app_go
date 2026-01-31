@@ -259,13 +259,12 @@ func SeedCourtOfficesForSpecialty(db *gorm.DB, specialtyID string, specialtyCode
 	return nil
 }
 
+// This needs to be available to other functions that use http.Client
+var httpClient = &http.Client{Timeout: 30 * time.Second}
+
 // fetchFromRamaJudicial makes an HTTP request to the Rama Judicial API
 func fetchFromRamaJudicial(url string) ([]RamaJudicialItem, error) {
-	client := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("HTTP request failed: %w", err)
 	}

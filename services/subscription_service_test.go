@@ -156,3 +156,185 @@ func TestExtendTrial(t *testing.T) {
 	diff := after.TrialEndsAt.Sub(originalEnd)
 	assert.InDelta(t, (7 * 24 * time.Hour).Seconds(), diff.Seconds(), 1)
 }
+func TestSubscriptionInfo(t *testing.T) {
+	db := setupSubscriptionTestDB()
+	SeedDefaultPlans(db)
+	SeedDefaultAddOns(db)
+
+	firmID := "f-info"
+	db.Create(&models.Firm{ID: firmID, Name: "Info Firm"})
+	CreateTrialSubscription(db, firmID)
+
+	t.Run("GetFirmSubscriptionInfo full success", func(t *testing.T) {
+		info, err := GetFirmSubscriptionInfo(db, firmID)
+		assert.NoError(t, err)
+		assert.NotNil(t, info)
+		t.Logf("DEBUG: Plan Tier: %s, TemplatesEnabled: %v", info.Plan.Tier, info.Plan.TemplatesEnabled)
+		assert.Equal(t, models.SubscriptionStatusTrialing, info.Subscription.Status)
+		assert.False(t, info.HasTemplates) // Trial does NOT include templates in SeedDefaultPlans
+	})
+
+	t.Run("GetFirmSubscription not found", func(t *testing.T) {
+		_, err := GetFirmSubscription(db, "non-existent")
+		assert.Error(t, err)
+	})
+}
+
+func TestEffectiveLimitsStorageAndCases(t *testing.T) {
+	db := setupSubscriptionTestDB()
+	SeedDefaultPlans(db)
+	SeedDefaultAddOns(db)
+
+	firmID := "f-limits"
+	db.Create(&models.Firm{ID: firmID})
+
+	var starterPlan models.Plan
+	db.Where("tier = ?", models.PlanTierStarter).First(&starterPlan)
+	db.Create(&models.FirmSubscription{FirmID: firmID, PlanID: starterPlan.ID, Status: "active"})
+
+	t.Run("Storage with add-ons", func(t *testing.T) {
+		// Starter: 1GB = 1073741824 bytes
+		limit := GetEffectiveStorageLimit(db, firmID, &starterPlan)
+		assert.Equal(t, starterPlan.MaxStorageBytes, limit)
+
+		// Add 10GB pack
+		var storagePack models.PlanAddOn
+		db.Where("type = ?", models.AddOnTypeStorage).First(&storagePack)
+		db.Create(&models.FirmAddOn{FirmID: firmID, AddOnID: storagePack.ID, Quantity: 2, IsActive: true})
+
+		limitWithAddon := GetEffectiveStorageLimit(db, firmID, &starterPlan)
+		expected := starterPlan.MaxStorageBytes + (storagePack.StorageBytes * 2)
+		assert.Equal(t, expected, limitWithAddon)
+	})
+
+	t.Run("Cases with add-ons", func(t *testing.T) {
+		// Starter: 50 cases
+		limit := GetEffectiveCaseLimit(db, firmID, &starterPlan)
+		assert.Equal(t, 50, limit)
+
+		var casePack models.PlanAddOn
+		db.Where("type = ?", models.AddOnTypeCases).First(&casePack)
+		db.Create(&models.FirmAddOn{FirmID: firmID, AddOnID: casePack.ID, Quantity: 1, IsActive: true})
+
+		limitWithAddon := GetEffectiveCaseLimit(db, firmID, &starterPlan)
+		assert.Equal(t, 50+casePack.UnitsIncluded, limitWithAddon)
+	})
+}
+
+func TestTemplateAccess(t *testing.T) {
+	db := setupSubscriptionTestDB()
+	SeedDefaultPlans(db)
+	SeedDefaultAddOns(db)
+
+	firmID := "f-templates"
+	db.Create(&models.Firm{ID: firmID})
+
+	var starterPlan models.Plan
+	db.Where("tier = ?", models.PlanTierStarter).First(&starterPlan)
+	db.Create(&models.FirmSubscription{FirmID: firmID, PlanID: starterPlan.ID, Status: "active"})
+
+	t.Run("No templates in trial", func(t *testing.T) {
+		fTrial := "f-trial-templates"
+		db.Create(&models.Firm{ID: fTrial, Name: "Trial Firm"})
+		CreateTrialSubscription(db, fTrial)
+
+		allowed, err := CanAccessTemplates(db, fTrial)
+		assert.NoError(t, err)
+		assert.False(t, allowed)
+	})
+
+	t.Run("Templates via add-on", func(t *testing.T) {
+		var templateAddon models.PlanAddOn
+		db.Where("type = ?", models.AddOnTypeTemplates).First(&templateAddon)
+		db.Create(&models.FirmAddOn{FirmID: firmID, AddOnID: templateAddon.ID, Quantity: 1, IsActive: true})
+
+		allowed, err := CanAccessTemplates(db, firmID)
+		assert.NoError(t, err)
+		assert.True(t, allowed)
+	})
+}
+
+func TestFileUploadLimit(t *testing.T) {
+	db := setupSubscriptionTestDB()
+	SeedDefaultPlans(db)
+
+	firmID := "f-upload"
+	db.Create(&models.Firm{ID: firmID})
+
+	var starterPlan models.Plan
+	db.Where("tier = ?", models.PlanTierStarter).First(&starterPlan)
+	db.Create(&models.FirmSubscription{FirmID: firmID, PlanID: starterPlan.ID, Status: "active"})
+
+	// Create usage
+	db.Create(&models.FirmUsage{FirmID: firmID, CurrentStorageBytes: starterPlan.MaxStorageBytes - 100, LastCalculatedAt: time.Now()})
+
+	t.Run("Within limit", func(t *testing.T) {
+		res, err := CanUploadFile(db, firmID, 50)
+		assert.NoError(t, err)
+		assert.True(t, res.Allowed)
+	})
+
+	t.Run("Exceed limit", func(t *testing.T) {
+		res, err := CanUploadFile(db, firmID, 150)
+		assert.ErrorIs(t, err, ErrStorageLimitReached)
+		assert.False(t, res.Allowed)
+	})
+}
+
+func TestUsageUpdateFunctions(t *testing.T) {
+	db := setupSubscriptionTestDB()
+	firmID := "f-usage-updates"
+	db.Create(&models.Firm{ID: firmID})
+	db.Create(&models.FirmUsage{FirmID: firmID, CurrentUsers: 1, CurrentCases: 1, CurrentStorageBytes: 100, LastCalculatedAt: time.Now()})
+
+	t.Run("UpdateUserUsage", func(t *testing.T) {
+		err := UpdateFirmUsageAfterUserChange(db, firmID, 1)
+		assert.NoError(t, err)
+		usage, _ := GetOrCalculateFirmUsage(db, firmID)
+		assert.Equal(t, 2, usage.CurrentUsers)
+	})
+
+	t.Run("UpdateCaseUsage", func(t *testing.T) {
+		err := UpdateFirmUsageAfterCaseChange(db, firmID, -1)
+		assert.NoError(t, err)
+		usage, _ := GetOrCalculateFirmUsage(db, firmID)
+		assert.Equal(t, 0, usage.CurrentCases)
+	})
+
+	t.Run("UpdateStorageUsage", func(t *testing.T) {
+		err := UpdateFirmUsageAfterStorageChange(db, firmID, 500)
+		assert.NoError(t, err)
+		usage, _ := GetOrCalculateFirmUsage(db, firmID)
+		assert.Equal(t, int64(600), usage.CurrentStorageBytes)
+	})
+}
+
+func TestTrialEdgeCases(t *testing.T) {
+	db := setupSubscriptionTestDB()
+	SeedDefaultPlans(db)
+	firmID := "f-trial-edges"
+	db.Create(&models.Firm{ID: firmID})
+
+	t.Run("No subscription error", func(t *testing.T) {
+		_, err := CanAddUser(db, firmID)
+		assert.ErrorIs(t, err, ErrNoActiveSubscription)
+	})
+
+	t.Run("Expired trial", func(t *testing.T) {
+		CreateTrialSubscription(db, firmID)
+		past := time.Now().AddDate(0, 0, -1)
+		db.Model(&models.FirmSubscription{}).Where("firm_id = ?", firmID).Update("trial_ends_at", past)
+
+		res, err := CanAddUser(db, firmID)
+		assert.ErrorIs(t, err, ErrSubscriptionExpired)
+		assert.False(t, res.Allowed)
+	})
+
+	t.Run("Extend trial not trialing", func(t *testing.T) {
+		f2 := "f-no-trial"
+		db.Create(&models.Firm{ID: f2})
+		db.Create(&models.FirmSubscription{FirmID: f2, Status: "active"})
+		err := ExtendTrial(db, f2, 5)
+		assert.Error(t, err)
+	})
+}
