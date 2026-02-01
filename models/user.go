@@ -14,10 +14,10 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
 	Name        string     `gorm:"not null" json:"name"`
-	Email       string     `gorm:"not null;uniqueIndex:idx_user_firm_email_role" json:"email"` // Unique per firm+role combination
+	Email       string     `gorm:"not null;uniqueIndex" json:"email"` // Unique globally
 	Password    string     `gorm:"not null" json:"-"`
-	FirmID      *string    `gorm:"type:uuid;index;uniqueIndex:idx_user_firm_email_role" json:"firm_id"`     // Nullable - user may not have firm yet
-	Role        string     `gorm:"not null;default:staff;uniqueIndex:idx_user_firm_email_role" json:"role"` // superadmin, admin, lawyer, staff, client
+	FirmID      *string    `gorm:"type:uuid;index" json:"firm_id"`     // Nullable - user may not have firm yet
+	Role        string     `gorm:"not null;default:staff" json:"role"` // superadmin, admin, lawyer, staff, client
 	IsActive    bool       `gorm:"not null;default:true" json:"is_active"`
 	Language    string     `gorm:"not null;default:'es'" json:"language"` // en, es
 	LastLoginAt *time.Time `json:"last_login_at"`
