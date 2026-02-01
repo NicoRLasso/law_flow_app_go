@@ -14,6 +14,7 @@ var (
 	ErrUserLimitReached     = errors.New("user limit reached for current plan")
 	ErrStorageLimitReached  = errors.New("storage limit reached for current plan")
 	ErrCaseLimitReached     = errors.New("case limit reached for current plan")
+	ErrClientLimitReached   = errors.New("client limit reached for current plan")
 	ErrTemplatesDisabled    = errors.New("templates feature not available on current plan")
 	ErrSubscriptionExpired  = errors.New("subscription has expired")
 	ErrNoActiveSubscription = errors.New("no active subscription found")
@@ -21,11 +22,13 @@ var (
 
 // LimitCheckResult contains the result of a limit check
 type LimitCheckResult struct {
-	Allowed        bool
-	CurrentUsage   int64
-	Limit          int64
-	PercentageUsed float64
-	Message        string
+	Allowed         bool
+	CurrentUsage    int64
+	Limit           int64
+	PercentageUsed  float64
+	Message         string
+	TranslationKey  string
+	TranslationArgs map[string]interface{}
 }
 
 // SubscriptionInfo contains subscription details for display
@@ -190,12 +193,20 @@ func CanAddUser(db *gorm.DB, firmID string) (*LimitCheckResult, error) {
 	}
 
 	if !subscription.IsActive() {
-		return &LimitCheckResult{Allowed: false, Message: "Subscription is not active"}, ErrSubscriptionExpired
+		return &LimitCheckResult{
+			Allowed:        false,
+			Message:        "Subscription is not active",
+			TranslationKey: "subscription.errors.subscription_expired",
+		}, ErrSubscriptionExpired
 	}
 
 	// Check if trial has expired
 	if subscription.HasTrialExpired() {
-		return &LimitCheckResult{Allowed: false, Message: "Trial period has expired"}, ErrSubscriptionExpired
+		return &LimitCheckResult{
+			Allowed:        false,
+			Message:        "Trial period has expired",
+			TranslationKey: "subscription.errors.trial_expired",
+		}, ErrSubscriptionExpired
 	}
 
 	effectiveLimit := GetEffectiveUserLimit(db, firmID, &subscription.Plan)
@@ -220,7 +231,75 @@ func CanAddUser(db *gorm.DB, firmID string) (*LimitCheckResult, error) {
 		result.Allowed = false
 		result.Message = fmt.Sprintf("User limit reached (%d/%d). Please upgrade your plan or purchase additional users.",
 			usage.CurrentUsers, effectiveLimit)
+		result.TranslationKey = "subscription.errors.user_limit_reached"
+		result.TranslationArgs = map[string]interface{}{
+			"current": usage.CurrentUsers,
+			"limit":   effectiveLimit,
+		}
 		return result, ErrUserLimitReached
+	}
+
+	result.Allowed = true
+	return result, nil
+}
+
+// CanAddClient checks if a firm can add another client (limit linked to max cases)
+func CanAddClient(db *gorm.DB, firmID string) (*LimitCheckResult, error) {
+	subscription, err := GetFirmSubscription(db, firmID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrNoActiveSubscription
+		}
+		return nil, err
+	}
+
+	if !subscription.IsActive() {
+		return &LimitCheckResult{
+			Allowed:        false,
+			Message:        "Subscription is not active",
+			TranslationKey: "subscription.errors.subscription_expired",
+		}, ErrSubscriptionExpired
+	}
+
+	// Check if trial has expired
+	if subscription.HasTrialExpired() {
+		return &LimitCheckResult{
+			Allowed:        false,
+			Message:        "Trial period has expired",
+			TranslationKey: "subscription.errors.trial_expired",
+		}, ErrSubscriptionExpired
+	}
+
+	// Client limit equals Case Limit
+	effectiveLimit := GetEffectiveCaseLimit(db, firmID, &subscription.Plan)
+
+	// Unlimited clients (if cases are unlimited)
+	if effectiveLimit == -1 {
+		return &LimitCheckResult{Allowed: true, Limit: -1}, nil
+	}
+
+	// Count existing clients
+	var currentClients int64
+	if err := db.Model(&models.User{}).Where("firm_id = ? AND role = ? AND is_active = ?", firmID, "client", true).Count(&currentClients).Error; err != nil {
+		return nil, err
+	}
+
+	result := &LimitCheckResult{
+		CurrentUsage:   currentClients,
+		Limit:          int64(effectiveLimit),
+		PercentageUsed: float64(currentClients) / float64(effectiveLimit) * 100,
+	}
+
+	if currentClients >= int64(effectiveLimit) {
+		result.Allowed = false
+		result.Message = fmt.Sprintf("Client limit reached (%d/%d). Client limit is equal to your Case limit. Please upgrade your plan or purchase additional cases.",
+			currentClients, effectiveLimit)
+		result.TranslationKey = "subscription.errors.client_limit_reached"
+		result.TranslationArgs = map[string]interface{}{
+			"current": currentClients,
+			"limit":   effectiveLimit,
+		}
+		return result, ErrClientLimitReached
 	}
 
 	result.Allowed = true
@@ -238,12 +317,20 @@ func CanAddCase(db *gorm.DB, firmID string) (*LimitCheckResult, error) {
 	}
 
 	if !subscription.IsActive() {
-		return &LimitCheckResult{Allowed: false, Message: "Subscription is not active"}, ErrSubscriptionExpired
+		return &LimitCheckResult{
+			Allowed:        false,
+			Message:        "Subscription is not active",
+			TranslationKey: "subscription.errors.subscription_expired",
+		}, ErrSubscriptionExpired
 	}
 
 	// Check trial expiration
 	if subscription.HasTrialExpired() {
-		return &LimitCheckResult{Allowed: false, Message: "Trial period has expired"}, ErrSubscriptionExpired
+		return &LimitCheckResult{
+			Allowed:        false,
+			Message:        "Trial period has expired",
+			TranslationKey: "subscription.errors.trial_expired",
+		}, ErrSubscriptionExpired
 	}
 
 	effectiveLimit := GetEffectiveCaseLimit(db, firmID, &subscription.Plan)
@@ -267,6 +354,11 @@ func CanAddCase(db *gorm.DB, firmID string) (*LimitCheckResult, error) {
 		result.Allowed = false
 		result.Message = fmt.Sprintf("Case limit reached (%d/%d). Please upgrade your plan or purchase additional cases.",
 			usage.CurrentCases, effectiveLimit)
+		result.TranslationKey = "subscription.errors.case_limit_reached"
+		result.TranslationArgs = map[string]interface{}{
+			"current": usage.CurrentCases,
+			"limit":   effectiveLimit,
+		}
 		return result, ErrCaseLimitReached
 	}
 
@@ -316,6 +408,11 @@ func CanUploadFile(db *gorm.DB, firmID string, fileSizeBytes int64) (*LimitCheck
 		result.Allowed = false
 		result.Message = fmt.Sprintf("Storage limit would be exceeded. Current: %s, Limit: %s",
 			models.FormatBytes(usage.CurrentStorageBytes), models.FormatBytes(effectiveLimit))
+		result.TranslationKey = "subscription.errors.storage_limit_reached"
+		result.TranslationArgs = map[string]interface{}{
+			"current": models.FormatBytes(usage.CurrentStorageBytes),
+			"limit":   models.FormatBytes(effectiveLimit),
+		}
 		return result, ErrStorageLimitReached
 	}
 

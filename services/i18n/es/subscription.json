@@ -1,0 +1,19 @@
+{
+  "subscription": {
+    "errors": {
+      "user_limit_reached": "Límite de usuarios alcanzado ({current}/{limit}). Por favor actualiza tu plan o compra usuarios adicionales.",
+      "user_limit_title": "Límite de Usuarios Alcanzado",
+      "case_limit_reached": "Límite de casos alcanzado ({current}/{limit}). Por favor actualiza tu plan o compra casos adicionales.",
+      "case_limit_title": "Límite de Casos Alcanzado",
+      "client_limit_reached": "Límite de clientes alcanzado ({current}/{limit}). El límite de clientes es igual a tu límite de Casos. Por favor actualiza tu plan o compra casos adicionales.",
+      "client_limit_title": "Límite de Clientes Alcanzado",
+      "storage_limit_reached": "Se excedería el límite de almacenamiento. Actual: {current}, Límite: {limit}",
+      "storage_limit_title": "Límite de Almacenamiento Alcanzado",
+      "subscription_expired": "Tu suscripción ha expirado. Por favor renueva para continuar.",
+      "subscription_expired_title": "Suscripción Expirada",
+      "trial_expired": "El periodo de prueba ha expirado",
+      "upgrade_plan": "Actualizar Plan",
+      "renew_now": "Renovar Ahora"
+    }
+  }
+}

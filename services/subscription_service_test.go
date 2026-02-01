@@ -64,6 +64,26 @@ func TestLimitChecks(t *testing.T) {
 		assert.ErrorIs(t, err, ErrCaseLimitReached)
 		assert.False(t, result.Allowed)
 	})
+	t.Run("CanAddClient check", func(t *testing.T) {
+		// Trial plan has MaxCases: 20
+		// Should be able to add 19 clients
+		for i := 0; i < 19; i++ {
+			email := "client" + string(rune(i)) + "@test.com"
+			db.Create(&models.User{ID: "c" + string(rune(i)), FirmID: &firmID, Role: "client", IsActive: true, Email: email})
+		}
+
+		result, err := CanAddClient(db, firmID)
+		assert.NoError(t, err)
+		assert.True(t, result.Allowed)
+
+		// Add one more (20th client) - limit is 20
+		db.Create(&models.User{ID: "c20", FirmID: &firmID, Role: "client", IsActive: true, Email: "c20@test.com"})
+
+		// Attempt to add 21st
+		result, err = CanAddClient(db, firmID)
+		assert.ErrorIs(t, err, ErrClientLimitReached)
+		assert.False(t, result.Allowed)
+	})
 }
 
 func TestEffectiveLimitsWithAddOns(t *testing.T) {

@@ -6,6 +6,7 @@ import (
 	"law_flow_app_go/middleware"
 	"law_flow_app_go/models"
 	"law_flow_app_go/services"
+	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/templates/pages"
 	"law_flow_app_go/templates/partials"
 	"net/http"
@@ -71,37 +72,115 @@ func CreateUser(c echo.Context) error {
 		if err != nil {
 			if err == services.ErrUserLimitReached {
 				if c.Request().Header.Get("HX-Request") == "true" {
+					title := i18n.T(c.Request().Context(), "subscription.errors.user_limit_title")
+					message := i18n.T(c.Request().Context(), limitResult.TranslationKey, limitResult.TranslationArgs)
+					btnText := i18n.T(c.Request().Context(), "subscription.errors.upgrade_plan")
+
 					return c.HTML(http.StatusForbidden, `
 						<div class="alert alert-warning shadow-lg">
 							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
 							</svg>
 							<div>
-								<h3 class="font-bold">User Limit Reached</h3>
-								<div class="text-xs">`+limitResult.Message+`</div>
+								<h3 class="font-bold">`+title+`</h3>
+								<div class="text-xs">`+message+`</div>
 							</div>
-							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">Upgrade Plan</a>
+							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">`+btnText+`</a>
 						</div>
 					`)
 				}
-				return echo.NewHTTPError(http.StatusForbidden, limitResult.Message)
+				return echo.NewHTTPError(http.StatusForbidden, i18n.T(c.Request().Context(), limitResult.TranslationKey, limitResult.TranslationArgs))
 			}
 			if err == services.ErrSubscriptionExpired {
 				if c.Request().Header.Get("HX-Request") == "true" {
+					// Use keys if available in limitResult, or fallback
+					key := "subscription.errors.subscription_expired"
+					if limitResult != nil && limitResult.TranslationKey != "" {
+						key = limitResult.TranslationKey
+					}
+
+					title := i18n.T(c.Request().Context(), "subscription.errors.subscription_expired_title")
+					message := i18n.T(c.Request().Context(), key)
+					btnText := i18n.T(c.Request().Context(), "subscription.errors.renew_now")
+
 					return c.HTML(http.StatusForbidden, `
 						<div class="alert alert-error shadow-lg">
 							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 							</svg>
 							<div>
-								<h3 class="font-bold">Subscription Expired</h3>
-								<div class="text-xs">Your subscription has expired. Please renew to continue.</div>
+								<h3 class="font-bold">`+title+`</h3>
+								<div class="text-xs">`+message+`</div>
 							</div>
-							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">Renew Now</a>
+							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">`+btnText+`</a>
 						</div>
 					`)
 				}
-				return echo.NewHTTPError(http.StatusForbidden, "Subscription has expired")
+				// Use keys if available in limitResult
+				key := "subscription.errors.subscription_expired"
+				if limitResult != nil && limitResult.TranslationKey != "" {
+					key = limitResult.TranslationKey
+				}
+				return echo.NewHTTPError(http.StatusForbidden, i18n.T(c.Request().Context(), key))
+			}
+			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check subscription limits")
+		}
+	} else if role == "client" {
+		limitResult, err := services.CanAddClient(db.DB, firm.ID)
+		if err != nil {
+			if err == services.ErrClientLimitReached {
+				if c.Request().Header.Get("HX-Request") == "true" {
+					title := i18n.T(c.Request().Context(), "subscription.errors.client_limit_title")
+					message := i18n.T(c.Request().Context(), limitResult.TranslationKey, limitResult.TranslationArgs)
+					btnText := i18n.T(c.Request().Context(), "subscription.errors.upgrade_plan")
+
+					return c.HTML(http.StatusForbidden, `
+						<div class="alert alert-warning shadow-lg">
+							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+							</svg>
+							<div>
+								<h3 class="font-bold">`+title+`</h3>
+								<div class="text-xs">`+message+`</div>
+							</div>
+							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">`+btnText+`</a>
+						</div>
+					`)
+				}
+				return echo.NewHTTPError(http.StatusForbidden, i18n.T(c.Request().Context(), limitResult.TranslationKey, limitResult.TranslationArgs))
+			}
+			// Handle other errors same as standard user
+			if err == services.ErrSubscriptionExpired {
+				if c.Request().Header.Get("HX-Request") == "true" {
+					// Use keys if available in limitResult
+					key := "subscription.errors.subscription_expired"
+					if limitResult != nil && limitResult.TranslationKey != "" {
+						key = limitResult.TranslationKey
+					}
+
+					title := i18n.T(c.Request().Context(), "subscription.errors.subscription_expired_title")
+					message := i18n.T(c.Request().Context(), key)
+					btnText := i18n.T(c.Request().Context(), "subscription.errors.renew_now")
+
+					return c.HTML(http.StatusForbidden, `
+						<div class="alert alert-error shadow-lg">
+							<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+							</svg>
+							<div>
+								<h3 class="font-bold">`+title+`</h3>
+								<div class="text-xs">`+message+`</div>
+							</div>
+							<a href="/firm/settings#subscription" class="btn btn-sm btn-primary">`+btnText+`</a>
+						</div>
+					`)
+				}
+				// Use keys if available
+				key := "subscription.errors.subscription_expired"
+				if limitResult != nil && limitResult.TranslationKey != "" {
+					key = limitResult.TranslationKey
+				}
+				return echo.NewHTTPError(http.StatusForbidden, i18n.T(c.Request().Context(), key))
 			}
 			return echo.NewHTTPError(http.StatusInternalServerError, "Failed to check subscription limits")
 		}

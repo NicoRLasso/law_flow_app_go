@@ -1,0 +1,19 @@
+{
+  "subscription": {
+    "errors": {
+      "user_limit_reached": "User limit reached ({current}/{limit}). Please upgrade your plan or purchase additional users.",
+      "user_limit_title": "User Limit Reached",
+      "case_limit_reached": "Case limit reached ({current}/{limit}). Please upgrade your plan or purchase additional cases.",
+      "case_limit_title": "Case Limit Reached",
+      "client_limit_reached": "Client limit reached ({current}/{limit}). Client limit is equal to your Case limit. Please upgrade your plan or purchase additional cases.",
+      "client_limit_title": "Client Limit Reached",
+      "storage_limit_reached": "Storage limit would be exceeded. Current: {current}, Limit: {limit}",
+      "storage_limit_title": "Storage Limit Reached",
+      "subscription_expired": "Your subscription has expired. Please renew to continue.",
+      "subscription_expired_title": "Subscription Expired",
+      "trial_expired": "Trial period has expired",
+      "upgrade_plan": "Upgrade Plan",
+      "renew_now": "Renew Now"
+    }
+  }
+}
