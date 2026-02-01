@@ -21,6 +21,8 @@ import (
 	"law_flow_app_go/services/i18n"
 	"law_flow_app_go/services/jobs"
 
+	"law_flow_app_go/templates/errors"
+
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 )
@@ -212,6 +214,23 @@ func main() {
 			return
 		}
 
+		// Custom Error Pages
+		if code == http.StatusNotFound {
+			csrfToken := middleware.GetCSRFToken(c)
+			component := errors.Error404(c.Request().Context(), csrfToken)
+			c.Response().Status = code
+			component.Render(c.Request().Context(), c.Response().Writer)
+			return
+		}
+
+		if code == http.StatusForbidden {
+			csrfToken := middleware.GetCSRFToken(c)
+			component := errors.Error403(c.Request().Context(), csrfToken)
+			c.Response().Status = code
+			component.Render(c.Request().Context(), c.Response().Writer)
+			return
+		}
+
 		// Default error response
 		e.DefaultHTTPErrorHandler(err, c)
 	}
@@ -297,6 +316,8 @@ func main() {
 		firmSetup.POST("/setup", handlers.FirmSetupPostHandler)
 	}
 	e.POST("/logout", middleware.RequireAuth()(handlers.LogoutHandler))
+	e.POST("/api/consent/accept", handlers.AcceptConsentHandler, middleware.RequireAuth())
+	e.POST("/api/consent/revoke", handlers.RevokeConsentHandler, middleware.RequireAuth())
 	superadminRoutes := e.Group("/superadmin")
 	superadminRoutes.Use(middleware.RequireAuth())
 	superadminRoutes.Use(middleware.RequireSuperadmin())
@@ -392,8 +413,6 @@ func main() {
 			userRoutes.GET("/api/users/:id/edit", handlers.GetUserFormEdit)
 			userRoutes.PUT("/api/users/:id", handlers.UpdateUser)
 		}
-		protected.POST("/api/consent/accept", handlers.AcceptConsentHandler)
-		protected.POST("/api/consent/revoke", handlers.RevokeConsentHandler)
 
 		// User Compliance routes (Data Rights)
 		protected.GET("/api/user/export", handlers.ExportComplianceUserDataHandler)

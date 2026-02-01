@@ -1,0 +1,25 @@
+package errors
+
+import (
+	"context"
+	"law_flow_app_go/templates/layouts"
+)
+
+templ Error403(ctx context.Context, csrfToken string) {
+	@layouts.Base(ctx, "403 Forbidden", csrfToken, nil) {
+		<div class="min-h-screen flex flex-col items-center justify-center bg-base-100 text-base-content px-4" x-data>
+			<div class="text-center max-w-lg animate-fade-in-up">
+				<h1 class="text-9xl font-serif font-bold text-primary opacity-20 select-none">403</h1>
+				<div class="-mt-12">
+					<h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Access Denied</h2>
+					<p class="text-lg opacity-70 mb-8 font-sans">
+						Sorry, you don't have permission to access this page. Please contact your administrator if you believe this is a mistake.
+					</p>
+					<button @click="history.back()" class="btn btn-primary rounded-sm px-8 font-serif shadow-lg hover-lift">
+						Go Back
+					</button>
+				</div>
+			</div>
+		</div>
+	}
+}

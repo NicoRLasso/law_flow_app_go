@@ -53,17 +53,22 @@ func GetUserConsents(db *gorm.DB, userID string) ([]models.ConsentLog, error) {
 
 // GetLatestConsent retrieves the most recent consent of a specific type for a user.
 func GetLatestConsent(db *gorm.DB, userID string, consentType models.ConsentType) (*models.ConsentLog, error) {
-	var consent models.ConsentLog
+	var consents []models.ConsentLog
+	// Use Find instead of First to avoid gorm.ErrRecordNotFound log noise
 	err := db.Where("user_id = ? AND consent_type = ?", userID, consentType).
 		Order("created_at DESC").
-		First(&consent).Error
+		Limit(1).
+		Find(&consents).Error
+
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, nil // No consent found
-		}
 		return nil, fmt.Errorf("failed to get latest consent: %w", err)
 	}
-	return &consent, nil
+
+	if len(consents) == 0 {
+		return nil, nil // No consent found
+	}
+
+	return &consents[0], nil
 }
 
 // HasValidConsent checks if a user has a valid (granted, not revoked) consent for a specific type.

@@ -49,9 +49,28 @@ func AcceptConsentHandler(c echo.Context) error {
 
 // GetConsentModalHandler returns the consent modal if user needs to accept
 func GetConsentModalHandler(c echo.Context) error {
-	user, ok := c.Get("user").(*models.User)
-	if !ok || user == nil {
-		// If no user is logged in, no consent is needed
+	var user *models.User
+
+	// Try to get user from context first (if middleware ran)
+	if u, ok := c.Get("user").(*models.User); ok && u != nil {
+		user = u
+	} else {
+		// If not in context, try to validate session manually (Soft Auth)
+		cookie, err := c.Cookie(middleware.SessionCookieName)
+		if err == nil && cookie.Value != "" {
+			session, err := services.ValidateSession(db.DB, cookie.Value)
+			if err == nil && session.User.IsActive {
+				user = &session.User
+				// Manually set firm context if needed for the modal (though modal mostly relies on user)
+				if session.Firm != nil {
+					c.Set("firm", session.Firm)
+				}
+			}
+		}
+	}
+
+	if user == nil {
+		// If still no user, they are not logged in, so no consent needed
 		return c.NoContent(http.StatusOK)
 	}
 
